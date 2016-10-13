@@ -8,6 +8,7 @@ add_library(wellindexcalculator
 add_library(fieldopt::wellindexcalculator ALIAS ${PROJECT_NAME})
 
 include_directories(${EIGEN3_INCLUDE_DIR})
+
 target_link_libraries (wellindexcalculator
         PUBLIC fieldopt::reservoir
         ${Boost_LIBRARIES})
@@ -17,12 +18,12 @@ target_compile_features(wellindexcalculator
         PUBLIC cxx_range_for)
 
 # Standalone WIC executable
-add_executable(WellIndexCalculator
+add_executable(WellIndexCalc
         main.cpp)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-target_link_libraries(WellIndexCalculator
+target_link_libraries(WellIndexCalc
         fieldopt::wellindexcalculator
         ${Boost_LIBRARIES})
 
