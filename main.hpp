@@ -55,17 +55,18 @@ void printCsv(vector<IntersectedCell> &well_blocks) {
     }
 }
 
-void printCompdat(vector<IntersectedCell> &well_blocs, string well_name, double wellbore_radius) {
+void printCompdat(vector<IntersectedCell> &well_blocks, string well_name, double wellbore_radius) {
     string head = "COMPDAT\n";
     string foot = "\n/";
     vector<string> body;
-    for (auto block : well_blocs) {
-        //                                        NAME I   J  K1  K2  OP/SH ST WI  RAD
-        auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d  OPEN  1  %s  %s")
+    for (auto block : well_blocks) {
+        //                                      NAME  I    J  K1  K2 OP/SH ST WI  RAD
+        auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1  %s  %s")
                 % well_name             // %1
                 %(block.ijk_index().i() + 1) // %2
                 %(block.ijk_index().j() + 1) // %3
                 %(block.ijk_index().k() + 1) // %4
+	        %(block.ijk_index().k() + 1) // %5
                 %block.well_index()          // %5
                 %wellbore_radius);           // %6
         body.push_back(entry);
@@ -95,19 +96,19 @@ po::variables_map createVariablesMap(int argc, const char **argv) {
             ("well-name,w", po::value<string>(),
              "well name to be used when writing compdat")
             ;
-    // Positional arguments
-    po::positional_options_description p;
-    p.add("grid", 1);
-
+	
     // Process arguments to variable map
     po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).
-            options(desc).positional(p).run(), vm);
+    
+    // Parse the input arguments and store the values 
+    po::store(po::parse_command_line(argc, argv, desc, po::command_line_style::unix_style ^ po::command_line_style::allow_short), vm);
+    
+    // ??
     po::notify(vm);
 
     // If called with --help or -h flag:
     if (vm.count("help")) { // Print help if --help present or input file/output dir not present
-        cout << "Usage: ./WellIndexCalculator gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r [options]" << endl;
+        cout << "Usage: ./WellIndexCalculator --grid gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r [options]" << endl;
         cout << desc << endl;
         exit(EXIT_SUCCESS);
     }
