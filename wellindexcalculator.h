@@ -51,7 +51,7 @@ namespace Reservoir {
             WellIndexCalculator(Grid::Grid *grid);
 
             /*!
-             * \brief Compute the well block data for a single well.
+             * \brief Compute the well block index data for a single well segment defined by heel and toe.
              * \param heel The heel end point of the spline defining the well.
              * \param toe The toe end point of the spline defining the well.
              * \param wellbore_radius The radius of the well.
@@ -67,11 +67,8 @@ namespace Reservoir {
              */
 
             Grid::Grid *grid_; //!< The grid used in the calculations.
-            double wellbore_radius_;
-            Vector3d heel_;
-            Vector3d toe_;
 
-        public:
+        protected:
             /*!
              * \brief Given a reservoir with blocks and a line(start_point to end_point), return global index of all
              * blocks interesected by the line, as well as the point where the line enters the block.
@@ -82,10 +79,10 @@ namespace Reservoir {
              * \return A pair containing global indeces of intersected cells and the points where it enters each cell
              * (and thereby leaves the previous cell) of the line segment inside each cell.
              */
-            std::vector<IntersectedCell> cells_intersected();
+            void collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, Vector3d start_point, Vector3d end_point, double wellbore_radius);
 
             /*!
-             * \brief Find the point where the line bethween the start_point and end_point exits a cell.
+             * \brief Find the point where the line between the start_point and end_point exits a cell.
              *
              * Takes as input an entry_point end_point which defines the well path. Finds the two points on the path
              * which intersects the block faces and chooses the one that is not the entry point, i.e. the exit point.
@@ -98,8 +95,8 @@ namespace Reservoir {
              * \param exception_point A specific point we don't want the function to end up in.
              * \return The point where the well path exits the cell.
              */
-            Vector3d find_exit_point(Grid::Cell &cell, Vector3d &start_point,
-                                     Vector3d &end_point, Vector3d &exception_point);
+            Vector3d find_exit_point(std::vector<IntersectedCell> &cells, int cell_index,
+            		Vector3d &start_point, Vector3d &end_point, Vector3d &exception_point);
 
             /*!
              * \brief Compute the well index (aka. transmissibility factor) for a (one) single cell/block by
@@ -113,7 +110,7 @@ namespace Reservoir {
              * \param icell Well block to compute the WI in.
              * \return Well index for block/cell
             */
-            double compute_well_index(IntersectedCell &icell);
+            void compute_well_index(std::vector<IntersectedCell> &cells, int cell_index);
 
             /*!
              * \brief Auxilary function for compute_well_index function
@@ -124,7 +121,7 @@ namespace Reservoir {
              * \param kz permeability second direction
              * \return directional well index
             */
-            double dir_well_index(double Lx, double dy, double dz, double ky, double kz);
+            double dir_well_index(double Lx, double dy, double dz, double ky, double kz, double wellbore_radius);
 
             /*!
              * \brief Auxilary function(2) for compute_well_index function
