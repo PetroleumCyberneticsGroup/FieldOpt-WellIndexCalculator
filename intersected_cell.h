@@ -1,6 +1,7 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Hilmar M. Magnusson <hilmarmag@gmail.com>
    Modified by Einar J.M. Baumann (2016) <einar.baumann@gmail.com>
+   Modified by Alin G. Chitu (2016) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -26,37 +27,64 @@
 #define FIELDOPT_INTERSECTEDCELL_H
 
 #include "Reservoir/grid/cell.h"
+#include <map>
+#include <vector>
 
 namespace Reservoir {
 namespace WellIndexCalculation {
     using namespace Eigen;
     /*!
      * \brief The IntersectedCell struct holds information about an intersected cell.
+     *
      */
     class IntersectedCell : public Grid::Cell {
     public:
         IntersectedCell() {}
         IntersectedCell(const Grid::Cell &cell) : Grid::Cell(cell) {};
 
-        std::vector<Vector3d> points() const;
-
+        /*!
+         * \brief The cell x axis
+         */
         Vector3d xvec() const;
+        /*!
+         * \brief The cell y axis
+         */
         Vector3d yvec() const;
+        /*!
+         * \brief The cell z axis
+         */
         Vector3d zvec() const;
+
+        // Cell size
         double dx() const;
         double dy() const;
         double dz() const;
 
-        const Vector3d & entry_point() const;
-        void set_entry_point(const Vector3d &entry_point);
-        const Vector3d & exit_point() const;
-        void set_exit_point(const Vector3d &exit_point);
-        double well_index() const;
-        void set_well_index(double well_index);
+        void add_new_segment(Vector3d entry_point, Vector3d exit_point, double segment_radius);
+        int num_segments() const;
+
+        Vector3d get_segment_entry_point(int segment_index) const;
+        Vector3d get_segment_exit_point(int segment_index) const;
+        double get_segment_radius(int segment_index) const;
+
+        double cell_well_index() const;
+        void set_cell_well_index(double well_index);
+
+        void set_segment_calculation_data(int segment_index, std::string name, double value);
+
+        // This is a class method
+        static int GetIntersectedCellIndex(std::vector<IntersectedCell> &cells, Grid::Cell grdcell);
 
     private:
-        Vector3d entry_point_;
-        Vector3d exit_point_;
+        // intersecting well segment definition
+        std::vector<Vector3d> entry_points_;
+        std::vector<Vector3d> exit_points_;
+        std::vector<double> segment_radius_;
+
+        // per segment well index calculation data
+        std::vector<std::map<std::string, double>> calculation_data_;
+
+        // well index
         double well_index_;
     };
 }

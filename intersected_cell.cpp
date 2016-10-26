@@ -1,11 +1,8 @@
 #include "intersected_cell.h"
+#include <iostream>
 
 namespace Reservoir {
     namespace WellIndexCalculation {
-
-        std::vector<Vector3d> IntersectedCell::points() const {
-            return std::vector<Vector3d>({entry_point_, exit_point_});
-        }
 
         Vector3d IntersectedCell::xvec() const {
             return corners()[5] - corners()[4];
@@ -31,28 +28,66 @@ namespace Reservoir {
             return zvec().norm();
         }
 
-        const Vector3d &IntersectedCell::entry_point() const {
-            return entry_point_;
+        Vector3d IntersectedCell::get_segment_entry_point(int segment_index) const{
+        	return entry_points_[segment_index];
         }
 
-        void IntersectedCell::set_entry_point(const Vector3d &entry_point) {
-            entry_point_ = entry_point;
+        Vector3d IntersectedCell::get_segment_exit_point(int segment_index) const{
+        	return exit_points_[segment_index];
         }
 
-        const Vector3d &IntersectedCell::exit_point() const {
-            return exit_point_;
+        double IntersectedCell::get_segment_radius(int segment_index) const{
+        	return segment_radius_[segment_index];
         }
 
-        void IntersectedCell::set_exit_point(const Vector3d &exit_point) {
-            exit_point_ = exit_point;
+        int IntersectedCell::num_segments() const{
+        	return entry_points_.size();
         }
 
-        double IntersectedCell::well_index() const {
+        void IntersectedCell::add_new_segment(Vector3d entry_point, Vector3d exit_point, double radius){
+        	entry_points_.push_back(entry_point);
+        	exit_points_.push_back(exit_point);
+        	segment_radius_.push_back(radius);
+        }
+
+        double IntersectedCell::cell_well_index() const {
             return well_index_;
         }
 
-        void IntersectedCell::set_well_index(double well_index) {
+        void IntersectedCell::set_cell_well_index(double well_index) {
             well_index_ = well_index;
+        }
+
+        void IntersectedCell::set_segment_calculation_data(int segment_index, std::string name, double value){
+        	if (segment_index >=0 && segment_index < calculation_data_.size()){
+        		calculation_data_.at(segment_index)[name] = value;
+        	}
+        	else if(segment_index == calculation_data_.size()){
+        		calculation_data_.push_back(std::map<std::string, double>());
+        		calculation_data_.back()[name] = value;
+        	}
+        	else std::runtime_error("This segment index is out of bounds.");
+        }
+
+        int IntersectedCell::GetIntersectedCellIndex( std::vector<IntersectedCell> &cells, Grid::Cell grdcell){
+        	if (cells.size() == 0)
+        	{
+        		cells.push_back(IntersectedCell(grdcell));
+        		return 0;
+        	}
+        	else
+        	{
+        		for(int cell_index = 0 ; cell_index < cells.size(); cell_index++)
+        		{
+        			if (cells.at(cell_index).global_index() == grdcell.global_index())
+        			{
+        				return cell_index;
+        			}
+        		}
+
+        		cells.push_back(IntersectedCell(grdcell));
+        		return cells.size() - 1;
+        	}
         }
     }
 }
