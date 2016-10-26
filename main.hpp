@@ -44,6 +44,7 @@ using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
 void printCsv(vector<IntersectedCell> &well_blocks) {
+    cout << "i,\tj,\tk1,\tk2,\twi" << endl;
     for (auto block : well_blocks) {
         auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
                 %(block.ijk_index().i() + 1)         // %1
