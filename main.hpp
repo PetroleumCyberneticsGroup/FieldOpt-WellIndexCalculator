@@ -44,13 +44,13 @@ using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
 void printCsv(vector<IntersectedCell> &well_blocks) {
-    cout << "i,\tj,\tk,\twi" << endl;
     for (auto block : well_blocks) {
-        auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%s")
+        auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
                 %(block.ijk_index().i() + 1)         // %1
                 %(block.ijk_index().j() + 1)         // %2
                 %(block.ijk_index().k() + 1)         // %3
-                %block.well_index());                // %4
+                %(block.ijk_index().k() + 1)         // %3
+                %block.cell_well_index());           // %4
         cout << line << endl;
     }
 }
@@ -66,8 +66,8 @@ void printCompdat(vector<IntersectedCell> &well_blocks, string well_name, double
                 %(block.ijk_index().i() + 1) // %2
                 %(block.ijk_index().j() + 1) // %3
                 %(block.ijk_index().k() + 1) // %4
-	        %(block.ijk_index().k() + 1) // %5
-                %block.well_index()          // %5
+                %(block.ijk_index().k() + 1) // %5
+                %block.cell_well_index()     // %5
                 %wellbore_radius);           // %6
         body.push_back(entry);
     }
