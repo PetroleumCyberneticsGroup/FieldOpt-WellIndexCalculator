@@ -60,15 +60,16 @@ void printCompdat(vector<IntersectedCell> &well_blocks, string well_name, double
     string foot = "\n/";
     vector<string> body;
     for (auto block : well_blocks) {
-        //                                      NAME  I    J  K1  K2 OP/SH ST WI  RAD
-        auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1  %s  %s")
+        //                                      NAME  I    J  K1  K2 OP/SH ST WI  RAD BS
+        auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1  %s  %s  %s")
                 % well_name             // %1
                 %(block.ijk_index().i() + 1) // %2
                 %(block.ijk_index().j() + 1) // %3
                 %(block.ijk_index().k() + 1) // %4
-	        %(block.ijk_index().k() + 1) // %5
+	            %(block.ijk_index().k() + 1) // %5
                 %block.well_index()          // %5
-                %wellbore_radius);           // %6
+                %wellbore_radius
+                %"/");           // %6
         body.push_back(entry);
     }
     string full = head + boost::algorithm::join(body, "\n") + foot;
