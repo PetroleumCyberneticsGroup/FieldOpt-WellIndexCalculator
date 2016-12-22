@@ -58,16 +58,31 @@ namespace Reservoir {
             well_index_ = well_index;
         }
 
-        void IntersectedCell::set_segment_calculation_data(int segment_index, std::string name, double value){
-        	if (segment_index >=0 && segment_index < calculation_data_.size()){
-        		calculation_data_.at(segment_index)[name] = value;
+        void IntersectedCell::set_segment_calculation_data(int segment_index, std::string name, double value)
+        {
+        	// Check if this name already exists
+        	std::map<std::string, std::vector<double>>::iterator it = calculation_data_.find(name);
+        	if(it != calculation_data_.end())
+        	{
+        		if (segment_index >= 0 && segment_index < calculation_data_[name].size())
+        		{
+        			calculation_data_[name].at(segment_index) = value;
+        		}
+            	else if(segment_index == calculation_data_[name].size()){
+            		calculation_data_[name].push_back(value);
+            	}
+            	else std::runtime_error("This segment index is out of bounds.");
         	}
-        	else if(segment_index == calculation_data_.size()){
-        		calculation_data_.push_back(std::map<std::string, double>());
-        		calculation_data_.back()[name] = value;
+        	else
+        	{
+        		calculation_data_[name].push_back(value);
         	}
-        	else std::runtime_error("This segment index is out of bounds.");
         }
+
+        std::map<std::string, std::vector<double>>& IntersectedCell::get_calculation_data()
+		{
+        	return calculation_data_;
+		}
 
         int IntersectedCell::GetIntersectedCellIndex( std::vector<IntersectedCell> &cells, Grid::Cell grdcell){
         	if (cells.size() == 0)

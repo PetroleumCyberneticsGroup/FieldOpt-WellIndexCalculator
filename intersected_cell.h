@@ -71,6 +71,7 @@ namespace WellIndexCalculation {
         void set_cell_well_index(double well_index);
 
         void set_segment_calculation_data(int segment_index, std::string name, double value);
+        std::map<std::string, std::vector<double>>& get_calculation_data();
 
         // This is a class method
         static int GetIntersectedCellIndex(std::vector<IntersectedCell> &cells, Grid::Cell grdcell);
@@ -82,7 +83,7 @@ namespace WellIndexCalculation {
         std::vector<double> segment_radius_;
 
         // per segment well index calculation data
-        std::vector<std::map<std::string, double>> calculation_data_;
+        std::map<std::string, std::vector<double>> calculation_data_;
 
         // well index
         double well_index_;
