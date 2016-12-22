@@ -35,6 +35,17 @@ namespace Reservoir {
     namespace WellIndexCalculation {
         using namespace Eigen;
 
+        class WellDefinition {
+        public:
+        	std::string wellname;
+        	std::vector<Vector3d> heels;
+        	std::vector<Vector3d> toes;
+        	std::vector<double> radii;
+
+        public:
+        	static void ReadWellsFromFile(std::string file_path, std::vector<WellDefinition>& wells);
+        };
+
         /*!
          * \brief The WellIndexCalculation class deduces the well blocks and their respecitve well indices/transmissibility
          * factors for one or more well splines defined by a heel and a toe.
@@ -58,7 +69,18 @@ namespace Reservoir {
              * \return A list of BlockData objects containing the (i,j,k) index and well index/transmissibility factor
              * for every block intersected by the spline.
              */
-            std::vector<IntersectedCell> ComputeWellBlocks(Vector3d heel, Vector3d toe, double wellbore_radius);
+            // std::vector<IntersectedCell> ComputeWellBlocks(Vector3d heel, Vector3d toe, double wellbore_radius);
+
+            /*!
+             * \brief Compute the well block index data for a single well segment defined by heel and toe.
+             * \param heel The heel end point of the spline defining the well.
+             * \param toe The toe end point of the spline defining the well.
+             * \param wellbore_radius The radius of the well.
+             * \return A list of BlockData objects containing the (i,j,k) index and well index/transmissibility factor
+             * for every block intersected by the spline.
+             */
+            std::map<std::string, std::vector<IntersectedCell>> ComputeWellBlocks(std::vector<WellDefinition> wells);
+
 
         private:
             /*!
@@ -133,7 +155,6 @@ namespace Reservoir {
              */
             double dir_wellblock_radius(double dx, double dy, double kx, double ky);
         };
-
     }
 }
 

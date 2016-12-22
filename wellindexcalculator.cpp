@@ -24,6 +24,8 @@
 ******************************************************************************/
 
 #include "wellindexcalculator.h"
+#include <fstream>
+#include <map>
 
 namespace Reservoir {
     namespace WellIndexCalculation {
@@ -31,21 +33,47 @@ namespace Reservoir {
             grid_ = grid;
         }
 
-        std::vector<IntersectedCell> WellIndexCalculator::ComputeWellBlocks(Vector3d heel, Vector3d toe, double wellbore_radius) {
+//        std::vector<IntersectedCell> WellIndexCalculator::ComputeWellBlocks(Vector3d heel, Vector3d toe, double wellbore_radius) {
+//
+//        	// Compute cells intersected by well segment
+//        	std::vector<IntersectedCell> intersected_cells;
+//        	collect_intersected_cells(intersected_cells, heel, toe, wellbore_radius);
+//
+//        	// For all intersected cells compute well transmissibility index
+//            for (int i = 0; i < intersected_cells.size(); ++i)
+//            {
+//                compute_well_index(intersected_cells, i);
+//            }
+//
+//            // Return the objects
+//            return intersected_cells;
+//        }
 
-        	// Compute cells intersected by well segment
-        	std::vector<IntersectedCell> intersected_cells;
-        	collect_intersected_cells(intersected_cells, heel, toe, wellbore_radius);
-	    
-        	// For all intersected cells compute well transmissibility index
-            for (int i = 0; i < intersected_cells.size(); ++i)
-            {
-                compute_well_index(intersected_cells, i);
-            }
+        std::map<std::string, std::vector<IntersectedCell>> WellIndexCalculator::ComputeWellBlocks(std::vector<WellDefinition> wells)
+        {
+        	std::map<std::string, std::vector<IntersectedCell>> well_indices;
+        	for (int iWell = 0; iWell < wells.size(); ++iWell)
+        	{
+            	// Compute cells intersected by all well segments
+            	std::vector<IntersectedCell> intersected_cells;
+            	for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment )
+            	{
+            		collect_intersected_cells(intersected_cells, wells[iWell].heels[iSegment], wells[iWell].toes[iSegment], wells[iWell].radii[iSegment]);
+            	}
+
+            	// For all intersected cells compute well transmissibility index
+                for (int iCell = 0; iCell < intersected_cells.size(); ++iCell)
+                {
+                    compute_well_index(intersected_cells, iCell);
+                }
+
+        		well_indices[wells[iWell].wellname] = intersected_cells;
+        	}
 
             // Return the objects
-            return intersected_cells;
+            return well_indices;
         }
+
 
         void WellIndexCalculator::collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, Vector3d start_point, Vector3d end_point, double wellbore_radius) {
 
@@ -180,7 +208,8 @@ namespace Reservoir {
                 double current_Ly = (icell.yvec() * icell.yvec().dot(current_vec) / icell.yvec().dot(icell.yvec())).norm();
                 double current_Lz = (icell.zvec() * icell.zvec().dot(current_vec) / icell.zvec().dot(icell.zvec())).norm();
 
-                // Compute Well Index from formula provided by Shu per Segment (Note that this has a glich since segments from the same well could have different radius (e.g. radial well))
+                // Compute Well Index from formula provided by Shu per Segment
+                // (Note that this has a glich since segments from the same well could have different radius (e.g. radial well))
                 double current_wx = dir_well_index(current_Lx, icell.dy(), icell.dz(), icell.permy(), icell.permz(), icell.get_segment_radius(iSegment));
                 double current_wy = dir_well_index(current_Ly, icell.dx(), icell.dz(), icell.permx(), icell.permz(), icell.get_segment_radius(iSegment));
                 double current_wz = dir_well_index(current_Lz, icell.dx(), icell.dy(), icell.permx(), icell.permy(), icell.get_segment_radius(iSegment));
@@ -192,9 +221,13 @@ namespace Reservoir {
                 well_index_z += current_wz;
 
                 // Store data for later use
-                icell.set_segment_calculation_data(iSegment, "x", current_vec.x());
-                icell.set_segment_calculation_data(iSegment, "y", current_vec.y());
-                icell.set_segment_calculation_data(iSegment, "z", current_vec.z());
+                icell.set_segment_calculation_data(iSegment, "dx", icell.dx());
+                icell.set_segment_calculation_data(iSegment, "dy", icell.dy());
+                icell.set_segment_calculation_data(iSegment, "dz", icell.dz());
+
+                icell.set_segment_calculation_data(iSegment, "permx", icell.permx());
+                icell.set_segment_calculation_data(iSegment, "permy", icell.permy());
+                icell.set_segment_calculation_data(iSegment, "permz", icell.permz());
 
                 icell.set_segment_calculation_data(iSegment, "Lx", current_Lx);
                 icell.set_segment_calculation_data(iSegment, "Ly", current_Ly);
@@ -205,7 +238,8 @@ namespace Reservoir {
                 icell.set_segment_calculation_data(iSegment, "wz", current_wz);
             }
 
-            // Compute the combined well index as the Sum the segment Compute Well Index from formula provided by Shu for the entire combined projections (this is the original formulation)
+            // Compute the combined well index as the Sum the segment
+            // Compute Well Index from formula provided by Shu for the entire combined projections (this is the original formulation)
             icell.set_cell_well_index(sqrt(well_index_x * well_index_x + well_index_y * well_index_y + well_index_z * well_index_z));
         }
 
@@ -216,10 +250,38 @@ namespace Reservoir {
             return well_index_i;
         }
 
-        double WellIndexCalculator::dir_wellblock_radius(double dx, double dy, double kx, double ky) {
+        double WellIndexCalculator::dir_wellblock_radius(double dx, double dy, double kx, double ky)
+        {
             double r = 0.28 * sqrt((dx * dx) * sqrt(ky / kx) + (dy * dy) * sqrt(kx / ky)) /
                        (sqrt(sqrt(kx / ky)) + sqrt(sqrt(ky / kx)));
             return r;
+        }
+
+        void WellDefinition::ReadWellsFromFile(std::string file_path, std::vector<WellDefinition>& wells)
+        {
+        	std::ifstream infile(file_path);
+        	std::string previous_well_name = "";
+        	std::string well_name;
+        	double hx, hy, hz, tx, ty, tz;
+        	double radius;
+        	//try
+        	{
+        		while (infile >> well_name >> hx >> hy >> hz >> tx >> ty >> tz >> radius)
+        		{
+        			if (previous_well_name != well_name)
+        			{
+        				wells.push_back(WellDefinition());
+        				wells.back().wellname = well_name;
+
+        				previous_well_name = well_name;
+        			}
+
+    				wells.back().heels.push_back(Eigen::Vector3d(hx,hy,hz));
+    				wells.back().toes.push_back(Eigen::Vector3d(tx,ty,tz));
+    				wells.back().radii.push_back(radius);
+        		}
+        	}
+
         }
     }
 }
