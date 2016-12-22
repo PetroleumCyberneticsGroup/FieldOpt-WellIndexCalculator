@@ -29,31 +29,52 @@
 #include "wellindexcalculator.h"
 #include <Reservoir/grid/eclgrid.h>
 
+using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
 int main(int argc, const char *argv[]) {
     // Initialize some variables from the runtime arguments
     auto vm = createVariablesMap(argc, argv);
-	
-    auto heel = Eigen::Vector3d(vm["heel"].as<vector<double>>().data());
-    auto toe = Eigen::Vector3d(vm["toe"].as<vector<double>>().data());
-    string gridpth = vm["grid"].as<string>();
-    double wellbore_radius = vm["radius"].as<double>();
 
+    // Get the path to the grid file
+	string gridpth = vm["grid"].as<string>();
+	
     // Initialize the Grid and WellIndexCalculator objects
     auto grid = new Reservoir::Grid::ECLGrid(gridpth);
-    
-    // Compute the well blocks
     auto wic = WellIndexCalculator(grid);
-    auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
+
+    vector<WellDefinition> wells;
+    
+    if (vm.count("well-filedef") == 1)
+    {
+    	assert(boost::filesystem::exists(vm["well-filedef"].as<string>()));
+    	WellDefinition::ReadWellsFromFile(vm["well-filedef"].as<string>(), wells);
+    }
+    else
+    {
+    	wells.push_back(WellDefinition());
+    	if (vm.count("well-name"))
+    	{
+    		wells.at(0).wellname = vm["well-name"].as<string>();
+   	    }
+    	wells.at(0).heels.push_back(Eigen::Vector3d(vm["heel"].as<vector<double>>().data()));
+    	wells.at(0).toes.push_back(Eigen::Vector3d(vm["toe"].as<vector<double>>().data()));
+    	wells.at(0).radii.push_back(vm["radius"].as<double>());
+    }
+
+    // Compute the well blocks
+    auto well_indices = wic.ComputeWellBlocks(wells);
 
     if (vm.count("compdat")) { // Print as a COMPDAT table if the --compdat/-c flag was given
-        string well_name = vm["well-name"].as<string>();
-        printCompdat(well_blocks, well_name, wellbore_radius);
+        printCompdat(well_indices);
     }
     else { // Otherwise, print as a CSV table
-        printCsv(well_blocks);
+        printCsv(well_indices);
     }
     
+    if (vm.count("debug") > 0)
+    {
+    	printDebug(well_indices);
+    }
     return 0;
 }
