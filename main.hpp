@@ -87,7 +87,7 @@ void printCompdat(map<string, vector<IntersectedCell>> &well_indices)
 		for (auto block : well_indices[well_name])
 		{
 			//                                      NAME  I    J  K1  K2 OP/SH ST WI  DIA
-			auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1  %s  %s")
+			auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1*  %s  %s/")
 					% well_name             				// %1
 					%(block.ijk_index().i() + 1) 			// %2
 					%(block.ijk_index().j() + 1) 			// %3
