@@ -19,7 +19,7 @@ target_compile_features(wellindexcalculator
 
 # Standalone WellIndexCalculator executable (WIN/Linux) ========================
 add_executable(wicalc main.cpp)
-        
+
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 if (_WIN32)
@@ -60,5 +60,6 @@ if (BUILD_TESTING)
             ${GTEST_BOTH_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT})
 
-    add_test(NAME test_wellindexcalculator COMMAND $<TARGET_FILE:test_wellindexcalculator>)
+    add_test(NAME test_wellindexcalculator
+             COMMAND $<TARGET_FILE:test_wellindexcalculator>)
 endif()
