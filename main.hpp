@@ -1,5 +1,7 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Einar J.M. Baumann <einar.baumann@gmail.com>
+   Modified by M.Bellout (2017) <mathias.bellout@ntnu.no>
+   Modified by ...
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -144,39 +146,39 @@ po::variables_map createVariablesMap(int argc, const char **argv) {
   if(!vm.count("grid")){
     cout << "grid parameter missing..." << endl
          << usage_msg << endl;
-         exit(EXIT_SUCCESS);
+         exit(EXIT_FAILURE);
      };
   if(!vm.count("heel")){
     cout << "heel parameter missing..." << endl
          << usage_msg << endl;
-         exit(EXIT_SUCCESS);
+         exit(EXIT_FAILURE);
      };
   if(!vm.count("toe")){
     cout << "toe parameter missing..." << endl
          << usage_msg << endl;
-         exit(EXIT_SUCCESS);
+         exit(EXIT_FAILURE);
      };
   if(!vm.count("radius")){
     cout << "radius parameter missing..." << endl
          << usage_msg << endl;
-         exit(EXIT_SUCCESS);
+         exit(EXIT_FAILURE);
      };
   if(vm.count("compdat")){
       if(!vm.count("radius")){
         cout << "well-name parameter missing..." << endl
              << usage_msg << endl;
-             exit(EXIT_SUCCESS);
+             exit(EXIT_FAILURE);
          };
      };
   if(!(vm["heel"].as<vector<double>>().size() == 3)){
     cout << "heel parameter missing..." << endl
          << usage_msg << endl;
-         exit(EXIT_SUCCESS);
+         exit(EXIT_FAILURE);
      };
   if(!(vm["toe"].as<vector<double>>().size() == 3)){
     cout << "heel parameter missing..." << endl
          << usage_msg << endl;
-         exit(EXIT_SUCCESS);
+         exit(EXIT_FAILURE);
      };
 
 

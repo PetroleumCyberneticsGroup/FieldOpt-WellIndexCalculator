@@ -54,7 +54,8 @@ if (BUILD_TESTING)
     include_directories(${GTEST_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR} tests)
     add_executable(test_wellindexcalculator
             tests/test_intersected_cells.cpp
-            tests/test_single_cell_wellindex.cpp)
+            tests/test_single_cell_wellindex.cpp
+            tests/test_standalone_wicalc.cpp)
     target_link_libraries(test_wellindexcalculator
             fieldopt::wellindexcalculator
             ${GTEST_BOTH_LIBRARIES}
