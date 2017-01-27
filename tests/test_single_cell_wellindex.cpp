@@ -74,12 +74,24 @@ namespace {
         double well_end_z = 0.25*corners[4].z() + 0.25*corners[5].z() +0.25*corners[6].z() + 0.25*corners[7].z();
         Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x,well_start_y,well_start_z);
         Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
+
         auto icell = IntersectedCell(cell_1);
-        icell.set_entry_point(start_point);
-        icell.set_exit_point(end_point);
+        icell.add_new_segment(start_point, end_point, wellbore_radius);
+
         auto wic = WellIndexCalculator(grid_);
-        wic.ComputeWellBlocks(start_point, end_point, wellbore_radius);
-        double wi = wic.compute_well_index(icell);
+
+        std::vector<WellDefinition> wells;
+    	wells.push_back(WellDefinition());
+    	wells.at(0).heels.push_back(start_point);
+    	wells.at(0).toes.push_back(end_point);
+    	wells.at(0).radii.push_back( wellbore_radius);
+    	wells.at(0).wellname = "testwell";
+    	wic.ComputeWellBlocks(wells);
+
+        std::vector<IntersectedCell> intersected_cell;
+        int index_icell = IntersectedCell::GetIntersectedCellIndex(intersected_cell, icell);
+        wic.compute_well_index(intersected_cell, index_icell);
+        double wi = intersected_cell[index_icell].cell_well_index();
         /* 0.555602 is the expected well transmisibility factor aka. well index.
          * For now this value is read directly from eclipse output file:
          * Expect value within delta percent
@@ -106,14 +118,25 @@ namespace {
         double well_end_z = 0.25*corners[4].z() + 0.25*corners[5].z() +0.25*corners[6].z() + 0.25*corners[7].z();
         Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x, well_start_y, well_start_z);
         Eigen::Vector3d end_point= Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
+
         Reservoir::WellIndexCalculation::IntersectedCell icell(cell_1);
-        icell.set_entry_point(start_point);
-        icell.set_exit_point(end_point);
+        icell.add_new_segment(start_point, end_point, wellbore_radius);
 
         auto wic = WellIndexCalculator(grid_);
-        wic.ComputeWellBlocks(start_point, end_point, wellbore_radius);
 
-        double wi = wic.compute_well_index(icell);
+        std::vector<WellDefinition> wells;
+    	wells.push_back(WellDefinition());
+    	wells.at(0).heels.push_back(start_point);
+    	wells.at(0).toes.push_back(end_point);
+    	wells.at(0).radii.push_back( wellbore_radius);
+    	wells.at(0).wellname = "testwell";
+    	wic.ComputeWellBlocks(wells);
+
+        std::vector<IntersectedCell> intersected_cell;
+        int index_icell = IntersectedCell::GetIntersectedCellIndex(intersected_cell, icell);
+        wic.compute_well_index(intersected_cell, index_icell);
+        double wi = intersected_cell[index_icell].cell_well_index();
+
         // WellIndexCalculation::GeometryFunctions::vertical_well_index_cell(cell_1,kx,ky,wellbore_radius);
         /* 0.555602 is the expected well transmisibility factor aka. well index.
          * For now this value is read directly from eclipse output file:
@@ -134,7 +157,16 @@ namespace {
 
         // \todo The following lines need to be changed
         auto wic = WellIndexCalculator(grid_);
-        auto blocks = wic.ComputeWellBlocks(start_point, end_point, wellbore_radius);
+
+        std::vector<WellDefinition> wells;
+    	wells.push_back(WellDefinition());
+    	wells.at(0).heels.push_back(start_point);
+    	wells.at(0).toes.push_back(end_point);
+    	wells.at(0).radii.push_back( wellbore_radius);
+    	wells.at(0).wellname = "testwell";
+
+    	auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
+
         EXPECT_EQ(118, blocks.size());
 /*
     std::ofstream myfile;
