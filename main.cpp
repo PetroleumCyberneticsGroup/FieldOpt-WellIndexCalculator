@@ -40,18 +40,18 @@ int main(int argc, const char *argv[]) {
                    auto vm = createVariablesMap(argc, argv);
                  auto heel = Vector3d(vm["heel"].as<vector<double>>().data());
                   auto toe = Vector3d(vm["toe"].as<vector<double>>().data());
-            string gridpth = vm["grid"].as<string>();
+          string grid_path = vm["grid"].as<string>();
     double wellbore_radius = vm["radius"].as<double>();
 
     // Initialize the Grid and WellIndexCalculator objects
-    auto grid = new Reservoir::Grid::ECLGrid(gridpth);
+    auto grid = new Reservoir::Grid::ECLGrid(grid_path);
+     auto wic = WellIndexCalculator(grid);
 
-    // Compute the well blocks
-            auto wic = WellIndexCalculator(grid);
+    // Compute well blocks
     auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
 
     // Print as a COMPDAT table if the --compdat/-c flag was given
-    if (vm.count("compdat")) { 
+    if (vm.count("compdat")) {
         string well_name = vm["well-name"].as<string>();
         printCompdat(well_blocks, well_name, wellbore_radius);
     }
