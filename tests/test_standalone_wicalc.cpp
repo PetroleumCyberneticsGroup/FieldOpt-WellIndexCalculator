@@ -21,6 +21,12 @@
    <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
+/*!
+ * \todo Add more tests to check the error handing capability, e.g.,
+ * against wrong/missing parameter input, if sufficient. If not,
+ * increase the capability (in main.hpp).
+ */
+
 #include <gtest/gtest.h>
 #include <boost/filesystem.hpp> /* exists */
 #include <stdio.h>              /* printf */
@@ -60,12 +66,12 @@ namespace{
 
     TEST_F(wicalcStandaloneTest, checkExecutable) {
         if (check_wicalc_exists()){
-            string cmd_in = wicalc_path + 
-                            grid_str + 
-                            heel_str + 
-                            toe_str + 
-                            radius_str + 
-                            compdat_str + 
+            string cmd_in = wicalc_path +
+                            grid_str +
+                            heel_str +
+                            toe_str +
+                            radius_str +
+                            compdat_str +
                             wname_str;
 
             printf ("Executing: %s.\n", cmd_in.c_str());
@@ -80,12 +86,12 @@ namespace{
     TEST_F(wicalcStandaloneTest, checkMissingInputParameterGrid) {
         if (check_wicalc_exists()){
 
-            string cmd_in = wicalc_path + 
-                            " " + 
-                            heel_str + 
-                            toe_str + 
-                            radius_str + 
-                            compdat_str + 
+            string cmd_in = wicalc_path +
+                            " " +
+                            heel_str +
+                            toe_str +
+                            radius_str +
+                            compdat_str +
                             wname_str;
 
             printf ("Executing: %s.\n", cmd_in.c_str());
@@ -96,6 +102,6 @@ namespace{
 
     // TEST_F(wicalcStandaloneTest, checkErrorHandingInputParameterGrid) {
     // string grid_str_err = " --grid../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
-    // }    
+    // }
 
 }
