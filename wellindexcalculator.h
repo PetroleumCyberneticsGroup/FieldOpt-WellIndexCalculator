@@ -90,7 +90,7 @@ namespace Reservoir {
 
             Grid::Grid *grid_; //!< The grid used in the calculations.
 
-        protected:
+        public:
             /*!
              * \brief Given a reservoir with blocks and a line(start_point to end_point), return global index of all
              * blocks interesected by the line, as well as the point where the line enters the block.
