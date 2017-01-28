@@ -31,7 +31,8 @@ namespace Reservoir {
 namespace WellIndexCalculation {
     using namespace Eigen;
     /*!
-     * \brief The IntersectedCell struct holds information about an intersected cell.
+     * \brief The IntersectedCell struct holds
+     * information about an intersected cell.
      */
     class IntersectedCell : public Grid::Cell {
     public:
@@ -48,9 +49,11 @@ namespace WellIndexCalculation {
         double dz() const;
 
         const Vector3d & entry_point() const;
-        void set_entry_point(const Vector3d &entry_point);
         const Vector3d & exit_point() const;
+
+        void set_entry_point(const Vector3d &entry_point);
         void set_exit_point(const Vector3d &exit_point);
+
         double well_index() const;
         void set_well_index(double well_index);
 
