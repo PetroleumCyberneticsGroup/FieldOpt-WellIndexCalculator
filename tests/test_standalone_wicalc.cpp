@@ -36,72 +36,72 @@ using namespace std;
 
 namespace{
 
-    class wicalcStandaloneTest : public ::testing::Test {
-    protected:
-        wicalcStandaloneTest(){};
+class wicalcStandaloneTest : public ::testing::Test {
+ protected:
+  wicalcStandaloneTest(){};
 
-        virtual ~wicalcStandaloneTest(){}
+  virtual ~wicalcStandaloneTest(){}
 
-        virtual void SetUp(){}
+  virtual void SetUp(){}
 
-        virtual void TearDown(){}
+  virtual void TearDown(){}
 
-        string wicalc_path = "./wicalc";
-           string grid_str = " --grid ../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
-           string heel_str = " --heel 10 10 1712";
-            string toe_str = " --toe 100 100 1712";
-         string radius_str = " --radius 0.1905";
-        string compdat_str = " --compdat";
-          string wname_str = " --well-name PROD";
+  string wicalc_path = "./wicalc";
+  string grid_str = " --grid ../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
+  string heel_str = " --heel 10 10 1712";
+  string toe_str = " --toe 100 100 1712";
+  string radius_str = " --radius 0.1905";
+  string compdat_str = " --compdat";
+  string wname_str = " --well-name PROD";
 
-        bool check_wicalc_exists(){
-            if ( !boost::filesystem::exists( wicalc_path ) ){
-                printf ("Cannot find wicalc executable. Skipping test.\n");
-                return false;
-            }else{
-                return true;
-            }
-        };
-    };
+  bool check_wicalc_exists(){
+      if ( !boost::filesystem::exists( wicalc_path ) ){
+          printf ("Cannot find wicalc executable. Skipping test.\n");
+          return false;
+      }else{
+          return true;
+      }
+  };
+};
 
-    TEST_F(wicalcStandaloneTest, checkExecutable) {
-        if (check_wicalc_exists()){
-            string cmd_in = wicalc_path +
-                            grid_str +
-                            heel_str +
-                            toe_str +
-                            radius_str +
-                            compdat_str +
-                            wname_str;
+TEST_F(wicalcStandaloneTest, checkExecutable) {
+    if (check_wicalc_exists()){
+        string cmd_in = wicalc_path +
+            grid_str +
+            heel_str +
+            toe_str +
+            radius_str +
+            compdat_str +
+            wname_str;
 
-            printf ("Executing: %s.\n", cmd_in.c_str());
-            int i=system(cmd_in.c_str());
-            printf ("The value returned was: %d.\n", i);
+        printf ("Executing: %s.\n", cmd_in.c_str());
+        int i=system(cmd_in.c_str());
+        printf ("The value returned was: %d.\n", i);
 
-            // \todo Pipe the output of system to a string variable
-            // then compare against a similar output
-        }
+        // \todo Pipe the output of system to a string variable
+        // then compare against a similar output
     }
+}
 
-    TEST_F(wicalcStandaloneTest, checkMissingInputParameterGrid) {
-        if (check_wicalc_exists()){
+TEST_F(wicalcStandaloneTest, checkMissingInputParameterGrid) {
+    if (check_wicalc_exists()){
 
-            string cmd_in = wicalc_path +
-                            " " +
-                            heel_str +
-                            toe_str +
-                            radius_str +
-                            compdat_str +
-                            wname_str;
+        string cmd_in = wicalc_path +
+            " " +
+            heel_str +
+            toe_str +
+            radius_str +
+            compdat_str +
+            wname_str;
 
-            printf ("Executing: %s.\n", cmd_in.c_str());
-            int i=system(cmd_in.c_str());
-            printf ("The value returned was: %d.\n", i);
-        }
+        printf ("Executing: %s.\n", cmd_in.c_str());
+        int i=system(cmd_in.c_str());
+        printf ("The value returned was: %d.\n", i);
     }
+}
 
-    // TEST_F(wicalcStandaloneTest, checkErrorHandingInputParameterGrid) {
-    // string grid_str_err = " --grid../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
-    // }
+// TEST_F(wicalcStandaloneTest, checkErrorHandingInputParameterGrid) {
+// string grid_str_err = " --grid../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
+// }
 
 }
