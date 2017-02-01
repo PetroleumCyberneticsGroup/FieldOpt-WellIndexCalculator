@@ -31,34 +31,33 @@
 #include <Reservoir/grid/eclgrid.h>
 
 using namespace std;
-using Eigen::Vector3d;
 
 int main(int argc, const char *argv[]) {
-    // Initialize some variables from the runtime arguments
-    Eigen::setNbThreads(1); // OV
+  // Initialize some variables from the runtime arguments
+  Eigen::setNbThreads(1); // OV
 
-                   auto vm = createVariablesMap(argc, argv);
-                 auto heel = Vector3d(vm["heel"].as<vector<double>>().data());
-                  auto toe = Vector3d(vm["toe"].as<vector<double>>().data());
-          string grid_path = vm["grid"].as<string>();
-    double wellbore_radius = vm["radius"].as<double>();
+  auto vm = createVariablesMap(argc, argv);
+  auto heel = Vector3d(vm["heel"].as<vector<double>>().data());
+  auto toe = Vector3d(vm["toe"].as<vector<double>>().data());
+  string grid_path = vm["grid"].as<string>();
+  double wellbore_radius = vm["radius"].as<double>();
 
-    // Initialize the Grid and WellIndexCalculator objects
-    auto grid = new Reservoir::Grid::ECLGrid(grid_path);
-     auto wic = WellIndexCalculator(grid);
+  // Initialize the Grid and WellIndexCalculator objects
+  auto grid = new Reservoir::Grid::ECLGrid(grid_path);
+  auto wic = WellIndexCalculator(grid);
 
-    // Compute well blocks
-    auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
+  // Compute well blocks
+  auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
 
-    // Print as a COMPDAT table if the --compdat/-c flag was given
-    if (vm.count("compdat")) {
-        string well_name = vm["well-name"].as<string>();
-        printCompdat(well_blocks, well_name, wellbore_radius);
-    }
+  // Print as a COMPDAT table if the --compdat/-c flag was given
+  if (vm.count("compdat")) {
+    string well_name = vm["well-name"].as<string>();
+    printCompdat(well_blocks, well_name, wellbore_radius);
+  }
     // Otherwise, print as a CSV table
-    else {
-        printCsv(well_blocks);
-    }
+  else {
+    printCsv(well_blocks);
+  }
 
-    return 0;
+  return 0;
 }
