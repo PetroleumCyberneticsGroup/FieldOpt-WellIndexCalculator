@@ -1,26 +1,48 @@
 cmake_minimum_required(VERSION 3.2)
 project(wellindexcalculator LANGUAGES CXX)
 
-# wellindexcalculator lib ======================================================
-add_library(wellindexcalculator
-        intersected_cell.cpp
-        wellindexcalculator.cpp)
-
-add_library(fieldopt::wellindexcalculator ALIAS ${PROJECT_NAME})
+option(BUILD_WIC_ADGPRS "Build WIC as ADGPRS plugin (shared lib, WIN/LINUX)" OFF)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
-target_link_libraries (wellindexcalculator
-        PUBLIC fieldopt::reservoir
-        ${Boost_LIBRARIES})
 
-target_compile_features(wellindexcalculator
-        PUBLIC cxx_auto_type
-        PUBLIC cxx_range_for)
+# wellindexcalculator lib ======================================================
+if (_WIN32)
+    add_library(wellindexcalculator SHARED dllmain.cpp)
+
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWELLINDEXCALCULATOR_EXPORTS")
+
+    target_link_libraries(wellindexcalculator
+            fieldopt::wellindexcalculator
+            ${Boost_LIBRARIES}
+            ${SHLWAPI_LIBRARY})
+
+else()
+    if (NOT BUILD_WIC_ADGPRS)
+        add_library(wellindexcalculator
+                intersected_cell.cpp
+                wellindexcalculator.cpp)
+
+    elseif(BUILD_WIC_ADGPRS)
+        add_library(wellindexcalculator SHARED
+                intersected_cell.cpp
+                wellindexcalculator.cpp)
+
+    endif()
+
+    add_library(fieldopt::wellindexcalculator ALIAS ${PROJECT_NAME})
+
+    target_link_libraries (wellindexcalculator
+            PUBLIC fieldopt::reservoir
+            ${Boost_LIBRARIES})
+
+    target_compile_features(wellindexcalculator
+            PUBLIC cxx_auto_type
+            PUBLIC cxx_range_for)
+
+endif()
 
 # Standalone WellIndexCalculator executable (WIN/Linux) ========================
 add_executable(wicalc main.cpp)
-
-include_directories(${EIGEN3_INCLUDE_DIR})
 
 if (_WIN32)
     find_library( SHLWAPI_LIBRARY NAMES Shlwapi )
@@ -32,19 +54,6 @@ else()
     target_link_libraries(wicalc
             fieldopt::wellindexcalculator
             ${Boost_LIBRARIES})
-endif()
-
-# Dynamic library: wicalculator (WIN) ==========================================
-if (_WIN32)
-    add_library(wicalculator SHARED dllmain.cpp)
-
-    include_directories(${EIGEN3_INCLUDE_DIR})
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWELLINDEXCALCULATOR_EXPORTS")
-
-    target_link_libraries(wicalculator
-            fieldopt::wellindexcalculator
-            ${Boost_LIBRARIES}
-            ${SHLWAPI_LIBRARY})
 endif()
 
 # Testing ======================================================================
@@ -62,5 +71,5 @@ if (BUILD_TESTING)
             ${CMAKE_THREAD_LIBS_INIT})
 
     add_test(NAME test_wellindexcalculator
-             COMMAND $<TARGET_FILE:test_wellindexcalculator>)
+            COMMAND $<TARGET_FILE:test_wellindexcalculator>)
 endif()
