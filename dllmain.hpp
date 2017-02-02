@@ -9,11 +9,22 @@
 // If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
 // set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 
-#include <SDKDDKVer.h>
+//#include <SDKDDKVer.h>
 
 #define WIN32_LEAN_AND_MEAN   // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
-#include <windows.h>
+//#include <windows.h>
+
+#ifndef DWORD
+#define WINAPI
+typedef unsigned long DWORD;
+typedef short WCHAR;
+typedef void * HANDLE;
+#define MAX_PATH    PATH_MAX
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned int BOOL;
+#endif
 
 // The following ifdef block is the standard way of creating macros which make exporting
 // from a DLL simpler. All files within this DLL are compiled with the WELLINDEXCALCULATOR_EXPORTS
@@ -29,7 +40,7 @@
 #endif
 #else
 #ifdef __cplusplus
-#define WELLINDEXCALCULATOR_API extern "C" __declspec(dllimport)
+#define WELLINDEXCALCULATOR_API extern "C" // __declspec(dllimport)
 #else
 #define WELLINDEXCALCULATOR_API __declspec(dllimport)
 #endif

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(wellindexcalculator LANGUAGES CXX)
 
-option(BUILD_WIC_ADGPRS "Build WIC as ADGPRS plugin (shared lib, WIN/LINUX)" OFF)
+option(BUILD_WIC_ADGPRS "Build WIC as ADGPRS plugin (shared lib, WIN/LINUX)" ON)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -24,6 +24,7 @@ else()
 
     elseif(BUILD_WIC_ADGPRS)
         add_library(wellindexcalculator SHARED
+                dllmain.cpp
                 intersected_cell.cpp
                 wellindexcalculator.cpp)
 

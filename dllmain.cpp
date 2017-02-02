@@ -6,6 +6,11 @@
 
 #include <stdio.h>
 #include <sys/stat.h>
+
+#include <stdbool.h>
+#include <iostream>
+#include <stdlib.h>
+
 inline bool exists(const char* name)
 {
   struct stat buffer; 
@@ -13,6 +18,10 @@ inline bool exists(const char* name)
 }
 
 using namespace Reservoir::WellIndexCalculation;
+
+//__attribute__((constructor)) void dllLoad();
+
+//__attribute__((destructor)) void dllUnload();
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
