@@ -13,16 +13,13 @@
 
 inline bool exists(const char* name)
 {
-  struct stat buffer; 
+  struct stat buffer;
   return (stat (name, &buffer) == 0);
 }
 
 using namespace Reservoir::WellIndexCalculation;
 
-//__attribute__((constructor)) void dllLoad();
-
-//__attribute__((destructor)) void dllUnload();
-
+#if _WIN32
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -50,6 +47,31 @@ BOOL APIENTRY DllMain( HMODULE hModule,
   }
   return TRUE;
 }
+#else
+
+//CP_BEGIN_EXTERN_C
+__attribute__((constructor))
+/**
+ * initializer of the dylib.
+ */
+static void Initializer(int argc, char** argv, char** envp)
+{
+  grid = NULL;
+  printf("DllInitializer\n");
+}
+
+__attribute__((destructor))
+/**
+ * It is called when dylib is being unloaded.
+ *
+ */
+static void Finalizer()
+{
+  printf("DllFinalizer\n");
+}
+
+//CP_END_EXTERN_C
+#endif
 
 // This is an example of an exported variable
 //WELLINDEXCALCULATOR_API Grid::Grid grid = NULL;

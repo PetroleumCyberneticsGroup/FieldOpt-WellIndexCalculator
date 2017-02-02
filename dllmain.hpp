@@ -5,26 +5,28 @@
 
 #pragma once
 
+#if _WIN32
 // Including SDKDDKVer.h defines the highest available Windows platform.
 // If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
 // set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 
-//#include <SDKDDKVer.h>
+#include <SDKDDKVer.h>
 
 #define WIN32_LEAN_AND_MEAN   // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
-//#include <windows.h>
-
-#ifndef DWORD
-#define WINAPI
-typedef unsigned long DWORD;
-typedef short WCHAR;
-typedef void * HANDLE;
-#define MAX_PATH    PATH_MAX
-typedef unsigned char BYTE;
-typedef unsigned short WORD;
-typedef unsigned int BOOL;
+#include <windows.h>
 #endif
+
+//#ifndef DWORD
+//#define WINAPI
+//typedef unsigned long DWORD;
+//typedef short WCHAR;
+//typedef void * HANDLE;
+//#define MAX_PATH    PATH_MAX
+//typedef unsigned char BYTE;
+//typedef unsigned short WORD;
+//typedef unsigned int BOOL;
+//#endif
 
 // The following ifdef block is the standard way of creating macros which make exporting
 // from a DLL simpler. All files within this DLL are compiled with the WELLINDEXCALCULATOR_EXPORTS
@@ -33,17 +35,33 @@ typedef unsigned int BOOL;
 // WELLINDEXCALCULATOR_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 #ifdef WELLINDEXCALCULATOR_EXPORTS
-#ifdef __cplusplus
-#define WELLINDEXCALCULATOR_API  extern "C" __declspec(dllexport)
+#if _WIN32
+        #ifdef __cplusplus
+        #define WELLINDEXCALCULATOR_API  extern "C" __declspec(dllexport)
+        #else
+        #define WELLINDEXCALCULATOR_API  __declspec(dllexport)
+        #endif
+    #else
+        #ifdef __cplusplus
+        #define WELLINDEXCALCULATOR_API  extern "C"
+        #else
+        #define WELLINDEXCALCULATOR_API
+        #endif
+    #endif
 #else
-#define WELLINDEXCALCULATOR_API  __declspec(dllexport)
-#endif
+#if _WIN32
+    #ifdef __cplusplus
+    #define WELLINDEXCALCULATOR_API extern "C" __declspec(dllimport)
+    #else
+    #define WELLINDEXCALCULATOR_API __declspec(dllimport)
+    #endif
 #else
-#ifdef __cplusplus
-#define WELLINDEXCALCULATOR_API extern "C" // __declspec(dllimport)
-#else
-#define WELLINDEXCALCULATOR_API __declspec(dllimport)
-#endif
+    #ifdef __cplusplus
+    #define WELLINDEXCALCULATOR_API extern "C"
+    #else
+    #define WELLINDEXCALCULATOR_API
+    #endif
+    #endif
 #endif
 
 // This is the constructor of a class that has been exported.
@@ -58,10 +76,12 @@ typedef unsigned int BOOL;
 void* grid;
 
 // This is an example of an exported function.
-WELLINDEXCALCULATOR_API int computeWellIndices(const char* gridpth,
+WELLINDEXCALCULATOR_API int computeWellIndices(
+    const char* gridpth,
     const double* heel, const double* toe, const double* wellbore_radius,
     int* n, int* i, int* j, int* k, double* wi);
 
-WELLINDEXCALCULATOR_API int computeBlockCenter(const char* gridpth,
+WELLINDEXCALCULATOR_API int computeBlockCenter(
+    const char* gridpth,
     const int* heel,  const int* toe, double* heelxyz, double* toexyz);
 
