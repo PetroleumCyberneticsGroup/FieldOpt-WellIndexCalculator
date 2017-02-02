@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(wellindexcalculator LANGUAGES CXX)
 
-option(BUILD_WIC_ADGPRS "Build WIC as ADGPRS plugin (shared lib, WIN/LINUX)" ON)
-
 # Include: Eigen =======================================================
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -24,37 +22,63 @@ else() # LINUX --------------------------------------------------------
                 wellindexcalculator.cpp)
 
     elseif(BUILD_WIC_ADGPRS)
-        add_library(wellindexcalculator SHARED
+        add_library(wellindexcalculator-adgprs SHARED
                 dllmain.cpp
                 intersected_cell.cpp
                 wellindexcalculator.cpp)
     endif()
 
-    add_library(fieldopt::wellindexcalculator ALIAS ${PROJECT_NAME})
 
-    target_link_libraries (wellindexcalculator
-            PUBLIC fieldopt::reservoir
-            ${Boost_LIBRARIES})
+    if (NOT BUILD_WIC_ADGPRS)
+        add_library(fieldopt::wellindexcalculator
+                ALIAS ${PROJECT_NAME})
 
-    target_compile_features(wellindexcalculator
-            PUBLIC cxx_auto_type
-            PUBLIC cxx_range_for)
+        target_link_libraries (wellindexcalculator
+                PUBLIC fieldopt::reservoir
+                ${Boost_LIBRARIES})
+
+        target_compile_features(wellindexcalculator
+                PUBLIC cxx_auto_type
+                PUBLIC cxx_range_for)
+
+        add_executable(wicalc main.cpp)
+
+    elseif(BUILD_WIC_ADGPRS)
+        add_library(fieldopt::wellindexcalculator-adgprs
+                ALIAS ${PROJECT_NAME}-adgprs)
+
+        target_link_libraries (wellindexcalculator-adgprs
+                PUBLIC fieldopt::reservoir
+                ${Boost_LIBRARIES})
+
+        target_compile_features(wellindexcalculator-adgprs
+                PUBLIC cxx_auto_type
+                PUBLIC cxx_range_for)
+
+        add_executable(wicalc-adgprs dllmain.cpp)
+
+    endif()
 endif()
 
 # Standalone WellIndexCalculator executable (WIN/Linux) ================
-add_executable(wicalc main.cpp)
-
-if (_WIN32)
+if (_WIN32 AND BUILD_WIC_ADGPRS)
     find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
 
-    target_link_libraries(wicalc
+    target_link_libraries(wicalc-adgprs
             fieldopt::wellindexcalculator
             ${Boost_LIBRARIES}
             ${SHLWAPI_LIBRARY})
 else()
-    target_link_libraries(wicalc
-            fieldopt::wellindexcalculator
-            ${Boost_LIBRARIES})
+    if (NOT BUILD_WIC_ADGPRS)
+        target_link_libraries(wicalc
+                fieldopt::wellindexcalculator
+                ${Boost_LIBRARIES})
+
+    elseif(BUILD_WIC_ADGPRS)
+        target_link_libraries(wicalc-adgprs
+                fieldopt::wellindexcalculator-adgprs
+                ${Boost_LIBRARIES})
+    endif()
 endif()
 
 # Testing ==============================================================

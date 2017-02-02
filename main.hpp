@@ -121,16 +121,15 @@ po::variables_map createVariablesMap(int argc, const char **argv) {
   po::variables_map vm;
 
   // Parse the input arguments and store the values
-  po::store(po::parse_command_line(argc, argv, desc,
-                                   po::command_line_style::unix_style ^
-                                       po::command_line_style::allow_short),
-            vm);
+  po::store(po::parse_command_line(
+      argc, argv, desc, po::command_line_style::unix_style ^
+      po::command_line_style::allow_short), vm);
 
   // ??
   po::notify(vm);
 
   // Print help if --help/-h present or input file/output dir not present
-  string usage_msg = "Usage: ./WellIndexCalculator "
+  string usage_msg = "Usage: ./wicalc "
       "--grid gridpath "
       "--heel x1 y1 z1 "
       "--toe x2 y2 z2 "
@@ -158,11 +157,14 @@ po::variables_map createVariablesMap(int argc, const char **argv) {
          << usage_msg << endl;
     exit(EXIT_FAILURE);
   };
+  assert(vm.count("radius"));
+
   if(!vm.count("radius")){
     cout << "radius parameter missing..." << endl
          << usage_msg << endl;
     exit(EXIT_FAILURE);
   };
+
   if(vm.count("compdat")){
     if(!vm.count("radius")){
       cout << "well-name parameter missing..." << endl
@@ -181,8 +183,8 @@ po::variables_map createVariablesMap(int argc, const char **argv) {
     exit(EXIT_FAILURE);
   };
 
-  if(vm["radius"].as<double>() > 0){
-    cout << "radius parameter missing..." << endl
+  if(vm["radius"].as<double>() <= 0.0){
+    cout << "radius must be larger than zero..." << endl
          << usage_msg << endl;
     exit(EXIT_FAILURE);
   };
