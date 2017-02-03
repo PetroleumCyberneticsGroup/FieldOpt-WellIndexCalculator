@@ -17,17 +17,6 @@
 #include <windows.h>
 #endif
 
-//#ifndef DWORD
-//#define WINAPI
-//typedef unsigned long DWORD;
-//typedef short WCHAR;
-//typedef void * HANDLE;
-//#define MAX_PATH    PATH_MAX
-//typedef unsigned char BYTE;
-//typedef unsigned short WORD;
-//typedef unsigned int BOOL;
-//#endif
-
 // The following ifdef block is the standard way of creating macros which make exporting
 // from a DLL simpler. All files within this DLL are compiled with the WELLINDEXCALCULATOR_EXPORTS
 // symbol defined on the command line. This symbol should not be defined on any project
@@ -50,18 +39,18 @@
     #endif
 #else
 #if _WIN32
-    #ifdef __cplusplus
+#ifdef __cplusplus
     #define WELLINDEXCALCULATOR_API extern "C" __declspec(dllimport)
     #else
     #define WELLINDEXCALCULATOR_API __declspec(dllimport)
     #endif
 #else
-    #ifdef __cplusplus
-    #define WELLINDEXCALCULATOR_API extern "C"
-    #else
-    #define WELLINDEXCALCULATOR_API
-    #endif
-    #endif
+#ifdef __cplusplus
+#define WELLINDEXCALCULATOR_API extern "C"
+#else
+#define WELLINDEXCALCULATOR_API
+#endif
+#endif
 #endif
 
 // This is the constructor of a class that has been exported.

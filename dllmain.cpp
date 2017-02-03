@@ -78,8 +78,8 @@ static void Finalizer()
 
 // This is an example of an exported function.
 WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
-    const double* heel, const double* toe, const double* wellbore_radius,
-    int* nblks, int* i, int* j, int* k, double* wi)
+                                               const double* heel, const double* toe, const double* wellbore_radius,
+                                               int* nblks, int* i, int* j, int* k, double* wi)
 {
   try
   {
@@ -123,7 +123,7 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
 }
 
 WELLINDEXCALCULATOR_API int computeBlockCenter(const char* basepth,
-    const int* heel,  const int* toe, double* heelxyz, double* toexyz)
+                                               const int* heel,  const int* toe, double* heelxyz, double* toexyz)
 {
   try
   {
@@ -136,7 +136,7 @@ WELLINDEXCALCULATOR_API int computeBlockCenter(const char* basepth,
       grid = new Reservoir::Grid::ECLGrid(gridpth);
 
     Reservoir::Grid::Cell current_cell =
-      ((Reservoir::Grid::Grid*)grid)->GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);
+        ((Reservoir::Grid::Grid*)grid)->GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);
     heelxyz[0] = current_cell.center()[0];
     heelxyz[1] = current_cell.center()[1];
     heelxyz[2] = current_cell.center()[2];
