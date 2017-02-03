@@ -51,7 +51,7 @@ namespace {
         std::string file_path_ = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
     };
 
-    TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
+    TEST_F(SingleCellWellIndexTest, wellIndexValueWithQVector_test) {
 
         // Load grid and chose first icell (icell 1,1,1)
         //double kx = 1.689380;
@@ -125,7 +125,7 @@ namespace {
         EXPECT_TRUE( wi > 0.555602/(delta_percent));
     }
 
-    TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
+    TEST_F(SingleCellWellIndexTest, well_index_grid_test) {
         double wellbore_radius = 0.191/2;
 
         Eigen::Vector3d start_point = Eigen::Vector3d(0.05,0.00,1712);
