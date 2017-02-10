@@ -15,6 +15,15 @@ if (_WIN32) # WINDOWS
             ${Boost_LIBRARIES}
             ${SHLWAPI_LIBRARY})
 
+    if(BUILD_WIC_ADGPRS)
+        find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
+
+        target_link_libraries(wicalc-adgprs
+                fieldopt::wellindexcalculator
+                ${Boost_LIBRARIES}
+                ${SHLWAPI_LIBRARY})
+    endif(BUILD_WIC_ADGPRS)
+
 else() # LINUX --------------------------------------------------------
     if (NOT BUILD_WIC_ADGPRS)
         add_library(wellindexcalculator
@@ -44,19 +53,16 @@ else() # LINUX --------------------------------------------------------
 
         if (NOT CREATE_BUNDLE)
             add_executable(wicalc main.cpp)
+            target_link_libraries(wicalc
+                    fieldopt::wellindexcalculator
+                    ${Boost_LIBRARIES})
+
             install( TARGETS wicalc wellindexcalculator
                     RUNTIME DESTINATION bin
                     LIBRARY DESTINATION lib
                     ARCHIVE DESTINATION lib/static
                     )
         endif()
-        if(CREATE_BUNDLE)
-            install( TARGETS wellindexcalculator
-                    RUNTIME DESTINATION bin
-                    LIBRARY DESTINATION lib
-                    ARCHIVE DESTINATION lib/static
-                    )
-            endif()
 
     elseif(BUILD_WIC_ADGPRS)
         add_library(fieldopt::wellindexcalculator-adgprs
@@ -72,31 +78,13 @@ else() # LINUX --------------------------------------------------------
 
         add_executable(wicalc-adgprs dllmain.cpp)
 
-    endif()
-endif()
-
-# Standalone WellIndexCalculator executable (WIN/Linux) ================
-if (_WIN32 AND BUILD_WIC_ADGPRS)
-    find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
-
-    target_link_libraries(wicalc-adgprs
-            fieldopt::wellindexcalculator
-            ${Boost_LIBRARIES}
-            ${SHLWAPI_LIBRARY})
-else()
-    if (NOT BUILD_WIC_ADGPRS)
-        if (NOT CREATE_BUNDLE)
-            target_link_libraries(wicalc
-                    fieldopt::wellindexcalculator
-                    ${Boost_LIBRARIES})
-        endif()
-
-    elseif(BUILD_WIC_ADGPRS)
         target_link_libraries(wicalc-adgprs
                 fieldopt::wellindexcalculator-adgprs
                 ${Boost_LIBRARIES})
+
     endif()
 endif()
+
 
 # Testing ==============================================================
 if (BUILD_TESTING)
