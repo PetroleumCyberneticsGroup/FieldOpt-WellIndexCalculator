@@ -51,18 +51,16 @@ else() # LINUX --------------------------------------------------------
                 PUBLIC cxx_range_for)
 
 
-        if (NOT CREATE_BUNDLE)
-            add_executable(wicalc main.cpp)
-            target_link_libraries(wicalc
-                    fieldopt::wellindexcalculator
-                    ${Boost_LIBRARIES})
+        add_executable(wicalc main.cpp)
+        target_link_libraries(wicalc
+                fieldopt::wellindexcalculator
+                ${Boost_LIBRARIES})
 
-            install( TARGETS wicalc wellindexcalculator
-                    RUNTIME DESTINATION bin
-                    LIBRARY DESTINATION lib
-                    ARCHIVE DESTINATION lib/static
-                    )
-        endif()
+        install( TARGETS wicalc wellindexcalculator
+                RUNTIME DESTINATION bin
+                LIBRARY DESTINATION lib
+                ARCHIVE DESTINATION lib/static
+                )
 
     elseif(BUILD_WIC_ADGPRS)
         add_library(fieldopt::wellindexcalculator-adgprs
