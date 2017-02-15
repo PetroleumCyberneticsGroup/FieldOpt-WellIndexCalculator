@@ -46,6 +46,8 @@ else() # LINUX --------------------------------------------------------
                 PUBLIC fieldopt::reservoir
                 ${Boost_LIBRARIES})
 
+	include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
+
         target_compile_features(wellindexcalculator
                 PUBLIC cxx_auto_type
                 PUBLIC cxx_range_for)
