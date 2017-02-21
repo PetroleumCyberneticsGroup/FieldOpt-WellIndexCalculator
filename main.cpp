@@ -22,7 +22,8 @@
 ******************************************************************************/
 
 /*!
- * @brief This file contains the main function for the stand-alone well index calculator executable.
+ * @brief This file contains the main function for the stand-alone
+ * well index calculator executable.
  */
 
 #include "main.hpp"
@@ -32,28 +33,31 @@
 using namespace std;
 
 int main(int argc, const char *argv[]) {
-    // Initialize some variables from the runtime arguments
-    auto vm = createVariablesMap(argc, argv);
-	
-    auto heel = Eigen::Vector3d(vm["heel"].as<vector<double>>().data());
-    auto toe = Eigen::Vector3d(vm["toe"].as<vector<double>>().data());
-    string gridpth = vm["grid"].as<string>();
-    double wellbore_radius = vm["radius"].as<double>();
+  // Initialize some variables from the runtime arguments
+  Eigen::setNbThreads(1); // OV
 
-    // Initialize the Grid and WellIndexCalculator objects
-    auto grid = new Reservoir::Grid::ECLGrid(gridpth);
-    
-    // Compute the well blocks
-    auto wic = WellIndexCalculator(grid);
-    auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
+  auto vm = createVariablesMap(argc, argv);
+  auto heel = Vector3d(vm["heel"].as<vector<double>>().data());
+  auto toe = Vector3d(vm["toe"].as<vector<double>>().data());
+  string grid_path = vm["grid"].as<string>();
+  double wellbore_radius = vm["radius"].as<double>();
 
-    if (vm.count("compdat")) { // Print as a COMPDAT table if the --compdat/-c flag was given
-        string well_name = vm["well-name"].as<string>();
-        printCompdat(well_blocks, well_name, wellbore_radius);
-    }
-    else { // Otherwise, print as a CSV table
-        printCsv(well_blocks);
-    }
-    
-    return 0;
+  // Initialize the Grid and WellIndexCalculator objects
+  auto grid = new Reservoir::Grid::ECLGrid(grid_path);
+  auto wic = WellIndexCalculator(grid);
+
+  // Compute well blocks
+  auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
+
+  // Print as a COMPDAT table if the --compdat/-c flag was given
+  if (vm.count("compdat")) {
+    string well_name = vm["well-name"].as<string>();
+    printCompdat(well_blocks, well_name, wellbore_radius);
+  }
+    // Otherwise, print as a CSV table
+  else {
+    printCsv(well_blocks);
+  }
+
+  return 0;
 }
