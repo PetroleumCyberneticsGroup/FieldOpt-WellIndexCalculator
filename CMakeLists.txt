@@ -81,7 +81,6 @@ else() # LINUX --------------------------------------------------------
         target_link_libraries(wicalc-adgprs
                 fieldopt::wellindexcalculator-adgprs
                 ${Boost_LIBRARIES})
-
     endif()
 endif()
 
@@ -108,3 +107,21 @@ if (BUILD_TESTING)
     add_test(NAME test_wellindexcalculator
             COMMAND $<TARGET_FILE:test_wellindexcalculator>)
 endif()
+
+add_executable(benchmark_wellindexcalculator
+        tests/well_index_benchmark/test_resource_wic_welldir.h
+        tests/well_index_benchmark/test_resource_wic_widata.h
+        tests/well_index_benchmark/test_well_index_deviated_well.cpp
+        tests/well_index_benchmark/test_resource_wic_diff_functions.h
+        )
+
+target_link_libraries(benchmark_wellindexcalculator
+        fieldopt::reservoir
+        fieldopt::ertwrapper
+        fieldopt::wellindexcalculator
+        Qt5::Core
+        ${GTEST_BOTH_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${GTEST_BOTH_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${Boost_LIBRARIES})
