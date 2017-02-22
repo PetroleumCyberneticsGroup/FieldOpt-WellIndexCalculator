@@ -81,7 +81,8 @@ void WIData::PrintCOMPDATPlot(QString file_root){
     QString csv_file = file_root + ".csv";
     QString pdf_file = file_root + ".pdf";
     // CHANGE AFTER COPYING TOOLS DIR TO BUILD FOLDER AT COMPILE TIME
-    QString command = "/home/bellout/git/PCG/FieldOpt/tools/python_scripts/compdat_plot/create_compdat_plot.py "
+    QString command = "/home/bellout/git/PCG/FieldOpt/tools"
+        "/python_scripts/compdat_plot/create_compdat_plot.py "
         + csv_file + " " + pdf_file + " 60 60";
 
     // LAUNCH PLOT MAKER
@@ -92,16 +93,16 @@ void WIData::PrintCOMPDATPlot(QString file_root){
 
 void WIData::CalculateWCF(QString file_root){
 
-    bool debug_ = false;
+    bool debug_ = true;
 
     // CSV FORMAT
     XYZh = XYZc[0] + " " + XYZc[1] + " " + XYZc[2];
     XYZt = XYZc[3] + " " + XYZc[4] + " " + XYZc[5];
-    QString command_csv = "./WellIndexCalculator -g "
+    QString command_csv = "./wicalc --grid "
         + grid_file
-        + " -h " + XYZh
-        + " -t " + XYZt
-        + " -r " + radius;
+        + " --heel " + XYZh
+        + " --toe " + XYZt
+        + " --radius " + radius;
 
     // LAUNCH WELL INDEX CALCULATOR (CSV FORMAT)
     QProcess wic_process_csv;
@@ -109,18 +110,26 @@ void WIData::CalculateWCF(QString file_root){
     wic_process_csv.waitForFinished();
 
     // READ OUTPUT FROM QProcess COMMAND + CLOSE PROCESSES
-    QString wic_process_csv_all_output = QString::fromLatin1(wic_process_csv.readAll().data());
+    QString wic_process_csv_all_output = QString::fromLatin1(
+        wic_process_csv.readAll().data());
     wic_process_csv.close();
-    Utilities::FileHandling::WriteStringToFile(wic_process_csv_all_output, file_root + ".csv");
+    Utilities::FileHandling::WriteStringToFile(
+        wic_process_csv_all_output,
+        file_root + ".csv");
 
     // COMPDAT FORMAT
-    QString command = "./WellIndexCalculator -g "
+    QString command = "./wicalc --grid "
         + grid_file
-        + " -h " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
-        + " -t " + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
-        + " -r " + radius
-        + " -c "
-        + " -w " + well_name;
+        + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
+        + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
+        + " --radius " + radius
+        + " --compdat "
+        + " --well " + well_name;
+
+    if (debug_){
+        std::cout << "\033[1;31m<DEBUG:START->\033[0m" << std::endl;
+        std::cout << "command:" << command.toStdString() << std::endl;
+    }
 
     // LAUNCH WELL INDEX CALCULATOR
     QProcess wic_process;
@@ -137,7 +146,8 @@ void WIData::CalculateWCF(QString file_root){
     QString all_output = QString::fromLatin1(wic_all_output.data());
     QString standard_output = QString::fromLatin1(wic_standard_output.data());
     QString error_output = QString::fromLatin1(wic_error_output.data());
-    Utilities::FileHandling::WriteStringToFile(all_output, file_root + ".compdat");
+    Utilities::FileHandling::WriteStringToFile(
+        all_output, file_root + ".compdat");
 
     QStringList lines = all_output.split(QRegExp("[\r\n]"));
     QStringList fields;
@@ -145,30 +155,30 @@ void WIData::CalculateWCF(QString file_root){
     Matrix<int, Dynamic, 4> IJK_stor;
     std::vector<double> wcf;
 
-        foreach(QString line, lines){
+    foreach(QString line, lines){
 
-            if (line.contains("OPEN")) {
+        if (line.contains("OPEN")) {
 
-                // Read IJK values from current line
-                fields = line.split(QRegExp("\\s+"));
-                temp_IJK << fields[2].toInt(), fields[3].toInt(),
-                    fields[4].toInt(), fields[5].toInt();
+            // Read IJK values from current line
+            fields = line.split(QRegExp("\\s+"));
+            temp_IJK << fields[2].toInt(), fields[3].toInt(),
+                fields[4].toInt(), fields[5].toInt();
 
-                // Store IJK values
-                Matrix<int, Dynamic, 4> IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
-                IJK_curr << IJK_stor, temp_IJK;
-                IJK_stor = IJK_curr;
+            // Store IJK values
+            Matrix<int, Dynamic, 4>
+                IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
+            IJK_curr << IJK_stor, temp_IJK;
+            IJK_stor = IJK_curr;
 
-                // Store well connection factor values
-                wcf.push_back(fields[8].toDouble());
-            }
+            // Store well connection factor values
+            wcf.push_back(fields[8].toDouble());
         }
+    }
 
     IJKN = IJK_stor;
     WCFN = Map<Matrix<double, Dynamic, 1>>(wcf.data(), wcf.size());
 
     if (debug_){
-        std::cout << "\033[1;31m<DEBUG:START->\033[0m" << std::endl;
         std::cout << "all output:" << all_output.toStdString() << std::endl;
         std::cout << "standard output:" << standard_output.toStdString() << std::endl;
         std::cout << "error output:" << error_output.toStdString() << std::endl;
@@ -249,11 +259,12 @@ void WIData::ReadCOMPDAT(QString file_name,
                 in_fields[4].toInt(), in_fields[5].toInt();
 
             // Store IJK values
-            Matrix<int, Dynamic, 4> IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
+            Matrix<int, Dynamic, 4>
+                IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
             IJK_curr << IJK_stor, temp_IJK;
             IJK_stor = IJK_curr;
 
-            // Store well conne = 0ction factor values
+            // Store well connection factor values
             wcf.push_back(in_fields[8].toDouble());
         };
     }

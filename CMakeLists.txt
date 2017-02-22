@@ -108,6 +108,7 @@ if (BUILD_TESTING)
             COMMAND $<TARGET_FILE:test_wellindexcalculator>)
 endif()
 
+# WI benckmark =========================================================
 add_executable(benchmark_wellindexcalculator
         tests/well_index_benchmark/test_resource_wic_welldir.h
         tests/well_index_benchmark/test_resource_wic_widata.h
@@ -116,8 +117,6 @@ add_executable(benchmark_wellindexcalculator
         )
 
 target_link_libraries(benchmark_wellindexcalculator
-        fieldopt::reservoir
-        fieldopt::ertwrapper
         fieldopt::wellindexcalculator
         Qt5::Core
         ${GTEST_BOTH_LIBRARIES}

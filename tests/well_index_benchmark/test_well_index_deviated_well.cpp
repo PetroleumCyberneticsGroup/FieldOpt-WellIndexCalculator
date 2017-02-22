@@ -56,12 +56,20 @@ TEST_F(DeviatedWellIndexTest, test) {
 
 TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
 
-    // GET LIST OF WELL FOLDERS CONTAINING PCG & RMS COMPDATS (OBTAINED USING WI_BENCHMARK CODE)
+    // GET LIST OF WELL FOLDERS CONTAINING PCG &
+    // RMS COMPDATS (OBTAINED USING WI_BENCHMARK CODE)
     auto file_list_ = well_dir_->GetWellDir();
-    auto dir_names_ = file_list_[0]; // list of well dirs (names only) => dir name only: tw04_04
-    auto dir_list_ = file_list_[1]; // list of well dirs (absolute path) => fullpath: ../tw04_04/
-    auto rms_files = file_list_[2]; // fullpath: ../tw04_04/EVENTS_tw04_04_RMS.DATA
-    auto pcg_files = file_list_[3]; // fullpath: ../tw04_04/EVENTS_tw04_04_PCG.DATA
+    // list of well dirs (names only) => dir name only: tw04_04
+    auto dir_names_ = file_list_[0];
+
+    // list of well dirs (absolute path) => fullpath: ../tw04_04/
+    auto dir_list_ = file_list_[1];
+
+    // fullpath: ../tw04_04/EVENTS_tw04_04_RMS.DATA
+    auto rms_files = file_list_[2];
+
+    // fullpath: ../tw04_04/EVENTS_tw04_04_PCG.DATA
+    auto pcg_files = file_list_[3];
 
     // WELL INDEX DATA OBJECTS
     WIData WIDataRMS, WIDataPCG;
@@ -70,9 +78,11 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     WIDataPCG.grid_file = file_path_;
 
     // DEBUG
-    debug_msg(false, "well_dir_list", dir_names_, dir_list_, 0, WIDataRMS, WIDataPCG, 0);
+    debug_msg(false, "well_dir_list", dir_names_,
+              dir_list_, 0, WIDataRMS, WIDataPCG, 0);
 
-    // LOOP THROUGH LIST OF WELL FOLDERS: FOR WELL FOLDER ii: READ PCG & RMS COMPDAT DATA
+    // LOOP THROUGH LIST OF WELL FOLDERS: FOR WELL
+    // FOLDER ii: READ PCG & RMS COMPDAT DATA
     int num_files = (debug_) ? 5 : rms_files.length(); //override
     QString str_out;
     QString lstr_out = "\n================================================================================";
@@ -93,6 +103,7 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         WIDataPCG.ReadXYZ(dir_list_[ii] + "/" + dir_names_[ii]);
         WIDataPCG.CalculateWCF(dir_list_[ii] + "/" + dir_names_[ii]);
         WIDataPCG.PrintCOMPDATPlot(dir_list_[ii] + "/" + dir_names_[ii]);
+
         // USE DATA COMPUTED USING WellIndexCalculator INSTEAD OF OLD DATA
         WIDataPCG.IJK = WIDataPCG.IJKN;
         WIDataPCG.WCF = WIDataPCG.WCFN;
@@ -104,25 +115,31 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
             + dir_names_[ii] + " (row numbering uses 0-indexing)\nheel.xyz = "
             + WIDataPCG.XYZh + ", toe.xyz = " + WIDataPCG.XYZt
             + lstr_out;
-        Utilities::FileHandling::WriteStringToFile("\\begin{alltt}" + str_out, WIDataPCG.tex_file);
+        Utilities::FileHandling::WriteStringToFile(
+            "\\begin{alltt}" + str_out, WIDataPCG.tex_file);
         std::cout << "\033[1;36m" << str_out.toStdString() << "\033[0m";
 
         // DEBUG
-        debug_msg(false, "RMS_PCG_IJK_data", dir_names_, dir_list_, ii, WIDataRMS, WIDataPCG, 0);
+        debug_msg(false, "RMS_PCG_IJK_data",
+                  dir_names_, dir_list_, ii,
+                  WIDataRMS, WIDataPCG, 0);
 
         // REMOVE ROW IF LOW WCF
         RemoveRowsLowWCF(WIDataRMS);
         RemoveRowsLowWCF(WIDataPCG);
 
         // REMOVE EXTRA ROWS IF DATA HAS UNEQUAL LENGTH
-        RemoveSuperfluousRowsWrapper(WIDataRMS, WIDataPCG, dir_list_, dir_names_, ii);
+        RemoveSuperfluousRowsWrapper(WIDataRMS, WIDataPCG,
+                                     dir_list_, dir_names_,
+                                     ii);
 
         // COMPARE IJK AND PCG VALUES (EQUAL LENGTH DATA)
         CompareIJK(WIDataRMS, WIDataPCG);
         CompareWCF(WIDataRMS, WIDataPCG);
 
         // WRITE TO TEX FILE
-        Utilities::FileHandling::WriteLineToFile("\\end{alltt}", WIDataPCG.tex_file);
+        Utilities::FileHandling::WriteLineToFile(
+            "\\end{alltt}", WIDataPCG.tex_file);
     }
 }
 }

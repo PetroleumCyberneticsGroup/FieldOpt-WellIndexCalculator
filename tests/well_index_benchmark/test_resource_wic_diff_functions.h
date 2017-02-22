@@ -112,8 +112,10 @@ void RemoveRowsLowWCF(WIData &data) {
 
     // MSG OUT
     QString str_out, wcf_str, temp_str, msg, nl, lstr_out;
-    lstr_out = "\n--------------------------------------------------------------------------------";
-    str_out = lstr_out + "\n>>> If any, start removing rows with low WCF for " + data.data_tag + " data.";
+    lstr_out = "\n-----------------------------------"
+        "---------------------------------------------";
+    str_out = lstr_out + "\n>>> If any, start removing "
+        "rows with low WCF for " + data.data_tag + " data.";
 
     // DEBUG
     if(debug){
@@ -638,7 +640,8 @@ void RemoveSuperfluousRows(WIData &WIDataRMS, WIData &WIDataPCG, QStringList &di
 
     // VECTOR LENGTHS HAVE BEEN MADE EQUAL => COMPARE DIRECTLY
     QString str_out;
-    QString ind_str = (sup_indices.length() > 1) ? QString::number(sup_indices.size()) + " rows were" : "1 row was";
+    QString ind_str = (sup_indices.length() > 1) ?
+                      QString::number(sup_indices.size()) + " rows were" : "1 row was";
     str_out.append(">>> Vector lengths have been made equal: "
                        + ind_str + " removed from "
                        + rem_str + " data\nb/c IJK values did not match. ");
@@ -649,7 +652,8 @@ void RemoveSuperfluousRows(WIData &WIDataRMS, WIData &WIDataPCG, QStringList &di
 
 
     if (sup_indices.length()>5){
-        str_out.append("\nWARNING: more than 5 rows removed, check wells are supposed to be equal. ");
+        str_out.append("\nWARNING: more than 5 rows removed, "
+                           "check wells are supposed to be equal. ");
     }
 
     str_out.append("\nContinuing comparison.");
