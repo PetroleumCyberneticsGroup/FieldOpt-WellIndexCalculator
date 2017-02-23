@@ -77,6 +77,7 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
     auto icell = IntersectedCell(cell_1);
+    grid_->FillCellProperties(icell);
     icell.set_entry_point(start_point);
     icell.set_exit_point(end_point);
 
@@ -112,6 +113,7 @@ TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
     Eigen::Vector3d end_point= Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
     Reservoir::WellIndexCalculation::IntersectedCell icell(cell_1);
+    grid_->FillCellProperties(icell);
     icell.set_entry_point(start_point);
     icell.set_exit_point(end_point);
 
