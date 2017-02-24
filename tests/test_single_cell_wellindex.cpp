@@ -77,6 +77,7 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
     auto icell = IntersectedCell(cell_1);
+    grid_->FillCellProperties(icell);
     icell.set_entry_point(start_point);
     icell.set_exit_point(end_point);
 
@@ -85,12 +86,9 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     double wi = wic.compute_well_index(icell);
     /* 0.555602 is the expected well transmisibility factor aka. well index.
      * For now this value is read directly from eclipse output file:
-     * Expect value within delta percent
+     * Expect value within 0.001
      */
-    double delta = 0.001;
-    double delta_percent =1+(delta/100);
-    EXPECT_TRUE( wi < 0.555602*(delta_percent));
-    EXPECT_TRUE( wi > 0.555602/(delta_percent));
+    EXPECT_NEAR(wi, 0.555602, 0.001);
 }
 
 TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
@@ -112,6 +110,7 @@ TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
     Eigen::Vector3d end_point= Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
     Reservoir::WellIndexCalculation::IntersectedCell icell(cell_1);
+    grid_->FillCellProperties(icell);
     icell.set_entry_point(start_point);
     icell.set_exit_point(end_point);
 

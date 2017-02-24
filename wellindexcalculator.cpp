@@ -55,6 +55,7 @@ vector<IntersectedCell> WellIndexCalculator::cells_intersected() {
     intersected_cells.push_back(
         IntersectedCell( grid_->GetCellEnvelopingPoint(heel_) )
     );
+    grid_->FillCellProperties(intersected_cells[0]); // Get poro and perm data
     intersected_cells[0].set_entry_point(heel_);
 
     // Find the toe cell -- removed by OV; why?
@@ -84,6 +85,7 @@ vector<IntersectedCell> WellIndexCalculator::cells_intersected() {
         intersected_cells.push_back(
             IntersectedCell(grid_->GetCellEnvelopingPoint( move_exit_epsilon ))
         );
+        grid_->FillCellProperties(intersected_cells.back()); // Get poro and perm data
         // The entry point of each cell is the exit point of the previous cell
         intersected_cells.back().set_entry_point(exit_point);
 
