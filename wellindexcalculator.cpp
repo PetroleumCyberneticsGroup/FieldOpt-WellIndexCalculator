@@ -98,7 +98,7 @@ vector<IntersectedCell> WellIndexCalculator::cells_intersected() {
         // Find the exit point of the cell and set it in the list
         exit_point = find_exit_point(intersected_cells.back(), exit_point, toe_, exit_point);
         intersected_cells.back().set_exit_point(exit_point);
-        assert(intersected_cells.size() < 500);
+        assert(intersected_cells.size() < 1000);
     }
 
     assert(intersected_cells.back().global_index() == last_cell.global_index());
