@@ -7,7 +7,8 @@ add_library(wellindexcalculator
 
 add_library(fieldopt::wellindexcalculator ALIAS ${PROJECT_NAME})
 
-include_directories(${EIGEN3_INCLUDE_DIR})
+include_directories(${EIGEN3_INCLUDE_DIR}
+	${ERT_INCLUDE_DIR})
 
 target_link_libraries (wellindexcalculator
         PUBLIC fieldopt::reservoir

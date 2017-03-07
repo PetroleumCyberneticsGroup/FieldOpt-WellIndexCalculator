@@ -35,14 +35,37 @@ using namespace std;
 int main(int argc, const char *argv[]) {
     // Initialize some variables from the runtime arguments
     auto vm = createVariablesMap(argc, argv);
+    
+    // Make sure that the grid path exists
+    assert(boost::filesystem::exists(vm["grid"].as<string>()));
 
+    // Make sure that the user either specifies an input file or the data for a fingle well segment is specified correctly
+    assert(vm.count("well-filedef")	||(
+    		vm.count("heel") && vm.count("toe") &&
+    		vm["heel"].as<vector<double>>().size() == 3 &&
+    		vm["toe"].as<vector<double>>().size() == 3 &&
+    		vm.count("radius") && vm["radius"].as<double>() > 0 &&
+    		(vm.count("compdat")? (vm.count("well-name")? true:false):true)
+    		)
+    		);
+    
     // Get the path to the grid file
 	string gridpth = vm["grid"].as<string>();
 	
     // Initialize the Grid and WellIndexCalculator objects
-    auto grid = new Reservoir::Grid::ECLGrid(gridpth);
+	Reservoir::Grid::ECLGrid* grid;
+	try 
+	{
+		grid = new Reservoir::Grid::ECLGrid(gridpth);
+	} 
+	catch (const std::runtime_error& e) 
+	{
+		std::cout << "Error reading the Eclipse grid " << e.what();
+		std::cout << std::endl << "The program will stop now";
+		return 1;
+	}
+    
     auto wic = WellIndexCalculator(grid);
-
     vector<WellDefinition> wells;
     
     if (vm.count("well-filedef") == 1)

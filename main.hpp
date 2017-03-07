@@ -156,12 +156,14 @@ void printDebug( map<string, vector<IntersectedCell>> &well_indices)
     debugfile.close();
 }
 
-po::variables_map createVariablesMap(int argc, const char **argv) {
+po::variables_map createVariablesMap(int argc, const char **argv) 
+{
     //
     // This function parses the runtime arguments and creates a boost::program_options::variable_map from them.
     // It also displays help if the --help flag is passed.
     //
-    po::options_description desc("FieldOpt options");
+	
+    po::options_description desc("WellIndexCalc options");
     desc.add_options()
             ("help", "print help message")
 
@@ -185,34 +187,33 @@ po::variables_map createVariablesMap(int argc, const char **argv) {
     // Process arguments to variable map
     po::variables_map vm;
     
-    // Parse the input arguments and store the values 
-    po::store(po::parse_command_line(argc, argv, desc, po::command_line_style::unix_style ^ po::command_line_style::allow_short), vm);
+    bool success_arg = true;
+    try
+    {
+		// Parse the input arguments and store the values 
+		po::store(po::parse_command_line(argc, argv, desc, 
+				po::command_line_style::unix_style ^ po::command_line_style::allow_short), vm);
+		
+		// ??
+		po::notify(vm);	
+    } 
+    catch (std::exception& e) 
+    {
+    	success_arg = false;
+    	std::cout << e.what() << std::endl;
+    }
     
-    // ??
-    po::notify(vm);
-
     // If called with --help or -h flag:
-    if (vm.count("help")) { // Print help if --help present or input file/output dir not present
-        cout << "Usage: ./WellIndexCalculator --grid gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r [options]" << endl;
+    if (vm.count("help") || !success_arg) 
+    { // Print help if --help present or input file/output dir not present
+        cout << "Usage: ./WellIndexCalc --grid gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r [options]" << endl;
         cout << "options can be --compdat --well-name Name" << endl;
         cout << "Or" << endl;
-        cout << "Usage: ./WellIndexCalculator --grid gridpath --well-filedef filepath" << endl;
+        cout << "Usage: ./WellIndexCalc --grid gridpath --well-filedef filepath" << endl;
         cout << desc << endl;
+        
         exit(EXIT_SUCCESS);
     }
-
-    // Make sure that the grid path exists
-    assert(boost::filesystem::exists(vm["grid"].as<string>()));
-
-    // Make sure that the user either specifies an input file or the data for a fingle well segment is specified correctly
-    assert(vm.count("well-filedef")	||(
-    		vm.count("heel") && vm.count("toe") &&
-    		vm["heel"].as<vector<double>>().size() == 3 &&
-    		vm["toe"].as<vector<double>>().size() == 3 &&
-    		vm.count("radius") && vm["radius"].as<double>() > 0 &&
-    		(vm.count("compdat")? (vm.count("well-name")? true:false):true)
-    		)
-    		);
 
     return vm;
 }
