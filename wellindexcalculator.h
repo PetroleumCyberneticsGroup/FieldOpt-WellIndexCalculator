@@ -101,7 +101,9 @@ namespace Reservoir {
              * \return A pair containing global indeces of intersected cells and the points where it enters each cell
              * (and thereby leaves the previous cell) of the line segment inside each cell.
              */
-            void collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, Vector3d start_point, Vector3d end_point, double wellbore_radius);
+            void collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, 
+            		Vector3d start_point, Vector3d end_point, double wellbore_radius, 
+            		std::vector<int> bb_cells);
 
             /*!
              * \brief Find the point where the line between the start_point and end_point exits a cell.

@@ -26,6 +26,7 @@
 #include "wellindexcalculator.h"
 #include <fstream>
 #include <map>
+#include <iostream>
 
 namespace Reservoir {
     namespace WellIndexCalculation {
@@ -33,34 +34,53 @@ namespace Reservoir {
             grid_ = grid;
         }
 
-//        std::vector<IntersectedCell> WellIndexCalculator::ComputeWellBlocks(Vector3d heel, Vector3d toe, double wellbore_radius) {
-//
-//        	// Compute cells intersected by well segment
-//        	std::vector<IntersectedCell> intersected_cells;
-//        	collect_intersected_cells(intersected_cells, heel, toe, wellbore_radius);
-//
-//        	// For all intersected cells compute well transmissibility index
-//            for (int i = 0; i < intersected_cells.size(); ++i)
-//            {
-//                compute_well_index(intersected_cells, i);
-//            }
-//
-//            // Return the objects
-//            return intersected_cells;
-//        }
-
-        std::map<std::string, std::vector<IntersectedCell>> WellIndexCalculator::ComputeWellBlocks(std::vector<WellDefinition> wells)
+        std::map<std::string, std::vector<IntersectedCell>> 
+        	WellIndexCalculator::ComputeWellBlocks(std::vector<WellDefinition> wells)
         {
         	std::map<std::string, std::vector<IntersectedCell>> well_indices;
         	for (int iWell = 0; iWell < wells.size(); ++iWell)
         	{
+        		// Compute an overall bounding box per well --> speed up cell searching 
+            	double xi, yi, zi, xf, yf, zf;
+            	xi = std::numeric_limits<double>::max();
+            	xf = std::numeric_limits<double>::min();
+				yi = std::numeric_limits<double>::max();
+				yf = std::numeric_limits<double>::min();				
+            	zi = std::numeric_limits<double>::max();
+            	zf = std::numeric_limits<double>::min();            	
+
+        		for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment )
+            	{
+                	xi = std::min(xi, std::min(wells[iWell].heels[iSegment].x(), wells[iWell].toes[iSegment].x()));
+                	xf = std::max(xf, std::max(wells[iWell].heels[iSegment].x(), wells[iWell].toes[iSegment].x()));
+    				yi = std::min(yi, std::min(wells[iWell].heels[iSegment].y(), wells[iWell].toes[iSegment].y()));
+    				yf = std::max(yf, std::max(wells[iWell].heels[iSegment].y(), wells[iWell].toes[iSegment].y()));				
+                	zi = std::min(zi, std::min(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));
+                	zf = std::max(zf, std::max(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));            	
+            	}
+        		
+        		std::cout << xi  << " " << xf << " " << yi << " " << yf << " " << zi << " " << zf << std::endl; 
+            	// Artificially and heuristically increase the size of the searching area
+            	xi = xi - 0.1*(xf-xi); xf = xf + 0.1*(xf-xi);
+            	yi = yi - 0.1*(yf-yi); yf = yf + 0.1*(yf-yi);
+            	zi = zi - 0.1*(zf-zi); zf = zf + 0.1*(zf-zi);
+
+            	// Get the list of all cell in the bounding box 
+            	std::vector<int> bb_cells;
+           		bb_cells = grid_->GetBoundingBoxCellIndices( xi, yi, zi, xf, yf, zf );
+        		std::cout << bb_cells.size() << std::endl;
+           		
             	// Compute cells intersected by all well segments
             	std::vector<IntersectedCell> intersected_cells;
             	for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment )
             	{
-            		collect_intersected_cells(intersected_cells, wells[iWell].heels[iSegment], wells[iWell].toes[iSegment], wells[iWell].radii[iSegment]);
+            		collect_intersected_cells(intersected_cells, wells[iWell].heels[iSegment], 
+            				wells[iWell].toes[iSegment], wells[iWell].radii[iSegment], 
+            				bb_cells);
             	}
 
+            	// std::cout << "number of intersected cells: " << intersected_cells.size() << std::endl;
+            	            	
             	// For all intersected cells compute well transmissibility index
                 for (int iCell = 0; iCell < intersected_cells.size(); ++iCell)
                 {
@@ -75,52 +95,92 @@ namespace Reservoir {
         }
 
 
-        void WellIndexCalculator::collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, Vector3d start_point, Vector3d end_point, double wellbore_radius) {
+        void WellIndexCalculator::collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, 
+        		Vector3d start_point, Vector3d end_point, double wellbore_radius, 
+        		std::vector<int> bb_cells) 
+        {
+       		// If no cells are found in the bounding box it means this segment is completely out of the reservoir
+       		if (bb_cells.size() == 0)
+       			return; 
 
-            // Find the bounding box to reduce searching space
-        	double xi, yi, zi, xf, yf, zf;
+       		// std::cout << "number of cells in the bb " << bb_cells.size() << std::endl; 
+        	
+       		// Find the heel cell
+        	Grid::Cell first_cell;
+        	Vector3d org_start_point = start_point;
+        	double epsilon = 0.01 / (end_point - start_point).norm();
+        	double step = 0;
+        	
+       		while (true)
+       		{
+				try
+				{
+					first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
+					//std::cout << "first cell found " << first_cell.global_index() << std::endl;
+					break;
+				}
+				catch (const std::runtime_error& e)
+				{
+					step += epsilon;
+					//std::cout << "The starting point is outside the grid: " << e.what() << std::endl;
+					start_point = org_start_point * (1 - step) + end_point * step;
 
-        	if (start_point.x() < end_point.x())
-        	{	xi = start_point.x(); xf = end_point.x(); }
-        	else
-        	{	xi = end_point.x(); xf = start_point.x(); }
-
-        	if (start_point.y() < end_point.y())
-        	{	yi = start_point.y(); yf = end_point.y(); }
-        	else
-        	{	yi = end_point.y(); yf = start_point.y(); }
-
-        	if (start_point.z() < end_point.z())
-        	{	zi = start_point.z(); zf = end_point.z(); }
-        	else
-        	{	zi = end_point.z(); zf = start_point.z(); }
-
-        	// Artificially and heuristically increase the size of the searching area
-        	xi = xi - 0.1*(xf-xi); xf = xf + 0.1*(xf-xi);
-        	yi = yi - 0.1*(yf-yi); yf = yf + 0.1*(yf-yi);
-        	zi = zi - 0.1*(zf-zi); zf = zf + 0.1*(zf-zi);
-
-        	std::vector<int> bb_cells;
-        	if (1 < 0)
-        	{
-        		bb_cells = grid_->GetBoundingBoxCellIndices( xi, yi, zi, xf, yf, zf );
-        	}
-
-        	// Find the heel cell
-        	Grid::Cell first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
-
-        	// Get the index of the interesected cell that corresponds to the cell where the first point resides (if this is not yet in the list it will be added)
-        	int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells, first_cell);
-
+					std::cout << " " << step << " " << (org_start_point - end_point).dot(start_point - end_point) << std::endl;
+					
+					// Check if we went too far
+					//if ((end_point - org_start_point).dot(start_point - org_start_point) <= 0.0)
+					if (step > 1.0)
+					{
+						// The entire segment is outside the grid;
+						std::cout << "_";
+						return;
+					}
+				}
+       		}
+        	
             // Find the toe cell
-            Grid::Cell last_cell = grid_->GetCellEnvelopingPoint(end_point, bb_cells);
+            Grid::Cell last_cell;
+            Vector3d org_end_point = end_point;
+            step = 0;
+            while (true)
+            {
+				try
+				{
+					last_cell = grid_->GetCellEnvelopingPoint(end_point, bb_cells);
+					//std::cout << "last cell found " << last_cell.global_index() << std::endl;
+					break;
+				}
+				catch (const std::runtime_error& e)
+				{
+					step += epsilon; 
+					//std::cout << "The end point is outside the grid: " << e.what() << std::endl;
+					end_point = org_end_point*(1 - step) + start_point*step;
+					std::cout << " " << step << std::endl;
+					// Check if we went too far
+					//if ((end_point - start_point).dot(org_end_point - start_point) <= 0.0)
+					if (step > 1.0)
+					{
+						// The entire segment is outside the grid;
+						std::cout << ".";
+						return;
+					}
+				}
+            }
 
             // If the first and last blocks are the same, return the block and start+end points
-            if (last_cell.global_index() == first_cell.global_index()) {
-
+            if (last_cell.global_index() == first_cell.global_index()) 
+            {
+            	// Get the index of the interesected cell that corresponds to the cell where 
+            	// the first point resides (if this is not yet in the list it will be added)
+            	int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells, first_cell);
+	
                 intersected_cells.at(intersected_cell_index).add_new_segment(start_point, end_point, wellbore_radius);
                 return;
             }
+
+            // Get the index of the interesected cell that corresponds to the cell where 
+        	// the first point resides (if this is not yet in the list it will be added)
+        	int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells, first_cell);
 
             // Make sure we follow line in the correct direction. (i.e. dot product positive)
             Vector3d exit_point = find_exit_point(intersected_cells, intersected_cell_index, start_point, end_point, start_point);
@@ -130,17 +190,45 @@ namespace Reservoir {
             }
             intersected_cells.at(intersected_cell_index).add_new_segment(start_point, exit_point, wellbore_radius);
 
-            double epsilon = 0.01 / (end_point - exit_point).norm();
-
+            // The step is different here
+            epsilon = 0.01 / (end_point - exit_point).norm();
+            step = 0;
+            
             // Add previous exit point to list, find next exit point and all other up to the end_point    
-            while (true) {
+            while (true) 
+            {
                 // Move into the next cell, add it to the list and set the entry point
                 Vector3d move_exit_epsilon = exit_point * (1 - epsilon) + end_point * epsilon;
-                Grid::Cell new_cell = grid_->GetCellEnvelopingPoint(move_exit_epsilon, bb_cells);
+                
+                // Find the next cell, but this might be inactive 
+                Grid::Cell new_cell;
+                while (true)
+                {
+                	step = epsilon;
+                	try
+                	{
+                		new_cell = grid_->GetCellEnvelopingPoint(move_exit_epsilon, bb_cells);
+                		break;
+                	}
+                	catch( const std::runtime_error& e)
+                	{
+                		step += epsilon;
+                		move_exit_epsilon = exit_point * (1 - step) + end_point * step;
+                		std::cout << " " << step << std::endl;
+                		// Check if we are not too far
+                		//if ((exit_point - end_point).dot(move_exit_epsilon - end_point) <= 0.0)
+                		if (step > 1.0)
+                		{
+                			std::cout << "*";
+                			return;
+                		}
+                	}
+                }
                 intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells, new_cell);
 
-                // Terminate if we're in the last cell
-                if (intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index()) {
+                // Stop if we're in the last cell
+                if (intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index()) 
+                {
                 	// The entry point of each cell is the exit point of the previous cell
                     intersected_cells.at(intersected_cell_index).add_new_segment(exit_point, end_point, wellbore_radius);
                     break;
@@ -152,25 +240,30 @@ namespace Reservoir {
                 intersected_cells.at(intersected_cell_index).add_new_segment(entry_point, exit_point, wellbore_radius);
 
                 // This should be removed
-                assert(intersected_cells.size() < 500);
+                // assert(intersected_cells.size() < 500);
             }
 	    
             assert(intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index());
         }
 
         Vector3d WellIndexCalculator::find_exit_point(std::vector<IntersectedCell> &cells, int cell_index,
-        											  Vector3d &entry_point, Vector3d &end_point, Vector3d &exception_point) {
+        											  Vector3d &entry_point, Vector3d &end_point, Vector3d &exception_point) 
+        {
             Vector3d line = end_point - entry_point;
 
             // Loop through the cell faces until we find one that the line intersects
-            for (Grid::Cell::Face face : cells.at(cell_index).faces()) {
-                if (face.normal_vector.dot(line) != 0) { // Check that the line and face are not parallel.
+            for (Grid::Cell::Face face : cells.at(cell_index).faces()) 
+            {
+                if (face.normal_vector.dot(line) != 0) 
+                { // Check that the line and face are not parallel.
                     auto intersect_point = face.intersection_with_line(entry_point, end_point);
 
                     // Check that the intersect point is on the correct side of all faces (i.e. inside the cell)
                     bool feasible_point = true;
-                    for (auto p : cells.at(cell_index).faces()) {
-                        if (!p.point_on_same_side(intersect_point, 10e-6)) {
+                    for (auto p : cells.at(cell_index).faces()) 
+                    {
+                        if (!p.point_on_same_side(intersect_point, 10e-6)) 
+                        {
                             feasible_point = false;
                             break;
                         }
@@ -178,7 +271,8 @@ namespace Reservoir {
 
                     // Return the point if it is deemed feasible, not identical to the entry point, and going in the correct direction.
                     if (feasible_point && (exception_point - intersect_point).norm() > 10e-10
-                        && (end_point - entry_point).dot(end_point - intersect_point) >= 0) {
+                        && (end_point - entry_point).dot(end_point - intersect_point) >= 0) 
+                    {
                         return intersect_point;
                     }
                 }
