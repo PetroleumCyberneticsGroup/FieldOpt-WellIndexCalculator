@@ -76,7 +76,7 @@ vector<IntersectedCell> WellIndexCalculator::cells_intersected() {
     }
     intersected_cells[0].set_exit_point(exit_point);
 
-    double epsilon = 0.01 / (toe_ - exit_point).norm();
+    double epsilon = 0.02 / (toe_ - exit_point).norm();
 
     // Add previous exit point to list, find next exit point and all other up to the end_point
     while (true) {
@@ -98,7 +98,10 @@ vector<IntersectedCell> WellIndexCalculator::cells_intersected() {
         // Find the exit point of the cell and set it in the list
         exit_point = find_exit_point(intersected_cells.back(), exit_point, toe_, exit_point);
         intersected_cells.back().set_exit_point(exit_point);
-        assert(intersected_cells.size() < 1000);
+        if (intersected_cells.size() > 500) {
+            cout << "WARNING: More than 500 cells intersected. Returning empty array." << endl;
+            return vector<IntersectedCell>();
+        }
     }
 
     assert(intersected_cells.back().global_index() == last_cell.global_index());
