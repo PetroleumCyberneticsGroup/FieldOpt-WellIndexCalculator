@@ -1,7 +1,7 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Hilmar M. Magnusson <hilmarmag@gmail.com>
    Modified by Einar J.M. Baumann (2016) <einar.baumann@gmail.com>
-   Modified by Alin G. Chitu (2016) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the

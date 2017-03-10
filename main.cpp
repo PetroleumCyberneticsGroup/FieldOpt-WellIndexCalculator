@@ -1,5 +1,6 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Einar J.M. Baumann <einar.baumann@gmail.com>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>   
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -22,7 +23,8 @@
 ******************************************************************************/
 
 /*!
- * @brief This file contains the main function for the stand-alone well index calculator executable.
+ * @brief This file contains the main function for the stand-alone
+ * well index calculator executable.
  */
 
 #include "main.hpp"
@@ -32,13 +34,32 @@
 using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
-int main(int argc, const char *argv[]) {
+int main(int argc, const char *argv[]) 
+{
     // Initialize some variables from the runtime arguments
+	Eigen::setNbThreads(1); // OV //AGC not sure what this does
+
     auto vm = createVariablesMap(argc, argv);
     
-    // Make sure that the grid path exists
-    assert(boost::filesystem::exists(vm["grid"].as<string>()));
-
+	// Checking that provided grid file actually exists
+	// NoteMB: See definition of exists() at start of main.hpp file
+	// I assume boost::filesystem::exists is problematic in
+	// Windows, and therefore OV has defined an equivalent
+	// function based on <sys/stat.h>
+	// Here we apply the function conditional on OS
+	bool out;
+#if _WIN32
+	out = exists(vm["grid"].as<string>());
+#else
+	out = boost::filesystem::exists(vm["grid"].as<string>());
+#endif
+	
+	if (!out)
+	{
+	  cout << "Grid file missing..." << endl;
+	  exit(EXIT_FAILURE);
+	};
+    
     // Make sure that the user either specifies an input file or the data for a fingle well segment is specified correctly
     assert(vm.count("well-filedef")	||(
     		vm.count("heel") && vm.count("toe") &&
@@ -62,7 +83,8 @@ int main(int argc, const char *argv[]) {
 	{
 		std::cout << "Error reading the Eclipse grid " << e.what();
 		std::cout << std::endl << "The program will stop now";
-		return 1;
+		
+		exit(EXIT_FAILURE);
 	}
     
     auto wic = WellIndexCalculator(grid);
@@ -99,5 +121,6 @@ int main(int argc, const char *argv[]) {
     {
     	printDebug(well_indices);
     }
-    return 0;
+    
+    exit(EXIT_SUCCESS);    
 }

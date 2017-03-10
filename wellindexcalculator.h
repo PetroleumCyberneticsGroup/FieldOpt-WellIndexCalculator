@@ -1,7 +1,8 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Hilmar M. Magnusson <hilmarmag@gmail.com>
    Modified by Einar J.M. Baumann (2016) <einar.baumann@gmail.com>
-
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
+   
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
    WellIndexCalculator is provided under the GNU Lesser General Public
@@ -34,6 +35,7 @@
 namespace Reservoir {
     namespace WellIndexCalculation {
         using namespace Eigen;
+        using namespace std;
 
         class WellDefinition {
         public:
@@ -47,12 +49,15 @@ namespace Reservoir {
         };
 
         /*!
-         * \brief The WellIndexCalculation class deduces the well blocks and their respecitve well indices/transmissibility
-         * factors for one or more well splines defined by a heel and a toe.
+         * \brief The WellIndexCalculation class deduces the well blocks
+         * and their respective well indices/transmissibility factors for
+         * one or more well splines defined by a heel and a toe.
          *
-         * Note that some of the internal datastructures in this class seem more complex than they need to be. This is
-         * because the internal methods support well splines consisting of more than one point. This is, however, not yet
-         * supported by the Model library and so have been "hidden".
+         * Note that some of the internal datastructures in this class seem
+         * more complex than they need to be. This is because the internal
+         * methods support well splines consisting of more than one point.
+         * This is, however, not yet supported by the Model library and so
+         * have been "hidden".
          *
          * Credit for computations in this class goes to @hilmarm.
          */
@@ -62,45 +67,42 @@ namespace Reservoir {
             WellIndexCalculator(Grid::Grid *grid);
 
             /*!
-             * \brief Compute the well block index data for a single well segment defined by heel and toe.
-             * \param heel The heel end point of the spline defining the well.
-             * \param toe The toe end point of the spline defining the well.
-             * \param wellbore_radius The radius of the well.
-             * \return A list of BlockData objects containing the (i,j,k) index and well index/transmissibility factor
-             * for every block intersected by the spline.
-             */
-            // std::vector<IntersectedCell> ComputeWellBlocks(Vector3d heel, Vector3d toe, double wellbore_radius);
-
-            /*!
-             * \brief Compute the well block index data for a single well segment defined by heel and toe.
-             * \param heel The heel end point of the spline defining the well.
-             * \param toe The toe end point of the spline defining the well.
-             * \param wellbore_radius The radius of the well.
-             * \return A list of BlockData objects containing the (i,j,k) index and well index/transmissibility factor
-             * for every block intersected by the spline.
+             * \brief Compute the well block indices for all wells
+             * \param wells The list of wells
+             * \return A map containing for each well given my its name the list of cells intersected by the well. 
+             * Each intersected cell has stored the well connectivity information. 
              */
             std::map<std::string, std::vector<IntersectedCell>> ComputeWellBlocks(std::vector<WellDefinition> wells);
 
 
         private:
             /*!
-             * \brief The Well struct holds the information needed to compute the well blocks and their
-             * respective well indices for a well spline consisting of a heel and a toe.
+             * \brief The Well struct holds the information needed to compute
+             * the well blocks and their respective well indices for a well
+             * spline consisting of a heel and a toe.
              */
 
             Grid::Grid *grid_; //!< The grid used in the calculations.
 
         public:
             /*!
-             * \brief Given a reservoir with blocks and a line(start_point to end_point), return global index of all
-             * blocks interesected by the line, as well as the point where the line enters the block.
-             * by the line and the points of intersection
+             * \brief Given a reservoir with blocks and a line (start_point
+             * to end_point), return global index of all blocks interesected
+             * by the line, as well as the point where the line enters the
+             * block
+             *
+             * ?? by the line and the points of intersection
+             *
              * \param start_point The start point of the well path.
              * \param end_point The end point of the well path.
              * \param grid The grid object containing blocks/cells.
-             * \return A pair containing global indeces of intersected cells and the points where it enters each cell
-             * (and thereby leaves the previous cell) of the line segment inside each cell.
+             *
+             * \return A pair containing global indices of intersected
+             * cells and the points where it enters each cell (and thereby
+             * leaves the previous cell) of the line segment inside each
+             * cell.
              */
+
             void collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, 
             		Vector3d start_point, Vector3d end_point, double wellbore_radius, 
             		std::vector<int> bb_cells);
@@ -108,28 +110,34 @@ namespace Reservoir {
             /*!
              * \brief Find the point where the line between the start_point and end_point exits a cell.
              *
-             * Takes as input an entry_point end_point which defines the well path. Finds the two points on the path
-             * which intersects the block faces and chooses the one that is not the entry point, i.e. the exit point.
+             * Takes as input an entry_point end_point which defines the well
+             * path. Finds the two points on the path which intersects the
+             * block faces and chooses the one that is not the entry point,
+             * i.e. the exit point.
              *
              * \todo Find a better name for the exception_point and describe it better.
              *
              * \param cell The cell to find the well paths exit point in.
              * \param start_point The start point of the well path.
              * \param end_point The end point of the well path.
-             * \param exception_point A specific point we don't want the function to end up in.
+             * \param exception_point A specific point we don't
+             * want the function to end up in.
+             *
              * \return The point where the well path exits the cell.
              */
             Vector3d find_exit_point(std::vector<IntersectedCell> &cells, int cell_index,
             		Vector3d &start_point, Vector3d &end_point, Vector3d &exception_point);
 
             /*!
-             * \brief Compute the well index (aka. transmissibility factor) for a (one) single cell/block by
-             * using the Projection Well Method (Shu 2005).
+             * \brief Compute the well index (aka. transmissibility factor)
+             * for a (one) single cell/block by using the Projection Well
+             * Method (Shu 2005).
              *
-             * Assumption: The block is fairly regular, i.e. corners are straight angles.
+             * Assumption: The block is fairly regular,
+             * i.e. corners are straight angles.
              *
-             * \note Corner points of Cell(s) are always listed in the same order and orientation. (see
-             * Grid::Cell for illustration).
+             * \note Corner points of Cell(s) are always listed in the same
+             * order and orientation. (see Grid::Cell for illustration).
              *
              * \param icell Well block to compute the WI in.
              * \return Well index for block/cell
@@ -138,24 +146,29 @@ namespace Reservoir {
 
             /*!
              * \brief Auxilary function for compute_well_index function
+             *
              * \param Lx lenght of projection in first direction
              * \param dy size block second direction
              * \param dz size block third direction
              * \param ky permeability second direction
              * \param kz permeability second direction
+             *
              * \return directional well index
             */
             double dir_well_index(double Lx, double dy, double dz, double ky, double kz, double wellbore_radius);
 
             /*!
              * \brief Auxilary function(2) for compute_well_index function
+             *
              * \param dx size block second direction
              * \param dy size block third direction
              * \param kx permeability second direction
              * \param ky permeability second direction
+             *
              * \return directional wellblock radius
              */
-            double dir_wellblock_radius(double dx, double dy, double kx, double ky);
+            double dir_wellblock_radius(double dx, double dy,
+                                        double kx, double ky);
         };
     }
 }

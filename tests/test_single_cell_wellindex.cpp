@@ -1,5 +1,6 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Hilmar M. Magnusson <hilmarmag@gmail.com>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -148,12 +149,12 @@ namespace {
         EXPECT_TRUE( wi > 0.555602/(delta_percent));
     }
 
-    TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
-        double wellbore_radius = 0.191/2;
+TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
+    double wellbore_radius = 0.191/2;
 
-        Eigen::Vector3d start_point = Eigen::Vector3d(0.05,0.00,1712);
-        Eigen::Vector3d end_point= Eigen::Vector3d(1440.0,1400.0,1712);
-        std::vector<Eigen::Vector3d> well_spline_points = {start_point, end_point};
+    Eigen::Vector3d start_point = Eigen::Vector3d(0.05,0.00,1712);
+    Eigen::Vector3d end_point= Eigen::Vector3d(1440.0,1400.0,1712);
+    std::vector<Eigen::Vector3d> well_spline_points = {start_point, end_point};
 
         // \todo The following lines need to be changed
         auto wic = WellIndexCalculator(grid_);
@@ -181,9 +182,7 @@ namespace {
         myfile.close();
     WellIndexCalculation::GeometryFunctions::print_well_index_file(grid_,well_spline_points, end_points, wellbore_radius, 0.00001, "NewlyTried1422");
 */
-        EXPECT_TRUE(true);
-    }
-
+    EXPECT_TRUE(true);
 }
 
-
+}

@@ -1,5 +1,7 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Einar J.M. Baumann <einar.baumann@gmail.com>
+   Modified by M.Bellout (2017) <mathias.bellout@ntnu.no>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -22,10 +24,10 @@
 ******************************************************************************/
 
 /*!
- * @brief This file contains helper methods for the main.cpp file in this folder.
- *
- * It contains methods to parse the program arguments, as well as well as methods to
- * print the output in various formats.
+ * @brief This file contains helper methods for the main.cpp file in
+ * this folder.
+ * It contains methods to parse the program arguments, as well as well
+ * as methods to print the output in various formats.
  */
 
 #ifndef WIC_MAIN_H
@@ -38,8 +40,21 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+
 #include <map>
+
+
+// OV
+#if _WIN32
+#include <sys/stat.h>
+    inline bool exists(const std::string& name)
+    {
+        struct stat buffer;
+        return (stat (name.c_str(), &buffer) == 0);
+    }
+#else
 #include <boost/filesystem/operations.hpp>
+#endif
 
 namespace po = boost::program_options;
 using namespace Reservoir::WellIndexCalculation;
