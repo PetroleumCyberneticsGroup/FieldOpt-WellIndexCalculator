@@ -60,7 +60,10 @@ namespace po = boost::program_options;
 using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
-void printCsv(map<string, vector<IntersectedCell>> &well_indices) {
+const double minimum_well_index = 1e-9;
+
+void printCsv(map<string, vector<IntersectedCell>> &well_indices) 
+{
     cout << "i,\tj,\tk1,\tk2,\twi" << endl;
 
     vector<string> well_names;
@@ -74,13 +77,16 @@ void printCsv(map<string, vector<IntersectedCell>> &well_indices) {
 		cout << well_name << endl;
 		for (auto block : well_indices[well_name])
 		{
-			auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
-					%(block.ijk_index().i() + 1)         // %1
-					%(block.ijk_index().j() + 1)         // %2
-					%(block.ijk_index().k() + 1)         // %3
-					%(block.ijk_index().k() + 1)         // %3
-					%block.cell_well_index());           // %4
-			cout << line << endl;
+			if (block.cell_well_index() > minimum_well_index)
+			{
+				auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
+						%(block.ijk_index().i() + 1)         // %1
+						%(block.ijk_index().j() + 1)         // %2
+						%(block.ijk_index().k() + 1)         // %3
+						%(block.ijk_index().k() + 1)         // %3
+						%block.cell_well_index());           // %4
+				cout << line << endl;
+			}
 		}
     }
 }
@@ -101,16 +107,19 @@ void printCompdat(map<string, vector<IntersectedCell>> &well_indices)
     {
 		for (auto block : well_indices[well_name])
 		{
-			//                                      NAME  I    J  K1  K2 OP/SH ST WI  DIA
-			auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1*  %s  %s/")
-					% well_name             				// %1
-					%(block.ijk_index().i() + 1) 			// %2
-					%(block.ijk_index().j() + 1) 			// %3
-					%(block.ijk_index().k() + 1) 			// %4
-					%(block.ijk_index().k() + 1) 			// %5
-					%(block.cell_well_index())     			// %6
-					%(2*block.get_segment_radius(0)));  	// %7
-			body.push_back(entry);
+			if (block.cell_well_index() > minimum_well_index)
+			{
+				//                                      NAME  I    J  K1  K2 OP/SH ST WI  DIA
+				auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1*  %s  %s/")
+						% well_name             				// %1
+						%(block.ijk_index().i() + 1) 			// %2
+						%(block.ijk_index().j() + 1) 			// %3
+						%(block.ijk_index().k() + 1) 			// %4
+						%(block.ijk_index().k() + 1) 			// %5
+						%(block.cell_well_index())     			// %6
+						%(2*block.get_segment_radius(0)));  	// %7
+				body.push_back(entry);
+			}
 		}
 		string full = head + boost::algorithm::join(body, "\n") + foot;
 		cout << full << endl;
