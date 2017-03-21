@@ -1,6 +1,7 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Hilmar M. Magnusson <hilmarmag@gmail.com>
    Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
+   Modified by Einar Baumann (2017) <einar.bamann@gmail.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -32,122 +33,110 @@ using namespace Reservoir::WellIndexCalculation;
 
 namespace {
 
-    class SingleCellWellIndexTest : public ::testing::Test {
-    protected:
-        SingleCellWellIndexTest() {
-            grid_ = new ECLGrid(file_path_);
-        }
+class SingleCellWellIndexTest : public ::testing::Test {
+ protected:
+  SingleCellWellIndexTest() {
+      grid_ = new ECLGrid(file_path_);
+  }
 
-        virtual ~SingleCellWellIndexTest() {
-            delete grid_;
-        }
+  virtual ~SingleCellWellIndexTest() {
+      delete grid_;
+  }
 
-        virtual void SetUp() {
-        }
+  virtual void SetUp() {
+  }
 
-        virtual void TearDown() { }
+  virtual void TearDown() { }
 
 
-        Grid *grid_;
-        std::string file_path_ = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
-    };
+  Grid *grid_;
+  std::string file_path_ = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
+};
 
-    TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
+TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
 
-        // Load grid and chose first icell (icell 1,1,1)
-        //double kx = 1.689380;
-        //double ky = 1.689380;
-        //double kz = 1;
-        //Figure out conversions and shit?
-        double wellbore_radius = 0.1905/2;
+    // Load grid and chose first icell (icell 1,1,1)
+    //double kx = 1.689380;
+    //double ky = 1.689380;
+    //double kz = 1;
+    //Figure out conversions and shit?
+    double wellbore_radius = 0.1905/2;
 
-        auto cell_1 = grid_->GetCell(0);
-        auto ptr_cell_1 = cell_1;
-        auto corners = cell_1.corners();
+    auto cell_1 = grid_->GetCell(0);
+    auto ptr_cell_1 = cell_1;
+    auto corners = cell_1.corners();
 
-        //Determine well placement. Let it go vertically through the centre of the block.
-        double well_start_x = 0.25*corners[0].x() + 0.25*corners[1].x() +0.25*corners[2].x() + 0.25*corners[3].x();
-        double well_start_y = 0.25*corners[0].y() + 0.25*corners[1].y() +0.25*corners[2].y() + 0.25*corners[3].y();
-        double well_start_z = 0.25*corners[0].z() + 0.25*corners[1].z() +0.25*corners[2].z() + 0.25*corners[3].z();
+    //Determine well placement. Let it go vertically through the centre of the block.
+    double well_start_x = 0.25*corners[0].x() + 0.25*corners[1].x() +0.25*corners[2].x() + 0.25*corners[3].x();
+    double well_start_y = 0.25*corners[0].y() + 0.25*corners[1].y() +0.25*corners[2].y() + 0.25*corners[3].y();
+    double well_start_z = 0.25*corners[0].z() + 0.25*corners[1].z() +0.25*corners[2].z() + 0.25*corners[3].z();
 
-        double well_end_x = 0.25*corners[4].x() + 0.25*corners[5].x() +0.25*corners[6].x() + 0.25*corners[7].x();
-        double well_end_y = 0.25*corners[4].y() + 0.25*corners[5].y() +0.25*corners[6].y() + 0.25*corners[7].y();
-        double well_end_z = 0.25*corners[4].z() + 0.25*corners[5].z() +0.25*corners[6].z() + 0.25*corners[7].z();
-        Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x,well_start_y,well_start_z);
-        Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
+    double well_end_x = 0.25*corners[4].x() + 0.25*corners[5].x() +0.25*corners[6].x() + 0.25*corners[7].x();
+    double well_end_y = 0.25*corners[4].y() + 0.25*corners[5].y() +0.25*corners[6].y() + 0.25*corners[7].y();
+    double well_end_z = 0.25*corners[4].z() + 0.25*corners[5].z() +0.25*corners[6].z() + 0.25*corners[7].z();
+    Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x,well_start_y,well_start_z);
+    Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
-        auto icell = IntersectedCell(cell_1);
-        icell.add_new_segment(start_point, end_point, wellbore_radius);
+    auto icell = IntersectedCell(cell_1);
+    icell.add_new_segment(start_point, end_point, wellbore_radius);
 
-        auto wic = WellIndexCalculator(grid_);
+    auto wic = WellIndexCalculator(grid_);
 
-        std::vector<WellDefinition> wells;
-    	wells.push_back(WellDefinition());
-    	wells.at(0).heels.push_back(start_point);
-    	wells.at(0).toes.push_back(end_point);
-    	wells.at(0).radii.push_back( wellbore_radius);
-    	wells.at(0).wellname = "testwell";
-    	wic.ComputeWellBlocks(wells);
+    std::vector<WellDefinition> wells;
+    wells.push_back(WellDefinition());
+    wells.at(0).heels.push_back(start_point);
+    wells.at(0).toes.push_back(end_point);
+    wells.at(0).radii.push_back( wellbore_radius);
+    wells.at(0).wellname = "testwell";
+    auto iblocks = wic.ComputeWellBlocks(wells);
+    double wi = iblocks["testwell"][0].cell_well_index();
+    /* 0.555602 is the expected well transmisibility factor aka. well index.
+     * For now this value is read directly from eclipse output file:
+     * Expect value within delta percent
+     */
+    double delta = 0.001;
+    EXPECT_NEAR(wi, 0.555602, delta/100);
+}
 
-        std::vector<IntersectedCell> intersected_cell;
-        int index_icell = IntersectedCell::GetIntersectedCellIndex(intersected_cell, icell);
-        wic.compute_well_index(intersected_cell, index_icell);
-        double wi = intersected_cell[index_icell].cell_well_index();
-        /* 0.555602 is the expected well transmisibility factor aka. well index.
-         * For now this value is read directly from eclipse output file:
-         * Expect value within delta percent
-         */
-        double delta = 0.001;
-        double delta_percent =1+(delta/100);
-        EXPECT_TRUE( wi < 0.555602*(delta_percent));
-        EXPECT_TRUE( wi > 0.555602/(delta_percent));
-    }
+TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
+    double wellbore_radius = 0.1905/2;
 
-    TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
-        double wellbore_radius = 0.1905/2;
+    auto cell_1 = grid_->GetCell(0);
+    auto corners = cell_1.corners();
 
-        auto cell_1 = grid_->GetCell(0);
-        auto corners = cell_1.corners();
+    //Determine well placement. Let it go vertically through the centre of the block.
+    double well_start_x = 0.25*corners[0].x() + 0.25*corners[1].x() +0.25*corners[2].x() + 0.25*corners[3].x();
+    double well_start_y = 0.25*corners[0].y() + 0.25*corners[1].y() +0.25*corners[2].y() + 0.25*corners[3].y();
+    double well_start_z = 0.25*corners[0].z() + 0.25*corners[1].z() +0.25*corners[2].z() + 0.25*corners[3].z();
 
-        //Determine well placement. Let it go vertically through the centre of the block.
-        double well_start_x = 0.25*corners[0].x() + 0.25*corners[1].x() +0.25*corners[2].x() + 0.25*corners[3].x();
-        double well_start_y = 0.25*corners[0].y() + 0.25*corners[1].y() +0.25*corners[2].y() + 0.25*corners[3].y();
-        double well_start_z = 0.25*corners[0].z() + 0.25*corners[1].z() +0.25*corners[2].z() + 0.25*corners[3].z();
+    double well_end_x = 0.25*corners[4].x() + 0.25*corners[5].x() +0.25*corners[6].x() + 0.25*corners[7].x();
+    double well_end_y = 0.25*corners[4].y() + 0.25*corners[5].y() +0.25*corners[6].y() + 0.25*corners[7].y();
+    double well_end_z = 0.25*corners[4].z() + 0.25*corners[5].z() +0.25*corners[6].z() + 0.25*corners[7].z();
+    Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x, well_start_y, well_start_z);
+    Eigen::Vector3d end_point= Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
-        double well_end_x = 0.25*corners[4].x() + 0.25*corners[5].x() +0.25*corners[6].x() + 0.25*corners[7].x();
-        double well_end_y = 0.25*corners[4].y() + 0.25*corners[5].y() +0.25*corners[6].y() + 0.25*corners[7].y();
-        double well_end_z = 0.25*corners[4].z() + 0.25*corners[5].z() +0.25*corners[6].z() + 0.25*corners[7].z();
-        Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x, well_start_y, well_start_z);
-        Eigen::Vector3d end_point= Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
+    Reservoir::WellIndexCalculation::IntersectedCell icell(cell_1);
+    icell.add_new_segment(start_point, end_point, wellbore_radius);
 
-        Reservoir::WellIndexCalculation::IntersectedCell icell(cell_1);
-        icell.add_new_segment(start_point, end_point, wellbore_radius);
+    auto wic = WellIndexCalculator(grid_);
 
-        auto wic = WellIndexCalculator(grid_);
+    std::vector<WellDefinition> wells;
+    wells.push_back(WellDefinition());
+    wells.at(0).heels.push_back(start_point);
+    wells.at(0).toes.push_back(end_point);
+    wells.at(0).radii.push_back( wellbore_radius);
+    wells.at(0).wellname = "testwell";
+    auto blocks = wic.ComputeWellBlocks(wells);
+    double wi = blocks["testwell"][0].cell_well_index();
 
-        std::vector<WellDefinition> wells;
-    	wells.push_back(WellDefinition());
-    	wells.at(0).heels.push_back(start_point);
-    	wells.at(0).toes.push_back(end_point);
-    	wells.at(0).radii.push_back( wellbore_radius);
-    	wells.at(0).wellname = "testwell";
-    	wic.ComputeWellBlocks(wells);
-
-        std::vector<IntersectedCell> intersected_cell;
-        int index_icell = IntersectedCell::GetIntersectedCellIndex(intersected_cell, icell);
-        wic.compute_well_index(intersected_cell, index_icell);
-        double wi = intersected_cell[index_icell].cell_well_index();
-
-        // WellIndexCalculation::GeometryFunctions::vertical_well_index_cell(cell_1,kx,ky,wellbore_radius);
-        /* 0.555602 is the expected well transmisibility factor aka. well index.
-         * For now this value is read directly from eclipse output file:
-         * Expect value within delta percent
-         */
-        double delta = 0.0001;
-        double delta_percent =1+(delta/100);
-        EXPECT_TRUE( wi < 0.555602*(delta_percent));
-        EXPECT_TRUE( wi > 0.555602/(delta_percent));
-    }
+    // WellIndexCalculation::GeometryFunctions::vertical_well_index_cell(cell_1,kx,ky,wellbore_radius);
+    /* 0.555602 is the expected well transmisibility factor aka. well index.
+     * For now this value is read directly from eclipse output file:
+     * Expect value within delta percent
+     */
+    double delta = 0.001;
+    EXPECT_NEAR(wi, 0.555602, delta/100);
+}
 
 TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
     double wellbore_radius = 0.191/2;
@@ -156,19 +145,19 @@ TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
     Eigen::Vector3d end_point= Eigen::Vector3d(1440.0,1400.0,1712);
     std::vector<Eigen::Vector3d> well_spline_points = {start_point, end_point};
 
-        // \todo The following lines need to be changed
-        auto wic = WellIndexCalculator(grid_);
+    // \todo The following lines need to be changed
+    auto wic = WellIndexCalculator(grid_);
 
-        std::vector<WellDefinition> wells;
-    	wells.push_back(WellDefinition());
-    	wells.at(0).heels.push_back(start_point);
-    	wells.at(0).toes.push_back(end_point);
-    	wells.at(0).radii.push_back( wellbore_radius);
-    	wells.at(0).wellname = "testwell";
+    std::vector<WellDefinition> wells;
+    wells.push_back(WellDefinition());
+    wells.at(0).heels.push_back(start_point);
+    wells.at(0).toes.push_back(end_point);
+    wells.at(0).radii.push_back( wellbore_radius);
+    wells.at(0).wellname = "testwell";
 
-    	auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
+    auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
 
-        EXPECT_EQ(118, blocks.size());
+    EXPECT_EQ(118, blocks.size());
 /*
     std::ofstream myfile;
     myfile.open ("test_44.txt");
