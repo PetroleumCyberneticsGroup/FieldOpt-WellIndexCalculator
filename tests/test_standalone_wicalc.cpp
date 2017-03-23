@@ -1,5 +1,7 @@
 /******************************************************************************
    Copyright (C) 2017 Mathias C. Bellout <mathias.bellout@ntnu.no>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
+   Modified by Einar Baumann (2017) <einar.baumann@gmail.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -76,7 +78,7 @@ TEST_F(wicalcStandaloneTest, checkExecutable) {
 
         printf ("Executing: %s.\n", cmd_in.c_str());
         int i=system(cmd_in.c_str());
-        printf ("The value returned was: %d.\n", i);
+        EXPECT_EQ(i, 0);
 
         // \todo Pipe the output of system to a string variable
         // then compare against a similar output
@@ -96,7 +98,7 @@ TEST_F(wicalcStandaloneTest, checkMissingInputParameterGrid) {
 
         printf ("Executing: %s.\n", cmd_in.c_str());
         int i=system(cmd_in.c_str());
-        printf ("The value returned was: %d.\n", i);
+        EXPECT_EQ(i, 0);
     }
 }
 

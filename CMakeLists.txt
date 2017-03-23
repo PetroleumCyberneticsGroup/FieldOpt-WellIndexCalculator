@@ -8,6 +8,9 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 if (_WIN32) # WINDOWS
     find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
 
+include_directories(${EIGEN3_INCLUDE_DIR}
+	${ERT_INCLUDE_DIR})
+
     add_library(wellindexcalculator SHARED dllmain.cpp)
 
     target_link_libraries(wellindexcalculator
@@ -108,7 +111,9 @@ if (BUILD_TESTING)
             COMMAND $<TARGET_FILE:test_wellindexcalculator>)
 endif()
 
+
 # WI benckmark =========================================================
+if (BUILD_BENCHMARK)
 add_executable(benchmark_wellindexcalculator
         tests/well_index_benchmark/test_resource_wic_welldir.h
         tests/well_index_benchmark/test_resource_wic_widata.h
@@ -124,3 +129,4 @@ target_link_libraries(benchmark_wellindexcalculator
         ${GTEST_BOTH_LIBRARIES}
         ${CMAKE_THREAD_LIBS_INIT}
         ${Boost_LIBRARIES})
+endif()

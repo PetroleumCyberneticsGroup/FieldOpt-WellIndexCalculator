@@ -1,5 +1,6 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Einar J.M. Baumann <einar.baumann@gmail.com>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -30,34 +31,96 @@
 #include "wellindexcalculator.h"
 #include <Reservoir/grid/eclgrid.h>
 
+using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
-int main(int argc, const char *argv[]) {
-  // Initialize some variables from the runtime arguments
-  Eigen::setNbThreads(1); // OV
+int main(int argc, const char *argv[])
+{
+	// Initialize some variables from the runtime arguments
+	Eigen::setNbThreads(1); // OV //AGC not sure what this does
 
-  auto vm = createVariablesMap(argc, argv);
-  auto heel = Vector3d(vm["heel"].as<vector<double>>().data());
-  auto toe = Vector3d(vm["toe"].as<vector<double>>().data());
-  string grid_path = vm["grid"].as<string>();
-  double wellbore_radius = vm["radius"].as<double>();
+	auto vm = createVariablesMap(argc, argv);
 
-  // Initialize the Grid and WellIndexCalculator objects
-  auto grid = new Reservoir::Grid::ECLGrid(grid_path);
-  auto wic = WellIndexCalculator(grid);
+	// Checking that provided grid file actually exists
+	// NoteMB: See definition of exists() at start of main.hpp file
+	// I assume boost::filesystem::exists is problematic in
+	// Windows, and therefore OV has defined an equivalent
+	// function based on <sys/stat.h>
+	// Here we apply the function conditional on OS
+	bool out;
+#if _WIN32
+	out = exists(vm["grid"].as<string>());
+#else
+	out = boost::filesystem::exists(vm["grid"].as<string>());
+#endif
 
-  // Compute well blocks
-  auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
+	if (!out)
+	{
+		cout << "Grid file missing..." << endl;
+		exit(EXIT_FAILURE);
+	};
 
-  // Print as a COMPDAT table if the --compdat/-c flag was given
-  if (vm.count("compdat")) {
-    string well_name = vm["well-name"].as<string>();
-    printCompdat(well_blocks, well_name, wellbore_radius);
-  }
-    // Otherwise, print as a CSV table
-  else {
-    printCsv(well_blocks);
-  }
+	// Make sure that the user either specifies an input file or the data for a fingle well segment is specified correctly
+	assert(vm.count("well-filedef")	||(
+		vm.count("heel") && vm.count("toe") &&
+			vm["heel"].as<vector<double>>().size() == 3 &&
+			vm["toe"].as<vector<double>>().size() == 3 &&
+			vm.count("radius") && vm["radius"].as<double>() > 0 &&
+			(vm.count("compdat")? (vm.count("well-name")? true:false):true)
+	)
+	);
 
-  return 0;
+	// Get the path to the grid file
+	string gridpth = vm["grid"].as<string>();
+
+	// Initialize the Grid and WellIndexCalculator objects
+	Reservoir::Grid::ECLGrid* grid;
+	try
+	{
+		grid = new Reservoir::Grid::ECLGrid(gridpth);
+	}
+	catch (const std::runtime_error& e)
+	{
+		std::cout << "Error reading the Eclipse grid " << e.what();
+		std::cout << std::endl << "The program will stop now";
+
+		exit(EXIT_FAILURE);
+	}
+
+	auto wic = WellIndexCalculator(grid);
+	vector<WellDefinition> wells;
+
+	if (vm.count("well-filedef") == 1)
+	{
+		assert(boost::filesystem::exists(vm["well-filedef"].as<string>()));
+		WellDefinition::ReadWellsFromFile(vm["well-filedef"].as<string>(), wells);
+	}
+	else
+	{
+		wells.push_back(WellDefinition());
+		if (vm.count("well-name"))
+		{
+			wells.at(0).wellname = vm["well-name"].as<string>();
+		}
+		wells.at(0).heels.push_back(Eigen::Vector3d(vm["heel"].as<vector<double>>().data()));
+		wells.at(0).toes.push_back(Eigen::Vector3d(vm["toe"].as<vector<double>>().data()));
+		wells.at(0).radii.push_back(vm["radius"].as<double>());
+	}
+
+	// Compute the well blocks
+	auto well_indices = wic.ComputeWellBlocks(wells);
+
+	if (vm.count("compdat")) { // Print as a COMPDAT table if the --compdat/-c flag was given
+		printCompdat(well_indices);
+	}
+	else { // Otherwise, print as a CSV table
+		printCsv(well_indices);
+	}
+
+	if (vm.count("debug") > 0)
+	{
+		printDebug(well_indices);
+	}
+
+	exit(EXIT_SUCCESS);
 }
