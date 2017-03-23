@@ -132,8 +132,8 @@ void printDebug( map<string, vector<IntersectedCell>> &well_indices)
 	debugfile.open ("debug_info.dat");
 
 	vector<string> body;
-
 	vector<string> well_names;
+
 	for(map<string, vector<IntersectedCell>>::iterator it = well_indices.begin(); it != well_indices.end(); ++it)
 	{
 		well_names.push_back(it->first);
@@ -162,9 +162,7 @@ void printDebug( map<string, vector<IntersectedCell>> &well_indices)
 		for (auto block : well_indices[well_name])
 		{
 			debugfile << block.ijk_index().i() + 1 << "\t" << block.ijk_index().j() + 1 << "\t" << block.ijk_index().k() + 1 << "\t";
-
 			calc_data = block.get_calculation_data();
-
 			for (int iSegment = 0; iSegment < calc_data[data_names[0]].size(); ++iSegment)
 			{
 				for (string item : data_names)
@@ -172,7 +170,6 @@ void printDebug( map<string, vector<IntersectedCell>> &well_indices)
 					debugfile << calc_data[item].at(iSegment) << "\t";
 				}
 			}
-
 			debugfile << endl;
 		}
 	}
@@ -200,36 +197,39 @@ po::variables_map createVariablesMap(int argc, const char **argv)
 		("well-name,w", po::value<string>(), "well name to be used when writing compdat")
 		;
 
-	// Process arguments to variable map
-	po::variables_map vm;
+	po::variables_map vm; // Process arguments to variable map
+    // Parse the input arguments and store the values
+    po::store(po::parse_command_line(argc, argv, desc,
+                                     po::command_line_style::unix_style ^ po::command_line_style::allow_short), vm);
 
-	bool success_arg = true;
-	try
-	{
-		// Parse the input arguments and store the values
-		po::store(po::parse_command_line(argc, argv, desc,
-										 po::command_line_style::unix_style ^ po::command_line_style::allow_short), vm);
+    if (vm.count("help")) // If called with --help or -h flag:
+    { // Print help if --help present or input file/output dir not present
+        cout << "Usage: ./WellIndexCalc --grid gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r [options]" << endl;
+        cout << "options can be --compdat --well-name Name" << endl;
+        cout << "Or" << endl;
+        cout << "Usage: ./WellIndexCalc --grid gridpath --well-filedef filepath" << endl;
+        cout << desc << endl;
+        exit(EXIT_SUCCESS);
+    }
 
-		// ??
-		po::notify(vm);
-	}
-	catch (std::exception& e)
-	{
-		success_arg = false;
-		std::cout << e.what() << std::endl;
-	}
-
-	// If called with --help or -h flag:
-	if (vm.count("help") || !success_arg)
-	{ // Print help if --help present or input file/output dir not present
-		cout << "Usage: ./WellIndexCalc --grid gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r [options]" << endl;
-		cout << "options can be --compdat --well-name Name" << endl;
-		cout << "Or" << endl;
-		cout << "Usage: ./WellIndexCalc --grid gridpath --well-filedef filepath" << endl;
-		cout << desc << endl;
-		exit(EXIT_SUCCESS);
-	}
-
+    // Check that the necessary parameters are provided
+    if (!vm.count("grid")) {
+        cerr << "Error: You must provide a grid path." << endl;
+        exit(EXIT_FAILURE);
+    }
+    if (!vm.count("well-filedef") && (!vm.count("heel") || !vm.count("toe"))) {
+        cerr << "Error: You must provide ther a well definition file or heel and toe." << endl;
+        exit(EXIT_FAILURE);
+    }
+    if (!vm.count("well-filedef") && !vm.count("well-name")) {
+        cerr << "Error: You must provide a well name." << endl;
+        exit(EXIT_FAILURE);
+    }
+    if (!vm.count("well-filedef") && !vm.count("radius")) {
+        cerr << "Error: You must provide a well radius." << endl;
+        exit(EXIT_FAILURE);
+    }
+    po::notify(vm); // Notify if any unhandled errors are encountered while parsing
 	return vm;
 }
 
