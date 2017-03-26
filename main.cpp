@@ -52,27 +52,22 @@ int main(int argc, const char *argv[])
     try {
         grid = new Reservoir::Grid::ECLGrid(gridpth);
     }
-    catch (const std::runtime_error& e)
-    {
+    catch (const std::runtime_error& e) {
         std::cout << "Error reading the Eclipse grid " << e.what();
         std::cout << std::endl << "The program will stop now";
-
         exit(EXIT_FAILURE);
     }
 
     auto wic = WellIndexCalculator(grid);
     vector<WellDefinition> wells;
 
-    if (vm.count("well-filedef") == 1)
-    {
+    if (vm.count("well-filedef") == 1) {
         assert(boost::filesystem::exists(vm["well-filedef"].as<string>()));
         WellDefinition::ReadWellsFromFile(vm["well-filedef"].as<string>(), wells);
     }
-    else
-    {
+    else {
         wells.push_back(WellDefinition());
-        if (vm.count("well-name"))
-        {
+        if (vm.count("well-name")) {
             wells.at(0).wellname = vm["well-name"].as<string>();
         }
         wells.at(0).heels.push_back(Eigen::Vector3d(vm["heel"].as<vector<double>>().data()));
@@ -84,15 +79,16 @@ int main(int argc, const char *argv[])
     // Compute the well blocks
     auto well_indices = wic.ComputeWellBlocks(wells);
 
-    if (vm.count("compdat")) { // Print as a COMPDAT table if the --compdat/-c flag was given
+    // Print as a COMPDAT table if the --compdat/-c flag was given
+    if (vm.count("compdat")) {
         printCompdat(well_indices);
     }
-    else { // Otherwise, print as a CSV table
+    // Otherwise, print as a CSV table
+    else {
         printCsv(well_indices);
     }
 
-    if (vm.count("debug") > 0)
-    {
+    if (vm.count("debug") > 0) {
         printDebug(well_indices);
     }
 
