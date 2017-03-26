@@ -62,182 +62,166 @@ using namespace std;
 
 const double minimum_well_index = 1e-9;
 
-void printCsv(map<string, vector<IntersectedCell>> &well_indices) 
-{
+void printCsv(map<string, vector<IntersectedCell>> &well_indices) {
     cout << "i,\tj,\tk1,\tk2,\twi" << endl;
 
     vector<string> well_names;
-    for(map<string, vector<IntersectedCell>>::iterator it = well_indices.begin(); it != well_indices.end(); ++it)
-    {
-      well_names.push_back(it->first);
+    for(map<string, vector<IntersectedCell>>::iterator
+            it = well_indices.begin(); it != well_indices.end(); ++it) {
+        well_names.push_back(it->first);
     }
 
-    for (auto well_name : well_names)
-    {
-		cout << well_name << endl;
-		for (auto block : well_indices[well_name])
-		{
-			if (block.cell_well_index() > minimum_well_index)
-			{
-				auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
-						%(block.ijk_index().i() + 1)         // %1
-						%(block.ijk_index().j() + 1)         // %2
-						%(block.ijk_index().k() + 1)         // %3
-						%(block.ijk_index().k() + 1)         // %3
-						%block.cell_well_index());           // %4
-				cout << line << endl;
-			}
-		}
+    for (auto well_name : well_names) {
+        cout << well_name << endl;
+        for (auto block : well_indices[well_name]) {
+            if (block.cell_well_index() > minimum_well_index) {
+                auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
+                                           %(block.ijk_index().i() + 1)         // %1
+                                           %(block.ijk_index().j() + 1)         // %2
+                                           %(block.ijk_index().k() + 1)         // %3
+                                           %(block.ijk_index().k() + 1)         // %4
+                                           %block.cell_well_index());           // %5
+                cout << line << endl;
+            }
+        }
     }
 }
 
-void printCompdat(map<string, vector<IntersectedCell>> &well_indices)
-{
+void printCompdat(map<string, vector<IntersectedCell>> &well_indices) {
     string head = "COMPDAT\n";
     string foot = "\n/";
     vector<string> body;
+    //                      NAME   I   J  K1  K2  OP/SH ST  WI   DIAM
+    string compdat_frmt = "   %s  %d  %d  %d  %d  OPEN  1*  %8s  %8s /";
 
     vector<string> well_names;
-    for(map<string, vector<IntersectedCell>>::iterator it = well_indices.begin(); it != well_indices.end(); ++it)
-    {
-    	well_names.push_back(it->first);
+    for(map<string, vector<IntersectedCell>>::iterator
+            it = well_indices.begin(); it != well_indices.end(); ++it) {
+        well_names.push_back(it->first);
     }
 
-    for (auto well_name : well_names)
-    {
-		for (auto block : well_indices[well_name])
-		{
-			if (block.cell_well_index() > minimum_well_index)
-			{
-				//                                      NAME  I    J  K1  K2 OP/SH ST WI  DIA
-				auto entry = boost::str(boost::format("   %s  %d  %d  %d  %d OPEN  1*  %s  %s/")
-						% well_name             				// %1
-						%(block.ijk_index().i() + 1) 			// %2
-						%(block.ijk_index().j() + 1) 			// %3
-						%(block.ijk_index().k() + 1) 			// %4
-						%(block.ijk_index().k() + 1) 			// %5
-						%(block.cell_well_index())     			// %6
-						%(2*block.get_segment_radius(0)));  	// %7
-				body.push_back(entry);
-			}
-		}
-		string full = head + boost::algorithm::join(body, "\n") + foot;
-		cout << full << endl;
+    for (auto well_name : well_names) {
+        for (auto block : well_indices[well_name]) {
+            if (block.cell_well_index() > minimum_well_index) {
+                auto entry = boost::str(boost::format(compdat_frmt)
+                                            % well_name             			// %1
+                                            %(block.ijk_index().i() + 1) 		// %2
+                                            %(block.ijk_index().j() + 1) 		// %3
+                                            %(block.ijk_index().k() + 1) 		// %4
+                                            %(block.ijk_index().k() + 1) 		// %5
+                                            %(block.cell_well_index())     		// %6
+                                            %(2*block.get_segment_radius(0)));  // %7
+                body.push_back(entry);
+            }
+        }
+        string full = head + boost::algorithm::join(body, "\n") + foot;
+        cout << full << endl;
     }
 }
 
 void printDebug( map<string, vector<IntersectedCell>> &well_indices)
 {
-	ofstream debugfile;
-	debugfile.open ("debug_info.dat");
+    ofstream debugfile;
+    debugfile.open ("debug_info.dat");
 
-	vector<string> body;
-
+    vector<string> body;
     vector<string> well_names;
-    for(map<string, vector<IntersectedCell>>::iterator it = well_indices.begin(); it != well_indices.end(); ++it)
-    {
-      well_names.push_back(it->first);
+    for(map<string, vector<IntersectedCell>>::iterator
+            it = well_indices.begin(); it != well_indices.end(); ++it) {
+        well_names.push_back(it->first);
     }
 
-    for (auto well_name : well_names)
-    {
-    	debugfile << well_name << endl;
+    for (auto well_name : well_names) {
+        debugfile << well_name << endl;
 
-    	auto block = well_indices[well_name].at(0);
-		map<string, vector<double>> calc_data = block.get_calculation_data();
-	    vector<string> data_names;
-	    for(map<string, vector<double>>::iterator it = calc_data.begin(); it != calc_data.end(); ++it)
-	    {
-	    	data_names.push_back(it->first);
-	    }
+        auto block = well_indices[well_name].at(0);
+        map<string, vector<double>> calc_data = block.get_calculation_data();
+        vector<string> data_names;
 
-	    debugfile << "i,\tj,\tk,\t";
-	    for (string item : data_names)
-	    {
-	    	debugfile << item << "\t";
-	    }
+        for(map<string, vector<double>>::iterator
+                it = calc_data.begin(); it != calc_data.end(); ++it) {
+            data_names.push_back(it->first);
+        }
 
-	    debugfile << "-- repeated for all segments" << endl;
+        debugfile << "i,\tj,\tk,\t";
+        for (string item : data_names) {
+            debugfile << item << "\t";
+        }
 
-		for (auto block : well_indices[well_name])
-		{
-		    debugfile << block.ijk_index().i() + 1 << "\t" << block.ijk_index().j() + 1 << "\t" << block.ijk_index().k() + 1 << "\t";
+        debugfile << "-- repeated for all segments" << endl;
 
-		    calc_data = block.get_calculation_data();
+        for (auto block : well_indices[well_name]) {
+            debugfile << block.ijk_index().i() + 1 << "\t"
+                      << block.ijk_index().j() + 1 << "\t"
+                      << block.ijk_index().k() + 1 << "\t";
+            calc_data = block.get_calculation_data();
 
-	    	for (int iSegment = 0; iSegment < calc_data[data_names[0]].size(); ++iSegment)
-			{
-			    for (string item : data_names)
-			    {
-			    	debugfile << calc_data[item].at(iSegment) << "\t";
-			    }
-			}
-
-	    	debugfile << endl;
-		}
+            for (int iSegment = 0; iSegment < calc_data[data_names[0]].size(); ++iSegment) {
+                for (string item : data_names) {
+                    debugfile << calc_data[item].at(iSegment) << "\t";
+                }
+            }
+            debugfile << endl;
+        }
     }
-
     debugfile.close();
 }
 
-po::variables_map createVariablesMap(int argc, const char **argv) 
+po::variables_map createVariablesMap(int argc, const char **argv)
 {
-    //
-    // This function parses the runtime arguments and creates a boost::program_options::variable_map from them.
+    // This function parses the runtime arguments and creates
+    // a boost::program_options::variable_map from them.
     // It also displays help if the --help flag is passed.
-    //
-	
+
     po::options_description desc("WellIndexCalc options");
     desc.add_options()
-            ("help", "print help message")
+        ("help", "print help message")
 
-            ("debug", po::value<int>()->implicit_value(0), "write debug information")
+        ("debug", po::value<int>()->implicit_value(0), "write debug information")
 
-            ("grid,g", po::value<string>()->required(), "path to model grid file (e.g. *.GRID)")
+        ("grid,g", po::value<string>()->required(), "path to model grid file (e.g. *.GRID)")
 
-            ("well-filedef,f", po::value<string>(), "path to the well(s) definition file name")
+        ("well-filedef,f", po::value<string>(), "path to the well(s) definition file name")
 
-            ("heel,h", po::value<vector<double>>()->multitoken(), "Heel coordinates (x y z)")
+        ("heel,h", po::value<vector<double>>()->multitoken(), "Heel coordinates (x y z)")
 
-            ("toe,t", po::value<vector<double>>()->multitoken(), "Toe coordinates (x y z)")
+        ("toe,t", po::value<vector<double>>()->multitoken(), "Toe coordinates (x y z)")
 
-            ("radius,r", po::value<double>(), "wellbore radius")
-            
-            ("skin-factor,s", po::value<double>(), "skin factor")
-            
-            ("compdat,c", po::value<int>()->implicit_value(0), "print in compdat format instead of CSV")
+        ("radius,r", po::value<double>(), "wellbore radius")
 
-            ("well-name,w", po::value<string>(), "well name to be used when writing compdat")
-            ;
-	
+        ("skin-factor,s", po::value<double>(), "skin factor")
+
+        ("compdat,c", po::value<int>()->implicit_value(0), "print in compdat format instead of CSV")
+
+        ("well-name,w", po::value<string>(), "well name to be used when writing compdat");
+
     // Process arguments to variable map
     po::variables_map vm;
-    
+
     bool success_arg = true;
-    try
-    {
-		// Parse the input arguments and store the values 
-		po::store(po::parse_command_line(argc, argv, desc, 
-				po::command_line_style::unix_style ^ po::command_line_style::allow_short), vm);
-		
-		// ??
-		po::notify(vm);	
-    } 
-    catch (std::exception& e) 
-    {
-    	success_arg = false;
-    	std::cout << e.what() << std::endl;
+    try {
+        // Parse the input arguments and store the values
+        po::store(po::parse_command_line(
+            argc, argv, desc, po::command_line_style::unix_style ^
+                po::command_line_style::allow_short), vm);
+
+        // ??
+        po::notify(vm);
     }
-    
+    catch (std::exception& e) {
+        success_arg = false;
+        cout << e.what() << endl;
+    }
+
     // If called with --help or -h flag:
-    if (vm.count("help") || !success_arg) 
+    if (vm.count("help") || !success_arg)
     { // Print help if --help present or input file/output dir not present
-        cout << "Usage: ./WellIndexCalc --grid gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r --skin-factor s [options]" << endl;
+        cout << "Usage: ./WellIndexCalc --grid gridpath --heel x1 y1 z1 "
+            "--toe x2 y2 z2 --radius r --skin-factor s [options]" << endl;
         cout << "options can be --compdat --well-name Name" << endl;
         cout << "Or" << endl;
         cout << "Usage: ./WellIndexCalc --grid gridpath --well-filedef filepath" << endl;
         cout << desc << endl;
-        
         exit(EXIT_SUCCESS);
     }
 
@@ -247,7 +231,7 @@ po::variables_map createVariablesMap(int argc, const char **argv)
         exit(EXIT_FAILURE);
     }
     if (!vm.count("well-filedef") && (!vm.count("heel") || !vm.count("toe"))) {
-        cerr << "Error: You must provide ther a well definition file or heel and toe." << endl;
+        cerr << "Error: You must provide a well definition file or heel and toe." << endl;
         exit(EXIT_FAILURE);
     }
     if (!vm.count("well-filedef") && !vm.count("well-name")) {
@@ -256,6 +240,16 @@ po::variables_map createVariablesMap(int argc, const char **argv)
     }
     if (!vm.count("well-filedef") && !vm.count("radius")) {
         cerr << "Error: You must provide a well radius." << endl;
+        exit(EXIT_FAILURE);
+    }
+    if (!vm.count("well-filedef")
+        && (!vm["heel"].as<vector<double>>().size() != 3
+            || !vm["toe"].as<vector<double>>().size() != 3)) {
+        cerr << "Error: Heel or tow parameters missing." << endl;
+        exit(EXIT_FAILURE);
+    }
+    if (!vm.count("well-filedef") && vm["radius"].as<double>() <= 0.0) {
+        cerr << "Error: Well radius must be larger than zero." << endl;
         exit(EXIT_FAILURE);
     }
     po::notify(vm); // Notify if any unhandled errors are encountered while parsing
