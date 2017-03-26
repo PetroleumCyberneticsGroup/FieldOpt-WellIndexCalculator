@@ -225,7 +225,8 @@ po::variables_map createVariablesMap(int argc, const char **argv)
         exit(EXIT_SUCCESS);
     }
 
-    // Check that the necessary parameters are provided
+    // Make sure that the user either specifies an input file
+    // or the data for a single well segment is specified correctly
     if (!vm.count("grid")) {
         cerr << "Error: You must provide a grid path." << endl;
         exit(EXIT_FAILURE);
@@ -252,7 +253,35 @@ po::variables_map createVariablesMap(int argc, const char **argv)
         cerr << "Error: Well radius must be larger than zero." << endl;
         exit(EXIT_FAILURE);
     }
-    po::notify(vm); // Notify if any unhandled errors are encountered while parsing
+    if (!vm.count("well-filedef") && vm.count("skin-factor") &&
+        vm["skin-factor"].as<double>() > 0.0) {
+        cerr << "Error: Skin factor must be larger than zero." << endl;
+        exit(EXIT_FAILURE);
+    }
+    if (!vm.count("well-filedef") &&
+        (vm.count("compdat") ? (vm.count("well-name") != 0):true)) {
+        cerr << "Error: Compdat option not set." << endl;
+        exit(EXIT_FAILURE);
+    }
+    // Check if obsolete
+    // check if grid file exists, conditional to OS
+    // See definition of exists() at start of main.hpp file
+    if (vm.count("grid")) {
+        bool gf_exists;
+#if _WIN32
+        gf_exists = exists(vm["grid"].as<string>());
+#else
+        gf_exists = boost::filesystem::exists(vm["grid"].as<string>());
+#endif
+
+        if (!gf_exists) {
+            cerr << "Error: Grid file does not exists." << endl;
+            exit(EXIT_FAILURE);
+        };
+    }
+
+    // Notify if any unhandled errors are encountered while parsing
+    po::notify(vm);
     return vm;
 }
 
