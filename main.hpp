@@ -1,6 +1,6 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Einar J.M. Baumann <einar.baumann@gmail.com>
-   Modified by M.Bellout (2017) <mathias.bellout@ntnu.no>
+   Modified by M.Bellout (2017) <mathias.bellout@ntnu.no, chakibbb@gmail.com>
    Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the

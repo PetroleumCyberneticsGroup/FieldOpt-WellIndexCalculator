@@ -1,6 +1,7 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Einar J.M. Baumann <einar.baumann@gmail.com>
-   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>   
+   Modified by M.Bellout (2017) <mathias.bellout@ntnu.no, chakibbb@gmail.com>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -34,13 +35,13 @@
 using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
-int main(int argc, const char *argv[]) 
+int main(int argc, const char *argv[])
 {
     // Initialize some variables from the runtime arguments
 	Eigen::setNbThreads(1); // OV //AGC not sure what this does
 
     auto vm = createVariablesMap(argc, argv);
-    
+
 	// Checking that provided grid file actually exists
 	// NoteMB: See definition of exists() at start of main.hpp file
 	// I assume boost::filesystem::exists is problematic in
@@ -53,13 +54,13 @@ int main(int argc, const char *argv[])
 #else
 	out = boost::filesystem::exists(vm["grid"].as<string>());
 #endif
-	
+
 	if (!out)
 	{
 	  cout << "Grid file missing..." << endl;
 	  exit(EXIT_FAILURE);
 	};
-    
+
     // Make sure that the user either specifies an input file or the data for a fingle well segment is specified correctly
     assert(vm.count("well-filedef")	||(
     		vm.count("heel") && vm.count("toe") &&
@@ -70,27 +71,27 @@ int main(int argc, const char *argv[])
     		(vm.count("compdat")? (vm.count("well-name")? true:false):true)
     		)
     		);
-    
+
     // Get the path to the grid file
 	string gridpth = vm["grid"].as<string>();
-	
+
     // Initialize the Grid and WellIndexCalculator objects
 	Reservoir::Grid::ECLGrid* grid;
-	try 
+	try
 	{
 		grid = new Reservoir::Grid::ECLGrid(gridpth);
-	} 
-	catch (const std::runtime_error& e) 
+	}
+	catch (const std::runtime_error& e)
 	{
 		std::cout << "Error reading the Eclipse grid " << e.what();
 		std::cout << std::endl << "The program will stop now";
-		
+
 		exit(EXIT_FAILURE);
 	}
-    
+
     auto wic = WellIndexCalculator(grid);
     vector<WellDefinition> wells;
-    
+
     if (vm.count("well-filedef") == 1)
     {
     	assert(boost::filesystem::exists(vm["well-filedef"].as<string>()));
@@ -118,11 +119,11 @@ int main(int argc, const char *argv[])
     else { // Otherwise, print as a CSV table
         printCsv(well_indices);
     }
-    
+
     if (vm.count("debug") > 0)
     {
     	printDebug(well_indices);
     }
-    
-    exit(EXIT_SUCCESS);    
+
+    exit(EXIT_SUCCESS);
 }
