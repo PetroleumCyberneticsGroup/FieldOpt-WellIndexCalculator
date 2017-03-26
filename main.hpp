@@ -263,23 +263,6 @@ po::variables_map createVariablesMap(int argc, const char **argv)
         cerr << "Error: Compdat option not set." << endl;
         exit(EXIT_FAILURE);
     }
-    // Check if obsolete
-    // check if grid file exists, conditional to OS
-    // See definition of exists() at start of main.hpp file
-    if (vm.count("grid")) {
-        bool gf_exists;
-#if _WIN32
-        gf_exists = exists(vm["grid"].as<string>());
-#else
-        gf_exists = boost::filesystem::exists(vm["grid"].as<string>());
-#endif
-
-        if (!gf_exists) {
-            cerr << "Error: Grid file does not exists." << endl;
-            exit(EXIT_FAILURE);
-        };
-    }
-
     // Notify if any unhandled errors are encountered while parsing
     po::notify(vm);
     return vm;

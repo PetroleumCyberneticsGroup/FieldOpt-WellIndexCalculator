@@ -53,8 +53,8 @@ int main(int argc, const char *argv[])
         grid = new Reservoir::Grid::ECLGrid(gridpth);
     }
     catch (const std::runtime_error& e) {
-        std::cout << "Error reading the Eclipse grid " << e.what();
-        std::cout << std::endl << "The program will stop now";
+        cout << "Error reading the Eclipse grid " << e.what();
+        cout << endl << "The program will stop now";
         exit(EXIT_FAILURE);
     }
 
