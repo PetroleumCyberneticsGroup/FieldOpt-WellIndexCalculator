@@ -32,64 +32,69 @@
 
 namespace Reservoir {
 namespace WellIndexCalculation {
-    using namespace Eigen;
-    /*!
- * \brief The IntersectedCell struct holds
- * information about an intersected cell.
-     */
-    class IntersectedCell : public Grid::Cell {
-    public:
-        IntersectedCell() {}
-        IntersectedCell(const Grid::Cell &cell) : Grid::Cell(cell) {};
+using namespace Eigen;
+using namespace std;
 
-        /*!
-         * \brief The cell x axis
-         */
-        Vector3d xvec() const;
-        /*!
-         * \brief The cell y axis
-         */
-        Vector3d yvec() const;
-        /*!
-         * \brief The cell z axis
-         */
-        Vector3d zvec() const;
+/*!
+ * \brief The IntersectedCell struct holds information about an intersected cell.
+ */
+class IntersectedCell : public Grid::Cell {
+ public:
+  IntersectedCell() {}
+  IntersectedCell(const Grid::Cell &cell) : Grid::Cell(cell) {};
 
-        // Cell size
-        double dx() const;
-        double dy() const;
-        double dz() const;
+  /*!
+   * \brief The cell x axis
+   */
+  Vector3d xvec() const;
+  /*!
+   * \brief The cell y axis
+   */
+  Vector3d yvec() const;
+  /*!
+   * \brief The cell z axis
+   */
+  Vector3d zvec() const;
 
-        void add_new_segment(Vector3d entry_point, Vector3d exit_point, double segment_radius, double segment_skin);
-        int num_segments() const;
+  // Cell size
+  double dx() const;
+  double dy() const;
+  double dz() const;
 
-        Vector3d get_segment_entry_point(int segment_index) const;
-        Vector3d get_segment_exit_point(int segment_index) const;
-        double get_segment_radius(int segment_index) const;
-        double get_segment_skin(int segment_index) const;
+  void add_new_segment(Vector3d entry_point, Vector3d exit_point,
+                       double segment_radius, double segment_skin);
+  int num_segments() const;
 
-        double cell_well_index() const;
-        void set_cell_well_index(double well_index);
+  Vector3d get_segment_entry_point(int segment_index) const;
+  Vector3d get_segment_exit_point(int segment_index) const;
+  double get_segment_radius(int segment_index) const;
+  double get_segment_skin(int segment_index) const;
 
-        void set_segment_calculation_data(int segment_index, std::string name, double value);
-        std::map<std::string, std::vector<double>>& get_calculation_data();
+  double cell_well_index() const;
+  void set_cell_well_index(double well_index);
 
-        // This is a class method
-        static int GetIntersectedCellIndex(std::vector<IntersectedCell> &cells, Grid::Cell grdcell);
+  void set_segment_calculation_data(int segment_index,
+                                    string name,
+                                    double value);
+  map<string, vector<double>>& get_calculation_data();
 
-    private:
-        // intersecting well segment definition
-        std::vector<Vector3d> entry_points_;
-        std::vector<Vector3d> exit_points_;
-        std::vector<double> segment_radius_;
-        std::vector<double> segment_skin_;
+  // This is a class method
+  static int GetIntersectedCellIndex(vector<IntersectedCell> &cells,
+                                     Grid::Cell grdcell);
 
-        // per segment well index calculation data
-        std::map<std::string, std::vector<double>> calculation_data_;
+ private:
+  // intersecting well segment definition
+  vector<Vector3d> entry_points_;
+  vector<Vector3d> exit_points_;
+  vector<double> segment_radius_;
+  vector<double> segment_skin_;
 
-        // well index
-        double well_index_;
-    };
+  // per segment well index calculation data
+  map<string, vector<double>> calculation_data_;
+
+  // well index
+  double well_index_;
+};
 }
 }
 
