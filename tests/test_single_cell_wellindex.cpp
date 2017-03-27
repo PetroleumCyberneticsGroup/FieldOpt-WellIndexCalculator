@@ -61,6 +61,7 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     //double kz = 1;
     //Figure out conversions and shit?
     double wellbore_radius = 0.1905/2;
+    double skin_factor = 0.0;
 
     auto cell_1 = grid_->GetCell(0);
     auto ptr_cell_1 = cell_1;
@@ -78,7 +79,7 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
     auto icell = IntersectedCell(cell_1);
-    icell.add_new_segment(start_point, end_point, wellbore_radius);
+    icell.add_new_segment(start_point, end_point, wellbore_radius, skin_factor);
 
     auto wic = WellIndexCalculator(grid_);
 
@@ -100,6 +101,7 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
 
 TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
     double wellbore_radius = 0.1905/2;
+    double skin_factor = 0.0;
 
     auto cell_1 = grid_->GetCell(0);
     auto corners = cell_1.corners();
@@ -116,7 +118,7 @@ TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
     Eigen::Vector3d end_point= Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
 
     Reservoir::WellIndexCalculation::IntersectedCell icell(cell_1);
-    icell.add_new_segment(start_point, end_point, wellbore_radius);
+    icell.add_new_segment(start_point, end_point, wellbore_radius, skin_factor);
 
     auto wic = WellIndexCalculator(grid_);
 

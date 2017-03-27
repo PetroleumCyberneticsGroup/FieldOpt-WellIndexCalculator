@@ -334,11 +334,11 @@ bool WellIndexCalculator::GetIntersection(double fDst1, double fDst2,
                                           Vector3d P1, Vector3d P2,
                                           Vector3d &Hit) {
     if ( (fDst1 * fDst2) >= 0.0f ) {
-        return false
+        return false;
     };
 
     if ( fDst1 == fDst2 ) {
-        return false
+        return false;
     };
 
     Hit = P1 + (P2-P1) * ( -fDst1/(fDst2-fDst1) );
