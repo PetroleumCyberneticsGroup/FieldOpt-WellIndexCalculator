@@ -40,14 +40,14 @@ namespace Reservoir {
 
 class WellDefinition {
         public:
-        	std::string wellname;
-        	std::vector<Vector3d> heels;
-        	std::vector<Vector3d> toes;
-        	std::vector<double> radii;
-        	std::vector<double> skins;
+        	string wellname;
+        	vector<Vector3d> heels;
+        	vector<Vector3d> toes;
+        	vector<double> radii;
+        	vector<double> skins;
 
         public:
-        	static void ReadWellsFromFile(std::string file_path, std::vector<WellDefinition>& wells);
+        	static void ReadWellsFromFile(string file_path, vector<WellDefinition>& wells);
         };
 
         /*!
@@ -74,7 +74,7 @@ class WellDefinition {
              * \return A map containing for each well given my its name the list of cells intersected by the well. 
              * Each intersected cell has stored the well connectivity information. 
              */
-            std::map<std::string, std::vector<IntersectedCell>> ComputeWellBlocks(std::vector<WellDefinition> wells);
+            map<string, vector<IntersectedCell>> ComputeWellBlocks(vector<WellDefinition> wells);
 
 
         private:
@@ -112,9 +112,9 @@ class WellDefinition {
              * leaves the previous cell) of the line segment inside each
              * cell.
              */
-            void collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells, 
+            void collect_intersected_cells(vector<IntersectedCell> &intersected_cells, 
             		Vector3d start_point, Vector3d end_point, double wellbore_radius, double skin_factor, 
-            		std::vector<int> bb_cells, double& bb_xi, double& bb_yi, double& bb_zi, double& bb_xf, double& bb_yf, double& bb_zf);
+            		vector<int> bb_cells, double& bb_xi, double& bb_yi, double& bb_zi, double& bb_xf, double& bb_yf, double& bb_zf);
 
             /*!
              * \brief Find the point where the line bethween the start_point
@@ -135,7 +135,7 @@ class WellDefinition {
              *
              * \return The point where the well path exits the cell.
              */
-            Vector3d find_exit_point(std::vector<IntersectedCell> &cells, int cell_index,
+            Vector3d find_exit_point(vector<IntersectedCell> &cells, int cell_index,
             		Vector3d &start_point, Vector3d &end_point, Vector3d &exception_point);
 
             /*!
@@ -152,7 +152,7 @@ class WellDefinition {
              * \param icell Well block to compute the WI in.
              * \return Well index for block/cell
             */
-            void compute_well_index(std::vector<IntersectedCell> &cells, int cell_index);
+            void compute_well_index(vector<IntersectedCell> &cells, int cell_index);
 
             /*!
              * \brief Auxilary function for compute_well_index function
