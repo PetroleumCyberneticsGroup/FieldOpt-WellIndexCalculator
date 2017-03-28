@@ -95,7 +95,7 @@ TEST_F(IntersectedCellsTest, find_point_test) {
     calc_exit_point = wic_.find_exit_point(
         intersected_cell, index_cell1,
         start_point, end_point, calc_exit_point);
-    cout << "new algorith exit point = "
+    cout << "new algorithm exit point = "
          << calc_exit_point.x() << ","
          << calc_exit_point.y() << ","
          << calc_exit_point.z() << endl;
@@ -122,7 +122,7 @@ TEST_F(IntersectedCellsTest, intersected_cell_test_cases) {
   Eigen::Vector3d start_point = Eigen::Vector3d(0,0,1702);
   Eigen::Vector3d end_point = Eigen::Vector3d(44,84,1720);
 
-  std::vector<WellDefinition> wells;
+  vector<WellDefinition> wells;
   wells.push_back(WellDefinition());
   wells.at(0).heels.push_back(start_point);
   wells.at(0).toes.push_back(end_point);
