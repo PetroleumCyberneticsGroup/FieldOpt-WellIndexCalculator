@@ -49,7 +49,6 @@ class SingleCellWellIndexTest : public ::testing::Test {
 
   virtual void TearDown() { }
 
-
   Grid *grid_;
   std::string file_path_ = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
 };
