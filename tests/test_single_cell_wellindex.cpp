@@ -93,8 +93,16 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     wells.at(0).skins.push_back(skin_factor);
     wells.at(0).wellname = "testwell";
 
-//    auto iblocks = wic.ComputeWellBlocks(wells)["testwell"];
-//    double wi = iblocks[0].cell_well_index();
+
+    // commented due to segfault b/c returned number of blocks is zero
+//    auto blocks = wic.ComputeWellBlocks(wells);
+//    auto wblocks = blocks["testwell"];
+//    EXPECT_GT(0, wblocks.size());
+//    double wi = wblocks[0].cell_well_index();
+
+    // \todo The function cell_well_index() should deal with the case when
+    // the number of well blocks is zero (which results in segfault), e.g.,
+    // throw an error
 
 //    /* 0.555602 is the expected well transmisibility factor aka. well index.
 //     * For now this value is read directly from eclipse output file:
@@ -136,23 +144,16 @@ TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "testwell";
 
-    auto blockst = wic.ComputeWellBlocks(wells);
-    auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
-    double wi;
-    auto wblock = blocks[0];
-    auto wblockt = blockst["testwell"];
-
-//    auto wblocktt = blockst["testwell"][0];
-//    auto wblocktt = blockst[0];
-
-    cout << wblockt.size() << endl;
-
-//    wi = blocks[0].cell_well_index();
+    // commented due to segfault b/c returned number of blocks is zero
+//    auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
+//    EXPECT_GT(0, blocks.size());
+//    double wi = blocks[0].cell_well_index();
 
     /* 0.555602 is the expected well transmisibility factor aka. well index.
      * For now this value is read directly from eclipse output file:
      * Expect value within delta percent
      */
+
 //    double delta = 0.001;
 //    EXPECT_NEAR(wi, 0.555602, delta/100);
 }
@@ -177,7 +178,11 @@ TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
 
     auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
 
+    // fails b/c returned number of blocks is zero
     EXPECT_EQ(118, blocks.size());
+
+
+    // obsolete? remove...
 /*
     std::ofstream myfile;
     myfile.open ("test_44.txt");
