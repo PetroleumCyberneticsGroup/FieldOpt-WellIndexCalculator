@@ -202,8 +202,7 @@ po::variables_map createVariablesMap(int argc, const char **argv)
     try {
         // Parse the input arguments and store the values
         po::store(po::parse_command_line(
-            argc, argv, desc, po::command_line_style::unix_style ^
-                po::command_line_style::allow_short), vm);
+            argc, argv, desc), vm);
 
         // ??
         po::notify(vm);
@@ -235,34 +234,29 @@ po::variables_map createVariablesMap(int argc, const char **argv)
         cerr << "Error: You must provide a well definition file or heel and toe." << endl;
         exit(EXIT_FAILURE);
     }
-    if (!vm.count("well-filedef") && !vm.count("well-name")) {
-        cerr << "Error: You must provide a well name." << endl;
+    if (!vm.count("well-filedef") && !vm.count("radius")) {
+        cerr << "Error: You must provide a well definition file or a well radius." << endl;
         exit(EXIT_FAILURE);
     }
-    if (!vm.count("well-filedef") && !vm.count("radius")) {
-        cerr << "Error: You must provide a well radius." << endl;
+    if (!vm.count("well-filedef") && !vm.count("skin-factor")) {
+        cerr << "Error: You must provide a well definition file or a skin factor." << endl;
         exit(EXIT_FAILURE);
     }
     if (!vm.count("well-filedef")
-        && (!vm["heel"].as<vector<double>>().size() != 3
-            || !vm["toe"].as<vector<double>>().size() != 3)) {
-        cerr << "Error: Heel or tow parameters missing." << endl;
+        && vm["heel"].as<vector<double>>().size() != 3
+        && vm["toe"].as<vector<double>>().size() != 3) {
+        cerr << "Error: You must provide a well definition file or provide three values for heel and toe parameters." << endl;
         exit(EXIT_FAILURE);
     }
     if (!vm.count("well-filedef") && vm["radius"].as<double>() <= 0.0) {
         cerr << "Error: Well radius must be larger than zero." << endl;
         exit(EXIT_FAILURE);
     }
-    if (!vm.count("well-filedef") && vm.count("skin-factor") &&
-        vm["skin-factor"].as<double>() > 0.0) {
-        cerr << "Error: Skin factor must be larger than zero." << endl;
+    if (!vm.count("well-filedef") && vm["skin-factor"].as<double>() < 0.0) {
+        cerr << "Error: Skin factor must be larger or equal to zero." << endl;
         exit(EXIT_FAILURE);
     }
-    if (!vm.count("well-filedef") &&
-        (vm.count("compdat") ? (vm.count("well-name") != 0):true)) {
-        cerr << "Error: Compdat option not set." << endl;
-        exit(EXIT_FAILURE);
-    }
+    
     // Notify if any unhandled errors are encountered while parsing
     po::notify(vm);
     return vm;

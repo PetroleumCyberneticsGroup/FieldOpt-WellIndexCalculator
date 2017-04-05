@@ -38,7 +38,7 @@ WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid) {
 
 map<string, vector<IntersectedCell>>
 WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells) {
-
+	
     map<string, vector<IntersectedCell>> well_indices;
     // Perform well block search for each well
     for (int iWell = 0; iWell < wells.size(); ++iWell) {
@@ -80,10 +80,10 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells) {
                                                     bb_xi, bb_yi, bb_zi,
                                                     bb_xf, bb_yf, bb_zf);
         // Debug
-        // cout << bb_cells.size() << endl;
-        // cout << bb_xi << " " << bb_xf << " "
-        //      << bb_yi << " " << bb_yf << " "
-        //      << bb_zi << " " << bb_zf << endl;
+		// cout << bb_cells.size() << endl;
+		// cout << bb_xi << " " << bb_xf << " "
+		//	  << bb_yi << " " << bb_yf << " "
+		//	  << bb_zi << " " << bb_zf << endl;
 
         // Loop through each well segment -> find intersected cells for each segment
         vector<IntersectedCell> intersected_cells;

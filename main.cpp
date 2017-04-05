@@ -49,42 +49,54 @@ int main(int argc, const char *argv[])
 
     // Initialize the Grid and WellIndexCalculator objects
     Reservoir::Grid::ECLGrid* grid;
-    try {
+    try 
+    {
         grid = new Reservoir::Grid::ECLGrid(gridpth);
     }
-    catch (const std::runtime_error& e) {
-        cout << "Error reading the Eclipse grid " << e.what();
-        cout << endl << "The program will stop now";
+    catch (const std::runtime_error& e) 
+    {
+        cout << "Error reading the Eclipse grid " << e.what() << endl;
+        cout << "The program will stop now";
         exit(EXIT_FAILURE);
     }
-
+    
     auto wic = WellIndexCalculator(grid);
     vector<WellDefinition> wells;
 
-    if (vm.count("well-filedef") == 1) {
+    if (vm.count("well-filedef") == 1) 
+    {
         assert(boost::filesystem::exists(vm["well-filedef"].as<string>()));
         WellDefinition::ReadWellsFromFile(vm["well-filedef"].as<string>(), wells);
     }
-    else {
+    else 
+    {
         wells.push_back(WellDefinition());
+        
         if (vm.count("well-name")) {
             wells.at(0).wellname = vm["well-name"].as<string>();
         }
+        else
+        {
+        	wells.at(0).wellname = "unnamed_well";
+        }
+        
         wells.at(0).heels.push_back(Eigen::Vector3d(vm["heel"].as<vector<double>>().data()));
         wells.at(0).toes.push_back(Eigen::Vector3d(vm["toe"].as<vector<double>>().data()));
         wells.at(0).radii.push_back(vm["radius"].as<double>());
-        wells.at(0).skins.push_back(vm["skin_factor"].as<double>());
+        wells.at(0).skins.push_back(vm["skin-factor"].as<double>());
     }
-
+    
     // Compute the well blocks
     auto well_indices = wic.ComputeWellBlocks(wells);
-
+    
     // Print as a COMPDAT table if the --compdat/-c flag was given
-    if (vm.count("compdat")) {
+    if (vm.count("compdat")) 
+    {
         printCompdat(well_indices);
     }
     // Otherwise, print as a CSV table
-    else {
+    else 
+    {
         printCsv(well_indices);
     }
 
