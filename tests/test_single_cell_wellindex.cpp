@@ -76,8 +76,8 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     double well_end_y = 0.25*corners[4].y() + 0.25*corners[5].y() +0.25*corners[6].y() + 0.25*corners[7].y();
     double well_end_z = 0.25*corners[4].z() + 0.25*corners[5].z() +0.25*corners[6].z() + 0.25*corners[7].z();
 
-    Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x,well_start_y,well_start_z);
-    Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x,well_end_y, well_end_z);
+    Eigen::Vector3d start_point = Eigen::Vector3d(well_start_x, well_start_y, well_start_z);
+    Eigen::Vector3d end_point = Eigen::Vector3d(well_end_x, well_end_y, well_end_z);
 
     auto icell = IntersectedCell(cell_1);
     icell.add_new_segment(start_point, end_point, wellbore_radius, skin_factor);
@@ -92,24 +92,24 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     wells.at(0).skins.push_back(skin_factor);
     wells.at(0).wellname = "testwell";
 
-
-    // commented due to segfault b/c returned number of blocks is zero
-//    auto blocks = wic.ComputeWellBlocks(wells);
-//    auto wblocks = blocks["testwell"];
-//    EXPECT_GT(0, wblocks.size());
-//    double wi = wblocks[0].cell_well_index();
+    auto blocks = wic.ComputeWellBlocks(wells);   
+    auto wblocks = blocks[wells.at(0).wellname];
+    EXPECT_GT(wblocks.size(), 0);  
+    double wi = wblocks[0].cell_well_index();
 
     // \todo The function cell_well_index() should deal with the case when
     // the number of well blocks is zero (which results in segfault), e.g.,
-    // throw an error
+    // throw an error 
+    // 
+    // Note: The error here comes from wblock[0] which does not exist... cell_well_index() 
+    // cannot be called here if there is no block
 
-//    /* 0.555602 is the expected well transmisibility factor aka. well index.
-//     * For now this value is read directly from eclipse output file:
-//     * Expect value within delta percent
-//     */
-
-//    double delta = 0.001;
-//    EXPECT_NEAR(wi, 0.555602, delta/100);
+    /* 0.555602 is the expected well transmisibility factor aka. well index.
+     * For now this value is read directly from eclipse output file:
+     * Expect value within delta percent
+     */
+    double delta = 0.001;
+    EXPECT_NEAR(wi, 0.555602, delta/100);
 }
 
 TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
@@ -143,18 +143,16 @@ TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "testwell";
 
-    // commented due to segfault b/c returned number of blocks is zero
-//    auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
-//    EXPECT_GT(0, blocks.size());
-//    double wi = blocks[0].cell_well_index();
+    auto blocks = wic.ComputeWellBlocks(wells)[wells.at(0).wellname];
+    EXPECT_GT(blocks.size(), 0);
+    double wi = blocks[0].cell_well_index();
 
     /* 0.555602 is the expected well transmisibility factor aka. well index.
      * For now this value is read directly from eclipse output file:
      * Expect value within delta percent
      */
-
-//    double delta = 0.001;
-//    EXPECT_NEAR(wi, 0.555602, delta/100);
+    double delta = 0.001;
+    EXPECT_NEAR(wi, 0.555602, delta/100);
 }
 
 TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
@@ -176,26 +174,6 @@ TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
     wells.at(0).wellname = "testwell";
 
     auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
-
-    // fails b/c returned number of blocks is zero
     EXPECT_EQ(118, blocks.size());
-
-
-    // obsolete? remove...
-/*
-    std::ofstream myfile;
-    myfile.open ("test_44.txt");
-    myfile << "well starting point (x,y,z)= " << start_point.x() <<"," << start_point.y() << "," << start_point.z() << ")\n";
-    myfile << "well ending point (x,y,z)= " << end_point.x() <<"," << end_point.y() << "," << end_point.z() << ")\n";
-    myfile << "number of cells intersected = " << pair.first.length() << "\n";
-    myfile << "number of well index values = " << pair.second.length() << "\n";
-    for( int ii = 0; ii<pair.first.length(); ii++){
-        myfile << "cell number " << pair.first.at(ii) << " with permeability kx = " << grid_->GetCell(pair.first.at(ii)).permx() <<", ky = "<< grid_->GetCell(pair.first.at(ii)).permy()<< ", kz = "<< grid_->GetCell(pair.first.at(ii)).permz()<<" has well index = " << pair.second.at(ii) <<"\n";
-    }
-        myfile.close();
-    WellIndexCalculation::GeometryFunctions::print_well_index_file(grid_,well_spline_points, end_points, wellbore_radius, 0.00001, "NewlyTried1422");
-*/
-    EXPECT_TRUE(true);
 }
-
 }
