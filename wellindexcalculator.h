@@ -87,31 +87,36 @@ class WellIndexCalculator {
 
   Grid::Grid *grid_; //!< The grid used in the calculations.
 
-  /*!
-   * \brief
-   * \param
-   * \return
-   */
-  bool GetIntersection(double fDst1, double fDst2,
-                       Vector3d P1, Vector3d P2,
-                       Vector3d &Hit);
+//  /*!
+//   * \brief This should compute the point of intersection of one directional line with a box defined by its corners - Needs to be farther tested
+//   * \param
+//   * \return
+//   */
+//  bool GetIntersection(double fDst1, double fDst2,
+//                       Vector3d P1, Vector3d P2,
+//                       Vector3d &Hit);
+
+//  /*!
+//   * \brief Needs to be farther tested
+//   * \param
+//   * \return
+//   */
+//  bool InBox(Vector3d Hit, Vector3d B1, Vector3d B2, const int Axis);
+
+//  /*!
+//   * \brief returns true if directional line (L1, L2) intersects with the box  defined by (B1, B2) - Needs to be farther tested
+//   * \param
+//   * \return returns intersection point in Hit
+//   */
+//  bool CheckLineBox(Vector3d B1, Vector3d B2,
+//                    Vector3d L1, Vector3d L2,
+//                    Vector3d &Hit);
 
   /*!
-   * \brief
-   * \param
-   * \return
+   * \brief returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
    */
-  bool InBox(Vector3d Hit, Vector3d B1, Vector3d B2, const int Axis);
-
-  /*!
-   * \brief returns true if line (L1, L2) intersects with the box (B1, B2),
-   * \param
-   * \return returns intersection point in Hit
-   */
-  bool CheckLineBox(Vector3d B1, Vector3d B2,
-                    Vector3d L1, Vector3d L2,
-                    Vector3d &Hit);
-
+  bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
+  
  public:
   /*!
    * \brief Given a reservoir with blocks and a line (start_point

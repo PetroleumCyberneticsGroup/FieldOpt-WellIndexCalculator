@@ -37,12 +37,13 @@ WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid) {
 }
 
 map<string, vector<IntersectedCell>>
-WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells) {
-	
+WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells) 
+{	
     map<string, vector<IntersectedCell>> well_indices;
+    
     // Perform well block search for each well
-    for (int iWell = 0; iWell < wells.size(); ++iWell) {
-
+    for (int iWell = 0; iWell < wells.size(); ++iWell) 
+    {
         // Compute an overall bounding box per well --> speed up cell searching
         double xi, yi, zi, xf, yf, zf;
         xi = numeric_limits<double>::max();
@@ -101,7 +102,8 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells) {
         // cout << "number of intersected cells: " << intersected_cells.size() << endl;
 
         // For all intersected cells compute well transmissibility factor
-        for (int iCell = 0; iCell < intersected_cells.size(); ++iCell) {
+        for (int iCell = 0; iCell < intersected_cells.size(); ++iCell) 
+        {
             compute_well_index(intersected_cells, iCell);
         }
 
@@ -123,17 +125,15 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
 {
     // If no cells are found in the bounding box it means
     // this segment is completely out of the reservoir
-    if (bb_cells.size() == 0){
+    if (bb_cells.size() == 0)
+    {
         return;
     }
 
     // Skip the segments that are outside the reservoir
-    Vector3d point_hit;
-    if (!CheckLineBox(Vector3d(bb_xi, bb_yi, bb_zi),
-                      Vector3d(bb_xf, bb_yf, bb_zf),
-                      start_point, end_point,
-                      point_hit)) {
-        // cout << "segment outside scope" << endl;
+    if (IsLineCompletelyOutsideBox(Vector3d(bb_xi, bb_yi, bb_zi), Vector3d(bb_xf, bb_yf, bb_zf),
+                   	  	  	  	  start_point, end_point))
+    {
         return;
     }
 
@@ -154,18 +154,19 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
         {
             first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
             break;
-        }
+        } 
         catch (const runtime_error& e)
         {
             step += epsilon;
             start_point = org_start_point * (1 - step) + end_point * step;
 
             // Debug
-            // cout << "heel " << step << " "
-            //      << (org_start_point - end_point).dot(start_point - end_point) << endl;
+			// cout << "heel " << step << " "
+			//	  << (org_start_point - end_point).dot(start_point - end_point) << endl;
 
             // Check if we went too far
-            if (step > 1.0) {
+            if (step > 1.0) 
+            {
                 // The entire segment is outside the grid;
                 return;
             }
@@ -177,22 +178,21 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
     Vector3d org_end_point = end_point;
     step = 0;
 
-    while (true) {
+    while (true) 
+    {
         try
         {
             last_cell = grid_->GetCellEnvelopingPoint(end_point, bb_cells);
-            //cout << "last cell found " << last_cell.global_index() << endl;
             break;
         }
         catch (const runtime_error& e)
         {
             step += epsilon;
-            //cout << "The end point is outside the grid: " << e.what() << endl;
             end_point = org_end_point*(1 - step) + start_point*step;
 
             // Debug
-            //cout << "toe " << step << " "
-            //     << (org_start_point - end_point).dot(start_point - end_point) << endl;
+			//cout << "toe " << step << " "
+			//	 << (org_start_point - end_point).dot(start_point - end_point) << endl;
 
             // Check if we went too far
             if (step > 1.0)
@@ -204,8 +204,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
     }
 
     // If the first and last blocks are the same, return the block and start+end points
-    if (last_cell.global_index() == first_cell.global_index()) {
-
+    if (last_cell.global_index() == first_cell.global_index()) 
+    {   	
         // Get the index of the intersected cell that corresponds to the cell where
         // the first point resides (if this is not yet in the list it will be added)
         int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells,
@@ -330,57 +330,72 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
     return entry_point;
 }
 
-bool WellIndexCalculator::GetIntersection(double fDst1, double fDst2,
-                                          Vector3d P1, Vector3d P2,
-                                          Vector3d &Hit) {
-    if ( (fDst1 * fDst2) >= 0.0f ) {
-        return false;
-    };
+//bool WellIndexCalculator::GetIntersection(double fDst1, double fDst2,
+//                                          Vector3d P1, Vector3d P2,
+//                                          Vector3d &Hit) {
+//    if ( (fDst1 * fDst2) >= 0.0f ) {
+//        return false;
+//    };
+//
+//    if ( fDst1 == fDst2 ) {
+//        return false;
+//    };
+//
+//    Hit = P1 + (P2-P1) * ( -fDst1/(fDst2-fDst1) );
+//    return true;
+//}
 
-    if ( fDst1 == fDst2 ) {
-        return false;
-    };
+//bool WellIndexCalculator::InBox( Vector3d Hit, Vector3d B1, Vector3d B2, const int Axis) 
+//{
+//    if ( Axis==1 && Hit.z() > B1.z() && Hit.z() < B2.z() && Hit.y() > B1.y() && Hit.y() < B2.y()) return true;
+//    if ( Axis==2 && Hit.z() > B1.z() && Hit.z() < B2.z() && Hit.x() > B1.x() && Hit.x() < B2.x()) return true;
+//    if ( Axis==3 && Hit.x() > B1.x() && Hit.x() < B2.x() && Hit.y() > B1.y() && Hit.y() < B2.y()) return true;
+//    return false;
+//}
 
-    Hit = P1 + (P2-P1) * ( -fDst1/(fDst2-fDst1) );
-    return true;
-}
 
-bool WellIndexCalculator::InBox( Vector3d Hit, Vector3d B1, Vector3d B2, const int Axis) {
-    if ( Axis==1 && Hit.z() > B1.z() && Hit.z() < B2.z() && Hit.y() > B1.y() && Hit.y() < B2.y()) return true;
-    if ( Axis==2 && Hit.z() > B1.z() && Hit.z() < B2.z() && Hit.x() > B1.x() && Hit.x() < B2.x()) return true;
-    if ( Axis==3 && Hit.x() > B1.x() && Hit.x() < B2.x() && Hit.y() > B1.y() && Hit.y() < B2.y()) return true;
-    return false;
-}
+//// Returns true if line (L1, L2) intersects with the box (B1, B2)
+//// Returns intersection point in Hit
+//bool WellIndexCalculator::CheckLineBox( Vector3d B1, Vector3d B2,
+//                                        Vector3d L1, Vector3d L2,
+//                                        Vector3d &Hit) 
+//{
+//    if (L2.x() < B1.x() && L1.x() < B1.x()) return false;
+//    if (L2.x() > B2.x() && L1.x() > B2.x()) return false;
+//    if (L2.y() < B1.y() && L1.y() < B1.y()) return false;
+//    if (L2.y() > B2.y() && L1.y() > B2.y()) return false;
+//    if (L2.z() < B1.z() && L1.z() < B1.z()) return false;
+//    if (L2.z() > B2.z() && L1.z() > B2.z()) return false;
+//
+//    if (L1.x() > B1.x() && L1.x() < B2.x() &&
+//        L1.y() > B1.y() && L1.y() < B2.y() &&
+//        L1.z() > B1.z() && L1.z() < B2.z()) 
+//    {
+//        Hit = L1;
+//        return true;
+//    }
+//
+//    if ((GetIntersection( L1.x() - B1.x(), L2.x() - B1.x(), L1, L2, Hit) && InBox( Hit, B1, B2, 1 )) ||
+//        (GetIntersection( L1.y() - B1.y(), L2.y() - B1.y(), L1, L2, Hit) && InBox( Hit, B1, B2, 2 )) ||
+//        (GetIntersection( L1.z() - B1.z(), L2.z() - B1.z(), L1, L2, Hit) && InBox( Hit, B1, B2, 3 )) ||
+//        (GetIntersection( L1.x() - B2.x(), L2.x() - B2.x(), L1, L2, Hit) && InBox( Hit, B1, B2, 1 )) ||
+//        (GetIntersection( L1.y() - B2.y(), L2.y() - B2.y(), L1, L2, Hit) && InBox( Hit, B1, B2, 2 )) ||
+//        (GetIntersection( L1.z() - B2.z(), L2.z() - B2.z(), L1, L2, Hit) && InBox( Hit, B1, B2, 3 ))) {
+//        return true;
+//    }
+//
+//    return false;
+//}
 
-// Returns true if line (L1, L2) intersects with the box (B1, B2)
-// Returns intersection point in Hit
-bool WellIndexCalculator::CheckLineBox( Vector3d B1, Vector3d B2,
-                                        Vector3d L1, Vector3d L2,
-                                        Vector3d &Hit) {
-    if (L2.x() < B1.x() && L1.x() < B1.x()) return false;
-    if (L2.x() > B2.x() && L1.x() > B2.x()) return false;
-    if (L2.y() < B1.y() && L1.y() < B1.y()) return false;
-    if (L2.y() > B2.y() && L1.y() > B2.y()) return false;
-    if (L2.z() < B1.z() && L1.z() < B1.z()) return false;
-    if (L2.z() > B2.z() && L1.z() > B2.z()) return false;
 
-    if (L1.x() > B1.x() && L1.x() < B2.x() &&
-        L1.y() > B1.y() && L1.y() < B2.y() &&
-        L1.z() > B1.z() && L1.z() < B2.z()) {
-        Hit = L1;
-        return true;
-    }
-
-    if ((GetIntersection( L1.x() - B1.x(), L2.x() - B1.x(), L1, L2, Hit) && InBox( Hit, B1, B2, 1 )) ||
-        (GetIntersection( L1.y() - B1.y(), L2.y() - B1.y(), L1, L2, Hit) && InBox( Hit, B1, B2, 2 )) ||
-        (GetIntersection( L1.z() - B1.z(), L2.z() - B1.z(), L1, L2, Hit) && InBox( Hit, B1, B2, 3 )) ||
-        (GetIntersection( L1.x() - B2.x(), L2.x() - B2.x(), L1, L2, Hit) && InBox( Hit, B1, B2, 1 )) ||
-        (GetIntersection( L1.y() - B2.y(), L2.y() - B2.y(), L1, L2, Hit) && InBox( Hit, B1, B2, 2 )) ||
-        (GetIntersection( L1.z() - B2.z(), L2.z() - B2.z(), L1, L2, Hit) && InBox( Hit, B1, B2, 3 ))) {
-        return true;
-    }
-
-    return false;
+bool WellIndexCalculator::IsLineCompletelyOutsideBox( Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2) 
+{
+    if (L2.x() < B1.x() && L1.x() < B1.x()) return true;
+    if (L2.x() > B2.x() && L1.x() > B2.x()) return true;
+    if (L2.y() < B1.y() && L1.y() < B1.y()) return true;
+    if (L2.y() > B2.y() && L1.y() > B2.y()) return true;
+    if (L2.z() < B1.z() && L1.z() < B1.z()) return true;
+    if (L2.z() > B2.z() && L1.z() > B2.z()) return true;
 }
 
 void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int cell_index)
