@@ -40,13 +40,14 @@ using namespace std;
 
 class WellDefinition {
  public:
-  std::string wellname;
-  std::vector<Vector3d> heels;
-  std::vector<Vector3d> toes;
-  std::vector<double> radii;
+  string wellname;
+  vector<Vector3d> heels;
+  vector<Vector3d> toes;
+  vector<double> radii;
+  vector<double> skins;
 
  public:
-  static void ReadWellsFromFile(std::string file_path, std::vector<WellDefinition>& wells);
+  static void ReadWellsFromFile(string file_path, vector<WellDefinition>& wells);
 };
 
 /*!
@@ -70,10 +71,11 @@ class WellIndexCalculator {
   /*!
    * \brief Compute the well block indices for all wells
    * \param wells The list of wells
-   * \return A map containing for each well given my its name the list of cells intersected by the well.
-   * Each intersected cell has stored the well connectivity information.
+   * \return A map containing for each well given my its name, the
+   * list of cells intersected by the well. Each intersected cell
+   * has stored the well connectivity information.
    */
-  std::map<std::string, std::vector<IntersectedCell>> ComputeWellBlocks(std::vector<WellDefinition> wells);
+  map<string, vector<IntersectedCell>> ComputeWellBlocks(vector<WellDefinition> wells);
 
 
  private:
@@ -85,6 +87,36 @@ class WellIndexCalculator {
 
   Grid::Grid *grid_; //!< The grid used in the calculations.
 
+//  /*!
+//   * \brief This should compute the point of intersection of one directional line with a box defined by its corners - Needs to be farther tested
+//   * \param
+//   * \return
+//   */
+//  bool GetIntersection(double fDst1, double fDst2,
+//                       Vector3d P1, Vector3d P2,
+//                       Vector3d &Hit);
+
+//  /*!
+//   * \brief Needs to be farther tested
+//   * \param
+//   * \return
+//   */
+//  bool InBox(Vector3d Hit, Vector3d B1, Vector3d B2, const int Axis);
+
+//  /*!
+//   * \brief returns true if directional line (L1, L2) intersects with the box  defined by (B1, B2) - Needs to be farther tested
+//   * \param
+//   * \return returns intersection point in Hit
+//   */
+//  bool CheckLineBox(Vector3d B1, Vector3d B2,
+//                    Vector3d L1, Vector3d L2,
+//                    Vector3d &Hit);
+
+  /*!
+   * \brief returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
+   */
+  bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
+  
  public:
   /*!
    * \brief Given a reservoir with blocks and a line (start_point
@@ -97,20 +129,29 @@ class WellIndexCalculator {
    * \param intersected_cells Vector in which to store the cells
    * \param start_point The start point of the well path.
    * \param end_point The end point of the well path.
-   * \param grid The grid object containing blocks/cells.
+   * \todo
+   * \param ?????? grid The grid object containing blocks/cells.
    * \param bb_cells
+   * \param
+   * \param
+   * \param
+   * \param
    *
    * \return A pair containing global indices of intersected
    * cells and the points where it enters each cell (and thereby
    * leaves the previous cell) of the line segment inside each
    * cell.
    */
-  void collect_intersected_cells(std::vector<IntersectedCell> &intersected_cells,
-                                 Vector3d start_point, Vector3d end_point, double wellbore_radius,
-                                 std::vector<int> bb_cells);
+  void collect_intersected_cells(vector<IntersectedCell> &intersected_cells,
+                                 Vector3d start_point, Vector3d end_point,
+                                 double wellbore_radius, double skin_factor,
+                                 vector<int> bb_cells,
+                                 double& bb_xi, double& bb_yi, double& bb_zi,
+                                 double& bb_xf, double& bb_yf, double& bb_zf);
 
   /*!
-   * \brief Find the point where the line between the start_point and end_point exits a cell.
+   * \brief Find the point where the line between the start_point
+   * and end_point exits a cell.
    *
    * Takes as input an entry_point end_point which defines the well
    * path. Finds the two points on the path which intersects the
@@ -127,8 +168,9 @@ class WellIndexCalculator {
    *
    * \return The point where the well path exits the cell.
    */
-  Vector3d find_exit_point(std::vector<IntersectedCell> &cells, int cell_index,
-                           Vector3d &start_point, Vector3d &end_point, Vector3d &exception_point);
+  Vector3d find_exit_point(vector<IntersectedCell> &cells, int cell_index,
+                           Vector3d &start_point, Vector3d &end_point,
+                           Vector3d &exception_point);
 
   /*!
    * \brief Compute the well index (aka. transmissibility factor)
@@ -144,7 +186,7 @@ class WellIndexCalculator {
    * \param icell Well block to compute the WI in.
    * \return Well index for block/cell
   */
-  void compute_well_index(std::vector<IntersectedCell> &cells, int cell_index);
+  void compute_well_index(vector<IntersectedCell> &cells, int cell_index);
 
   /*!
    * \brief Auxilary function for compute_well_index function
@@ -154,10 +196,14 @@ class WellIndexCalculator {
    * \param dz size block third direction
    * \param ky permeability second direction
    * \param kz permeability second direction
+   * \param wellbore_radius the radius of the segment
+   * \param skin_factor associated skin to the segment
    *
    * \return directional well index
   */
-  double dir_well_index(double Lx, double dy, double dz, double ky, double kz, double wellbore_radius);
+  double dir_well_index(double Lx,
+                        double dy, double dz, double ky, double kz,
+                        double wellbore_radius, double skin_factor);
 
   /*!
    * \brief Auxilary function(2) for compute_well_index function
