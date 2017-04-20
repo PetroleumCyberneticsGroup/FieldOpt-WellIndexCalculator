@@ -63,11 +63,6 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
             zf = max(zf, max(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));
         }
 
-        // Debug
-        // cout << xi << " " << xf << " "
-        //      << yi << " " << yf << " "
-        //      << zi << " " << zf << endl;
-
         // Heuristic increase of the bounding area
         xi = xi - 0.1*(xf-xi); xf = xf + 0.1*(xf-xi);
         yi = yi - 0.1*(yf-yi); yf = yf + 0.1*(yf-yi);
@@ -80,11 +75,6 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
                                                     xf, yf, zf,
                                                     bb_xi, bb_yi, bb_zi,
                                                     bb_xf, bb_yf, bb_zf);
-        // Debug
-		// cout << bb_cells.size() << endl;
-		// cout << bb_xi << " " << bb_xf << " "
-		//	  << bb_yi << " " << bb_yf << " "
-		//	  << bb_zi << " " << bb_zf << endl;
 
         // Loop through each well segment -> find intersected cells for each segment
         vector<IntersectedCell> intersected_cells;
@@ -98,8 +88,6 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
                                       bb_xi, bb_yi, bb_zi,
                                       bb_xf, bb_yf, bb_zf);
         }
-
-        // cout << "number of intersected cells: " << intersected_cells.size() << endl;
 
         // For all intersected cells compute well transmissibility factor
         for (int iCell = 0; iCell < intersected_cells.size(); ++iCell) 
@@ -160,10 +148,6 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
             step += epsilon;
             start_point = org_start_point * (1 - step) + end_point * step;
 
-            // Debug
-			// cout << "heel " << step << " "
-			//	  << (org_start_point - end_point).dot(start_point - end_point) << endl;
-
             // Check if we went too far
             if (step > 1.0) 
             {
@@ -189,10 +173,6 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
         {
             step += epsilon;
             end_point = org_end_point*(1 - step) + start_point*step;
-
-            // Debug
-			//cout << "toe " << step << " "
-			//	 << (org_start_point - end_point).dot(start_point - end_point) << endl;
 
             // Check if we went too far
             if (step > 1.0)
@@ -260,11 +240,10 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
             {
                 step += epsilon;
                 move_exit_epsilon = exit_point * (1 - step) + end_point * step;
-                // cout << "exit " << step << endl;
 
                 // Check if we are not too far
-                //if ((exit_point - end_point).dot(move_exit_epsilon - end_point) <= 0.0)
-                if (step > 1.0) {
+                if (step > 1.0) 
+                {
                     return;
                 }
             }
