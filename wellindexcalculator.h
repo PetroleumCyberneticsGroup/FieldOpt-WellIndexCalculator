@@ -116,7 +116,25 @@ class WellIndexCalculator {
    * \brief returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
    */
   bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
-  
+
+  /*!
+   * @brief Find a new endpoint (heel/toe) for a well if the old one is outside.
+   * @param bb_cells Cellst to search through.
+   * @param epsilon Step length.
+   * @param org_start_point Original start point.
+   * @param start_point New start point.
+   * @param end_point End point.
+   * @param step The final step length (fraction of the segment length). Will be > 1.0 at end if unsuccessful.
+   * @param first_cell The first cell intersected by the segment.
+   */
+  void findNewEndpoint(const vector<int> &bb_cells,
+                       double epsilon,
+                       const Vector3d &org_start_point,
+                       Vector3d &start_point,
+                       Vector3d &end_point,
+                       double &step,
+                       Grid::Cell &first_cell) const;
+
  public:
   /*!
    * \brief Given a reservoir with blocks and a line (start_point

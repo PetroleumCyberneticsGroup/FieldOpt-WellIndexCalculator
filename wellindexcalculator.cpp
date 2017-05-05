@@ -2,6 +2,7 @@
    Copyright (C) 2015-2016 Hilmar M. Magnusson <hilmarmag@gmail.com>
    Modified by Einar J.M. Baumann (2016) <einar.baumann@gmail.com>
    Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
+   Modified by Einar J.M. Baumann (2017) <einar.baumann@gmail.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -37,12 +38,12 @@ WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid) {
 }
 
 map<string, vector<IntersectedCell>>
-WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells) 
-{	
+WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
+{
     map<string, vector<IntersectedCell>> well_indices;
-    
+
     // Perform well block search for each well
-    for (int iWell = 0; iWell < wells.size(); ++iWell) 
+    for (int iWell = 0; iWell < wells.size(); ++iWell)
     {
         // Compute an overall bounding box per well --> speed up cell searching
         double xi, yi, zi, xf, yf, zf;
@@ -90,7 +91,7 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
         }
 
         // For all intersected cells compute well transmissibility factor
-        for (int iCell = 0; iCell < intersected_cells.size(); ++iCell) 
+        for (int iCell = 0; iCell < intersected_cells.size(); ++iCell)
         {
             compute_well_index(intersected_cells, iCell);
         }
@@ -120,7 +121,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
 
     // Skip the segments that are outside the reservoir
     if (IsLineCompletelyOutsideBox(Vector3d(bb_xi, bb_yi, bb_zi), Vector3d(bb_xf, bb_yf, bb_zf),
-                   	  	  	  	  start_point, end_point))
+                                   start_point, end_point))
     {
         return;
     }
@@ -129,32 +130,14 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
     double epsilon = 0.01 / (end_point - start_point).norm();
     double step;
 
-    // \todo The following two while loops may be collected into
-    // a single function since they perform the same operation
-
     // Find the heel cell
     Grid::Cell first_cell;
     Vector3d org_start_point = start_point;
     step = 0;
 
-    while (true) {
-        try
-        {
-            first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
-            break;
-        } 
-        catch (const runtime_error& e)
-        {
-            step += epsilon;
-            start_point = org_start_point * (1 - step) + end_point * step;
-
-            // Check if we went too far
-            if (step > 1.0) 
-            {
-                // The entire segment is outside the grid;
-                return;
-            }
-        }
+    findNewEndpoint(bb_cells, epsilon, org_start_point, start_point, end_point, step, first_cell);
+    if (step > 1.0) {
+        return; // The entire segment was outside the grid
     }
 
     // Find the toe cell
@@ -162,30 +145,14 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
     Vector3d org_end_point = end_point;
     step = 0;
 
-    while (true) 
-    {
-        try
-        {
-            last_cell = grid_->GetCellEnvelopingPoint(end_point, bb_cells);
-            break;
-        }
-        catch (const runtime_error& e)
-        {
-            step += epsilon;
-            end_point = org_end_point*(1 - step) + start_point*step;
-
-            // Check if we went too far
-            if (step > 1.0)
-            {
-                // The entire segment is outside the grid;
-                return;
-            }
-        }
+    findNewEndpoint(bb_cells, epsilon, org_end_point, end_point, start_point, step, last_cell);
+    if (step > 1.0) {
+        return; // The entire segment was outside the grid
     }
 
     // If the first and last blocks are the same, return the block and start+end points
-    if (last_cell.global_index() == first_cell.global_index()) 
-    {   	
+    if (last_cell.global_index() == first_cell.global_index())
+    {
         // Get the index of the intersected cell that corresponds to the cell where
         // the first point resides (if this is not yet in the list it will be added)
         int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells,
@@ -242,7 +209,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
                 move_exit_epsilon = exit_point * (1 - step) + end_point * step;
 
                 // Check if we are not too far
-                if (step > 1.0) 
+                if (step > 1.0)
                 {
                     return;
                 }
@@ -273,6 +240,26 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
     }
 
     assert(intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index());
+}
+void WellIndexCalculator::findNewEndpoint(const vector<int> &bb_cells,
+                                          double epsilon,
+                                          const Vector3d &org_start_point,
+                                          Vector3d &start_point,
+                                          Vector3d &end_point,
+                                          double &step,
+                                          Grid::Cell &first_cell) const {
+    while (step <= 1) {
+        try
+        {
+            first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
+            break;
+        }
+        catch (const runtime_error& e)
+        {
+            step += epsilon;
+            start_point = org_start_point * (1 - step) + end_point * step;
+        }
+    }
 }
 
 Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, int cell_index,
@@ -324,7 +311,7 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
 //    return true;
 //}
 
-//bool WellIndexCalculator::InBox( Vector3d Hit, Vector3d B1, Vector3d B2, const int Axis) 
+//bool WellIndexCalculator::InBox( Vector3d Hit, Vector3d B1, Vector3d B2, const int Axis)
 //{
 //    if ( Axis==1 && Hit.z() > B1.z() && Hit.z() < B2.z() && Hit.y() > B1.y() && Hit.y() < B2.y()) return true;
 //    if ( Axis==2 && Hit.z() > B1.z() && Hit.z() < B2.z() && Hit.x() > B1.x() && Hit.x() < B2.x()) return true;
@@ -337,7 +324,7 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
 //// Returns intersection point in Hit
 //bool WellIndexCalculator::CheckLineBox( Vector3d B1, Vector3d B2,
 //                                        Vector3d L1, Vector3d L2,
-//                                        Vector3d &Hit) 
+//                                        Vector3d &Hit)
 //{
 //    if (L2.x() < B1.x() && L1.x() < B1.x()) return false;
 //    if (L2.x() > B2.x() && L1.x() > B2.x()) return false;
@@ -348,7 +335,7 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
 //
 //    if (L1.x() > B1.x() && L1.x() < B2.x() &&
 //        L1.y() > B1.y() && L1.y() < B2.y() &&
-//        L1.z() > B1.z() && L1.z() < B2.z()) 
+//        L1.z() > B1.z() && L1.z() < B2.z())
 //    {
 //        Hit = L1;
 //        return true;
@@ -367,7 +354,7 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
 //}
 
 
-bool WellIndexCalculator::IsLineCompletelyOutsideBox( Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2) 
+bool WellIndexCalculator::IsLineCompletelyOutsideBox( Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2)
 {
     if (L2.x() < B1.x() && L1.x() < B1.x()) return true;
     if (L2.x() > B2.x() && L1.x() > B2.x()) return true;
@@ -434,7 +421,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
     // Compute Well Index from formula provided by Shu for the
     // entire combined projections (this is the original formulation)
     icell.set_cell_well_index(sqrt(
-            well_index_x * well_index_x +
+        well_index_x * well_index_x +
             well_index_y * well_index_y +
             well_index_z * well_index_z));
 }
