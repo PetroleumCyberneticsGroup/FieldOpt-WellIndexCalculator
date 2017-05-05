@@ -86,6 +86,7 @@ class WellIndexCalculator {
    */
 
   Grid::Grid *grid_; //!< The grid used in the calculations.
+  double smallest_grid_cell_dimension_; //!< Smallest dimension of any grid cell. Used to calculate step lengths.
 
 //  /*!
 //   * \brief This should compute the point of intersection of one directional line with a box defined by its corners - Needs to be farther tested
@@ -119,20 +120,19 @@ class WellIndexCalculator {
 
   /*!
    * @brief Find a new endpoint (heel/toe) for a well if the old one is outside.
+   * @param step The final step length (fraction of the segment length). Will be > 1.0 at end if unsuccessful.
    * @param bb_cells Cellst to search through.
-   * @param epsilon Step length.
    * @param org_start_point Original start point.
    * @param start_point New start point.
    * @param end_point End point.
-   * @param step The final step length (fraction of the segment length). Will be > 1.0 at end if unsuccessful.
    * @param first_cell The first cell intersected by the segment.
+   * @return Returns true if the operation was succesful; otherwise false.
    */
-  void findNewEndpoint(const vector<int> &bb_cells,
-                       double epsilon,
+  bool findNewEndpoint(double &step,
+                       const vector<int> &bb_cells,
                        const Vector3d &org_start_point,
                        Vector3d &start_point,
                        Vector3d &end_point,
-                       double &step,
                        Grid::Cell &first_cell) const;
 
  public:

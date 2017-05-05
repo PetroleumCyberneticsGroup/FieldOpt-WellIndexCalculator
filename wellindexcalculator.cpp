@@ -35,6 +35,14 @@ namespace Reservoir {
 namespace WellIndexCalculation {
 WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid) {
     grid_ = grid;
+    auto smallest_cell = grid_->GetSmallestCell();
+    smallest_grid_cell_dimension_ = 1e7;
+    for (int i = 1; i < smallest_cell.corners().size(); ++i) {
+        double distance_between_corners = (smallest_cell.corners()[i-1] - smallest_cell.corners()[i]).norm();
+        if (distance_between_corners < smallest_grid_cell_dimension_) {
+            smallest_grid_cell_dimension_ = distance_between_corners;
+        }
+    }
 }
 
 map<string, vector<IntersectedCell>>
@@ -126,29 +134,21 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
         return;
     }
 
-    // Define increment along well segment line
-    double epsilon = 0.01 / (end_point - start_point).norm();
-    double step;
-
     // Find the heel cell
+    double step = 0.0;
     Grid::Cell first_cell;
     Vector3d org_start_point = start_point;
-    step = 0;
 
-    findNewEndpoint(bb_cells, epsilon, org_start_point, start_point, end_point, step, first_cell);
-    if (step > 1.0) {
-        return; // The entire segment was outside the grid
-    }
+    if (!findNewEndpoint(step, bb_cells, org_start_point, start_point, end_point, first_cell))
+        return;
 
     // Find the toe cell
+    step = 0.0;
     Grid::Cell last_cell;
     Vector3d org_end_point = end_point;
-    step = 0;
 
-    findNewEndpoint(bb_cells, epsilon, org_end_point, end_point, start_point, step, last_cell);
-    if (step > 1.0) {
-        return; // The entire segment was outside the grid
-    }
+    if (!findNewEndpoint(step, bb_cells, org_end_point, end_point, start_point, last_cell))
+        return;
 
     // If the first and last blocks are the same, return the block and start+end points
     if (last_cell.global_index() == first_cell.global_index())
@@ -184,8 +184,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
     // its increase, i.e., step += epsilon
 
     // Redefine increment step along well segment line
-    epsilon = 0.01 / (end_point - exit_point).norm();
-    step = 0;
+    double epsilon = 0.01 / (end_point - exit_point).norm();
+    step = 0.0;
 
     // Add previous exit point to list, find next exit point
     // and all other ones up to the end_point
@@ -197,24 +197,9 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
         // Find the next cell, but this might be inactive
         Grid::Cell new_cell;
         step = epsilon;
-        while (true) {
-            try
-            {
-                new_cell = grid_->GetCellEnvelopingPoint(move_exit_epsilon, bb_cells);
-                break;
-            }
-            catch( const runtime_error& e)
-            {
-                step += epsilon;
-                move_exit_epsilon = exit_point * (1 - step) + end_point * step;
+        if (!findNewEndpoint(step, bb_cells, exit_point, move_exit_epsilon, end_point, new_cell))
+            return;
 
-                // Check if we are not too far
-                if (step > 1.0)
-                {
-                    return;
-                }
-            }
-        }
         intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells,
                                                                           new_cell);
 
@@ -234,21 +219,18 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
         intersected_cells.at(intersected_cell_index).add_new_segment(entry_point, exit_point,
                                                                      wellbore_radius, skin_factor);
 
-        // \todo Test that cycling does not occur
-        // This should be removed
-        // assert(intersected_cells.size() < 500);
     }
 
     assert(intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index());
 }
-void WellIndexCalculator::findNewEndpoint(const vector<int> &bb_cells,
-                                          double epsilon,
+bool WellIndexCalculator::findNewEndpoint(double &step,
+                                          const vector<int> &bb_cells,
                                           const Vector3d &org_start_point,
                                           Vector3d &start_point,
                                           Vector3d &end_point,
-                                          double &step,
                                           Grid::Cell &first_cell) const {
-    while (step <= 1) {
+    double epsilon = 0.01 / (end_point - start_point).norm();
+    while (step <= 1.0) {
         try
         {
             first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
@@ -260,6 +242,7 @@ void WellIndexCalculator::findNewEndpoint(const vector<int> &bb_cells,
             start_point = org_start_point * (1 - step) + end_point * step;
         }
     }
+    return step < 1.0;
 }
 
 Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, int cell_index,
