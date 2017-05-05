@@ -166,4 +166,79 @@ TEST_F(IntersectedCellsTest, point_inside_cell_test) {
   EXPECT_FALSE(cell_60.EnvelopsPoint(point_0));
   EXPECT_TRUE(cell_1.EnvelopsPoint(point_2));
 }
+
+TEST_F(IntersectedCellsTest, ProblematicPathA) {
+
+  // Load grid and chose first cell (cell 1,1,1)
+  auto cell_0 = grid_->GetCell(0);
+  //auto ptr_cell_1 = &cell_1;
+  Eigen::Vector3d start_point = Eigen::Vector3d(290.0859, 1168.6483, 1711.5059);
+  Eigen::Vector3d end_point = Eigen::Vector3d(1113.9993,  107.1271, 1698.8978);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic_.ComputeWellBlocks(wells);
+}
+TEST_F(IntersectedCellsTest, ProblematicPathB) {
+
+  // Load grid and chose first cell (cell 1,1,1)
+  auto cell_0 = grid_->GetCell(0);
+  //auto ptr_cell_1 = &cell_1;
+  Eigen::Vector3d start_point = Eigen::Vector3d(-290.0859, 1168.6483, 1711.5059);
+  Eigen::Vector3d end_point = Eigen::Vector3d(1113.9993,  107.1271, 1698.8978);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic_.ComputeWellBlocks(wells);
+}
+TEST_F(IntersectedCellsTest, ProblematicPathC) {
+
+  // Load grid and chose first cell (cell 1,1,1)
+  auto cell_0 = grid_->GetCell(0);
+  //auto ptr_cell_1 = &cell_1;
+  Eigen::Vector3d start_point = Eigen::Vector3d(-213.3078, 1168.6483, 1711.5059);
+  Eigen::Vector3d end_point = Eigen::Vector3d(1107.0699, -430.7922, 1698.8978);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic_.ComputeWellBlocks(wells);
+}
+TEST_F(IntersectedCellsTest, ProblematicPathD) {
+
+  // Load grid and chose first cell (cell 1,1,1)
+  auto cell_0 = grid_->GetCell(0);
+  //auto ptr_cell_1 = &cell_1;
+  Eigen::Vector3d start_point = Eigen::Vector3d(213.3078, 1168.6483, 1711.5059);
+  Eigen::Vector3d end_point = Eigen::Vector3d(1107.0699,  430.7922, 1698.8978);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic_.ComputeWellBlocks(wells);
+}
+
+
 }
