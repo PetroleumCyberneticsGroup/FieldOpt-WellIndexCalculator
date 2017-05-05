@@ -184,6 +184,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
+  EXPECT_GT(cells.size(), 0);
 }
 TEST_F(IntersectedCellsTest, ProblematicPathB) {
 
@@ -202,6 +203,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathB) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
+  EXPECT_GT(cells.size(), 0);
 }
 TEST_F(IntersectedCellsTest, ProblematicPathC) {
 
@@ -220,6 +222,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathC) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
+  EXPECT_GT(cells.size(), 0);
 }
 TEST_F(IntersectedCellsTest, ProblematicPathD) {
 
@@ -238,6 +241,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathD) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
+  EXPECT_GT(cells.size(), 0);
 }
 
 

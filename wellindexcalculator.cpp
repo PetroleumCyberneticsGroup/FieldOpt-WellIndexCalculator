@@ -231,7 +231,8 @@ bool WellIndexCalculator::findNewEndpoint(double &step,
                                           Grid::Cell &first_cell) const {
     // First, traverse the segment until we're inside a cell.
     double orig_step = step;
-    double epsilon = smallest_grid_cell_dimension_ / 10.0;
+    // Set step size to half of the smallest dimension of the smallest grid block
+    double epsilon = smallest_grid_cell_dimension_ / (2.0 * (start_point-end_point).norm());
     while (step <= 1.0) {
         try
         {
@@ -249,8 +250,8 @@ bool WellIndexCalculator::findNewEndpoint(double &step,
     else if (step == orig_step)
         return true; // Return if we didn't have to move
 
-    // Then, traverse back until we're outside again, and use the last point inside the cell
-    epsilon = 0.01 / (end_point - start_point).norm();
+    // Then, traverse back with a smaller step size until we're outside again, and use the last point inside the cell
+    epsilon = epsilon / 10.0;
     while (true) {
         try
         {
