@@ -229,20 +229,41 @@ bool WellIndexCalculator::findNewEndpoint(double &step,
                                           Vector3d &start_point,
                                           Vector3d &end_point,
                                           Grid::Cell &first_cell) const {
-    double epsilon = 0.01 / (end_point - start_point).norm();
+    // First, traverse the segment until we're inside a cell.
+    double orig_step = step;
+    double epsilon = smallest_grid_cell_dimension_ / 10.0;
     while (step <= 1.0) {
         try
         {
             first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
             break;
         }
-        catch (const runtime_error& e)
+        catch (const runtime_error &e)
         {
             step += epsilon;
             start_point = org_start_point * (1 - step) + end_point * step;
         }
     }
-    return step < 1.0;
+    if (step > 1.0)
+        return false; // Return if we failed
+    else if (step == orig_step)
+        return true; // Return if we didn't have to move
+
+    // Then, traverse back until we're outside again, and use the last point inside the cell
+    epsilon = 0.01 / (end_point - start_point).norm();
+    while (true) {
+        try
+        {
+            step -= epsilon;
+            start_point = org_start_point * (1 - step) + end_point * step;
+            first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
+        }
+        catch (const runtime_error &e)
+        {
+            break;
+        }
+    }
+    return true;
 }
 
 Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, int cell_index,
