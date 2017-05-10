@@ -243,6 +243,32 @@ TEST_F(IntersectedCellsTest, ProblematicPathD) {
   auto cells = wic_.ComputeWellBlocks(wells);
   EXPECT_GT(cells.size(), 0);
 }
+TEST_F(IntersectedCellsTest, ProblematicNornePathA) {
+  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+  auto wic = WellIndexCalculator(grid);
 
+  Eigen::Vector3d start_point = Eigen::Vector3d(457518.693543, 7321524.904422, 2664.251818);
+  Eigen::Vector3d end_point = Eigen::Vector3d(458527.898804, 7321303.255945, 2674.991558);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(457695.839006, 7321303.496056, 2648.127423);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(458691.849848, 7321789.704993, 2687.949222);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(456020.932317, 7321189.825412, 2659.488457);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(458309.715382, 7321309.656581, 2649.867054);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(458589.704195, 7321218.390670, 2619.012866);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(456185.984986, 7322117.937520, 2691.531583);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells.size(), 0);
+}
 
 }
