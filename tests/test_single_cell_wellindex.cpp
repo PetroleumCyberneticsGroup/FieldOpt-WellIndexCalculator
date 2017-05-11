@@ -92,16 +92,16 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     wells.at(0).skins.push_back(skin_factor);
     wells.at(0).wellname = "testwell";
 
-    auto blocks = wic.ComputeWellBlocks(wells);   
+    auto blocks = wic.ComputeWellBlocks(wells);
     auto wblocks = blocks[wells.at(0).wellname];
-    EXPECT_GT(wblocks.size(), 0);  
+    EXPECT_GT(wblocks.size(), 0);
     double wi = wblocks[0].cell_well_index();
 
     // \todo The function cell_well_index() should deal with the case when
     // the number of well blocks is zero (which results in segfault), e.g.,
-    // throw an error 
-    // 
-    // Note: The error here comes from wblock[0] which does not exist... cell_well_index() 
+    // throw an error
+    //
+    // Note: The error here comes from wblock[0] which does not exist... cell_well_index()
     // cannot be called here if there is no block
 
     /* 0.555602 is the expected well transmisibility factor aka. well index.
@@ -174,6 +174,6 @@ TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
     wells.at(0).wellname = "testwell";
 
     auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
-    EXPECT_EQ(118, blocks.size());
+    EXPECT_EQ(117, blocks.size());
 }
 }

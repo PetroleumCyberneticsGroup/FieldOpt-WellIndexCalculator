@@ -184,7 +184,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
-  EXPECT_GT(cells.size(), 0);
+  EXPECT_GT(cells["testwell"].size(), 1);
 }
 TEST_F(IntersectedCellsTest, ProblematicPathB) {
 
@@ -203,7 +203,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathB) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
-  EXPECT_GT(cells.size(), 0);
+  EXPECT_GT(cells["testwell"].size(), 1);
 }
 TEST_F(IntersectedCellsTest, ProblematicPathC) {
 
@@ -222,7 +222,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathC) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
-  EXPECT_GT(cells.size(), 0);
+  EXPECT_GT(cells["testwell"].size(), 1);
 }
 TEST_F(IntersectedCellsTest, ProblematicPathD) {
 
@@ -241,15 +241,15 @@ TEST_F(IntersectedCellsTest, ProblematicPathD) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic_.ComputeWellBlocks(wells);
-  EXPECT_GT(cells.size(), 0);
+  EXPECT_GT(cells["testwell"].size(), 1);
 }
-TEST_F(IntersectedCellsTest, ProblematicNornePathA) {
+TEST_F(IntersectedCellsTest, ProblematicNornePaths) {
   auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
   auto wic = WellIndexCalculator(grid);
 
   Eigen::Vector3d start_point = Eigen::Vector3d(457518.693543, 7321524.904422, 2664.251818);
   Eigen::Vector3d end_point = Eigen::Vector3d(458527.898804, 7321303.255945, 2674.991558);
-//
+
 //  Eigen::Vector3d start_point = Eigen::Vector3d(457695.839006, 7321303.496056, 2648.127423);
 //  Eigen::Vector3d end_point = Eigen::Vector3d(458691.849848, 7321789.704993, 2687.949222);
 //
@@ -268,6 +268,7 @@ TEST_F(IntersectedCellsTest, ProblematicNornePathA) {
   wells.at(0).wellname = "testwell";
 
   auto cells = wic.ComputeWellBlocks(wells);
+  EXPECT_GT(cells["testwell"].size(), 2);
 //  EXPECT_GT(cells.size(), 0);
 }
 
