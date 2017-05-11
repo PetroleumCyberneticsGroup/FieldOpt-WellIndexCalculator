@@ -119,21 +119,17 @@ class WellIndexCalculator {
   bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
 
   /*!
-   * @brief Find a new endpoint (heel/toe) for a well if the old one is outside.
-   * @param step The final step length (fraction of the segment length). Will be > 1.0 at end if unsuccessful.
+   * @brief Find a new endpoint (heel/toe) for a well if necessary.
    * @param bb_cells Cellst to search through.
-   * @param org_start_point Original start point.
-   * @param start_point New start point.
+   * @param start_pt New start point.
    * @param end_point End point.
-   * @param first_cell The first cell intersected by the segment.
+   * @param cell The first cell intersected by the segment.
    * @return Returns true if the operation was succesful; otherwise false.
    */
-  bool findNewEndpoint(double &step,
-                       const vector<int> &bb_cells,
-                       const Vector3d &org_start_point,
-                       Vector3d &start_point,
-                       Vector3d &end_point,
-                       Grid::Cell &first_cell) const;
+  bool findEndpoint(const vector<int> &bb_cells,
+                    Vector3d &start_pt,
+                    Vector3d end_point,
+                    Grid::Cell &cell) const;
 
  public:
   /*!
@@ -160,9 +156,9 @@ class WellIndexCalculator {
    * leaves the previous cell) of the line segment inside each
    * cell.
    */
-  void collect_intersected_cells(vector<IntersectedCell> &intersected_cells,
-                                 Vector3d start_point, Vector3d end_point,
-                                 double wellbore_radius, double skin_factor,
+  void collect_intersected_cells(vector<IntersectedCell> &isc_cells,
+                                 Vector3d start_pt, Vector3d end_pt,
+                                 double wb_rad, double skin_fac,
                                  vector<int> bb_cells,
                                  double& bb_xi, double& bb_yi, double& bb_zi,
                                  double& bb_xf, double& bb_yf, double& bb_zf);

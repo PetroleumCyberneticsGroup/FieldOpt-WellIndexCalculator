@@ -78,7 +78,13 @@ class IntersectedCell : public Grid::Cell {
                                     double value);
   map<string, vector<double>>& get_calculation_data();
 
-  // This is a class method
+  /*!
+   * @brief Get the index of an intersected cell. If it is not found, the cell is added
+   * to the list before the new index is returned.
+   * @param cells The cell to find the index for.
+   * @param grdcell The list of cells to search through.
+   * @return The index of grdcell in cells.
+   */
   static int GetIntersectedCellIndex(vector<IntersectedCell> &cells,
                                      Grid::Cell grdcell);
 

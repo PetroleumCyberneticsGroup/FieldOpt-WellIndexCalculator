@@ -113,106 +113,92 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
 }
 
 
-void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &intersected_cells,
-                                                    Vector3d start_point, Vector3d end_point,
-                                                    double wellbore_radius, double skin_factor,
+void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc_cells,
+                                                    Vector3d start_pt, Vector3d end_pt,
+                                                    double wb_rad, double skin_fac,
                                                     vector<int> bb_cells,
                                                     double& bb_xi, double& bb_yi, double& bb_zi,
                                                     double& bb_xf, double& bb_yf, double& bb_zf)
 {
-    // If no cells are found in the bounding box it means
-    // this segment is completely out of the reservoir
-    if (bb_cells.size() == 0)
-    {
+    /* If no cells are found in the bounding box it means
+     * this segment is completely out of the reservoir.
+     * Additionally, we check if this particular segment
+     * is outside the reservoir. If either is true, we return.*/
+    bool well_is_outside = bb_cells.size() == 0;
+    bool segment_is_outside = IsLineCompletelyOutsideBox(Vector3d(bb_xi, bb_yi, bb_zi),
+                                                         Vector3d(bb_xf, bb_yf, bb_zf),
+                                                         start_pt, end_pt);
+    if (well_is_outside || segment_is_outside) {
+        cout << "Well or segment is outside the reservoir." << endl;
         return;
     }
 
-    // Skip the segments that are outside the reservoir
-    if (IsLineCompletelyOutsideBox(Vector3d(bb_xi, bb_yi, bb_zi), Vector3d(bb_xf, bb_yf, bb_zf),
-                                   start_point, end_point))
-    {
+    // Find the heel and toe cells. Return if it fails.
+    Grid::Cell first_cell, last_cell;
+    if (!findEndpoint(bb_cells, start_pt, end_pt, first_cell) ||
+        !findEndpoint(bb_cells, end_pt, start_pt, last_cell)) {
+        cout << "Failed to move well endpoints inside the reservoir." << endl;
         return;
     }
 
-    // Find the heel cell
-    double step = 0.0;
-    Grid::Cell first_cell;
-    Vector3d org_start_point = start_point;
-
-    if (!findNewEndpoint(step, bb_cells, org_start_point, start_point, end_point, first_cell))
-        return;
-
-    // Find the toe cell
-    step = 0.0;
-    Grid::Cell last_cell;
-    Vector3d org_end_point = end_point;
-
-    if (!findNewEndpoint(step, bb_cells, org_end_point, end_point, start_point, last_cell))
-        return;
-
-    // If the first and last blocks are the same, return the block and start+end points
+    /* If the first and last blocks are the same, return the block and start+end points */
     if (last_cell.global_index() == first_cell.global_index())
     {
-        // Get the index of the intersected cell that corresponds to the cell where
-        // the first point resides (if this is not yet in the list it will be added)
-        int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells,
-                                                                              first_cell);
-
-        intersected_cells.at(intersected_cell_index).add_new_segment(start_point, end_point,
-                                                                     wellbore_radius, skin_factor);
+        int isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, first_cell);
+        isc_cells.at(isc_cell_idx).add_new_segment(start_pt, end_pt, wb_rad, skin_fac);
         return;
     }
 
     // First cell
-    double epsilon = smallest_grid_cell_dimension_ / (50.0 * (start_point-end_point).norm());
-    Vector3d entry_point = start_point;
-    step = 0.0;
-    auto previous_cell = first_cell;
+    double epsilon = smallest_grid_cell_dimension_ / (50.0 * (start_pt-end_pt).norm());
+    Vector3d entry_pt = start_pt;
+    double step = 0.0;
+    auto prev_cell = first_cell;
 
-    // Get the index of the intersected cell that corresponds to the cell where
-    // the first point resides (if this is not yet in the list it will be added)
-    int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells,
-                                                                          first_cell);
+    int isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, first_cell);
 
     // Make sure we follow line in the correct direction. (i.e. dot product positive)
-    Vector3d exit_point = find_exit_point(intersected_cells, intersected_cell_index,
-                                          start_point, end_point, start_point);
+    Vector3d exit_pt = find_exit_point(isc_cells, isc_cell_idx,
+                                       start_pt, end_pt, start_pt);
 
-    if ((end_point - start_point).dot(exit_point - start_point) <= 0.0) {
-        exit_point = find_exit_point(intersected_cells, intersected_cell_index,
-                                     start_point, end_point, exit_point);
+    if ((end_pt - start_pt).dot(exit_pt - start_pt) <= 0.0) {
+        cout << endl << endl << "OH SHIT WHADDUP" << endl << endl;
+        exit_pt = find_exit_point(isc_cells, isc_cell_idx,
+                                  start_pt, end_pt, exit_pt);
     }
 
-    intersected_cells.at(intersected_cell_index).add_new_segment(start_point, exit_point,
-                                                                 wellbore_radius, skin_factor);
+    isc_cells.at(isc_cell_idx).add_new_segment(start_pt, exit_pt, wb_rad, skin_fac);
 
     // remaining cells
     while (step <= 1.0)
     {
         // Move into the next cell, add it to the list and set the entry point
-        step = (exit_point - start_point).norm() / (end_point - start_point).norm();
+        step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
         Reservoir::Grid::Cell new_cell;
         do {
             step += epsilon;
-            entry_point = start_point + step * (end_point - start_point);
+            entry_pt = start_pt + step * (end_pt - start_pt);
             try {
-                new_cell = grid_->GetCellEnvelopingPoint(entry_point, bb_cells);
+                new_cell = grid_->GetCellEnvelopingPoint(entry_pt, bb_cells);
             }
             catch (const runtime_error &e) {
                 continue;
             }
-        } while ((new_cell.global_index() == previous_cell.global_index() || new_cell.is_active() == false) && step <= 1.0);
-        intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells, new_cell);
-        if (new_cell.global_index() != previous_cell.global_index() && step <= 1.0) {
-            exit_point = find_exit_point(intersected_cells, intersected_cell_index, entry_point, end_point, exit_point);
-            intersected_cells.at(intersected_cell_index).add_new_segment(entry_point, exit_point, wellbore_radius, skin_factor);
-            previous_cell = new_cell;
+        } while ((new_cell.global_index() == prev_cell.global_index() || !new_cell.is_active()) && step <= 1.0);
+
+        isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, new_cell);
+
+        if (new_cell.global_index() != prev_cell.global_index() && step <= 1.0) {
+            exit_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, end_pt, exit_pt);
+            isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
+            prev_cell = new_cell;
         }
         else if (step > 1.0) { // We've already found the last cell; return.
-            intersected_cells.at(intersected_cell_index).add_new_segment(entry_point, end_point, wellbore_radius, skin_factor);
+            isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
+            assert(isc_cells.at(isc_cell_idx).global_index() == last_cell.global_index());
             return;
         }
-        else if (new_cell.global_index() == previous_cell.global_index()) { // Did not find a new cell
+        else if (new_cell.global_index() == prev_cell.global_index()) { // Did not find a new cell
             /* Either we're still inside the old one, or we've
              * stepped into an inactive cell. Step further. */
             continue;
@@ -222,44 +208,42 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
         }
     }
 
-    assert(intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index());
 }
-bool WellIndexCalculator::findNewEndpoint(double &step,
-                                          const vector<int> &bb_cells,
-                                          const Vector3d &org_start_point,
-                                          Vector3d &start_point,
-                                          Vector3d &end_point,
-                                          Grid::Cell &first_cell) const {
+bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
+                                       Vector3d &start_pt,
+                                       Vector3d end_point,
+                                       Grid::Cell &cell) const {
     // First, traverse the segment until we're inside a cell.
-    double orig_step = step;
+    double step = 0.0;
+    Vector3d org_start_pt = start_pt;
     // Set step size to half of the smallest dimension of the smallest grid block
-    double epsilon = smallest_grid_cell_dimension_ / (2.0 * (start_point-end_point).norm());
+    double epsilon = smallest_grid_cell_dimension_ / (2.0 * (start_pt-end_point).norm());
     while (step <= 1.0) {
         try
         {
-            first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
+            cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
             break;
         }
         catch (const runtime_error &e)
         {
             step += epsilon;
-            start_point = org_start_point * (1 - step) + end_point * step;
+            start_pt = org_start_pt * (1 - step) + end_point * step;
         }
     }
     if (step > 1.0)
-        return false; // Return if we failed
-    else if (step == orig_step) {
+        return false; // Return if we failed to step into the reservoir
+    else if (step == 0.0) {
         return true; // Return if we didn't have to move
     }
 
-    // Then, traverse back with a smaller step size until we're outside again, and use the last point inside the cell
+    // Then, traverse back with a smaller step size until we're outside again.
     epsilon = epsilon / 10.0;
     while (true) {
         try
         {
             step -= epsilon;
-            start_point = org_start_point * (1 - step) + end_point * step;
-            first_cell = grid_->GetCellEnvelopingPoint(start_point, bb_cells);
+            start_pt = org_start_pt * (1 - step) + end_point * step;
+            cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
         }
         catch (const runtime_error &e)
         {
