@@ -163,6 +163,12 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
         return;
     }
 
+    // First cell
+    double epsilon = smallest_grid_cell_dimension_ / (50.0 * (start_point-end_point).norm());
+    Vector3d entry_point = start_point;
+    step = 0.0;
+    auto previous_cell = first_cell;
+
     // Get the index of the intersected cell that corresponds to the cell where
     // the first point resides (if this is not yet in the list it will be added)
     int intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells,
@@ -180,45 +186,40 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &int
     intersected_cells.at(intersected_cell_index).add_new_segment(start_point, exit_point,
                                                                  wellbore_radius, skin_factor);
 
-    // \todo Make detailed description of increment step routine, and
-    // its increase, i.e., step += epsilon
-
-    // Redefine increment step along well segment line
-    double epsilon = 0.01 / (end_point - exit_point).norm();
-    step = 0.0;
-
-    // Add previous exit point to list, find next exit point
-    // and all other ones up to the end_point
-    while (true)
+    // remaining cells
+    while (step <= 1.0)
     {
         // Move into the next cell, add it to the list and set the entry point
-        Vector3d move_exit_epsilon = exit_point * (1 - epsilon) + end_point * epsilon;
-
-        // Find the next cell, but this might be inactive
-        Grid::Cell new_cell;
-        step = epsilon;
-        if (!findNewEndpoint(step, bb_cells, exit_point, move_exit_epsilon, end_point, new_cell))
-            return;
-
-        intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells,
-                                                                          new_cell);
-
-        // Stop if we're in the last cell
-        if (intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index()) {
-            // The entry point of each cell is the exit point of the previous cell
-            intersected_cells.at(intersected_cell_index).add_new_segment(exit_point, end_point,
-                                                                         wellbore_radius, skin_factor);
-            break;
+        step = (exit_point - start_point).norm() / (end_point - start_point).norm();
+        Reservoir::Grid::Cell new_cell;
+        do {
+            step += epsilon;
+            entry_point = start_point + step * (end_point - start_point);
+            try {
+                new_cell = grid_->GetCellEnvelopingPoint(entry_point, bb_cells);
+            }
+            catch (const runtime_error &e) {
+                continue;
+            }
+        } while ((new_cell.global_index() == previous_cell.global_index() || new_cell.is_active() == false) && step <= 1.0);
+        intersected_cell_index = IntersectedCell::GetIntersectedCellIndex(intersected_cells, new_cell);
+        if (new_cell.global_index() != previous_cell.global_index() && step <= 1.0) {
+            exit_point = find_exit_point(intersected_cells, intersected_cell_index, entry_point, end_point, exit_point);
+            intersected_cells.at(intersected_cell_index).add_new_segment(entry_point, exit_point, wellbore_radius, skin_factor);
+            previous_cell = new_cell;
         }
-
-        // Find the exit point of the cell and set it in the list
-        Vector3d entry_point = exit_point;
-        exit_point = find_exit_point(intersected_cells, intersected_cell_index,
-                                     entry_point, end_point, exit_point);
-
-        intersected_cells.at(intersected_cell_index).add_new_segment(entry_point, exit_point,
-                                                                     wellbore_radius, skin_factor);
-
+        else if (step > 1.0) { // We've already found the last cell; return.
+            intersected_cells.at(intersected_cell_index).add_new_segment(entry_point, end_point, wellbore_radius, skin_factor);
+            return;
+        }
+        else if (new_cell.global_index() == previous_cell.global_index()) { // Did not find a new cell
+            /* Either we're still inside the old one, or we've
+             * stepped into an inactive cell. Step further. */
+            continue;
+        }
+        else { // We should never end up here.
+            throw runtime_error("Something unexpected happened when trying to find the next intersected cell.");
+        }
     }
 
     assert(intersected_cells.at(intersected_cell_index).global_index() == last_cell.global_index());
@@ -247,8 +248,9 @@ bool WellIndexCalculator::findNewEndpoint(double &step,
     }
     if (step > 1.0)
         return false; // Return if we failed
-    else if (step == orig_step)
+    else if (step == orig_step) {
         return true; // Return if we didn't have to move
+    }
 
     // Then, traverse back with a smaller step size until we're outside again, and use the last point inside the cell
     epsilon = epsilon / 10.0;
