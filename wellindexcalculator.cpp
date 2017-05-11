@@ -162,7 +162,6 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
                                        start_pt, end_pt, start_pt);
 
     if ((end_pt - start_pt).dot(exit_pt - start_pt) <= 0.0) {
-        cout << endl << endl << "OH SHIT WHADDUP" << endl << endl;
         exit_pt = find_exit_point(isc_cells, isc_cell_idx,
                                   start_pt, end_pt, exit_pt);
     }
