@@ -333,5 +333,23 @@ TEST_F(IntersectedCellsTest, ProblematicNornePathE) {
   auto cells = wic.ComputeWellBlocks(wells);
   EXPECT_GT(cells["testwell"].size(), 2);
 }
+TEST_F(IntersectedCellsTest, ProblematicNornePathF) {
+  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+  auto wic = WellIndexCalculator(grid);
+
+  Eigen::Vector3d start_point = Eigen::Vector3d(457557.48809118319, 7321482.4243003726, 2678.7179379941103);
+  Eigen::Vector3d end_point = Eigen::Vector3d(457783.4811529119, 7321171.8443912724, 2670.7274579296886);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic.ComputeWellBlocks(wells);
+  EXPECT_GT(cells["testwell"].size(), 2);
+}
 
 }
