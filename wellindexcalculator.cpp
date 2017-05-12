@@ -190,12 +190,13 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
         isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, new_cell);
 
-        if (new_cell.global_index() != prev_cell.global_index() && step <= 1.0) {
+        if (new_cell.global_index() != prev_cell.global_index() && step <= 1.0
+            && new_cell.global_index() != last_cell.global_index()) {
             exit_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, end_pt, exit_pt);
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
             prev_cell = new_cell;
         }
-        else if (step > 1.0) { // We've already found the last cell; return.
+        else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) { // We've already found the last cell; return.
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
             assert(isc_cells.at(isc_cell_idx).global_index() == last_cell.global_index());
             return;
