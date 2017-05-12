@@ -231,6 +231,37 @@ class WellIndexCalculator {
    */
   double dir_wellblock_radius(double dx, double dy,
                               double kx, double ky);
+
+  /*!
+   * @brief Check whether adding a cell to the list will introduce a cycle.
+   * @param cells The list of intersected cells to look through.
+   * @param grdcell The new cell to check.
+   * @return True if adding grdcell will introduce a cycle; otherwise false.
+   */
+  bool introduces_cycle(vector<IntersectedCell> cells, Grid::Cell grdcell);
+
+  /*!
+   * @brief Recover from a cycle by traversing through the previous cell,
+   * finding a new exit point, and taking a last step into the next cell,
+   * finding it and its entry point.
+   * @param prev_cell The previous cell found (that didnt introduce a cycle).
+   * @param next_cell The next cell (the one that introduces a cycle).
+   * @param bb_cells
+   * @param entry_pt Entry point for the new cell will be set here.
+   * @param exit_pt Exit point for the new cell will be set here.
+   * @param start_pt The start point (heel) of the well segment.
+   * @param end_pt The end point (toe) of the well segment.
+   * @param step The current step.
+   * @param epsilon Step increase.
+   */
+  void recover_from_cycle(IntersectedCell &prev_cell,
+                          Grid::Cell & next_cell,
+                          vector<int> bb_cells,
+                          Vector3d &entry_pt,
+                          Vector3d &exit_pt,
+                          Vector3d start_pt,
+                          Vector3d end_pt,
+                          double &step, double epsilon);
 };
 }
 }

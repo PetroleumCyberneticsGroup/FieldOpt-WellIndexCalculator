@@ -70,6 +70,8 @@ class IntersectedCell : public Grid::Cell {
   double get_segment_radius(int segment_index) const;
   double get_segment_skin(int segment_index) const;
 
+  void update_last_segment_exit_point(Vector3d exit_point);
+
   double cell_well_index() const;
   void set_cell_well_index(double well_index);
 

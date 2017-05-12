@@ -71,6 +71,10 @@ double IntersectedCell::get_segment_skin(int segment_index) const {
     return segment_skin_[segment_index];
 }
 
+void IntersectedCell::update_last_segment_exit_point(Vector3d exit_point) {
+    exit_points_[exit_points_.size()-1] = exit_point;
+}
+
 int IntersectedCell::num_segments() const{
     return entry_points_.size();
 }
