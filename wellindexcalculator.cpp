@@ -198,7 +198,10 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
         }
         else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) { // We've already found the last cell; return.
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
-            assert(isc_cells.at(isc_cell_idx).global_index() == last_cell.global_index());
+            if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index()) {
+                cout << "WARNING: Expected last cell does not match found last cell. Returning empty list." << endl;
+                isc_cells.clear();
+            }
             return;
         }
         else if (new_cell.global_index() == prev_cell.global_index()) { // Did not find a new cell
