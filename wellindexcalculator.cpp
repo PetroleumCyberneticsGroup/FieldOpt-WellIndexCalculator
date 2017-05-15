@@ -150,7 +150,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     }
 
     // First cell
-    double epsilon = smallest_grid_cell_dimension_ / (50.0 * (start_pt-end_pt).norm());
+    double epsilon = smallest_grid_cell_dimension_ / (100.0 * (start_pt-end_pt).norm());
     Vector3d entry_pt = start_pt;
     double step = 0.0;
     auto prev_cell = first_cell;
@@ -245,7 +245,7 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
             cout << "Something unexpected occured when recovering from cycle (finding next cell)." << endl;
             throw runtime_error("Error recovering from cycle in WIC.");
         }
-    } while (next_cell.global_index() == prev_cell.global_index() && step <= 1.0);
+    } while ((next_cell.global_index() == prev_cell.global_index() || !next_cell.is_active()) && step <= 1.0);
 
     /* Update the exit point in the previous cell. */
     prev_cell.update_last_segment_exit_point(prev_exit_point);
@@ -266,6 +266,8 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
         try
         {
             cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
+            if (!cell.is_active())
+                throw runtime_error("The cell is inactive.");
             break;
         }
         catch (const runtime_error &e)
@@ -288,6 +290,8 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
             step -= epsilon;
             start_pt = org_start_pt * (1 - step) + end_point * step;
             cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
+            if (!cell.is_active())
+                throw runtime_error("The cell is inactive.");
         }
         catch (const runtime_error &e)
         {
