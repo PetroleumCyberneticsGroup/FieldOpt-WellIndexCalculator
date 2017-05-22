@@ -36,23 +36,27 @@ class DeviatedWellIndexTest : public ::testing::Test {
 
  protected:
   DeviatedWellIndexTest() {
-      grid_ = new ECLGrid(file_path_.toStdString());
+//      grid_5spot_ = new ECLGrid(grid_file_5spot.toStdString());
+//      grid_norne_ = new ECLGrid(grid_file_norne.toStdString());
       well_dir_ = new WellDir();
   }
 
   virtual ~DeviatedWellIndexTest() {
-      delete grid_;
+//      delete grid_5spot_;
+//      delete grid_norne_;
   }
 
-  Grid *grid_;
+//  Grid *grid_5spot_;
+//  Grid *grid_norne_;
   WellDir *well_dir_;
-  QString file_path_ = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
-  bool debug_ = false;
+  QString grid_file_5spot = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
+  QString grid_file_norne = "../examples/Flow/norne/OUTPUT/NORNE_ATW2013.EGRID";
+  bool debug_ = true;
 };
 
-TEST_F(DeviatedWellIndexTest, test) {
-
-}
+//TEST_F(DeviatedWellIndexTest, test) {
+//
+//}
 
 TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
 
@@ -75,10 +79,9 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     WIData WIDataRMS, WIDataPCG;
     WIDataRMS.data_tag = "RMS";
     WIDataPCG.data_tag = "PCG";
-    WIDataPCG.grid_file = file_path_;
 
     // DEBUG
-    debug_msg(false, "well_dir_list", dir_names_,
+    debug_msg(true, "well_dir_list", dir_names_,
               dir_list_, 0, WIDataRMS, WIDataPCG, 0);
 
     // LOOP THROUGH LIST OF WELL FOLDERS: FOR WELL
@@ -89,7 +92,7 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
 
     for (int ii = 0; ii < num_files; ++ii) {
 
-        // USE COMPDAT DATA PRODUCED BY BENCHMARK PROGRAM
+        // USE COMPDAT DATA (RMS) PRODUCED BY BENCHMARK PROGRAM
         WIDataRMS.ReadCOMPDAT(rms_files[ii], dir_list_[ii]);
 
         // UNCOMMENT IF READING PCG COMPDAT TABLE FROM BENCHMARK PROGRAM
@@ -98,11 +101,25 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         // WIDataPCG.PrintIJKData(dir_list_[ii] + "/DBG_" + dir_names_[ii] + "_PCG.IJK");
         // WIDataPCG.PrintWCFData(dir_list_[ii] + "/DBG_" + dir_names_[ii] + "_PCG.WCF");
 
+        std::cout << "Dir name: " << dir_names_[ii].at(0).toLatin1() << std::endl;
+
+        // DECIDE ON WHICH GRID FILE TO USE (5SPOT OR NORNE)
+        if( QString::compare(dir_names_[ii].at(0), "n", Qt::CaseSensitive) == 0 ) {
+            WIDataPCG.grid_file = grid_file_norne;
+        }
+        else if( QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0 ) {
+            WIDataPCG.grid_file = grid_file_5spot;
+        }
+        std::cout << "Grid file used:" << WIDataPCG.grid_file.toStdString() << std::endl;
+
         // MAKE NEW COMPDAT DATA USING PRECOMPILED WellIndexCalculator
         WIDataRMS.ReadXYZ(dir_list_[ii] + "/" + dir_names_[ii]);
         WIDataPCG.ReadXYZ(dir_list_[ii] + "/" + dir_names_[ii]);
         WIDataPCG.CalculateWCF(dir_list_[ii] + "/" + dir_names_[ii]);
-        WIDataPCG.PrintCOMPDATPlot(dir_list_[ii] + "/" + dir_names_[ii]);
+
+        if( QString::compare(dir_names_[ii], "t", Qt::CaseSensitive) == 0 ) {
+            WIDataPCG.PrintCOMPDATPlot(dir_list_[ii] + "/" + dir_names_[ii]);
+        }
 
         // USE DATA COMPUTED USING WellIndexCalculator INSTEAD OF OLD DATA
         WIDataPCG.IJK = WIDataPCG.IJKN;

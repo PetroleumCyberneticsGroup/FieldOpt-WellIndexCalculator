@@ -50,7 +50,7 @@ class WellDir {
  private:
   // Variables: folder path
   QString well_data_dir_ = "../wic-benchmark-wells";
-  bool debug_ = false;
+  bool debug_ = true;
 };
 
 
@@ -59,6 +59,10 @@ QList<QStringList> WellDir::GetWellDir() {
     // Check directory exists
     if (!Utilities::FileHandling::DirectoryExists(well_data_dir_))
         throw std::runtime_error("Well dir " + well_data_dir_.toStdString() + " not found.");
+
+    std::cout << "TEST!!!!" << std::endl;
+
+
 
     // Make list of well dirs
     QList<QStringList> dir_list_ = MakeDirList(well_data_dir_);
@@ -73,7 +77,7 @@ QList<QStringList> WellDir::GetWellDir() {
     well_list_.append(AddFilesToList(dir_list_[1], QString("*PCG.DATA")));
 
     // Debug: check lists are OK
-    if (debug_){
+//    if (true){
         std::cout << "\033[1;31m<DEBUG:START->\033[0m" << std::endl;
         std::cout << "well_data_path_: " << well_data_dir_.toStdString() << std::endl;
         std::cout << "size of well_list_: " << well_list_.size() << std::endl;
@@ -90,7 +94,7 @@ QList<QStringList> WellDir::GetWellDir() {
         temp_str = "pcg_list";
         printWellDirList(temp, temp_str);
         std::cout << "\033[1;31m<DEBUG:END--->\033[0m" << std::endl;
-    }
+//    }
 
     return well_list_;
 }
@@ -99,7 +103,7 @@ QList<QStringList> WellDir::MakeDirList(QString data_dir){
     // Make list of well dirs:
     QDir dir(data_dir);
     dir.setSorting(QDir::Name);
-    dir.setNameFilters(QStringList()<<"tw*");
+    dir.setNameFilters(QStringList()<<"*w0*_*");
     QList<QStringList> dir_list_;
     QStringList dir_list_abs_;
 
@@ -138,12 +142,14 @@ QStringList WellDir::AddFilesToList(QStringList temp_dir, QString ext){
 
             // Check if more than one file
             if (file_name_.length()>1)
-                throw std::runtime_error("Too many " + ext.toStdString() + " files in well folder!");
+                throw std::runtime_error("Too many " + ext.toStdString()
+                                             + " files in well folder!");
 
             // Check if no files
             QString file_str_;
             if (file_name_.length()<1){
-                // throw std::runtime_error("No " + ext.toStdString() + " file in well folder!");
+                // throw std::runtime_error("No " + ext.toStdString()
+                // + " file in well folder!");
                 file_str_ = "none";
             }else{
                 file_str_ = dir_name_ + "/" + file_name_[0];
