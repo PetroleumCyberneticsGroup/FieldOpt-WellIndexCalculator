@@ -70,6 +70,7 @@ class WIData {
   QString tex_file;
   QString well_name = "TW01";
   QString radius = QString::number(0.1905/2);
+  QString skin_factor = QString::number(0.0);
 
   bool debug_ = false;
 
@@ -102,7 +103,9 @@ void WIData::CalculateWCF(QString file_root){
         + grid_file
         + " --heel " + XYZh
         + " --toe " + XYZt
-        + " --radius " + radius;
+        + " --radius " + radius
+        + " --skin-factor " + skin_factor
+        + " --well-name " + well_name;
 
     // LAUNCH WELL INDEX CALCULATOR (CSV FORMAT)
     QProcess wic_process_csv;
@@ -123,8 +126,9 @@ void WIData::CalculateWCF(QString file_root){
         + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
         + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
         + " --radius " + radius
+        + " --skin-factor " + skin_factor
         + " --compdat "
-        + " --well " + well_name;
+        + " --well-name " + well_name;
 
     if (debug_){
         std::cout << "\033[1;31m<DEBUG:START->\033[0m" << std::endl;

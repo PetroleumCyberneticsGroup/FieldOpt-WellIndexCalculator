@@ -166,4 +166,209 @@ TEST_F(IntersectedCellsTest, point_inside_cell_test) {
   EXPECT_FALSE(cell_60.EnvelopsPoint(point_0));
   EXPECT_TRUE(cell_1.EnvelopsPoint(point_2));
 }
+
+TEST_F(IntersectedCellsTest, ProblematicPathA) {
+
+  // Load grid and chose first cell (cell 1,1,1)
+  auto cell_0 = grid_->GetCell(0);
+  //auto ptr_cell_1 = &cell_1;
+  Eigen::Vector3d start_point = Eigen::Vector3d(290.0859, 1168.6483, 1711.5059);
+  Eigen::Vector3d end_point = Eigen::Vector3d(1113.9993,  107.1271, 1698.8978);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic_.ComputeWellBlocks(wells);
+  EXPECT_GT(cells["testwell"].size(), 1);
+}
+//TEST_F(IntersectedCellsTest, ProblematicPathB) {
+//
+//  // Load grid and chose first cell (cell 1,1,1)
+//  auto cell_0 = grid_->GetCell(0);
+//  //auto ptr_cell_1 = &cell_1;
+//  Eigen::Vector3d start_point = Eigen::Vector3d(-290.0859, 1168.6483, 1711.5059);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(1113.9993,  107.1271, 1698.8978);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic_.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 1);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicPathC) {
+//
+//  // Load grid and chose first cell (cell 1,1,1)
+//  auto cell_0 = grid_->GetCell(0);
+//  //auto ptr_cell_1 = &cell_1;
+//  Eigen::Vector3d start_point = Eigen::Vector3d(-213.3078, 1168.6483, 1711.5059);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(1107.0699, -430.7922, 1698.8978);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic_.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 1);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicPathD) {
+//
+//  // Load grid and chose first cell (cell 1,1,1)
+//  auto cell_0 = grid_->GetCell(0);
+//  //auto ptr_cell_1 = &cell_1;
+//  Eigen::Vector3d start_point = Eigen::Vector3d(213.3078, 1168.6483, 1711.5059);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(1107.0699,  430.7922, 1698.8978);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic_.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 1);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicNornePathA) {
+//  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+//  auto wic = WellIndexCalculator(grid);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(457518.693543, 7321524.904422, 2664.251818);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(458527.898804, 7321303.255945, 2674.991558);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 2);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicNornePathB) {
+//  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+//  auto wic = WellIndexCalculator(grid);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(457695.839006, 7321303.496056, 2648.127423);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(458691.849848, 7321789.704993, 2687.949222);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 2);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicNornePathC) {
+//  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+//  auto wic = WellIndexCalculator(grid);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(456020.932317, 7321189.825412, 2659.488457);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(458309.715382, 7321309.656581, 2649.867054);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 2);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicNornePathD) {
+//  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+//  auto wic = WellIndexCalculator(grid);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(458589.704195, 7321218.390670, 2619.012866);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(456185.984986, 7322117.937520, 2691.531583);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 2);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicNornePathE) {
+//  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+//  auto wic = WellIndexCalculator(grid);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(457916.07625384547, 7321300.9202301782, 2647.4969520910727);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(458726.16052064049, 7322019.2765819589, 2668.4723783396412);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 2);
+//}
+//TEST_F(IntersectedCellsTest, ProblematicNornePathF) {
+//  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+//  auto wic = WellIndexCalculator(grid);
+//
+//  Eigen::Vector3d start_point = Eigen::Vector3d(457557.48809118319, 7321482.4243003726, 2678.7179379941103);
+//  Eigen::Vector3d end_point = Eigen::Vector3d(457783.4811529119, 7321171.8443912724, 2670.7274579296886);
+//
+//  vector<WellDefinition> wells;
+//  wells.push_back(WellDefinition());
+//  wells.at(0).heels.push_back(start_point);
+//  wells.at(0).toes.push_back(end_point);
+//  wells.at(0).radii.push_back(0.190);
+//  wells.at(0).skins.push_back(0.0);
+//  wells.at(0).wellname = "testwell";
+//
+//  auto cells = wic.ComputeWellBlocks(wells);
+//  EXPECT_GT(cells["testwell"].size(), 2);
+//}
+
+TEST_F(IntersectedCellsTest, ProblematicNornePathG) {
+  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
+  auto wic = WellIndexCalculator(grid);
+
+  Eigen::Vector3d start_point = Eigen::Vector3d(457271.40395813627, 7321296.3664021967, 2612.345947265625);
+  Eigen::Vector3d end_point = Eigen::Vector3d(458760.19236537709, 7321748.8851311458, 2646.4210547072985);
+
+  vector<WellDefinition> wells;
+  wells.push_back(WellDefinition());
+  wells.at(0).heels.push_back(start_point);
+  wells.at(0).toes.push_back(end_point);
+  wells.at(0).radii.push_back(0.190);
+  wells.at(0).skins.push_back(0.0);
+  wells.at(0).wellname = "testwell";
+
+  auto cells = wic.ComputeWellBlocks(wells);
+  EXPECT_GT(cells["testwell"].size(), 2);
+}
+
 }

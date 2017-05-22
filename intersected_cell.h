@@ -70,6 +70,8 @@ class IntersectedCell : public Grid::Cell {
   double get_segment_radius(int segment_index) const;
   double get_segment_skin(int segment_index) const;
 
+  void update_last_segment_exit_point(Vector3d exit_point);
+
   double cell_well_index() const;
   void set_cell_well_index(double well_index);
 
@@ -78,7 +80,13 @@ class IntersectedCell : public Grid::Cell {
                                     double value);
   map<string, vector<double>>& get_calculation_data();
 
-  // This is a class method
+  /*!
+   * @brief Get the index of an intersected cell. If it is not found, the cell is added
+   * to the list before the new index is returned.
+   * @param cells The cell to find the index for.
+   * @param grdcell The list of cells to search through.
+   * @return The index of grdcell in cells.
+   */
   static int GetIntersectedCellIndex(vector<IntersectedCell> &cells,
                                      Grid::Cell grdcell);
 

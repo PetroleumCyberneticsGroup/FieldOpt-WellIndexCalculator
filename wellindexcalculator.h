@@ -86,6 +86,7 @@ class WellIndexCalculator {
    */
 
   Grid::Grid *grid_; //!< The grid used in the calculations.
+  double smallest_grid_cell_dimension_; //!< Smallest dimension of any grid cell. Used to calculate step lengths.
 
 //  /*!
 //   * \brief This should compute the point of intersection of one directional line with a box defined by its corners - Needs to be farther tested
@@ -116,7 +117,20 @@ class WellIndexCalculator {
    * \brief returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
    */
   bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
-  
+
+  /*!
+   * @brief Find a new endpoint (heel/toe) for a well if necessary.
+   * @param bb_cells Cellst to search through.
+   * @param start_pt New start point.
+   * @param end_point End point.
+   * @param cell The first cell intersected by the segment.
+   * @return Returns true if the operation was succesful; otherwise false.
+   */
+  bool findEndpoint(const vector<int> &bb_cells,
+                    Vector3d &start_pt,
+                    Vector3d end_point,
+                    Grid::Cell &cell) const;
+
  public:
   /*!
    * \brief Given a reservoir with blocks and a line (start_point
@@ -142,9 +156,9 @@ class WellIndexCalculator {
    * leaves the previous cell) of the line segment inside each
    * cell.
    */
-  void collect_intersected_cells(vector<IntersectedCell> &intersected_cells,
-                                 Vector3d start_point, Vector3d end_point,
-                                 double wellbore_radius, double skin_factor,
+  void collect_intersected_cells(vector<IntersectedCell> &isc_cells,
+                                 Vector3d start_pt, Vector3d end_pt,
+                                 double wb_rad, double skin_fac,
                                  vector<int> bb_cells,
                                  double& bb_xi, double& bb_yi, double& bb_zi,
                                  double& bb_xf, double& bb_yf, double& bb_zf);
@@ -217,6 +231,37 @@ class WellIndexCalculator {
    */
   double dir_wellblock_radius(double dx, double dy,
                               double kx, double ky);
+
+  /*!
+   * @brief Check whether adding a cell to the list will introduce a cycle.
+   * @param cells The list of intersected cells to look through.
+   * @param grdcell The new cell to check.
+   * @return True if adding grdcell will introduce a cycle; otherwise false.
+   */
+  bool introduces_cycle(vector<IntersectedCell> cells, Grid::Cell grdcell);
+
+  /*!
+   * @brief Recover from a cycle by traversing through the previous cell,
+   * finding a new exit point, and taking a last step into the next cell,
+   * finding it and its entry point.
+   * @param prev_cell The previous cell found (that didnt introduce a cycle).
+   * @param next_cell The next cell (the one that introduces a cycle).
+   * @param bb_cells
+   * @param entry_pt Entry point for the new cell will be set here.
+   * @param exit_pt Exit point for the new cell will be set here.
+   * @param start_pt The start point (heel) of the well segment.
+   * @param end_pt The end point (toe) of the well segment.
+   * @param step The current step.
+   * @param epsilon Step increase.
+   */
+  void recover_from_cycle(IntersectedCell &prev_cell,
+                          Grid::Cell & next_cell,
+                          vector<int> bb_cells,
+                          Vector3d &entry_pt,
+                          Vector3d &exit_pt,
+                          Vector3d start_pt,
+                          Vector3d end_pt,
+                          double &step, double epsilon);
 };
 }
 }
