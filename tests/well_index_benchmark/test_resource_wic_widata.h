@@ -27,7 +27,7 @@
 #include <QtCore/QString>
 #include <QList>
 #include <Eigen/Dense>
-
+#include <iostream>
 #include <QFile>
 #include <QTextStream>
 #include <fstream>
@@ -69,8 +69,6 @@ class WIData {
   QString grid_file;
   QString tex_file;
   QString well_name;
-  QString well_name_5spot = "TW01";
-  QString well_name_norne = "NW01";
   QString radius = QString::number(0.1905/2);
   QString skin_factor = QString::number(0.0);
 
@@ -123,7 +121,7 @@ void WIData::CalculateWCF(QString file_root){
         file_root + ".csv");
 
     // COMPDAT FORMAT
-    QString command = "./wicalc --grid "
+    QString command = "time -p ./wicalc --grid "
         + grid_file
         + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
         + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
@@ -133,8 +131,9 @@ void WIData::CalculateWCF(QString file_root){
         + " --well-name " + well_name;
 
     if (debug_){
-        std::cout << "\033[1;31m<DEBUG:START->\033[0m" << std::endl;
-        std::cout << "command:" << command.toStdString() << std::endl;
+        std::cout << "\033[1;31m<[" << dir_name.toStdString()
+                  << "] DEBUG:START->\033[0m" << std::endl;
+        std::cout << "starting command:" << command.toStdString() << std::endl;
     }
 
     // LAUNCH WELL INDEX CALCULATOR
@@ -185,13 +184,14 @@ void WIData::CalculateWCF(QString file_root){
     WCFN = Map<Matrix<double, Dynamic, 1>>(wcf.data(), wcf.size());
 
     if (debug_){
-        std::cout << "all output:" << all_output.toStdString() << std::endl;
+//        std::cout << "all output:" << all_output.toStdString() << std::endl;
         std::cout << "standard output:" << standard_output.toStdString() << std::endl;
         std::cout << "error output:" << error_output.toStdString() << std::endl;
 
-        std::cout << "IJKN:" << IJKN << std::endl;
-        std::cout << "WCFN:" << WCFN << std::endl;
-        std::cout << "\033[1;31m<DEBUG:END--->\033[0m" << std::endl;
+//        std::cout << "IJKN:" << IJKN << std::endl;
+//        std::cout << "WCFN:" << WCFN << std::endl;
+        std::cout << "\033[1;31m<[" << dir_name.toStdString()
+                  << "] DEBUG:END--->\033[0m" << std::endl;
     }
 }
 
@@ -297,7 +297,7 @@ void WIData::ReadXYZ(QString file_name){
         QString line = xyz_in.readLine();
         xyz_in_fields = line.split(QRegExp("[\r\n\t]"));
 
-        if (!line.contains("TW01")) {
+        if (!line.contains("W01")) {
             // Store xyz values
             for(int ii = 0; ii < xyz_in_fields.size(); ++ii){
                 xyz_d.push_back(xyz_in_fields[ii].toDouble());

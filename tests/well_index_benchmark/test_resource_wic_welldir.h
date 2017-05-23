@@ -50,7 +50,7 @@ class WellDir {
  private:
   // Variables: folder path
   QString well_data_dir_ = "../wic-benchmark-wells";
-  bool debug_ = true;
+  bool debug_ = false;
 };
 
 
@@ -59,10 +59,6 @@ QList<QStringList> WellDir::GetWellDir() {
     // Check directory exists
     if (!Utilities::FileHandling::DirectoryExists(well_data_dir_))
         throw std::runtime_error("Well dir " + well_data_dir_.toStdString() + " not found.");
-
-    std::cout << "TEST!!!!" << std::endl;
-
-
 
     // Make list of well dirs
     QList<QStringList> dir_list_ = MakeDirList(well_data_dir_);
@@ -77,7 +73,7 @@ QList<QStringList> WellDir::GetWellDir() {
     well_list_.append(AddFilesToList(dir_list_[1], QString("*PCG.DATA")));
 
     // Debug: check lists are OK
-//    if (true){
+    if (debug_){
         std::cout << "\033[1;31m<DEBUG:START->\033[0m" << std::endl;
         std::cout << "well_data_path_: " << well_data_dir_.toStdString() << std::endl;
         std::cout << "size of well_list_: " << well_list_.size() << std::endl;
@@ -94,7 +90,7 @@ QList<QStringList> WellDir::GetWellDir() {
         temp_str = "pcg_list";
         printWellDirList(temp, temp_str);
         std::cout << "\033[1;31m<DEBUG:END--->\033[0m" << std::endl;
-//    }
+    }
 
     return well_list_;
 }

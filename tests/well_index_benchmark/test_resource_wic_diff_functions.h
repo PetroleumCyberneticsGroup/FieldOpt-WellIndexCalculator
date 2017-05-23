@@ -22,7 +22,7 @@
 #ifndef FIELDOPT_TEST_RESOURCE_DIFF_FUNCTIONS_H
 #define FIELDOPT_TEST_RESOURCE_DIFF_FUNCTIONS_H
 
-#include "tests/well_index_benchmark/test_resource_wic_widata.h"
+#include "test_resource_wic_widata.h"
 #include <Eigen/Dense>
 #include <typeinfo>
 
