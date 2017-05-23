@@ -108,7 +108,7 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         WIDataPCG.ReadXYZ(dir_list_[ii] + "/" + dir_names_[ii]);
         WIDataPCG.CalculateWCF(dir_list_[ii] + "/" + dir_names_[ii]);
 
-        if( QString::compare(dir_names_[ii], "t", Qt::CaseSensitive) == 0 ) {
+        if( QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0 ) {
             WIDataPCG.PrintCOMPDATPlot(dir_list_[ii] + "/" + dir_names_[ii]);
         }
 
