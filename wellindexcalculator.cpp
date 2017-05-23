@@ -150,7 +150,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     }
 
     // First cell
-    double epsilon = smallest_grid_cell_dimension_ / (100.0 * (start_pt-end_pt).norm());
+//    double epsilon = smallest_grid_cell_dimension_ / (1e2 * (start_pt-end_pt).norm());
     Vector3d entry_pt = start_pt;
     double step = 0.0;
     auto prev_cell = first_cell;
@@ -159,6 +159,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
     // Make sure we follow line in the correct direction. (i.e. dot product positive)
     Vector3d exit_pt = find_exit_point(isc_cells, isc_cell_idx, start_pt, end_pt, start_pt);
+
+    double epsilon = 0.01 / (exit_pt-end_pt).norm();
 
     if ((end_pt - start_pt).dot(exit_pt - start_pt) <= 0.0) {
         exit_pt = find_exit_point(isc_cells, isc_cell_idx, start_pt, end_pt, exit_pt);
@@ -286,7 +288,7 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
     }
 
     // Then, traverse back with a smaller step size until we're outside again.
-    epsilon = epsilon / 10.0;
+    epsilon = epsilon / 1e1;
     while (true) {
         try
         {
