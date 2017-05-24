@@ -70,6 +70,8 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     WIData WIDataRMS, WIDataPCG;
     WIDataRMS.data_tag = "RMS";
     WIDataPCG.data_tag = "PCG";
+    WIDataRMS.test_IJK_removed.resize(rms_files.length());
+    WIDataPCG.test_IJK_removed.resize(rms_files.length());
 
     // DEBUG
     debug_msg(false, "well_dir_list", dir_names_,
@@ -80,6 +82,11 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     int num_files = (debug_) ? 5 : rms_files.length(); //override
     QString str_out;
     QString lstr_out = "\n================================================================================";
+
+//    WIDataRMS.test_IJK_removed.resize(num_files,1);
+//    WIDataPCG.test_IJK_removed.resize(num_files,1);
+//    WIDataRMS.test_IJK_removed.fill(0);
+//    WIDataPCG.test_IJK_removed.fill(0);
 
     for (int ii = 0; ii < num_files; ++ii) {
 
@@ -143,11 +150,24 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
 
         // COMPARE IJK AND PCG VALUES (EQUAL LENGTH DATA)
         CompareIJK(WIDataRMS, WIDataPCG);
-        CompareWCF(WIDataRMS, WIDataPCG);
+        auto WIDiff = CompareWCF(WIDataRMS, WIDataPCG);
 
         // WRITE TO TEX FILE
         Utilities::FileHandling::WriteLineToFile(
             "\\end{alltt}", WIDataPCG.tex_file);
     }
+
+//    std::cout << "\n\n*********\nTESTING\n*********\n" << std::endl;
+//    for (int ii = 0; ii < num_files; ++ii) {
+//        std::cout << "Well name: " << dir_names_[ii].toStdString()
+//                  << " -- WIDataRMS.test_IJK_removed: "
+//                  << WIDataRMS.test_IJK_removed.rows()
+//                  << " (n_rows); ii=" << ii << "; "
+//                  << WIDataRMS.test_IJK_removed(ii)
+//                  << " (n_removed)" << std::endl;
+//
+//        EXPECT_LT(WIDataRMS.test_IJK_removed(ii), 10);
+//        EXPECT_LT(WIDataPCG.test_IJK_removed(ii), 10);
+//    }
 }
 }

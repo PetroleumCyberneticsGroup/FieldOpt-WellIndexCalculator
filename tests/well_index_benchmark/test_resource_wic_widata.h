@@ -72,6 +72,10 @@ class WIData {
   QString radius = QString::number(0.1905/2);
   QString skin_factor = QString::number(0.0);
 
+  std::vector< std::vector< std::vector<int> >> test_IJK_removed;
+
+  QList<double> WCF_accuracy_list;
+
   bool debug_ = false;
 
  private:
