@@ -257,8 +257,7 @@ double GetColumnMedian(Matrix<double,Dynamic,1> va,
                        Matrix<double,Dynamic,1> vdiff){
 
     Matrix<double,Dynamic,1> vratio = va.cwiseQuotient(vb);
-//    vratio.cwiseMin(2.0);
-//    vratio = capVector(vratio,2);
+    vratio = capVector(vratio,2);
 
     std::vector<double> stdvec;
     stdvec.resize(vratio.size());
