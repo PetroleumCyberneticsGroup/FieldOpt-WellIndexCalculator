@@ -195,9 +195,13 @@ double GetColumnMedian(Matrix<double, Dynamic, 1> va,
     int vsz = (int)std_vratio.size();
     std::sort(std_vratio.data(), std_vratio.data()+vsz);
 
+    // indexing ok since index numbering is 1 less than vector length
     auto median = (vsz % 2 == 1) ?
-                  std_vratio[vsz / 2] : // odd
-                  (std_vratio[vsz / 2 - 1] + std_vratio[vsz / 2]) / 2; // even
+                  // odd; sz=7->vz/2=3 in [0 1 2 (3) 4 5 6]->i=3
+                  std_vratio[vsz / 2] :
+                  // even; sz=6->vz/2=3 in [0 1 (2 3) 4 5]->i1=2,i2=3
+                  (std_vratio[vsz / 2 - 1] + std_vratio[vsz / 2]) / 2;
+
 
     if (apply_th < 2) {
         return median;
@@ -687,7 +691,8 @@ WIData CompareWCF(WIData &va, WIData &vb) {
 
         str_smry = str_val4 + " & " + str_val6 + " \\\\";        
     }
-    
+
+    std::cout << "Writing to file:" << va.tex_smry.toStdString() << std::endl << std::endl;
     Utilities::FileHandling::WriteLineToFile(str_smry, va.tex_smry);
 
     bool debug_ = false;

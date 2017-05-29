@@ -68,8 +68,8 @@ class WIData {
 
   QString grid_file;
   QString tex_file;
-  QString tex_smry_5spot;
-  QString tex_smry_norne;
+  QString tex_smry;
+
   QString well_name;
   QString radius = QString::number(0.1905/2);
   QString skin_factor = QString::number(0.0);

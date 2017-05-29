@@ -45,6 +45,7 @@ class DeviatedWellIndexTest : public ::testing::Test {
   WellDir *well_dir_;
   QString grid_file_5spot = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
   QString grid_file_norne = "../examples/Flow/norne/OUTPUT/NORNE_ATW2013.EGRID";
+  QString tex_smry_5spot, tex_smry_norne;
   bool debug_ = false;
 };
 
@@ -71,13 +72,11 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     WIDataRMS.data_tag = "RMS";
     WIDataPCG.data_tag = "PCG";
 
-    WIDataRMS.tex_smry_5spot = dir_list_[0] + "/../summary-table-5spot.tex";
-    WIDataPCG.tex_smry_5spot = WIDataRMS.tex_smry_5spot;
-    Utilities::FileHandling::WriteStringToFile("\\begin{tabular}", WIDataPCG.tex_smry_5spot);
+    tex_smry_5spot = dir_list_[0] + "/../summary-table-5spot.tex";
+    tex_smry_norne = dir_list_[0] + "/../summary-table-norne.tex";
 
-    WIDataRMS.tex_smry_norne = dir_list_[0] + "/../summary-table-norne.tex";
-    WIDataPCG.tex_smry_norne = WIDataRMS.tex_smry_norne;
-    Utilities::FileHandling::WriteStringToFile("\\begin{tabular}", WIDataPCG.tex_smry_norne);
+    Utilities::FileHandling::WriteStringToFile("\\begin{tabular}", tex_smry_5spot);
+    Utilities::FileHandling::WriteStringToFile("\\begin{tabular}", tex_smry_norne);
 
     WIDataRMS.test_IJK_removed.resize(rms_files.length());
     WIDataPCG.test_IJK_removed.resize(rms_files.length());
@@ -112,10 +111,12 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         if( QString::compare(dir_names_[ii].at(0), "n", Qt::CaseSensitive) == 0 ) {
             WIDataPCG.grid_file = grid_file_norne;
             WIDataPCG.well_name = "NW01";
+            WIDataPCG.tex_smry = tex_smry_norne;
         }
         else if( QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0 ) {
             WIDataPCG.grid_file = grid_file_5spot;
             WIDataPCG.well_name = "TW01";
+            WIDataPCG.tex_smry = tex_smry_5spot;
         }
         WIDataPCG.dir_name = dir_names_[ii];
 
@@ -138,7 +139,7 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         WIDataPCG.WCF = WIDataPCG.WCFN;
 
         // WRITE TO TEX FILE
-        str_out = lstr_out + "\nChecking IJK and WCF data for well: "
+        str_out = "\n" + lstr_out + "\nChecking IJK and WCF data for well: "
             + dir_names_[ii] + " (row numbering uses 0-indexing)\nheel.xyz = "
             + WIDataPCG.XYZh + ", toe.xyz = " + WIDataPCG.XYZt
             + "\n" + lstr_out;
@@ -167,8 +168,8 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         Utilities::FileHandling::WriteLineToFile("\\end{alltt}", WIDataPCG.tex_file);
     }
 
-    Utilities::FileHandling::WriteLineToFile("\\end{tabular}", WIDataPCG.tex_smry_5spot);
-    Utilities::FileHandling::WriteLineToFile("\\end{tabular}", WIDataPCG.tex_smry_norne);
+    Utilities::FileHandling::WriteLineToFile("\\end{tabular}", tex_smry_5spot);
+    Utilities::FileHandling::WriteLineToFile("\\end{tabular}", tex_smry_norne);
 
 //    std::cout << "\n\n*********\nTESTING\n*********\n" << std::endl;
 //    for (int ii = 0; ii < num_files; ++ii) {
