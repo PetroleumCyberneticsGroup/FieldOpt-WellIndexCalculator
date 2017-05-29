@@ -35,6 +35,36 @@ using namespace Eigen;
 namespace TestResources {
 namespace WIBenchmark {
 
+
+/*!
+ * \brief
+ * \param
+ * \return
+ */
+std::vector<double> ConvertEigenToStd(Matrix<double, Dynamic, 1> eigen_vector){
+
+    // feed eigen vector values to std:vector
+    std::vector<double> std_vector;
+    std_vector.resize(eigen_vector.size());
+    Matrix<double, Dynamic, 1>::Map(&std_vector[0], eigen_vector.size()) = eigen_vector;
+
+    return std_vector;
+};
+
+/*!
+ * \brief
+ * \param
+ * \return
+ */
+Matrix<double, Dynamic, 1> ConvertStdToEigen(std::vector<double> std_vector){
+
+    // feed std:vector values to eigen vector
+    Matrix<double, Dynamic, 1> eigen_vector =
+        Matrix<double, Dynamic,1>::Map(std_vector.data(), std_vector.size());
+
+    return eigen_vector;
+};
+
 /*!
  * \brief
  * \param
@@ -94,6 +124,111 @@ WIData GetShortestVector(WIData va, WIData vb){
         return va;
     }else{
         return vb;
+    }
+}
+
+/*!
+ * \brief
+ * \param
+ * \return
+ */
+double GetColumnOffset(Matrix<double,Dynamic,1> va,
+                       Matrix<double,Dynamic,1> vb,
+                       Matrix<double,Dynamic,1> vdiff){
+
+    // accuracy_magnitude: norm of difference vector (column offset)
+    return vdiff.norm();
+}
+
+/*!
+ * \brief
+ * \param
+ * \return
+ */
+double GetColumnCosine(Matrix<double,Dynamic,1> va,
+                       Matrix<double,Dynamic,1> vb,
+                       Matrix<double,Dynamic,1> vdiff){
+
+    // cosine similarity (cosine measure)
+    return va.dot(vb) / (va.norm() * vb.norm());
+}
+
+/*!
+ * \brief Remove values from vdiff that are above threshold value
+ * \param
+ * \return
+ */
+Matrix<double,Dynamic,1> ApplyThresh(Matrix<double, Dynamic, 1> vvector,
+                                     double threshold){
+
+    // tranfer only values below threshold
+    std::vector<double> vout_std;
+    for (int ii=0; ii < vvector.rows(); ++ii){
+        double vtemp = vvector(ii);
+        if (vtemp < threshold && vtemp > 1/threshold){
+            vout_std.push_back(vtemp);
+        }
+    }
+
+    return ConvertStdToEigen(vout_std);
+}
+
+/*!
+ * \brief
+ * \param
+ * \return
+ */
+double GetColumnMedian(Matrix<double, Dynamic, 1> va,
+                       Matrix<double, Dynamic, 1> vb,
+                       Matrix<double, Dynamic, 1> vdiff,
+                       int apply_th,
+                       double threshold) {
+
+    Matrix<double, Dynamic, 1> vratio = va.cwiseQuotient(vb);
+    if (apply_th > 0){
+        vratio = ApplyThresh(vratio, threshold);
+    }
+
+    auto std_vratio = ConvertEigenToStd(vratio);
+
+    // median of RMS/PCG ratio
+    int vsz = (int)std_vratio.size();
+    std::sort(std_vratio.data(), std_vratio.data()+vsz);
+
+    auto median = (vsz % 2 == 1) ?
+                  std_vratio[vsz / 2] : // odd
+                  (std_vratio[vsz / 2 - 1] + std_vratio[vsz / 2]) / 2; // even
+
+    if (apply_th < 2) {
+        return median;
+    }
+    else {
+        return (double)va.rows() - (double)vratio.rows();
+    }
+}
+
+/*!
+ * \brief
+ * \param
+ * \return
+ */
+double GetColumnMean(Matrix<double, Dynamic, 1> va,
+                     Matrix<double, Dynamic, 1> vb,
+                     Matrix<double, Dynamic, 1> vdiff,
+                     int apply_th,
+                     double threshold) {
+
+    Matrix<double,Dynamic,1> vratio = va.cwiseQuotient(vb);
+    if (apply_th > 0){
+        vratio = ApplyThresh(vratio, threshold);
+    }
+
+    // mean
+    if (apply_th < 2) {
+        return vratio.mean();
+    }
+    else {
+        return (double)va.rows() - (double)vratio.rows();
     }
 }
 
@@ -203,89 +338,6 @@ double GetColumnAccuracyElements(Matrix<double,Dynamic,1> col_vector){
     }
 
     return nrows_nz / nrows;
-}
-
-/*!
- * \brief
- * \param
- * \return
- */
-double GetColumnOffset(Matrix<double,Dynamic,1> va,
-                       Matrix<double,Dynamic,1> vb,
-                       Matrix<double,Dynamic,1> vdiff){
-
-    // accuracy_magnitude: norm of difference vector (column offset)
-    return vdiff.norm();
-}
-
-/*!
- * \brief
- * \param
- * \return
- */
-double GetColumnCosine(Matrix<double,Dynamic,1> va,
-                       Matrix<double,Dynamic,1> vb,
-                       Matrix<double,Dynamic,1> vdiff){
-
-    // cosine similarity (cosine measure)
-    return va.dot(vb) / (va.norm() * vb.norm());
-}
-
-/*!
- * \brief
- * \param
- * \return
- */
-Matrix<double,Dynamic,1> capVector(Matrix<double,Dynamic,1> vvector,
-                                   double cap){
-
-    // cap vdiff values
-    auto vmin = vvector;
-    vmin.fill(cap);
-    vmin = vvector.cwiseMin(vmin);
-
-    return vmin;
-}
-
-/*!
- * \brief
- * \param
- * \return
- */
-double GetColumnMedian(Matrix<double,Dynamic,1> va,
-                       Matrix<double,Dynamic,1> vb,
-                       Matrix<double,Dynamic,1> vdiff){
-
-    Matrix<double,Dynamic,1> vratio = va.cwiseQuotient(vb);
-    vratio = capVector(vratio,2);
-
-    std::vector<double> stdvec;
-    stdvec.resize(vratio.size());
-    Matrix<double, Dynamic, 1>::Map(&stdvec[0], vratio.size()) = vratio;
-
-    // median of RMS/PCG ratio
-    int vsz = (int)stdvec.size();
-    std::sort(stdvec.data(),stdvec.data()+vsz);
-
-    return (vsz % 2 == 0) ?
-           vratio[vsz / 2] :
-           (vratio[vsz / 2 - 1] + vratio[vsz / 2]) / 2;
-}
-
-/*!
- * \brief
- * \param
- * \return
- */
-double GetColumnMean(Matrix<double,Dynamic,1> va,
-                     Matrix<double,Dynamic,1> vb,
-                     Matrix<double,Dynamic,1> vdiff){
-
-    Matrix<double,Dynamic,1> vratio = va.cwiseQuotient(vb);
-    vratio = capVector(vratio,2);
-
-    // mean
-    return vratio.mean();
 }
 
 /*!
@@ -527,10 +579,11 @@ WIData CompareIJK(WIData va, WIData vb){
  */
 WIData CompareWCF(WIData &va, WIData &vb) {
 
+    double threshold = 2.0;
     WIData vdiff;
     vdiff.WCF = va.WCF - vb.WCF;
 
-    QString str_out;
+    QString str_out, str_smry;
     QString lstr_out = "\n--------------------------------------------------------------------------------";
     QString tol;
     tol.sprintf("%5.3f", GetEpsWCF());
@@ -539,6 +592,8 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         str_out = lstr_out + "\nWCF values match exactly for this well (WCF tol = " + tol + ").";
         std::cout << "\033[1;32m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+        str_smry = "1 & 1 \\\\"; 
+
     }else{
         str_out = lstr_out + "\nWCF values are NOT the same for this well (WCF tol = " + tol + ").";
         std::cout << "\033[1;35m" << str_out.toStdString() << "\033[0m" << std::endl;
@@ -548,18 +603,27 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         CheckRowwiseDiffWCF(va,vb,vdiff);
 
         // Output difference for column
-        vdiff.WCF_accuracy_list.append(GetColumnAccuracyElements(vdiff.WCF));
-        vdiff.WCF_accuracy_list.append(GetColumnOffset(va.WCF, vb.WCF, vdiff.WCF));
-        vdiff.WCF_accuracy_list.append(GetColumnCosine(va.WCF, vb.WCF, vdiff.WCF));
-        vdiff.WCF_accuracy_list.append(GetColumnMean(va.WCF, vb.WCF, vdiff.WCF));
-        vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF));
+        vdiff.WCF_accuracy_list.append(GetColumnAccuracyElements(vdiff.WCF)); // 0
+        vdiff.WCF_accuracy_list.append(GetColumnOffset(va.WCF, vb.WCF, vdiff.WCF)); // 1
+        vdiff.WCF_accuracy_list.append(GetColumnCosine(va.WCF, vb.WCF, vdiff.WCF)); // 2
+
+        // Mean (w/o and w/ threshold, and and removed values)
+        vdiff.WCF_accuracy_list.append(GetColumnMean(va.WCF, vb.WCF, vdiff.WCF, 0, threshold)); // 3
+        vdiff.WCF_accuracy_list.append(GetColumnMean(va.WCF, vb.WCF, vdiff.WCF, 1, threshold)); // 4
+        vdiff.WCF_accuracy_list.append(GetColumnMean(va.WCF, vb.WCF, vdiff.WCF, 2, threshold)); // 5
+
+        // Median (w/o and w/ threshold, and and removed values)
+        vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF, 0, threshold)); // 6
+        vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF, 1, threshold)); // 7
+        vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF, 2, threshold)); // 8
 
         // Zero element fraction
         str_out = "\nElement accuracy: fraction of zero (<tol) elements in diff. column (1=best)";
         std::cout << "\033[1;33m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        str_out  = "Element accuracy:  " + QString::number(vdiff.WCF_accuracy_list[0]);
+        auto str_val0 = QString::number(vdiff.WCF_accuracy_list[0]);
+        str_out  = "Element accuracy:  " + str_val0;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
@@ -568,7 +632,8 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         std::cout << "\033[1;33m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        str_out  = "Column offset:  " + QString::number(vdiff.WCF_accuracy_list[1]);
+        auto str_val1 = QString::number(vdiff.WCF_accuracy_list[1]);
+        str_out  = "Column offset:  " + str_val1;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
@@ -577,20 +642,53 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         std::cout << "\033[1;33m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        str_out  = "Column cosine measure:  " + QString::number(vdiff.WCF_accuracy_list[2]);
+        auto str_val2 = QString::number(vdiff.WCF_accuracy_list[2]);
+        str_out  = "Column cosine measure:  " + str_val2;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        // Mean
-        str_out  = "Mean of RMS/PCG wi-ratios:  " + QString::number(vdiff.WCF_accuracy_list[3]);
+        // Mean (w/o threshold)
+        auto str_val3 = QString::number(vdiff.WCF_accuracy_list[3]).leftJustified(7, '0');
+        str_out  = "\nMean of RMS/PCG wi-ratios (w/o threshold): " + str_val3;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        // Median
-        str_out  = "Median of RMS/PCG wi-ratios:  " + QString::number(vdiff.WCF_accuracy_list[4]);
+        // Mean (w/ threshold)
+        auto str_val4 = QString::number(vdiff.WCF_accuracy_list[4]).leftJustified(7, '0');
+        str_out = "Mean of RMS/PCG wi-ratios (w/ threshold):  " + str_val4;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+
+        // Mean (num removed values)
+        auto str_val5 = QString::number(vdiff.WCF_accuracy_list[5]);
+        str_out  = "[Number of values removed by threshold (="
+        + QString::number(threshold) + "): " + str_val5 + "]";
+        std::cout << str_out.toStdString() << std::endl;
+        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+
+        // Median (w/o threshold)
+        auto str_val6 = QString::number(vdiff.WCF_accuracy_list[6]).leftJustified(7, '0');
+        str_out  = "\nMedian of RMS/PCG wi-ratios (w/o threshold): " + str_val6;
+        std::cout << str_out.toStdString() << std::endl;
+        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+
+        // Median (w/ threshold)
+        auto str_val7 = QString::number(vdiff.WCF_accuracy_list[7]).leftJustified(7, '0');
+        str_out  = "Median of RMS/PCG wi-ratios (w/ threshold): " + str_val7;
+        std::cout << str_out.toStdString() << std::endl;
+        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+
+        // Median (num removed values)
+        auto str_val8 = QString::number(vdiff.WCF_accuracy_list[8]);
+        str_out  = "[Number of values removed by threshold (="
+        + QString::number(threshold) + "): " + str_val8 + "]";
+        std::cout << str_out.toStdString() << std::endl;
+        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+
+        str_smry = str_val4 + " & " + str_val6 + " \\\\";        
     }
+    
+    Utilities::FileHandling::WriteLineToFile(str_smry, va.tex_smry);
 
     bool debug_ = false;
     if (debug_){

@@ -68,6 +68,8 @@ class WIData {
 
   QString grid_file;
   QString tex_file;
+  QString tex_smry_5spot;
+  QString tex_smry_norne;
   QString well_name;
   QString radius = QString::number(0.1905/2);
   QString skin_factor = QString::number(0.0);
@@ -100,9 +102,11 @@ void WIData::CalculateWCF(QString file_root){
 
     bool debug_ = true;
 
-    // CSV FORMAT
+    // HEAD AND TOE COORDS
     XYZh = XYZc[0] + " " + XYZc[1] + " " + XYZc[2];
     XYZt = XYZc[3] + " " + XYZc[4] + " " + XYZc[5];
+
+    // CSV FORMAT
     QString command_csv = "./wicalc --grid "
         + grid_file
         + " --heel " + XYZh
@@ -127,8 +131,8 @@ void WIData::CalculateWCF(QString file_root){
     // COMPDAT FORMAT
     QString command = "time -p ./wicalc --grid "
         + grid_file
-        + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
-        + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
+        + " --heel " + XYZh
+        + " --toe "  + XYZt
         + " --radius " + radius
         + " --skin-factor " + skin_factor
         + " --compdat "
@@ -164,25 +168,29 @@ void WIData::CalculateWCF(QString file_root){
     Matrix<int, Dynamic, 4> IJK_stor;
     std::vector<double> wcf;
 
-    foreach(QString line, lines){
+        foreach(QString line, lines){
 
-        if (line.contains("OPEN")) {
+            if (line.contains("OPEN")) {
 
-            // Read IJK values from current line
-            fields = line.split(QRegExp("\\s+"));
-            temp_IJK << fields[2].toInt(), fields[3].toInt(),
-                fields[4].toInt(), fields[5].toInt();
+                // Read IJK values from current line
+                fields = line.split(QRegExp("\\s+"));
+                temp_IJK << fields[2].toInt(), fields[3].toInt(),
+                    fields[4].toInt(), fields[5].toInt();
 
-            // Store IJK values
-            Matrix<int, Dynamic, 4>
-                IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
-            IJK_curr << IJK_stor, temp_IJK;
-            IJK_stor = IJK_curr;
+                // Store IJK values
+                Matrix<int, Dynamic, 4>
+                    IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
+                IJK_curr << IJK_stor, temp_IJK;
+                IJK_stor = IJK_curr;
 
-            // Store well connection factor values
-            wcf.push_back(fields[8].toDouble());
+                // Store well connection factor values
+                wcf.push_back(fields[8].toDouble());
+            }
+
+            if (line.contains("WARNING")) {
+                Utilities::FileHandling::WriteLineToFile(line, this->tex_file);
+            }
         }
-    }
 
     IJKN = IJK_stor;
     WCFN = Map<Matrix<double, Dynamic, 1>>(wcf.data(), wcf.size());
