@@ -17,8 +17,6 @@
    along with FieldOpt.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-
-
 #ifndef FIELDOPT_TEST_RESOURCE_DIFF_FUNCTIONS_H
 #define FIELDOPT_TEST_RESOURCE_DIFF_FUNCTIONS_H
 
@@ -145,6 +143,22 @@ double GetColumnOffset(Matrix<double,Dynamic,1> va,
  * \param
  * \return
  */
+Matrix<double, Dynamic, 1> GetNonzero(Matrix<double, Dynamic, 1> vin){
+
+    std::vector<double> vout;
+    for (int ii=0; ii < vin.rows(); ++ii){
+        if (vin[ii] > 0) {
+            vout.push_back(vin[ii]);
+        }
+    }
+    return ConvertStdToEigen(vout);;
+}
+
+/*!
+ * \brief
+ * \param
+ * \return
+ */
 double GetColumnCosine(Matrix<double,Dynamic,1> va,
                        Matrix<double,Dynamic,1> vb,
                        Matrix<double,Dynamic,1> vdiff){
@@ -160,7 +174,6 @@ double GetColumnCosine(Matrix<double,Dynamic,1> va,
  */
 Matrix<double,Dynamic,1> ApplyThresh(Matrix<double, Dynamic, 1> vvector,
                                      double threshold){
-
     // tranfer only values below threshold
     std::vector<double> vout_std;
     for (int ii=0; ii < vvector.rows(); ++ii){
@@ -169,7 +182,6 @@ Matrix<double,Dynamic,1> ApplyThresh(Matrix<double, Dynamic, 1> vvector,
             vout_std.push_back(vtemp);
         }
     }
-
     return ConvertStdToEigen(vout_std);
 }
 
@@ -185,6 +197,7 @@ double GetColumnMedian(Matrix<double, Dynamic, 1> va,
                        double threshold) {
 
     Matrix<double, Dynamic, 1> vratio = va.cwiseQuotient(vb);
+    vratio = GetNonzero(vratio);
     if (apply_th > 0){
         vratio = ApplyThresh(vratio, threshold);
     }
@@ -223,6 +236,7 @@ double GetColumnMean(Matrix<double, Dynamic, 1> va,
                      double threshold) {
 
     Matrix<double,Dynamic,1> vratio = va.cwiseQuotient(vb);
+    vratio = GetNonzero(vratio);
     if (apply_th > 0){
         vratio = ApplyThresh(vratio, threshold);
     }
@@ -626,14 +640,6 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
         std::cout << "\033[1;32m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        // vdiff.WCF_accuracy_list << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
-        // if (va.test_IJK_removed[ii][1].size() + va.test_IJK_removed[ii][3].size() > va.max_sup) {
-        //     str_smry = va.dir_name.replace("_","\\_") + " & " + "0.000 & 0.000 \\\\";
-        // }
-        // else {
-        //     str_smry = va.dir_name.replace("_","\\_") + " & " + "1.000 & 1.000 \\\\";
-        // };
-
     }else{
         str_out = lstr_out + "\nWCF values are NOT the same for this well (WCF tol = " + tol + ").";
         std::cout << "\033[1;35m" << str_out.toStdString() << "\033[0m" << std::endl;
@@ -703,8 +709,8 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
     }
-    
-    str_smry = va.dir_name.replace("_","\\_") + " & " + str_val4 + " & " + str_val6 + " \\\\";
+
+    str_smry = "\\texttt{" + va.dir_name.replace("_","\\_") + "} & " + str_val4 + " & " + str_val6 + " \\\\";
 
     std::cout << "Writing to file:" << va.tex_smry.toStdString() << std::endl << std::endl;
     Utilities::FileHandling::WriteLineToFile(str_smry, va.tex_smry);

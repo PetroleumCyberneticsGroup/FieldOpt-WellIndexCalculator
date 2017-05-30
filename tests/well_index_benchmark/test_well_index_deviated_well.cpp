@@ -46,7 +46,8 @@ class DeviatedWellIndexTest : public ::testing::Test {
   QString grid_file_5spot = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
   QString grid_file_norne = "../examples/Flow/norne/OUTPUT/NORNE_ATW2013.EGRID";
   QString tex_smry_5spot, tex_smry_norne;
-  QString tab_header_str, tab_tail_str, tab_mean_str;
+  QString tab_header_str, tab_tail_str;
+  QString tab_mean_str_5spot, tab_mean_str_norne;
 
   bool debug_ = false;
 
@@ -54,7 +55,7 @@ class DeviatedWellIndexTest : public ::testing::Test {
     vector<double> well_mean, well_median;
   };
 
-  smry_data smry_data_;
+  smry_data smry_data_5spot, smry_data_norne;
 
 };
 
@@ -84,19 +85,21 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     tex_smry_5spot = dir_list_[0] + "/../summary-table-5spot.tex";
     tex_smry_norne = dir_list_[0] + "/../summary-table-norne.tex";
 
-    tab_header_str = "\\begin{table} \\begin{tabular}{c c c}\n"
+    tab_header_str = "\\begin{table}[h!]\\begin{center}\\def\\arraystretch{1.1}\n "
+        "\\begin{tabular}{c c c} \\toprule\n"
         "Well & "
         "{\\bfseries $mean^{th}$} & "
-        "{\\bfseries $median$}\\\\"
-        "\\toprule";
-    tab_tail_str = "\\bottomrule\n"
+        "{\\bfseries $median$}\\\\ "
+        "\\midrule";
+    tab_tail_str = "\\\\ \\bottomrule\n"
         "\\end{tabular}\n"
         "\\caption{"
-        "$mean^{th}$: the mean of the $\\dfrac{wi_{RMS}}{wi_{PCG}}$ vector for each well,"
-        "with outliers removed (above and below threshold values $[\\frac{1/2} 2]$).\n"
-        "$median$: the mediam of the $\\\\dfrac{wi_{RMS}}{wi_{PCG}}$ vector for each well,"
-        "no values removed.}\n"
-        "\\end{table}";
+        "$mean^{th}$: the mean of the $\\dfrac{wi_{RMS}}{wi_{PCG}}$ radios for each well, "
+        "with outliers removed (above and below threshold values $[\\frac{1}{2} \\; 2]$).\n"
+        "$median$: the median of $\\dfrac{wi_{RMS}}{wi_{PCG}}$ ratios for each well, "
+        "without any values removed by threshold. Zero rows are failed runs and not taken "
+        "into account in the means.}\n"
+        "\\end{center}\\end{table}";
 
     Utilities::FileHandling::WriteStringToFile(tab_header_str, tex_smry_5spot);
     Utilities::FileHandling::WriteStringToFile(tab_header_str, tex_smry_norne);
@@ -114,11 +117,6 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     QString str_out;
     QString lstr_out = "================================================================================";
 
-//    WIDataRMS.test_IJK_removed.resize(num_files,1);
-//    WIDataPCG.test_IJK_removed.resize(num_files,1);
-//    WIDataRMS.test_IJK_removed.fill(0);
-//    WIDataPCG.test_IJK_removed.fill(0);
-
     for (int ii = 0; ii < num_files; ++ii) {
 
         // USE COMPDAT DATA (RMS) PRODUCED BY BENCHMARK PROGRAM
@@ -131,15 +129,14 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         // WIDataPCG.PrintWCFData(dir_list_[ii] + "/DBG_" + dir_names_[ii] + "_PCG.WCF");
 
         // DECIDE ON WHICH GRID FILE TO USE (5SPOT OR NORNE)
-        if( QString::compare(dir_names_[ii].at(0), "n", Qt::CaseSensitive) == 0 ) {
+        if (QString::compare(dir_names_[ii].at(0), "n", Qt::CaseSensitive) == 0) {
             WIDataPCG.grid_file = grid_file_norne;
-            WIDataPCG.well_name = "NW01";
             WIDataPCG.tex_smry = tex_smry_norne;
-        }
-        else if( QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0 ) {
+            WIDataPCG.well_name = "NW01";
+        } else if (QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0) {
             WIDataPCG.grid_file = grid_file_5spot;
-            WIDataPCG.well_name = "TW01";
             WIDataPCG.tex_smry = tex_smry_5spot;
+            WIDataPCG.well_name = "TW01";
         }
         WIDataPCG.dir_name = dir_names_[ii];
         WIDataRMS.tex_smry = WIDataPCG.tex_smry;
@@ -154,7 +151,7 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         WIDataPCG.ReadXYZ(dir_list_[ii] + "/" + dir_names_[ii]);
         WIDataPCG.CalculateWCF(dir_list_[ii] + "/" + dir_names_[ii]);
 
-        if( QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0 ) {
+        if (QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0) {
             WIDataPCG.PrintCOMPDATPlot(dir_list_[ii] + "/" + dir_names_[ii]);
         }
 
@@ -192,16 +189,31 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         Utilities::FileHandling::WriteLineToFile("\\end{alltt}", WIDataPCG.tex_file);
 
         // COLLECT DATA FOR OVERALL MEAN
-        smry_data_.well_mean.push_back(WIDiff.WCF_accuracy_list[4]);
-        smry_data_.well_median.push_back(WIDiff.WCF_accuracy_list[6]);
+        if (QString::compare(dir_names_[ii].at(0), "n", Qt::CaseSensitive) == 0) {
+            smry_data_norne.well_mean.push_back(WIDiff.WCF_accuracy_list[4]);
+            smry_data_norne.well_median.push_back(WIDiff.WCF_accuracy_list[6]);
+        } else if (QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0) {
+            smry_data_5spot.well_mean.push_back(WIDiff.WCF_accuracy_list[4]);
+            smry_data_5spot.well_median.push_back(WIDiff.WCF_accuracy_list[6]);
+        }
     }
 
-    tab_mean_str = "\\midrule\\\\\nMean & "
-        + QString::number(ConvertStdToEigen(
-            smry_data_.well_mean).mean()).leftJustified(5, '0', true)
+    tab_mean_str_5spot = "\\midrule\nMean & "
+        + QString::number(GetNonzero(ConvertStdToEigen(
+            smry_data_5spot.well_mean)).mean()).leftJustified(5, '0', true)
         + " & "
-        + QString::number(ConvertStdToEigen(
-            smry_data_.well_median).mean()).leftJustified(5, '0', true);
+        + QString::number(GetNonzero(ConvertStdToEigen(
+            smry_data_5spot.well_median)).mean()).leftJustified(5, '0', true);
+
+    tab_mean_str_norne = "\\midrule\nMean & "
+        + QString::number(GetNonzero(ConvertStdToEigen(
+            smry_data_norne.well_mean)).mean()).leftJustified(5, '0', true)
+        + " & "
+        + QString::number(GetNonzero(ConvertStdToEigen(
+            smry_data_norne.well_median)).mean()).leftJustified(5, '0', true);
+
+    Utilities::FileHandling::WriteLineToFile(tab_mean_str_5spot, tex_smry_5spot);
+    Utilities::FileHandling::WriteLineToFile(tab_mean_str_norne, tex_smry_norne);
 
     Utilities::FileHandling::WriteLineToFile(tab_tail_str, tex_smry_5spot);
     Utilities::FileHandling::WriteLineToFile(tab_tail_str, tex_smry_norne);
