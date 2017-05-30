@@ -592,32 +592,7 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
     QString tol;
     tol.sprintf("%5.3f", GetEpsWCF());
 
-    if(va.WCF.isApprox(vb.WCF, GetEpsWCF())){
-        str_out = lstr_out + "\nWCF values match exactly for this well (WCF tol = " + tol + ").";
-        std::cout << "\033[1;32m" << str_out.toStdString() << "\033[0m" << std::endl;
-        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
-
-        vdiff.WCF_accuracy_list << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
-//        std::cout << "ii:" << ii << "-> va.test_IJK_removed.size():" << va.test_IJK_removed.size() << std::endl;
-//        std::cout << "ii:" << ii << "-> va.test_IJK_removed[ii].size():" << va.test_IJK_removed[ii].size() << std::endl;
-//        std::cout << "ii:" << ii << "-> va.test_IJK_removed[ii][1].size():" << va.test_IJK_removed[ii][1].size() << std::endl;
-//        std::cout << "ii:" << ii << "-> va.test_IJK_removed[ii][3].size():" << va.test_IJK_removed[ii][3].size() << std::endl;
-
-        if (va.test_IJK_removed[ii][1].size() + va.test_IJK_removed[ii][3].size() > va.max_sup) {
-            str_smry = va.dir_name.replace("_","\\_") + " & " + "0.000 & 0.000 \\\\";
-        }
-        else {
-            str_smry = va.dir_name.replace("_","\\_") + " & " + "1.000 & 1.000 \\\\";
-        };
-
-    }else{
-        str_out = lstr_out + "\nWCF values are NOT the same for this well (WCF tol = " + tol + ").";
-        std::cout << "\033[1;35m" << str_out.toStdString() << "\033[0m" << std::endl;
-        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
-
-        // Output general difference (i.e., for I, J and K columns)
-        CheckRowwiseDiffWCF(va,vb,vdiff);
-
+    if (va.WCF.rows() > 0 && vb.WCF.rows() > 0) {
         // Output difference for column
         vdiff.WCF_accuracy_list.append(GetColumnAccuracyElements(vdiff.WCF)); // 0
         vdiff.WCF_accuracy_list.append(GetColumnOffset(va.WCF, vb.WCF, vdiff.WCF)); // 1
@@ -632,6 +607,40 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
         vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF, 0, threshold)); // 6
         vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF, 1, threshold)); // 7
         vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF, 2, threshold)); // 8
+    }
+    else {
+        vdiff.WCF_accuracy_list << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+    }
+
+    auto str_val1 = QString::number(vdiff.WCF_accuracy_list[1]); // Column offset
+    auto str_val2 = QString::number(vdiff.WCF_accuracy_list[2]); // Cosine measure
+    auto str_val3 = QString::number(vdiff.WCF_accuracy_list[3]).leftJustified(5, '0', true); // Mean (w/o threshold)
+    auto str_val4 = QString::number(vdiff.WCF_accuracy_list[4]).leftJustified(5, '0', true); // Mean (w/ threshold)
+    auto str_val5 = QString::number(vdiff.WCF_accuracy_list[5]); // Mean (num removed values)
+    auto str_val6 = QString::number(vdiff.WCF_accuracy_list[6]).leftJustified(5, '0', true); // Median (w/o threshold)
+    auto str_val7 = QString::number(vdiff.WCF_accuracy_list[7]).leftJustified(5, '0', true); // Median (w/ threshold)
+    auto str_val8 = QString::number(vdiff.WCF_accuracy_list[8]); // Median (num removed values)
+
+    if(va.WCF.isApprox(vb.WCF, GetEpsWCF())){
+        str_out = lstr_out + "\nWCF values match exactly for this well (WCF tol = " + tol + ").";
+        std::cout << "\033[1;32m" << str_out.toStdString() << "\033[0m" << std::endl;
+        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+
+        // vdiff.WCF_accuracy_list << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+        // if (va.test_IJK_removed[ii][1].size() + va.test_IJK_removed[ii][3].size() > va.max_sup) {
+        //     str_smry = va.dir_name.replace("_","\\_") + " & " + "0.000 & 0.000 \\\\";
+        // }
+        // else {
+        //     str_smry = va.dir_name.replace("_","\\_") + " & " + "1.000 & 1.000 \\\\";
+        // };
+
+    }else{
+        str_out = lstr_out + "\nWCF values are NOT the same for this well (WCF tol = " + tol + ").";
+        std::cout << "\033[1;35m" << str_out.toStdString() << "\033[0m" << std::endl;
+        Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
+
+        // Output general difference (i.e., for I, J and K columns)
+        CheckRowwiseDiffWCF(va,vb,vdiff);
 
         // Zero element fraction
         str_out = "\nElement accuracy: fraction of zero (<tol) elements in diff. column (1=best)";
@@ -648,7 +657,6 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
         std::cout << "\033[1;33m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        auto str_val1 = QString::number(vdiff.WCF_accuracy_list[1]);
         str_out  = "Column offset:  " + str_val1;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
@@ -658,51 +666,45 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
         std::cout << "\033[1;33m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        auto str_val2 = QString::number(vdiff.WCF_accuracy_list[2]);
         str_out  = "Column cosine measure:  " + str_val2;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Mean (w/o threshold)
-        auto str_val3 = QString::number(vdiff.WCF_accuracy_list[3]).leftJustified(5, '0', true);
         str_out  = "\nMean of RMS/PCG wi-ratios (w/o threshold): " + str_val3;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Mean (w/ threshold)
-        auto str_val4 = QString::number(vdiff.WCF_accuracy_list[4]).leftJustified(5, '0', true);
         str_out = "Mean of RMS/PCG wi-ratios (w/ threshold):  " + str_val4;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Mean (num removed values)
-        auto str_val5 = QString::number(vdiff.WCF_accuracy_list[5]);
         str_out  = "[Number of values removed by threshold (="
         + QString::number(threshold) + "): " + str_val5 + "]";
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Median (w/o threshold)
-        auto str_val6 = QString::number(vdiff.WCF_accuracy_list[6]).leftJustified(5, '0', true);
         str_out  = "\nMedian of RMS/PCG wi-ratios (w/o threshold): " + str_val6;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Median (w/ threshold)
-        auto str_val7 = QString::number(vdiff.WCF_accuracy_list[7]).leftJustified(5, '0', true);
         str_out  = "Median of RMS/PCG wi-ratios (w/ threshold): " + str_val7;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Median (num removed values)
-        auto str_val8 = QString::number(vdiff.WCF_accuracy_list[8]);
         str_out  = "[Number of values removed by threshold (="
         + QString::number(threshold) + "): " + str_val8 + "]";
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        str_smry = va.dir_name.replace("_","\\_") + " & " + str_val4 + " & " + str_val6 + " \\\\";
     }
+    
+    str_smry = va.dir_name.replace("_","\\_") + " & " + str_val4 + " & " + str_val6 + " \\\\";
 
     std::cout << "Writing to file:" << va.tex_smry.toStdString() << std::endl << std::endl;
     Utilities::FileHandling::WriteLineToFile(str_smry, va.tex_smry);
