@@ -60,7 +60,7 @@ class WIData {
 
   Matrix<double,1,6> XYZd;
   QStringList XYZc;
-  QString XYZh, XYZt;
+  QString XYZh, XYZt, sp;
 
   QStringList name;
   QString dir_name;
@@ -73,6 +73,7 @@ class WIData {
   QString well_name;
   QString radius = QString::number(0.1905/2);
   QString skin_factor = QString::number(0.0);
+  int max_sup = 5;
 
   std::vector< std::vector< std::vector<int> >> test_IJK_removed;
 
@@ -103,14 +104,17 @@ void WIData::CalculateWCF(QString file_root){
     bool debug_ = true;
 
     // HEAD AND TOE COORDS
-    XYZh = XYZc[0] + " " + XYZc[1] + " " + XYZc[2];
-    XYZt = XYZc[3] + " " + XYZc[4] + " " + XYZc[5];
+    sp = "\"";
+    XYZh = sp + XYZc[0] + sp + " " + sp + XYZc[1] + sp + " " + sp + XYZc[2] + sp;
+    XYZt = sp + XYZc[3] + sp + " " + sp + XYZc[4] + sp + " " + sp + XYZc[5] + sp;
 
     // CSV FORMAT
     QString command_csv = "./wicalc --grid "
         + grid_file
-        + " --heel " + XYZh
-        + " --toe " + XYZt
+//        + " --heel " + XYZh
+//        + " --toe "  + XYZt
+        + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
+        + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
         + " --radius " + radius
         + " --skin-factor " + skin_factor
         + " --well-name " + well_name;
@@ -131,8 +135,10 @@ void WIData::CalculateWCF(QString file_root){
     // COMPDAT FORMAT
     QString command = "time -p ./wicalc --grid "
         + grid_file
-        + " --heel " + XYZh
-        + " --toe "  + XYZt
+//        + " --heel " + XYZh
+//        + " --toe "  + XYZt
+        + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
+        + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
         + " --radius " + radius
         + " --skin-factor " + skin_factor
         + " --compdat "
@@ -174,8 +180,8 @@ void WIData::CalculateWCF(QString file_root){
 
                 // Read IJK values from current line
                 fields = line.split(QRegExp("\\s+"));
-                temp_IJK << fields[2].toInt(), fields[3].toInt(),
-                    fields[4].toInt(), fields[5].toInt();
+                temp_IJK << fields[2].remove(" ").toInt(), fields[3].remove(" ").toInt(),
+                    fields[4].remove(" ").toInt(), fields[5].remove(" ").toInt();
 
                 // Store IJK values
                 Matrix<int, Dynamic, 4>
@@ -187,7 +193,7 @@ void WIData::CalculateWCF(QString file_root){
                 wcf.push_back(fields[8].toDouble());
             }
 
-            if (line.contains("WARNING")) {
+            if (line.contains("WARNING") || line.contains("option")) {
                 Utilities::FileHandling::WriteLineToFile(line, this->tex_file);
             }
         }

@@ -581,7 +581,7 @@ WIData CompareIJK(WIData va, WIData vb){
  * \param
  * \return
  */
-WIData CompareWCF(WIData &va, WIData &vb) {
+WIData CompareWCF(WIData &va, WIData &vb, int ii) {
 
     double threshold = 2.0;
     WIData vdiff;
@@ -596,7 +596,19 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         str_out = lstr_out + "\nWCF values match exactly for this well (WCF tol = " + tol + ").";
         std::cout << "\033[1;32m" << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
-        str_smry = "1 & 1 \\\\"; 
+
+        vdiff.WCF_accuracy_list << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+//        std::cout << "ii:" << ii << "-> va.test_IJK_removed.size():" << va.test_IJK_removed.size() << std::endl;
+//        std::cout << "ii:" << ii << "-> va.test_IJK_removed[ii].size():" << va.test_IJK_removed[ii].size() << std::endl;
+//        std::cout << "ii:" << ii << "-> va.test_IJK_removed[ii][1].size():" << va.test_IJK_removed[ii][1].size() << std::endl;
+//        std::cout << "ii:" << ii << "-> va.test_IJK_removed[ii][3].size():" << va.test_IJK_removed[ii][3].size() << std::endl;
+
+        if (va.test_IJK_removed[ii][1].size() + va.test_IJK_removed[ii][3].size() > va.max_sup) {
+            str_smry = va.dir_name.replace("_","\\_") + " & " + "0.000 & 0.000 \\\\";
+        }
+        else {
+            str_smry = va.dir_name.replace("_","\\_") + " & " + "1.000 & 1.000 \\\\";
+        };
 
     }else{
         str_out = lstr_out + "\nWCF values are NOT the same for this well (WCF tol = " + tol + ").";
@@ -652,13 +664,13 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Mean (w/o threshold)
-        auto str_val3 = QString::number(vdiff.WCF_accuracy_list[3]).leftJustified(7, '0');
+        auto str_val3 = QString::number(vdiff.WCF_accuracy_list[3]).leftJustified(5, '0', true);
         str_out  = "\nMean of RMS/PCG wi-ratios (w/o threshold): " + str_val3;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Mean (w/ threshold)
-        auto str_val4 = QString::number(vdiff.WCF_accuracy_list[4]).leftJustified(7, '0');
+        auto str_val4 = QString::number(vdiff.WCF_accuracy_list[4]).leftJustified(5, '0', true);
         str_out = "Mean of RMS/PCG wi-ratios (w/ threshold):  " + str_val4;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
@@ -671,13 +683,13 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Median (w/o threshold)
-        auto str_val6 = QString::number(vdiff.WCF_accuracy_list[6]).leftJustified(7, '0');
+        auto str_val6 = QString::number(vdiff.WCF_accuracy_list[6]).leftJustified(5, '0', true);
         str_out  = "\nMedian of RMS/PCG wi-ratios (w/o threshold): " + str_val6;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
         // Median (w/ threshold)
-        auto str_val7 = QString::number(vdiff.WCF_accuracy_list[7]).leftJustified(7, '0');
+        auto str_val7 = QString::number(vdiff.WCF_accuracy_list[7]).leftJustified(5, '0', true);
         str_out  = "Median of RMS/PCG wi-ratios (w/ threshold): " + str_val7;
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
@@ -689,7 +701,7 @@ WIData CompareWCF(WIData &va, WIData &vb) {
         std::cout << str_out.toStdString() << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, va.tex_file);
 
-        str_smry = str_val4 + " & " + str_val6 + " \\\\";        
+        str_smry = va.dir_name.replace("_","\\_") + " & " + str_val4 + " & " + str_val6 + " \\\\";
     }
 
     std::cout << "Writing to file:" << va.tex_smry.toStdString() << std::endl << std::endl;
@@ -1098,7 +1110,7 @@ void RemoveSuperfluousRowsB(WIData &WIDataRMS,
                             QStringList &diff_files,
                             int jj) {
 
-    bool debug_ = true;
+    bool debug_ = false;
     QString str_out;
 
     auto sup_indices = DiffTreatmentB(WIDataRMS, WIDataPCG, diff_files);
@@ -1139,9 +1151,9 @@ void RemoveSuperfluousRowsB(WIData &WIDataRMS,
         str_out.append("Rows that were removed: [" + str_ind.join(" ") + "].");
     }
 
-    if (sup_indices[1].size() + sup_indices[3].size()>5){
-        str_out.append("\nWARNING: more than 5 rows removed, "
-                           "check wells are supposed to be equal. ");
+    if (sup_indices[1].size() + sup_indices[3].size() > WIDataPCG.max_sup){
+        str_out.append("\nWARNING: more than " + QString::number(WIDataPCG.max_sup)
+                           + " rows removed, check wells are supposed to be equal. ");
     }
 
     WIDataRMS.test_IJK_removed[jj] = sup_indices;
@@ -1157,91 +1169,91 @@ void RemoveSuperfluousRowsB(WIData &WIDataRMS,
  * \param
  * \return
  */
-void RemoveSuperfluousRowsA(WIData &WIDataRMS,
-                            WIData &WIDataPCG,
-                            QStringList &diff_files,
-                            int jj){
-
-    bool debug_ = false;
-    bool remove_sup = true;
-    QVector<int> sup_indices_total;
-    QString str_out;
-
-    // DIFF TREATMENT: IJK COMPARISON: FIND EXTRA ROWS USING diff COMMAND
-    auto sup_indices = DiffTreatmentA(WIDataRMS, WIDataPCG, diff_files);
-
-    // REMOVE SUPERFLUOUS ROWS
-    WIData WILong = GetLongestVector(WIDataRMS, WIDataPCG);
-    WIData WIShort = GetShortestVector(WIDataRMS, WIDataPCG);
-    WIData WITemp;
-
-    // WIShort.IJK.setZero();
-    WITemp.IJK.resize(WILong.IJK.rows() - sup_indices.size(),4);
-    WITemp.WCF.resize(WILong.IJK.rows() - sup_indices.size(),1);
-    WITemp.IJK.fill(0);
-    WITemp.WCF.fill(0);
-
-    if (debug_){
-        std::cout << "WILong.IJK.rows:" << WILong.IJK.rows() << std::endl;
-        std::cout << "WIShort.IJK.rows:" << WIShort.IJK.rows() << std::endl;
-        std::cout << "WITemp.IJK.rows:" << WITemp.IJK.rows() << std::endl;
-    }
-
-    // LOOP OVER ALL ROWS IN THE LONGEST COLUMN AND INSERT EACH OF THESE INTO A NEW IJK
-    // COLUMN UNLESS THE GIVEN ROW IS A SUPERFLUOUS ONE, IN WHICH CASE WE SKIP IT
-    int kk = 0;
-    for (int ii = 0; ii < WILong.IJK.rows(); ++ii) {
-        if (debug_) std::cout << "ii: " <<  ii
-                              << "[kk: " << kk << "] "
-                              << "is current row superfluous? (1=yes, 0=no): "
-                              << sup_indices.contains(ii) << std::endl;
-        if (! sup_indices.contains(ii)) {
-            WITemp.IJK.row(kk) << WILong.IJK.row(ii);
-            WITemp.WCF.row(kk) << WILong.WCF.row(ii);
-            kk += 1;
-        }else{
-            if (debug_) std::cout << "Row not added to short vector!" << std::endl;
-        }
-    }
-
-    // REMOVE SUPERFLUOUS ROWS FROM ORIGINALLY LONG COLUMN (UPDATE LONG COLUMN)
-    QString rem_str;
-    if (WIDataRMS.IJK.rows() > WIDataPCG.IJK.rows()) {
-        WIDataRMS.IJK = WITemp.IJK;
-        WIDataRMS.WCF = WITemp.WCF;
-        rem_str = "RMS";
-    } else {
-        WIDataPCG.IJK = WITemp.IJK;
-        WIDataPCG.WCF = WITemp.WCF;
-        rem_str = "PCG";
-    }
-
-    if (debug_){
-        std::cout << "WIDataRMS.IJK.rows:" << WIDataRMS.IJK.rows() << std::endl;
-        std::cout << "WIDataPCG.IJK.rows:" << WIDataPCG.IJK.rows() << std::endl;
-        std::cout << "sup_indices.size():" << sup_indices.size() << std::endl;
-    }
-
-    // VECTOR LENGTHS HAVE BEEN MADE EQUAL => COMPARE DIRECTLY
-    QString ind_str = (sup_indices.length() > 1) ?
-                      QString::number(sup_indices.size()) + " rows were" : "1 row was";
-    str_out.append(">>> Vector lengths have been made equal: "
-                       + ind_str + " removed from "
-                       + rem_str + " data\nb/c IJK values did not match. ");
-
-    QStringList str_ind;
-        foreach(int ii, sup_indices){ str_ind.append(QString::number(ii)); }
-    str_out.append("Rows that were removed: [" + str_ind.join(" ") + "].");
-
-    if (sup_indices_total.length()>5){
-        str_out.append("\nWARNING: more than 5 rows removed, "
-                           "check wells are supposed to be equal. ");
-    }
-
-    str_out.append("\nContinuing comparison.");
-    std::cout << "\033[1;36m" << str_out.toStdString() << "\033[0m" << std::endl;
-    Utilities::FileHandling::WriteLineToFile(str_out, WIDataPCG.tex_file);
-}
+//void RemoveSuperfluousRowsA(WIData &WIDataRMS,
+//                            WIData &WIDataPCG,
+//                            QStringList &diff_files,
+//                            int jj){
+//
+//    bool debug_ = false;
+//    bool remove_sup = true;
+//    QVector<int> sup_indices_total;
+//    QString str_out;
+//
+//    // DIFF TREATMENT: IJK COMPARISON: FIND EXTRA ROWS USING diff COMMAND
+//    auto sup_indices = DiffTreatmentA(WIDataRMS, WIDataPCG, diff_files);
+//
+//    // REMOVE SUPERFLUOUS ROWS
+//    WIData WILong = GetLongestVector(WIDataRMS, WIDataPCG);
+//    WIData WIShort = GetShortestVector(WIDataRMS, WIDataPCG);
+//    WIData WITemp;
+//
+//    // WIShort.IJK.setZero();
+//    WITemp.IJK.resize(WILong.IJK.rows() - sup_indices.size(),4);
+//    WITemp.WCF.resize(WILong.IJK.rows() - sup_indices.size(),1);
+//    WITemp.IJK.fill(0);
+//    WITemp.WCF.fill(0);
+//
+//    if (debug_){
+//        std::cout << "WILong.IJK.rows:" << WILong.IJK.rows() << std::endl;
+//        std::cout << "WIShort.IJK.rows:" << WIShort.IJK.rows() << std::endl;
+//        std::cout << "WITemp.IJK.rows:" << WITemp.IJK.rows() << std::endl;
+//    }
+//
+//    // LOOP OVER ALL ROWS IN THE LONGEST COLUMN AND INSERT EACH OF THESE INTO A NEW IJK
+//    // COLUMN UNLESS THE GIVEN ROW IS A SUPERFLUOUS ONE, IN WHICH CASE WE SKIP IT
+//    int kk = 0;
+//    for (int ii = 0; ii < WILong.IJK.rows(); ++ii) {
+//        if (debug_) std::cout << "ii: " <<  ii
+//                              << "[kk: " << kk << "] "
+//                              << "is current row superfluous? (1=yes, 0=no): "
+//                              << sup_indices.contains(ii) << std::endl;
+//        if (! sup_indices.contains(ii)) {
+//            WITemp.IJK.row(kk) << WILong.IJK.row(ii);
+//            WITemp.WCF.row(kk) << WILong.WCF.row(ii);
+//            kk += 1;
+//        }else{
+//            if (debug_) std::cout << "Row not added to short vector!" << std::endl;
+//        }
+//    }
+//
+//    // REMOVE SUPERFLUOUS ROWS FROM ORIGINALLY LONG COLUMN (UPDATE LONG COLUMN)
+//    QString rem_str;
+//    if (WIDataRMS.IJK.rows() > WIDataPCG.IJK.rows()) {
+//        WIDataRMS.IJK = WITemp.IJK;
+//        WIDataRMS.WCF = WITemp.WCF;
+//        rem_str = "RMS";
+//    } else {
+//        WIDataPCG.IJK = WITemp.IJK;
+//        WIDataPCG.WCF = WITemp.WCF;
+//        rem_str = "PCG";
+//    }
+//
+//    if (debug_){
+//        std::cout << "WIDataRMS.IJK.rows:" << WIDataRMS.IJK.rows() << std::endl;
+//        std::cout << "WIDataPCG.IJK.rows:" << WIDataPCG.IJK.rows() << std::endl;
+//        std::cout << "sup_indices.size():" << sup_indices.size() << std::endl;
+//    }
+//
+//    // VECTOR LENGTHS HAVE BEEN MADE EQUAL => COMPARE DIRECTLY
+//    QString ind_str = (sup_indices.length() > 1) ?
+//                      QString::number(sup_indices.size()) + " rows were" : "1 row was";
+//    str_out.append(">>> Vector lengths have been made equal: "
+//                       + ind_str + " removed from "
+//                       + rem_str + " data\nb/c IJK values did not match. ");
+//
+//    QStringList str_ind;
+//        foreach(int ii, sup_indices){ str_ind.append(QString::number(ii)); }
+//    str_out.append("Rows that were removed: [" + str_ind.join(" ") + "].");
+//
+//    if (sup_indices_total.length()>5){
+//        str_out.append("\nWARNING: more than 5 rows removed, "
+//                           "check wells are supposed to be equal. ");
+//    }
+//
+//    str_out.append("\nContinuing comparison.");
+//    std::cout << "\033[1;36m" << str_out.toStdString() << "\033[0m" << std::endl;
+//    Utilities::FileHandling::WriteLineToFile(str_out, WIDataPCG.tex_file);
+//}
 
 
 /*!
@@ -1289,6 +1301,17 @@ void RemoveSuperfluousRowsWrapper(WIData &WIDataRMS,
         std::cout << std::endl << "\033[1;36m"
                   << str_out.toStdString() << "\033[0m" << std::endl;
         Utilities::FileHandling::WriteLineToFile(str_out, WIDataPCG.tex_file);
+
+        std::vector<int> empty_v;
+        std::vector< std::vector<int> > emp_indices;
+
+        emp_indices.push_back(empty_v);
+        emp_indices.push_back(empty_v);
+        emp_indices.push_back(empty_v);
+        emp_indices.push_back(empty_v);
+
+        WIDataRMS.test_IJK_removed[ii] = emp_indices;
+        WIDataPCG.test_IJK_removed[ii] = emp_indices;
 
     } else {
 

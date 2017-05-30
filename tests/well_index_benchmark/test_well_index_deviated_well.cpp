@@ -46,7 +46,16 @@ class DeviatedWellIndexTest : public ::testing::Test {
   QString grid_file_5spot = "../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
   QString grid_file_norne = "../examples/Flow/norne/OUTPUT/NORNE_ATW2013.EGRID";
   QString tex_smry_5spot, tex_smry_norne;
+  QString tab_header_str, tab_tail_str, tab_mean_str;
+
   bool debug_ = false;
+
+  struct smry_data{
+    vector<double> well_mean, well_median;
+  };
+
+  smry_data smry_data_;
+
 };
 
 TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
@@ -75,8 +84,22 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     tex_smry_5spot = dir_list_[0] + "/../summary-table-5spot.tex";
     tex_smry_norne = dir_list_[0] + "/../summary-table-norne.tex";
 
-    Utilities::FileHandling::WriteStringToFile("\\begin{tabular}", tex_smry_5spot);
-    Utilities::FileHandling::WriteStringToFile("\\begin{tabular}", tex_smry_norne);
+    tab_header_str = "\\begin{table} \\begin{tabular}{c c c}\n"
+        "Well & "
+        "{\\bfseries $mean^{th}$} & "
+        "{\\bfseries $median$}\\\\"
+        "\\toprule";
+    tab_tail_str = "\\bottomrule\n"
+        "\\end{tabular}\n"
+        "\\caption{"
+        "$mean^{th}$: the mean of the $\\dfrac{wi_{RMS}}{wi_{PCG}}$ vector for each well,"
+        "with outliers removed (above and below threshold values $[\\frac{1/2} 2]$).\n"
+        "$median$: the mediam of the $\\\\dfrac{wi_{RMS}}{wi_{PCG}}$ vector for each well,"
+        "no values removed.}\n"
+        "\\end{table}";
+
+    Utilities::FileHandling::WriteStringToFile(tab_header_str, tex_smry_5spot);
+    Utilities::FileHandling::WriteStringToFile(tab_header_str, tex_smry_norne);
 
     WIDataRMS.test_IJK_removed.resize(rms_files.length());
     WIDataPCG.test_IJK_removed.resize(rms_files.length());
@@ -119,6 +142,7 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
             WIDataPCG.tex_smry = tex_smry_5spot;
         }
         WIDataPCG.dir_name = dir_names_[ii];
+        WIDataRMS.tex_smry = WIDataPCG.tex_smry;
 
         // DEFINE TEX FILES + START WRITING TO FILE
         WIDataPCG.tex_file = dir_list_[ii] + "/" + dir_names_[ii] + ".tex";
@@ -162,14 +186,25 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
 
         // COMPARE IJK AND PCG VALUES (EQUAL LENGTH DATA)
         CompareIJK(WIDataRMS, WIDataPCG);
-        auto WIDiff = CompareWCF(WIDataRMS, WIDataPCG);
+        auto WIDiff = CompareWCF(WIDataRMS, WIDataPCG, ii);
 
         // WRITE TO TEX FILE
         Utilities::FileHandling::WriteLineToFile("\\end{alltt}", WIDataPCG.tex_file);
+
+        // COLLECT DATA FOR OVERALL MEAN
+        smry_data_.well_mean.push_back(WIDiff.WCF_accuracy_list[4]);
+        smry_data_.well_median.push_back(WIDiff.WCF_accuracy_list[6]);
     }
 
-    Utilities::FileHandling::WriteLineToFile("\\end{tabular}", tex_smry_5spot);
-    Utilities::FileHandling::WriteLineToFile("\\end{tabular}", tex_smry_norne);
+    tab_mean_str = "\\midrule\\\\\nMean & "
+        + QString::number(ConvertStdToEigen(
+            smry_data_.well_mean).mean()).leftJustified(5, '0', true)
+        + " & "
+        + QString::number(ConvertStdToEigen(
+            smry_data_.well_median).mean()).leftJustified(5, '0', true);
+
+    Utilities::FileHandling::WriteLineToFile(tab_tail_str, tex_smry_5spot);
+    Utilities::FileHandling::WriteLineToFile(tab_tail_str, tex_smry_norne);
 
 //    std::cout << "\n\n*********\nTESTING\n*********\n" << std::endl;
 //    for (int ii = 0; ii < num_files; ++ii) {
