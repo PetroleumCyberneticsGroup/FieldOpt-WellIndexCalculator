@@ -602,6 +602,15 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
     vdiff.WCF = va.WCF - vb.WCF;
 
     QString str_out, str_smry;
+    QString str_cola="", str_colb="";
+    QString str_dir_name, str_dir_label;
+
+    str_dir_name = va.dir_name;
+    str_dir_name.replace("_","\\_");
+
+    str_dir_label = va.dir_name;
+    str_dir_label.replace("_","-");
+
     QString lstr_out = "\n--------------------------------------------------------------------------------";
     QString tol;
     tol.sprintf("%5.3f", GetEpsWCF());
@@ -623,7 +632,8 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
         vdiff.WCF_accuracy_list.append(GetColumnMedian(va.WCF, vb.WCF, vdiff.WCF, 2, threshold)); // 8
     }
     else {
-        vdiff.WCF_accuracy_list << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+        vdiff.WCF_accuracy_list << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0;
+        str_cola = "\\txtRed{"; str_colb = "}";
     }
 
     auto str_val1 = QString::number(vdiff.WCF_accuracy_list[1]); // Column offset
@@ -710,10 +720,15 @@ WIData CompareWCF(WIData &va, WIData &vb, int ii) {
 
     }
 
-    str_smry = "\\texttt{" + va.dir_name.replace("_","\\_") + "} & " + str_val4 + " & " + str_val6 + " \\\\";
+    str_smry =  str_cola + "\\texttt{" + str_dir_name + "}" + str_colb
+        + " (\\ref{" + str_dir_label + "}) & "
+        + str_cola + str_val4 + str_colb + " & "
+        + str_cola + str_val6 + str_colb + " \\\\";
 
-    std::cout << "Writing to file:" << va.tex_smry.toStdString() << std::endl << std::endl;
-    Utilities::FileHandling::WriteLineToFile(str_smry, va.tex_smry);
+    if (QString::compare(va.dir_name, "tw00_00", Qt::CaseSensitive) != 0){ // skip well tw00_00
+        std::cout << "Writing to file:" << va.tex_smry.toStdString() << std::endl << std::endl;
+        Utilities::FileHandling::WriteLineToFile(str_smry, va.tex_smry);
+    }
 
     bool debug_ = false;
     if (debug_){

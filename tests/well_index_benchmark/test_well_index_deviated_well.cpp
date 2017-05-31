@@ -86,13 +86,12 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
     tex_smry_norne = dir_list_[0] + "/../summary-table-norne.tex";
 
     tab_header_str = "\\begin{table}[h!]\\begin{center}\\def\\arraystretch{1.1}\n "
-        "\\begin{tabular}{c c c} \\toprule\n"
+        "\\begin{tabular}{l c c} \\toprule\n"
         "Well & "
         "{\\bfseries $mean^{th}$} & "
         "{\\bfseries $median$}\\\\ "
         "\\midrule";
-    tab_tail_str = "\\\\ \\bottomrule\n"
-        "\\end{tabular}\n"
+    tab_tail_str = "\\end{tabular}\n\n"
         "\\caption{"
         "$mean^{th}$: the mean of the $\\dfrac{wi_{RMS}}{wi_{PCG}}$ radios for each well, "
         "with outliers removed (above and below threshold values $[\\frac{1}{2} \\; 2]$).\n"
@@ -192,25 +191,28 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
         if (QString::compare(dir_names_[ii].at(0), "n", Qt::CaseSensitive) == 0) {
             smry_data_norne.well_mean.push_back(WIDiff.WCF_accuracy_list[4]);
             smry_data_norne.well_median.push_back(WIDiff.WCF_accuracy_list[6]);
-        } else if (QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0) {
+        } else if (QString::compare(dir_names_[ii].at(0), "t", Qt::CaseSensitive) == 0
+            && QString::compare(dir_names_[ii], "tw00_00", Qt::CaseSensitive) != 0) {
             smry_data_5spot.well_mean.push_back(WIDiff.WCF_accuracy_list[4]);
             smry_data_5spot.well_median.push_back(WIDiff.WCF_accuracy_list[6]);
         }
     }
 
-    tab_mean_str_5spot = "\\midrule\nMean & "
+    tab_mean_str_5spot = "\\midrule\n\\bfseries Mean & \\bfseries "
         + QString::number(GetNonzero(ConvertStdToEigen(
             smry_data_5spot.well_mean)).mean()).leftJustified(5, '0', true)
-        + " & "
+        + " & \\bfseries "
         + QString::number(GetNonzero(ConvertStdToEigen(
-            smry_data_5spot.well_median)).mean()).leftJustified(5, '0', true);
+            smry_data_5spot.well_median)).mean()).leftJustified(5, '0', true)
+        + "\\\\ \\bottomrule";
 
-    tab_mean_str_norne = "\\midrule\nMean & "
+    tab_mean_str_norne = "\\midrule\n\\bfseries Mean & \\bfseries "
         + QString::number(GetNonzero(ConvertStdToEigen(
             smry_data_norne.well_mean)).mean()).leftJustified(5, '0', true)
-        + " & "
+        + " & \\bfseries "
         + QString::number(GetNonzero(ConvertStdToEigen(
-            smry_data_norne.well_median)).mean()).leftJustified(5, '0', true);
+            smry_data_norne.well_median)).mean()).leftJustified(5, '0', true)
+        + "\\\\ \\bottomrule";
 
     Utilities::FileHandling::WriteLineToFile(tab_mean_str_5spot, tex_smry_5spot);
     Utilities::FileHandling::WriteLineToFile(tab_mean_str_norne, tex_smry_norne);

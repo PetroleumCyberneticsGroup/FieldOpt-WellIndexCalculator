@@ -111,8 +111,6 @@ void WIData::CalculateWCF(QString file_root){
     // CSV FORMAT
     QString command_csv = "./wicalc --grid "
         + grid_file
-//        + " --heel " + XYZh
-//        + " --toe "  + XYZt
         + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
         + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
         + " --radius " + radius
@@ -123,6 +121,7 @@ void WIData::CalculateWCF(QString file_root){
     QProcess wic_process_csv;
     wic_process_csv.start(command_csv);
     wic_process_csv.waitForFinished();
+    wic_process_csv.waitForFinished(1000);
 
     // READ OUTPUT FROM QProcess COMMAND + CLOSE PROCESSES
     QString wic_process_csv_all_output = QString::fromLatin1(
@@ -135,8 +134,6 @@ void WIData::CalculateWCF(QString file_root){
     // COMPDAT FORMAT
     QString command = "time -p ./wicalc --grid "
         + grid_file
-//        + " --heel " + XYZh
-//        + " --toe "  + XYZt
         + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
         + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
         + " --radius " + radius
@@ -154,6 +151,7 @@ void WIData::CalculateWCF(QString file_root){
     QProcess wic_process;
     wic_process.start(command);
     wic_process.waitForFinished();
+    wic_process.waitForFinished(1000);
 
     // READ OUTPUT FROM QProcess COMMAND + CLOSE PROCESSES
     QByteArray wic_all_output  = wic_process.readAll();
