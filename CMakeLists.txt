@@ -113,9 +113,9 @@ endif()
 
 
 # WI benckmark =========================================================
-#if (BUILD_BENCHMARK)
+if (BUILD_BENCHMARK)
 add_executable(benchmark_wellindexcalculator
-#        tests/well_index_benchmark/test_resource_wic_welldir.h
+        tests/well_index_benchmark/test_resource_wic_welldir.h
         tests/well_index_benchmark/test_resource_wic_widata.h
         tests/well_index_benchmark/test_well_index_deviated_well.cpp
         tests/well_index_benchmark/test_resource_wic_diff_functions.h
@@ -129,4 +129,4 @@ target_link_libraries(benchmark_wellindexcalculator
         ${GTEST_BOTH_LIBRARIES}
         ${CMAKE_THREAD_LIBS_INIT}
         ${Boost_LIBRARIES})
-#endif()
+endif()
