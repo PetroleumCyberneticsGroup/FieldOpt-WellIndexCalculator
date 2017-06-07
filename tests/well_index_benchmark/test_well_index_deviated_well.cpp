@@ -182,7 +182,7 @@ TEST_F(DeviatedWellIndexTest, compareCOMPDAT) {
 
         // COMPARE IJK AND PCG VALUES (EQUAL LENGTH DATA)
         CompareIJK(WIDataRMS, WIDataPCG);
-        auto WIDiff = CompareWCF(WIDataRMS, WIDataPCG, ii);
+        auto WIDiff = CompareWCF(WIDataRMS, WIDataPCG);
 
         // WRITE TO TEX FILE
         Utilities::FileHandling::WriteLineToFile("\\end{alltt}", WIDataPCG.tex_file);

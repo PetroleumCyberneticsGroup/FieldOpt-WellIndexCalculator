@@ -595,7 +595,7 @@ WIData CompareIJK(WIData va, WIData vb){
  * \param
  * \return
  */
-WIData CompareWCF(WIData &va, WIData &vb, int ii) {
+WIData CompareWCF(WIData &va, WIData &vb) {
 
     double threshold = 2.0;
     WIData vdiff;

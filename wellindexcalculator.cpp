@@ -150,7 +150,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     }
 
     // First cell
-    double epsilon = smallest_grid_cell_dimension_ / (1e1 * (start_pt-end_pt).norm());
+    double epsilon = smallest_grid_cell_dimension_ / (1e3 * (start_pt-end_pt).norm());
     Vector3d entry_pt = start_pt;
     double step = 0.0;
     auto prev_cell = first_cell;
