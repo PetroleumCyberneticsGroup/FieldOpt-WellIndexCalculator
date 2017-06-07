@@ -174,6 +174,6 @@ TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
     wells.at(0).wellname = "testwell";
 
     auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
-    EXPECT_EQ(117, blocks.size());
+    EXPECT_EQ(118, blocks.size());
 }
 }

@@ -27,7 +27,7 @@
 #include <QtCore/QString>
 #include <QList>
 #include <Eigen/Dense>
-
+#include <iostream>
 #include <QFile>
 #include <QTextStream>
 #include <fstream>
@@ -60,7 +60,7 @@ class WIData {
 
   Matrix<double,1,6> XYZd;
   QStringList XYZc;
-  QString XYZh, XYZt;
+  QString XYZh, XYZt, sp;
 
   QStringList name;
   QString dir_name;
@@ -68,9 +68,16 @@ class WIData {
 
   QString grid_file;
   QString tex_file;
-  QString well_name = "TW01";
+  QString tex_smry;
+
+  QString well_name;
   QString radius = QString::number(0.1905/2);
   QString skin_factor = QString::number(0.0);
+  int max_sup = 5;
+
+  std::vector< std::vector< std::vector<int> >> test_IJK_removed;
+
+  QList<double> WCF_accuracy_list;
 
   bool debug_ = false;
 
@@ -96,13 +103,16 @@ void WIData::CalculateWCF(QString file_root){
 
     bool debug_ = true;
 
+    // HEAD AND TOE COORDS
+    sp = "\"";
+    XYZh = sp + XYZc[0] + sp + " " + sp + XYZc[1] + sp + " " + sp + XYZc[2] + sp;
+    XYZt = sp + XYZc[3] + sp + " " + sp + XYZc[4] + sp + " " + sp + XYZc[5] + sp;
+
     // CSV FORMAT
-    XYZh = XYZc[0] + " " + XYZc[1] + " " + XYZc[2];
-    XYZt = XYZc[3] + " " + XYZc[4] + " " + XYZc[5];
     QString command_csv = "./wicalc --grid "
         + grid_file
-        + " --heel " + XYZh
-        + " --toe " + XYZt
+        + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
+        + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
         + " --radius " + radius
         + " --skin-factor " + skin_factor
         + " --well-name " + well_name;
@@ -111,6 +121,7 @@ void WIData::CalculateWCF(QString file_root){
     QProcess wic_process_csv;
     wic_process_csv.start(command_csv);
     wic_process_csv.waitForFinished();
+    wic_process_csv.waitForFinished(1000);
 
     // READ OUTPUT FROM QProcess COMMAND + CLOSE PROCESSES
     QString wic_process_csv_all_output = QString::fromLatin1(
@@ -121,7 +132,7 @@ void WIData::CalculateWCF(QString file_root){
         file_root + ".csv");
 
     // COMPDAT FORMAT
-    QString command = "./wicalc --grid "
+    QString command = "time -p ./wicalc --grid "
         + grid_file
         + " --heel " + XYZc[0] + " " + XYZc[1] + " " + XYZc[2]
         + " --toe "  + XYZc[3] + " " + XYZc[4] + " " + XYZc[5]
@@ -131,14 +142,16 @@ void WIData::CalculateWCF(QString file_root){
         + " --well-name " + well_name;
 
     if (debug_){
-        std::cout << "\033[1;31m<DEBUG:START->\033[0m" << std::endl;
-        std::cout << "command:" << command.toStdString() << std::endl;
+        std::cout << "\033[1;31m<[" << dir_name.toStdString()
+                  << "] DEBUG:START->\033[0m" << std::endl;
+        std::cout << "starting command:" << command.toStdString() << std::endl;
     }
 
     // LAUNCH WELL INDEX CALCULATOR
     QProcess wic_process;
     wic_process.start(command);
     wic_process.waitForFinished();
+    wic_process.waitForFinished(1000);
 
     // READ OUTPUT FROM QProcess COMMAND + CLOSE PROCESSES
     QByteArray wic_all_output  = wic_process.readAll();
@@ -159,37 +172,42 @@ void WIData::CalculateWCF(QString file_root){
     Matrix<int, Dynamic, 4> IJK_stor;
     std::vector<double> wcf;
 
-    foreach(QString line, lines){
+        foreach(QString line, lines){
 
-        if (line.contains("OPEN")) {
+            if (line.contains("OPEN")) {
 
-            // Read IJK values from current line
-            fields = line.split(QRegExp("\\s+"));
-            temp_IJK << fields[2].toInt(), fields[3].toInt(),
-                fields[4].toInt(), fields[5].toInt();
+                // Read IJK values from current line
+                fields = line.split(QRegExp("\\s+"));
+                temp_IJK << fields[2].remove(" ").toInt(), fields[3].remove(" ").toInt(),
+                    fields[4].remove(" ").toInt(), fields[5].remove(" ").toInt();
 
-            // Store IJK values
-            Matrix<int, Dynamic, 4>
-                IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
-            IJK_curr << IJK_stor, temp_IJK;
-            IJK_stor = IJK_curr;
+                // Store IJK values
+                Matrix<int, Dynamic, 4>
+                    IJK_curr(IJK_stor.rows() + temp_IJK.rows(), 4);
+                IJK_curr << IJK_stor, temp_IJK;
+                IJK_stor = IJK_curr;
 
-            // Store well connection factor values
-            wcf.push_back(fields[8].toDouble());
+                // Store well connection factor values
+                wcf.push_back(fields[8].toDouble());
+            }
+
+            if (line.contains("WARNING") || line.contains("option")) {
+                Utilities::FileHandling::WriteLineToFile(line, this->tex_file);
+            }
         }
-    }
 
     IJKN = IJK_stor;
     WCFN = Map<Matrix<double, Dynamic, 1>>(wcf.data(), wcf.size());
 
     if (debug_){
-        std::cout << "all output:" << all_output.toStdString() << std::endl;
+//        std::cout << "all output:" << all_output.toStdString() << std::endl;
         std::cout << "standard output:" << standard_output.toStdString() << std::endl;
         std::cout << "error output:" << error_output.toStdString() << std::endl;
 
-        std::cout << "IJKN:" << IJKN << std::endl;
-        std::cout << "WCFN:" << WCFN << std::endl;
-        std::cout << "\033[1;31m<DEBUG:END--->\033[0m" << std::endl;
+//        std::cout << "IJKN:" << IJKN << std::endl;
+//        std::cout << "WCFN:" << WCFN << std::endl;
+        std::cout << "\033[1;31m<[" << dir_name.toStdString()
+                  << "] DEBUG:END--->\033[0m" << std::endl;
     }
 }
 
@@ -295,7 +313,7 @@ void WIData::ReadXYZ(QString file_name){
         QString line = xyz_in.readLine();
         xyz_in_fields = line.split(QRegExp("[\r\n\t]"));
 
-        if (!line.contains("TW01")) {
+        if (!line.contains("W01")) {
             // Store xyz values
             for(int ii = 0; ii < xyz_in_fields.size(); ++ii){
                 xyz_d.push_back(xyz_in_fields[ii].toDouble());

@@ -99,7 +99,7 @@ QList<QStringList> WellDir::MakeDirList(QString data_dir){
     // Make list of well dirs:
     QDir dir(data_dir);
     dir.setSorting(QDir::Name);
-    dir.setNameFilters(QStringList()<<"tw*");
+    dir.setNameFilters(QStringList()<<"*w0*_*");
     QList<QStringList> dir_list_;
     QStringList dir_list_abs_;
 
@@ -138,12 +138,14 @@ QStringList WellDir::AddFilesToList(QStringList temp_dir, QString ext){
 
             // Check if more than one file
             if (file_name_.length()>1)
-                throw std::runtime_error("Too many " + ext.toStdString() + " files in well folder!");
+                throw std::runtime_error("Too many " + ext.toStdString()
+                                             + " files in well folder!");
 
             // Check if no files
             QString file_str_;
             if (file_name_.length()<1){
-                // throw std::runtime_error("No " + ext.toStdString() + " file in well folder!");
+                // throw std::runtime_error("No " + ext.toStdString()
+                // + " file in well folder!");
                 file_str_ = "none";
             }else{
                 file_str_ = dir_name_ + "/" + file_name_[0];
