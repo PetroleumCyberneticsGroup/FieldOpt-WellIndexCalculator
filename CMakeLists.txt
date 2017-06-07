@@ -8,12 +8,24 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 if (_WIN32) # WINDOWS
     find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
 
+include_directories(${EIGEN3_INCLUDE_DIR}
+	${ERT_INCLUDE_DIR})
+
     add_library(wellindexcalculator SHARED dllmain.cpp)
 
     target_link_libraries(wellindexcalculator
             fieldopt::wellindexcalculator
             ${Boost_LIBRARIES}
             ${SHLWAPI_LIBRARY})
+
+    if(BUILD_WIC_ADGPRS)
+        find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
+
+        target_link_libraries(wicalc-adgprs
+                fieldopt::wellindexcalculator
+                ${Boost_LIBRARIES}
+                ${SHLWAPI_LIBRARY})
+    endif(BUILD_WIC_ADGPRS)
 
 else() # LINUX --------------------------------------------------------
     if (NOT BUILD_WIC_ADGPRS)
@@ -37,26 +49,23 @@ else() # LINUX --------------------------------------------------------
                 PUBLIC fieldopt::reservoir
                 ${Boost_LIBRARIES})
 
+	include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
+
         target_compile_features(wellindexcalculator
                 PUBLIC cxx_auto_type
                 PUBLIC cxx_range_for)
 
 
-        if (NOT CREATE_BUNDLE)
-            add_executable(wicalc main.cpp)
-            install( TARGETS wicalc wellindexcalculator
-                    RUNTIME DESTINATION bin
-                    LIBRARY DESTINATION lib
-                    ARCHIVE DESTINATION lib/static
-                    )
-        endif()
-        if(CREATE_BUNDLE)
-            install( TARGETS wellindexcalculator
-                    RUNTIME DESTINATION bin
-                    LIBRARY DESTINATION lib
-                    ARCHIVE DESTINATION lib/static
-                    )
-            endif()
+        add_executable(wicalc main.cpp)
+        target_link_libraries(wicalc
+                fieldopt::wellindexcalculator
+                ${Boost_LIBRARIES})
+
+        install( TARGETS wicalc wellindexcalculator
+                RUNTIME DESTINATION bin
+                LIBRARY DESTINATION lib
+                ARCHIVE DESTINATION lib/static
+                )
 
     elseif(BUILD_WIC_ADGPRS)
         add_library(fieldopt::wellindexcalculator-adgprs
@@ -72,31 +81,12 @@ else() # LINUX --------------------------------------------------------
 
         add_executable(wicalc-adgprs dllmain.cpp)
 
-    endif()
-endif()
-
-# Standalone WellIndexCalculator executable (WIN/Linux) ================
-if (_WIN32 AND BUILD_WIC_ADGPRS)
-    find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
-
-    target_link_libraries(wicalc-adgprs
-            fieldopt::wellindexcalculator
-            ${Boost_LIBRARIES}
-            ${SHLWAPI_LIBRARY})
-else()
-    if (NOT BUILD_WIC_ADGPRS)
-        if (NOT CREATE_BUNDLE)
-            target_link_libraries(wicalc
-                    fieldopt::wellindexcalculator
-                    ${Boost_LIBRARIES})
-        endif()
-
-    elseif(BUILD_WIC_ADGPRS)
         target_link_libraries(wicalc-adgprs
                 fieldopt::wellindexcalculator-adgprs
                 ${Boost_LIBRARIES})
     endif()
 endif()
+
 
 # Testing ==============================================================
 if (BUILD_TESTING)
@@ -119,4 +109,24 @@ if (BUILD_TESTING)
 
     add_test(NAME test_wellindexcalculator
             COMMAND $<TARGET_FILE:test_wellindexcalculator>)
+endif()
+
+
+# WI benckmark =========================================================
+if (BUILD_BENCHMARK)
+add_executable(benchmark_wellindexcalculator
+        tests/well_index_benchmark/test_resource_wic_welldir.h
+        tests/well_index_benchmark/test_resource_wic_widata.h
+        tests/well_index_benchmark/test_well_index_deviated_well.cpp
+        tests/well_index_benchmark/test_resource_wic_diff_functions.h
+        )
+
+target_link_libraries(benchmark_wellindexcalculator
+        fieldopt::wellindexcalculator
+        Qt5::Core
+        ${GTEST_BOTH_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${GTEST_BOTH_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${Boost_LIBRARIES})
 endif()

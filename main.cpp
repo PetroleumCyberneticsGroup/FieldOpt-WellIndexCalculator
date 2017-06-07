@@ -1,5 +1,7 @@
 /******************************************************************************
    Copyright (C) 2015-2016 Einar J.M. Baumann <einar.baumann@gmail.com>
+   Modified by M.Bellout (2017) <mathias.bellout@ntnu.no, chakibbb@gmail.com>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -30,34 +32,77 @@
 #include "wellindexcalculator.h"
 #include <Reservoir/grid/eclgrid.h>
 
+using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
-int main(int argc, const char *argv[]) {
-  // Initialize some variables from the runtime arguments
-  Eigen::setNbThreads(1); // OV
+int main(int argc, const char *argv[])
+{
+    // Initialize some variables from the runtime arguments
+    Eigen::setNbThreads(1);
+    // MB: introduced by OV for standalone library use;
+    // check if really needed <- AGC not sure what this does
 
-  auto vm = createVariablesMap(argc, argv);
-  auto heel = Vector3d(vm["heel"].as<vector<double>>().data());
-  auto toe = Vector3d(vm["toe"].as<vector<double>>().data());
-  string grid_path = vm["grid"].as<string>();
-  double wellbore_radius = vm["radius"].as<double>();
+    auto vm = createVariablesMap(argc, argv);
 
-  // Initialize the Grid and WellIndexCalculator objects
-  auto grid = new Reservoir::Grid::ECLGrid(grid_path);
-  auto wic = WellIndexCalculator(grid);
+    // Get the path to the grid file
+    string gridpth = vm["grid"].as<string>();
 
-  // Compute well blocks
-  auto well_blocks = wic.ComputeWellBlocks(heel, toe, wellbore_radius);
+    // Initialize the Grid and WellIndexCalculator objects
+    Reservoir::Grid::ECLGrid* grid;
+    try 
+    {
+        grid = new Reservoir::Grid::ECLGrid(gridpth);
+    }
+    catch (const std::runtime_error& e) 
+    {
+        cout << "Error reading the Eclipse grid " << e.what() << endl;
+        cout << "The program will stop now";
+        exit(EXIT_FAILURE);
+    }
+    
+    auto wic = WellIndexCalculator(grid);
+    vector<WellDefinition> wells;
 
-  // Print as a COMPDAT table if the --compdat/-c flag was given
-  if (vm.count("compdat")) {
-    string well_name = vm["well-name"].as<string>();
-    printCompdat(well_blocks, well_name, wellbore_radius);
-  }
+    if (vm.count("well-filedef") == 1) 
+    {
+        assert(boost::filesystem::exists(vm["well-filedef"].as<string>()));
+        WellDefinition::ReadWellsFromFile(vm["well-filedef"].as<string>(), wells);
+    }
+    else 
+    {
+        wells.push_back(WellDefinition());
+        
+        if (vm.count("well-name")) {
+            wells.at(0).wellname = vm["well-name"].as<string>();
+        }
+        else
+        {
+        	wells.at(0).wellname = "unnamed_well";
+        }
+        
+        wells.at(0).heels.push_back(Eigen::Vector3d(vm["heel"].as<vector<double>>().data()));
+        wells.at(0).toes.push_back(Eigen::Vector3d(vm["toe"].as<vector<double>>().data()));
+        wells.at(0).radii.push_back(vm["radius"].as<double>());
+        wells.at(0).skins.push_back(vm["skin-factor"].as<double>());
+    }
+    
+    // Compute the well blocks
+    auto well_indices = wic.ComputeWellBlocks(wells);
+    
+    // Print as a COMPDAT table if the --compdat/-c flag was given
+    if (vm.count("compdat")) 
+    {
+        printCompdat(well_indices);
+    }
     // Otherwise, print as a CSV table
-  else {
-    printCsv(well_blocks);
-  }
+    else 
+    {
+        printCsv(well_indices);
+    }
 
-  return 0;
+    if (vm.count("debug") > 0) {
+        printDebug(well_indices);
+    }
+
+    exit(EXIT_SUCCESS);
 }

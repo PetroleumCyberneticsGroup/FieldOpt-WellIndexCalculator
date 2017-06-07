@@ -1,5 +1,7 @@
 /******************************************************************************
    Copyright (C) 2017 Mathias C. Bellout <mathias.bellout@ntnu.no>
+   Modified by Alin G. Chitu (2016-2017) <alin.chitu@tno.nl, chitu_alin@yahoo.com>
+   Modified by Einar Baumann (2017) <einar.baumann@gmail.com>
 
    This file and the WellIndexCalculator as a whole is part of the
    FieldOpt project. However, unlike the rest of FieldOpt, the
@@ -47,12 +49,13 @@ class wicalcStandaloneTest : public ::testing::Test {
   virtual void TearDown(){}
 
   string wicalc_path = "./wicalc";
-  string grid_str = " --grid ../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
-  string heel_str = " --heel 10 10 1712";
-  string toe_str = " --toe 100 100 1712";
-  string radius_str = " --radius 0.1905";
+  string grid_str =    " --grid ../examples/ADGPRS/5spot/ECL_5SPOT.EGRID";
+  string heel_str =    " --heel 10 10 1712";
+  string toe_str =     " --toe 100 100 1712";
+  string radius_str =  " --radius 0.1905";
+  string skin_str =    " --skin-factor 0.0";
   string compdat_str = " --compdat";
-  string wname_str = " --well-name PROD";
+  string wname_str =   " --well-name PROD";
 
   bool check_wicalc_exists(){
       if ( !boost::filesystem::exists( wicalc_path ) ){
@@ -71,12 +74,14 @@ TEST_F(wicalcStandaloneTest, checkExecutable) {
             heel_str +
             toe_str +
             radius_str +
+            skin_str +
             compdat_str +
             wname_str;
 
         printf ("Executing: %s.\n", cmd_in.c_str());
+        // \todo This does not work on Windows native or with Cygwin
         int i=system(cmd_in.c_str());
-        printf ("The value returned was: %d.\n", i);
+        EXPECT_EQ(i, 0);
 
         // \todo Pipe the output of system to a string variable
         // then compare against a similar output
@@ -91,12 +96,14 @@ TEST_F(wicalcStandaloneTest, checkMissingInputParameterGrid) {
             heel_str +
             toe_str +
             radius_str +
+            skin_str +
             compdat_str +
             wname_str;
 
         printf ("Executing: %s.\n", cmd_in.c_str());
+        // \todo This does not work on Windows native or with Cygwin
         int i=system(cmd_in.c_str());
-        printf ("The value returned was: %d.\n", i);
+        EXPECT_EQ(i, 0);
     }
 }
 
