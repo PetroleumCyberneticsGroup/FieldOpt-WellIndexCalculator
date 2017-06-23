@@ -3,13 +3,14 @@ project(wellindexcalculator LANGUAGES CXX)
 
 # Include: Eigen =======================================================
 include_directories(${EIGEN3_INCLUDE_DIR})
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # wellindexcalculator lib ==============================================
 if (_WIN32) # WINDOWS
     find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
 
-include_directories(${EIGEN3_INCLUDE_DIR}
-	${ERT_INCLUDE_DIR})
+    include_directories(${EIGEN3_INCLUDE_DIR}
+	   ${ERT_INCLUDE_DIR})
 
     add_library(wellindexcalculator SHARED dllmain.cpp)
 
@@ -25,9 +26,10 @@ include_directories(${EIGEN3_INCLUDE_DIR}
                 fieldopt::wellindexcalculator
                 ${Boost_LIBRARIES}
                 ${SHLWAPI_LIBRARY})
-    endif(BUILD_WIC_ADGPRS)
+    endif()
 
 else() # LINUX --------------------------------------------------------
+
     if (NOT BUILD_WIC_ADGPRS)
         add_library(wellindexcalculator
                 intersected_cell.cpp
@@ -38,8 +40,8 @@ else() # LINUX --------------------------------------------------------
                 dllmain.cpp
                 intersected_cell.cpp
                 wellindexcalculator.cpp)
-    endif()
 
+    endif()
 
     if (NOT BUILD_WIC_ADGPRS)
         add_library(fieldopt::wellindexcalculator
@@ -49,7 +51,7 @@ else() # LINUX --------------------------------------------------------
                 PUBLIC fieldopt::reservoir
                 ${Boost_LIBRARIES})
 
-	include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
+	    include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
 
         target_compile_features(wellindexcalculator
                 PUBLIC cxx_auto_type
@@ -61,7 +63,7 @@ else() # LINUX --------------------------------------------------------
                 fieldopt::wellindexcalculator
                 ${Boost_LIBRARIES})
 
-        install( TARGETS wicalc wellindexcalculator
+        install(TARGETS wicalc wellindexcalculator
                 RUNTIME DESTINATION bin
                 LIBRARY DESTINATION lib
                 ARCHIVE DESTINATION lib/static
@@ -71,7 +73,7 @@ else() # LINUX --------------------------------------------------------
         add_library(fieldopt::wellindexcalculator-adgprs
                 ALIAS ${PROJECT_NAME}-adgprs)
 
-        target_link_libraries (wellindexcalculator-adgprs
+        target_link_libraries(wellindexcalculator-adgprs
                 PUBLIC fieldopt::reservoir
                 ${Boost_LIBRARIES})
 

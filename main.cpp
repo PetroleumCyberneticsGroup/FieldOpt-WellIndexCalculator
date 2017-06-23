@@ -30,6 +30,7 @@
 
 #include "main.hpp"
 #include "wellindexcalculator.h"
+#include "boost/filesystem.hpp"
 #include <Reservoir/grid/eclgrid.h>
 
 using namespace Reservoir::WellIndexCalculation;

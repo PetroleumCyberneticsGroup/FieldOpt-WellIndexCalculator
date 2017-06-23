@@ -9,6 +9,7 @@
 
 #include <stdbool.h>
 #include <iostream>
+#include <stdexcept>
 #include <stdlib.h>
 
 inline bool exists(const char* name)
@@ -93,23 +94,39 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
     // Initialize the Grid and WellIndexCalculator objects
     if (grid == NULL)
       grid = new Reservoir::Grid::ECLGrid(gridpth);
+
     auto wic = WellIndexCalculator((Reservoir::Grid::Grid*)grid);
 
     // Compute the well blocks
-    auto well_blocks = wic.ComputeWellBlocks(Eigen::Vector3d(heel), Eigen::Vector3d(toe), *wellbore_radius);
+    vector<WellDefinition> wells;
+    wells.push_back(WellDefinition());
+    wells.at(0).wellname = "unnamed_well";
+    wells.at(0).heels.push_back(Eigen::Vector3d(heel));
+    wells.at(0).toes.push_back(Eigen::Vector3d(toe));
+    wells.at(0).radii.push_back(*wellbore_radius);
+    wells.at(0).skins.push_back(0.0);
+
+    auto well_indices = wic.ComputeWellBlocks(wells);
+    vector<IntersectedCell>& well_blocks = well_indices.at("unnamed_well");
     *nblks = well_blocks.size();
 
     if ( (i == NULL) || (j == NULL) || (k == NULL) || (wi == NULL) )
       throw std::runtime_error("ComputeWellIndices: allocate memory for I, J, K, WI");
 
-    for (size_t iblk = 0; iblk < *nblks; iblk++)
+    try
     {
-      i[iblk] = well_blocks[iblk].ijk_index().i() + 1;
-      j[iblk] = well_blocks[iblk].ijk_index().j() + 1;
-      k[iblk] = well_blocks[iblk].ijk_index().k() + 1;
-      wi[iblk] = well_blocks[iblk].well_index();
+      for (size_t iblk = 0; iblk < *nblks; iblk++)
+      {
+        i[iblk] = well_blocks[iblk].ijk_index().i() + 1;
+        j[iblk] = well_blocks[iblk].ijk_index().j() + 1;
+        k[iblk] = well_blocks[iblk].ijk_index().k() + 1;
+        wi[iblk] = well_blocks[iblk].cell_well_index();
+      }
     }
-
+    catch (...)
+    {
+      throw std::runtime_error("ComputeWellIndices: memory problem with copying I, J, K, WI");
+    }
     //delete grid;
   }
   catch (std::runtime_error& e)

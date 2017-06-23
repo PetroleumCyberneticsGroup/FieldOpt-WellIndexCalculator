@@ -28,6 +28,7 @@
 #include <fstream>
 #include <map>
 #include <iostream>
+#include <stdexcept>
 
 using namespace std;
 
