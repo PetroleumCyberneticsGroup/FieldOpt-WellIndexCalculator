@@ -71,6 +71,17 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
             yf = max(yf, max(wells[iWell].heels[iSegment].y(), wells[iWell].toes[iSegment].y()));
             zi = min(zi, min(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));
             zf = max(zf, max(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));
+
+            // std::cout is supressed in ADGPRS
+            fprintf(stdout, "Heel (xyz): [ %f %f %f ]\n",
+                   wells[iWell].heels[iSegment].x(),
+                   wells[iWell].heels[iSegment].y(),
+                   wells[iWell].heels[iSegment].z());
+
+            fprintf(stdout, "Toe (xyz): [ %f %f %f ]\n",
+                    wells[iWell].toes[iSegment].x(),
+                    wells[iWell].toes[iSegment].y(),
+                    wells[iWell].toes[iSegment].z());
         }
 
         // Heuristic increase of the bounding area
@@ -78,7 +89,7 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
         yi = yi - 0.1*(yf-yi); yf = yf + 0.1*(yf-yi);
         zi = zi - 0.1*(zf-zi); zf = zf + 0.1*(zf-zi);
 
-        // Get the list of all cell in the bounding box
+        // Get the list of all cells in the bounding box
         vector<int> bb_cells;
         double bb_xi, bb_yi, bb_zi, bb_xf, bb_yf, bb_zf;
         bb_cells = grid_->GetBoundingBoxCellIndices(xi, yi, zi,
