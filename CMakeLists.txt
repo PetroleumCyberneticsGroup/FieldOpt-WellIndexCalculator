@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.2)
-project(wellindexcalculator LANGUAGES CXX)
+cmake_minimum_required(VERSION 2.8)
+project(wellindexcalculator)
 
 # Include: Eigen =======================================================
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -53,9 +53,7 @@ else() # LINUX --------------------------------------------------------
 
 	    include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
 
-        target_compile_features(wellindexcalculator
-                PUBLIC cxx_auto_type
-                PUBLIC cxx_range_for)
+        add_compile_options(-std=c++11)
 
 
         add_executable(wicalc main.cpp)
@@ -77,9 +75,7 @@ else() # LINUX --------------------------------------------------------
                 PUBLIC fieldopt::reservoir
                 ${Boost_LIBRARIES})
 
-        target_compile_features(wellindexcalculator-adgprs
-                PUBLIC cxx_auto_type
-                PUBLIC cxx_range_for)
+        add_compile_options(-std=c++11)
 
         add_executable(wicalc-adgprs dllmain.cpp)
 
