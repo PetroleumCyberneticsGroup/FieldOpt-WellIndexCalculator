@@ -33,13 +33,16 @@ else() # LINUX --------------------------------------------------------
     if (NOT BUILD_WIC_ADGPRS)
         add_library(wellindexcalculator
                 intersected_cell.cpp
-                wellindexcalculator.cpp)
+                wellindexcalculator.cpp
+                tests/wic_debug.hpp)
 
     elseif(BUILD_WIC_ADGPRS)
-        add_library(wellindexcalculator-adgprs SHARED
+        add_library(wellindexcalculator-adgprs
+                SHARED
                 dllmain.cpp
                 intersected_cell.cpp
-                wellindexcalculator.cpp)
+                wellindexcalculator.cpp
+                tests/wic_debug.hpp)
 
     endif()
 
@@ -55,8 +58,9 @@ else() # LINUX --------------------------------------------------------
 
         add_compile_options(-std=c++11)
 
+        add_executable(wicalc main.cpp
+                tests/wic_debug.hpp)
 
-        add_executable(wicalc main.cpp)
         target_link_libraries(wicalc
                 fieldopt::wellindexcalculator
                 ${Boost_LIBRARIES})
@@ -77,7 +81,9 @@ else() # LINUX --------------------------------------------------------
 
         add_compile_options(-std=c++11)
 
-        add_executable(wicalc-adgprs dllmain.cpp)
+        add_executable(wicalc-adgprs
+                dllmain.cpp
+                tests/wic_debug.hpp)
 
         target_link_libraries(wicalc-adgprs
                 fieldopt::wellindexcalculator-adgprs

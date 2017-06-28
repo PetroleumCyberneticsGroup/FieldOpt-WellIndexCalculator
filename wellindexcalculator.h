@@ -35,6 +35,7 @@
 
 namespace Reservoir {
 namespace WellIndexCalculation {
+
 using namespace Eigen;
 using namespace std;
 
@@ -47,7 +48,8 @@ class WellDefinition {
   vector<double> skins;
 
  public:
-  static void ReadWellsFromFile(string file_path, vector<WellDefinition>& wells);
+  static void ReadWellsFromFile(string file_path,
+                                vector<WellDefinition>& wells);
 };
 
 /*!
@@ -114,7 +116,7 @@ class WellIndexCalculator {
 //                    Vector3d &Hit);
 
   /*!
-   * \brief returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
+   * \brief Returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
    */
   bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
 
@@ -262,7 +264,12 @@ class WellIndexCalculator {
                           Vector3d start_pt,
                           Vector3d end_pt,
                           double &step, double epsilon);
+
+  // WIC Debug
+  bool dbg_mode = true; //!< On/off printing of debug messages
+
 };
+
 }
 }
 

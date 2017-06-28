@@ -9,6 +9,7 @@
 
 #include <stdbool.h>
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 #include <stdlib.h>
 
@@ -105,6 +106,7 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
     wells.at(0).toes.push_back(Eigen::Vector3d(toe));
     wells.at(0).radii.push_back(*wellbore_radius);
     wells.at(0).skins.push_back(0.0);
+
 
     auto well_indices = wic.ComputeWellBlocks(wells);
     vector<IntersectedCell>& well_blocks = well_indices.at("unnamed_well");

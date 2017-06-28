@@ -101,8 +101,8 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     // the number of well blocks is zero (which results in segfault), e.g.,
     // throw an error
     //
-    // Note: The error here comes from wblock[0] which does not exist... cell_well_index()
-    // cannot be called here if there is no block
+    // Note: The error here comes from wblock[0] which does not exist...
+    // cell_well_index() cannot be called here if there is no block
 
     /* 0.555602 is the expected well transmisibility factor aka. well index.
      * For now this value is read directly from eclipse output file:

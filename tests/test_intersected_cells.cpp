@@ -167,25 +167,26 @@ TEST_F(IntersectedCellsTest, point_inside_cell_test) {
     EXPECT_TRUE(cell_1.EnvelopsPoint(point_2));
 }
 
-TEST_F(IntersectedCellsTest, ProblematicPathA) {
+//TEST_F(IntersectedCellsTest, ProblematicPathA) {
+//
+//    // Load grid and chose first cell (cell 1,1,1)
+//    auto cell_0 = grid_->GetCell(0);
+//    //auto ptr_cell_1 = &cell_1;
+//    Eigen::Vector3d start_point = Eigen::Vector3d(290.0859, 1168.6483, 1711.5059);
+//    Eigen::Vector3d end_point = Eigen::Vector3d(1113.9993,  107.1271, 1698.8978);
+//
+//    vector<WellDefinition> wells;
+//    wells.push_back(WellDefinition());
+//    wells.at(0).heels.push_back(start_point);
+//    wells.at(0).toes.push_back(end_point);
+//    wells.at(0).radii.push_back(0.190);
+//    wells.at(0).skins.push_back(0.0);
+//    wells.at(0).wellname = "testwell";
+//
+//    auto cells = wic_.ComputeWellBlocks(wells);
+//    EXPECT_GT(cells["testwell"].size(), 1);
+//}
 
-    // Load grid and chose first cell (cell 1,1,1)
-    auto cell_0 = grid_->GetCell(0);
-    //auto ptr_cell_1 = &cell_1;
-    Eigen::Vector3d start_point = Eigen::Vector3d(290.0859, 1168.6483, 1711.5059);
-    Eigen::Vector3d end_point = Eigen::Vector3d(1113.9993,  107.1271, 1698.8978);
-
-    vector<WellDefinition> wells;
-    wells.push_back(WellDefinition());
-    wells.at(0).heels.push_back(start_point);
-    wells.at(0).toes.push_back(end_point);
-    wells.at(0).radii.push_back(0.190);
-    wells.at(0).skins.push_back(0.0);
-    wells.at(0).wellname = "testwell";
-
-    auto cells = wic_.ComputeWellBlocks(wells);
-    EXPECT_GT(cells["testwell"].size(), 1);
-}
 //TEST_F(IntersectedCellsTest, ProblematicPathB) {
 //
 //  // Load grid and chose first cell (cell 1,1,1)
@@ -205,6 +206,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic_.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 1);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicPathC) {
 //
 //  // Load grid and chose first cell (cell 1,1,1)
@@ -224,6 +226,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic_.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 1);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicPathD) {
 //
 //  // Load grid and chose first cell (cell 1,1,1)
@@ -243,6 +246,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic_.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 1);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicNornePathA) {
 //  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
 //  auto wic = WellIndexCalculator(grid);
@@ -261,6 +265,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 2);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicNornePathB) {
 //  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
 //  auto wic = WellIndexCalculator(grid);
@@ -279,6 +284,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 2);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicNornePathC) {
 //  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
 //  auto wic = WellIndexCalculator(grid);
@@ -297,6 +303,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 2);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicNornePathD) {
 //  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
 //  auto wic = WellIndexCalculator(grid);
@@ -315,6 +322,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 2);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicNornePathE) {
 //  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
 //  auto wic = WellIndexCalculator(grid);
@@ -333,6 +341,7 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  auto cells = wic.ComputeWellBlocks(wells);
 //  EXPECT_GT(cells["testwell"].size(), 2);
 //}
+
 //TEST_F(IntersectedCellsTest, ProblematicNornePathF) {
 //  auto grid =  new ECLGrid("../examples/Flow/norne/NORNE_ATW2013.EGRID");
 //  auto wic = WellIndexCalculator(grid);
@@ -352,24 +361,24 @@ TEST_F(IntersectedCellsTest, ProblematicPathA) {
 //  EXPECT_GT(cells["testwell"].size(), 2);
 //}
 
-TEST_F(IntersectedCellsTest, ProblematicNornePathG) {
-    auto grid =  new ECLGrid("../examples/Flow/norne/OUTPUT/NORNE_ATW2013.EGRID");
-    auto wic = WellIndexCalculator(grid);
-
-    Eigen::Vector3d start_point = Eigen::Vector3d(457271.40395813627, 7321296.3664021967, 2612.345947265625);
-    Eigen::Vector3d end_point = Eigen::Vector3d(458760.19236537709, 7321748.8851311458, 2646.4210547072985);
-
-    vector<WellDefinition> wells;
-    wells.push_back(WellDefinition());
-    wells.at(0).heels.push_back(start_point);
-    wells.at(0).toes.push_back(end_point);
-    wells.at(0).radii.push_back(0.190);
-    wells.at(0).skins.push_back(0.0);
-    wells.at(0).wellname = "testwell";
-
-    auto cells = wic.ComputeWellBlocks(wells);
-    EXPECT_GT(cells["testwell"].size(), 2);
-}
+//TEST_F(IntersectedCellsTest, ProblematicNornePathG) {
+//    auto grid =  new ECLGrid("../examples/Flow/norne/OUTPUT/NORNE_ATW2013.EGRID");
+//    auto wic = WellIndexCalculator(grid);
+//
+//    Eigen::Vector3d start_point = Eigen::Vector3d(457271.40395813627, 7321296.3664021967, 2612.345947265625);
+//    Eigen::Vector3d end_point = Eigen::Vector3d(458760.19236537709, 7321748.8851311458, 2646.4210547072985);
+//
+//    vector<WellDefinition> wells;
+//    wells.push_back(WellDefinition());
+//    wells.at(0).heels.push_back(start_point);
+//    wells.at(0).toes.push_back(end_point);
+//    wells.at(0).radii.push_back(0.190);
+//    wells.at(0).skins.push_back(0.0);
+//    wells.at(0).wellname = "testwell";
+//
+//    auto cells = wic.ComputeWellBlocks(wells);
+//    EXPECT_GT(cells["testwell"].size(), 2);
+//}
 
 TEST_F(IntersectedCellsTest, BoundingBox) {
     auto grid =  new ECLGrid("../examples/ECLIPSE/Brugge_xyz/BRUGGE.GRID");
@@ -390,7 +399,7 @@ TEST_F(IntersectedCellsTest, BoundingBox) {
     wells.push_back(WellDefinition());
     wells.at(0).heels.push_back(start_point);
     wells.at(0).toes.push_back(end_point);
-    wells.at(0).radii.push_back(0.219);
+    wells.at(0).radii.push_back(0.1095);
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "PROD";
 

@@ -25,22 +25,27 @@
 ******************************************************************************/
 
 #include "wellindexcalculator.h"
-#include <fstream>
 #include <map>
 #include <iostream>
 #include <stdexcept>
+
+#include "tests/wic_debug.hpp"
 
 using namespace std;
 
 namespace Reservoir {
 namespace WellIndexCalculation {
-WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid) {
+WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid)
+{
     grid_ = grid;
     auto smallest_cell = grid_->GetSmallestCell();
     smallest_grid_cell_dimension_ = 1e7;
-    for (int i = 1; i < smallest_cell.corners().size(); ++i) {
-        double distance_between_corners = (smallest_cell.corners()[i-1] - smallest_cell.corners()[i]).norm();
-        if (distance_between_corners < smallest_grid_cell_dimension_) {
+    for (int i = 1; i < smallest_cell.corners().size(); ++i)
+    {
+        double distance_between_corners =
+            (smallest_cell.corners()[i-1] - smallest_cell.corners()[i]).norm();
+        if (distance_between_corners < smallest_grid_cell_dimension_)
+        {
             smallest_grid_cell_dimension_ = distance_between_corners;
         }
     }
@@ -72,22 +77,20 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
             zi = min(zi, min(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));
             zf = max(zf, max(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));
 
-            // std::cout is supressed in ADGPRS
-            fprintf(stdout, "Heel (xyz): [ %f %f %f ]\n",
-                   wells[iWell].heels[iSegment].x(),
-                   wells[iWell].heels[iSegment].y(),
-                   wells[iWell].heels[iSegment].z());
-
-            fprintf(stdout, "Toe (xyz): [ %f %f %f ]\n",
-                    wells[iWell].toes[iSegment].x(),
-                    wells[iWell].toes[iSegment].y(),
-                    wells[iWell].toes[iSegment].z());
+            // Debug ------------------------------
+            WICDebug::dbg_ComputeWellBlocks_bbox_i(
+                dbg_mode, wells, iWell, iSegment,
+                xi, yi, zi, xf, yf, zf);
         }
 
         // Heuristic increase of the bounding area
         xi = xi - 0.1*(xf-xi); xf = xf + 0.1*(xf-xi);
         yi = yi - 0.1*(yf-yi); yf = yf + 0.1*(yf-yi);
         zi = zi - 0.1*(zf-zi); zf = zf + 0.1*(zf-zi);
+
+        // Debug ------------------------------
+        WICDebug::dbg_ComputeWellBlocks_bbox_f(
+            dbg_mode, xi, yi, zi, xf, yf, zf);
 
         // Get the list of all cells in the bounding box
         vector<int> bb_cells;
@@ -97,9 +100,14 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
                                                     bb_xi, bb_yi, bb_zi,
                                                     bb_xf, bb_yf, bb_zf);
 
+        // Debug -------------------------------
+        WICDebug::dbg_GetBoundingBoxCellIndices(
+            dbg_mode, bb_cells);
+
         // Loop through each well segment -> find intersected cells for each segment
         vector<IntersectedCell> intersected_cells;
-        for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment ) {
+        for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment)
+        {
             collect_intersected_cells(intersected_cells,
                                       wells[iWell].heels[iSegment],
                                       wells[iWell].toes[iSegment],
@@ -109,6 +117,7 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
                                       bb_xi, bb_yi, bb_zi,
                                       bb_xf, bb_yf, bb_zf);
         }
+
 
         // For all intersected cells compute well transmissibility factor
         for (int iCell = 0; iCell < intersected_cells.size(); ++iCell)
@@ -136,7 +145,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
      * this segment is completely out of the reservoir.
      * Additionally, we check if this particular segment
      * is outside the reservoir. If either is true, we return.*/
-    bool well_is_outside = bb_cells.size() == 0;
+    bool well_is_outside = (bb_cells.size() == 0);
     bool segment_is_outside = IsLineCompletelyOutsideBox(Vector3d(bb_xi, bb_yi, bb_zi),
                                                          Vector3d(bb_xf, bb_yf, bb_zf),
                                                          start_pt, end_pt);
@@ -193,7 +202,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             catch (const runtime_error &e) {
                 continue;
             }
-        } while ((new_cell.global_index() == prev_cell.global_index() || !new_cell.is_active()) && step <= 1.0);
+        } while ((new_cell.global_index() == prev_cell.global_index() ||
+            !new_cell.is_active()) && step <= 1.0);
 
         if (introduces_cycle(isc_cells, new_cell)) {
             recover_from_cycle(isc_cells[isc_cells.size()-1], new_cell, bb_cells,
@@ -202,16 +212,21 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
         isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, new_cell);
 
-        if (new_cell.global_index() != prev_cell.global_index() && step <= 1.0
-            && new_cell.global_index() != last_cell.global_index()) {
+        if (new_cell.global_index() != prev_cell.global_index() &&
+            new_cell.global_index() != last_cell.global_index() &&
+            step <= 1.0)
+        {
             exit_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, end_pt, exit_pt);
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
             prev_cell = new_cell;
         }
-        else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) { // We've already found the last cell; return.
+        else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) // We've already found the last cell; return.
+        {
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
-            if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index()) {
-                cout << "WARNING: Expected last cell does not match found last cell. Returning empty list." << endl;
+            if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index())
+            {
+                cout << "WARNING: Expected last cell does not match "
+                    "found last cell. Returning empty list." << endl;
                 isc_cells.clear();
             }
             return;
@@ -222,11 +237,12 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             continue;
         }
         else { // We should never end up here.
-            throw runtime_error("Something unexpected happened when trying to find the next intersected cell.");
+            throw runtime_error("Something unexpected happened when trying "
+                                    "to find the next intersected cell.");
         }
     }
-
 }
+
 void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
                                              Grid::Cell &next_cell,
                                              vector<int> bb_cells,
@@ -268,6 +284,7 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
     cout << "  New exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
     cout << "  New next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
 }
+
 bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
                                        Vector3d &start_pt,
                                        Vector3d end_point,
@@ -350,6 +367,7 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
     // single point (corner or edge) -> return entry_point
     return entry_point;
 }
+
 bool WellIndexCalculator::introduces_cycle(vector<IntersectedCell> cells, Grid::Cell grdcell) {
     if (cells[cells.size()-2].global_index() == grdcell.global_index()) {
         return true;
@@ -416,7 +434,10 @@ bool WellIndexCalculator::introduces_cycle(vector<IntersectedCell> cells, Grid::
 //}
 
 
-bool WellIndexCalculator::IsLineCompletelyOutsideBox( Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2)
+bool WellIndexCalculator::IsLineCompletelyOutsideBox(Vector3d B1,
+                                                     Vector3d B2,
+                                                     Vector3d L1,
+                                                     Vector3d L2)
 {
     if (L2.x() < B1.x() && L1.x() < B1.x()) return true;
     if (L2.x() > B2.x() && L1.x() > B2.x()) return true;
@@ -426,7 +447,8 @@ bool WellIndexCalculator::IsLineCompletelyOutsideBox( Vector3d B1, Vector3d B2, 
     if (L2.z() > B2.z() && L1.z() > B2.z()) return true;
 }
 
-void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int cell_index)
+void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
+                                             int cell_index)
 {
     double well_index_x = 0;
     double well_index_y = 0;
