@@ -416,12 +416,17 @@ bool WellIndexCalculator::IsLineCompletelyOutsideBox( Vector3d B1, Vector3d B2, 
 
 void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int cell_index)
 {
-    double well_index_x = 0;
-    double well_index_y = 0;
-    double well_index_z = 0;
+    double well_index_x_matrix = 0;
+    double well_index_y_matrix = 0;
+    double well_index_z_matrix = 0;
 
+    double well_index_x_fracture = 0;
+    double well_index_y_fracture = 0;
+    double well_index_z_fracture = 0;
+    
     IntersectedCell &icell = cells.at(cell_index);
-
+    int num_grids = icell.permx().size();
+    
     for (int iSegment = 0; iSegment < icell.num_segments(); iSegment++) {
 
         // Compute vector from segment
@@ -438,42 +443,87 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
 
         // Compute Well Index from formula provided by Shu (\todo Introduce ref/year) per Segment
         // (Note that this has a glich since segments from the same well could have different radius (e.g. radial well))
-        double current_wx = dir_well_index(current_Lx, icell.dy(), icell.dz(), icell.permy(), icell.permz(), icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment));
-        double current_wy = dir_well_index(current_Ly, icell.dx(), icell.dz(), icell.permx(), icell.permz(), icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment));
-        double current_wz = dir_well_index(current_Lz, icell.dx(), icell.dy(), icell.permx(), icell.permy(), icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment));
-
-        // Compute the sum of well index for each direction.
-        // For segments with equal radius this will in the end calculate
-        // the well index based on the Shu formula in its original formulation
-        well_index_x += current_wx;
-        well_index_y += current_wy;
-        well_index_z += current_wz;
-
+        vector<double> current_wx;
+        vector<double> current_wy;
+        vector<double> current_wz;
+        
+        for(int igrid=0;igrid<num_grids;igrid++)
+        {
+        	current_wx.push_back(dir_well_index(current_Lx, icell.dy(), icell.dz(), icell.permy()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
+        	current_wy.push_back(dir_well_index(current_Ly, icell.dx(), icell.dz(), icell.permx()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
+        	current_wz.push_back(dir_well_index(current_Lz, icell.dx(), icell.dy(), icell.permx()[igrid], icell.permy()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
+        }
+        
         // Store data for later use
         icell.set_segment_calculation_data(iSegment, "dx", icell.dx());
         icell.set_segment_calculation_data(iSegment, "dy", icell.dy());
         icell.set_segment_calculation_data(iSegment, "dz", icell.dz());
 
-        icell.set_segment_calculation_data(iSegment, "permx", icell.permx());
-        icell.set_segment_calculation_data(iSegment, "permy", icell.permy());
-        icell.set_segment_calculation_data(iSegment, "permz", icell.permz());
-
         icell.set_segment_calculation_data(iSegment, "Lx", current_Lx);
         icell.set_segment_calculation_data(iSegment, "Ly", current_Ly);
         icell.set_segment_calculation_data(iSegment, "Lz", current_Lz);
 
-        icell.set_segment_calculation_data(iSegment, "wx", current_wx);
-        icell.set_segment_calculation_data(iSegment, "wy", current_wy);
-        icell.set_segment_calculation_data(iSegment, "wz", current_wz);
+        if (icell.is_active_matrix())
+        {
+			icell.set_segment_calculation_data(iSegment, "permx_m", icell.permx()[0]);
+			icell.set_segment_calculation_data(iSegment, "permy_m", icell.permy()[0]);
+			icell.set_segment_calculation_data(iSegment, "permz_m", icell.permz()[0]);
+	
+			icell.set_segment_calculation_data(iSegment, "wx_m", current_wx[0]);
+			icell.set_segment_calculation_data(iSegment, "wy_m", current_wy[0]);
+			icell.set_segment_calculation_data(iSegment, "wz_m", current_wz[0]);
+        }
+        if (icell.is_active_fracture())
+        {
+        	int ind = 0;
+        	if (icell.is_active_matrix()) ind = 1;
+
+        	icell.set_segment_calculation_data(iSegment, "permx_f", icell.permx()[ind]);
+			icell.set_segment_calculation_data(iSegment, "permy_f", icell.permy()[ind]);
+			icell.set_segment_calculation_data(iSegment, "permz_f", icell.permz()[ind]);
+	
+			icell.set_segment_calculation_data(iSegment, "wx_f", current_wx[ind]);
+			icell.set_segment_calculation_data(iSegment, "wy_f", current_wy[ind]);
+			icell.set_segment_calculation_data(iSegment, "wz_f", current_wz[ind]);
+        }
+        
+        // Compute the sum of well index for each direction.
+        // For segments with equal radius this will in the end calculate
+        // the well index based on the Shu formula in its original formulation
+        if (icell.is_active_matrix())
+        {
+        	well_index_x_matrix += current_wx[0];
+        	well_index_y_matrix += current_wy[0];
+        	well_index_z_matrix += current_wz[0];
+        }        
+        if (icell.is_active_fracture())
+        {
+        	int ind = 0;
+        	if (icell.is_active_matrix()) ind = 1;
+        	well_index_x_fracture += current_wx[ind];
+        	well_index_y_fracture += current_wy[ind];
+        	well_index_z_fracture += current_wz[ind];        	
+        }
     }
 
     // Compute the combined well index as the Sum the segment
     // Compute Well Index from formula provided by Shu for the
     // entire combined projections (this is the original formulation)
-    icell.set_cell_well_index(sqrt(
-        well_index_x * well_index_x +
-            well_index_y * well_index_y +
-            well_index_z * well_index_z));
+	if (icell.is_active_matrix())
+	{
+		icell.set_cell_well_index_matrix(sqrt(
+				well_index_x_matrix * well_index_x_matrix +
+				well_index_y_matrix * well_index_y_matrix +
+				well_index_z_matrix * well_index_z_matrix));
+	}
+
+	if (icell.is_active_fracture())
+	{
+		icell.set_cell_well_index_fracture(sqrt(
+				well_index_x_fracture * well_index_x_fracture +
+				well_index_y_fracture * well_index_y_fracture +
+				well_index_z_fracture * well_index_z_fracture));
+	}	
 }
 
 double WellIndexCalculator::dir_well_index(double Lx,
