@@ -213,8 +213,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             throw runtime_error("Something unexpected happened when trying to find the next intersected cell.");
         }
     }
-
 }
+
 void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
                                              Grid::Cell &next_cell,
                                              vector<int> bb_cells,
@@ -426,7 +426,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
     
     IntersectedCell &icell = cells.at(cell_index);
     int num_grids = icell.permx().size();
-    
+
     for (int iSegment = 0; iSegment < icell.num_segments(); iSegment++) {
 
         // Compute vector from segment
@@ -447,7 +447,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
         vector<double> current_wy;
         vector<double> current_wz;
         
-        for(int igrid=0;igrid<num_grids;igrid++)
+        for(int igrid = 0; igrid < num_grids; igrid++)
         {
         	current_wx.push_back(dir_well_index(current_Lx, icell.dy(), icell.dz(), icell.permy()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
         	current_wy.push_back(dir_well_index(current_Ly, icell.dx(), icell.dz(), icell.permx()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
