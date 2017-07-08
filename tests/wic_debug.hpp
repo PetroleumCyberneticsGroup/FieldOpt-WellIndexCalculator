@@ -31,6 +31,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+//#include <time.h>
 
 using namespace std;
 
@@ -77,6 +78,30 @@ inline ostringstream get_dbg_msg() {
 // WellIndexCalculator.cpp
 
 /*!
+ * \brief Test numeric limit types
+ *
+    // Debug --------------------------------
+    WICDebug::dbg_ComputeWellBlocks_num_lims(
+        dbg_mode, xi, yi, zi, xf, yf, zf);
+ *
+ */
+inline void dbg_ComputeWellBlocks_num_lims(
+    bool dbg_mode,
+    double xi, double yi, double zi,
+    double xf, double yf, double zf) {
+    int wdth = 18;
+    auto dbg_msg = get_dbg_msg();
+    dbg_msg << "(xi yi zi): ["
+            << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
+            << "(xf yf zf): ["
+            << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
+    print_wic_dbg(
+        dbg_mode, true, "[ComputeWellBlocks (WellIndexCalculator.cpp)] "
+            "Test numeric limit types: \n", dbg_msg.str());
+
+};
+
+/*!
  * \brief
  * This is the first function called by the WIC process
  */
@@ -86,7 +111,9 @@ inline void dbg_ComputeWellBlocks_bbox_i(
     int iWell, int iSegment,
     double xi, double yi, double zi,
     double xf, double yf, double zf) {
+
     int wdth = 11;
+    time_t rawtime;
     auto dbg_msg = get_dbg_msg();
 
     dbg_msg << "Heel (xyz): ["
@@ -98,7 +125,9 @@ inline void dbg_ComputeWellBlocks_bbox_i(
             << setw(wdth) << wells[iWell].toes[iSegment].y()
             << setw(wdth) << wells[iWell].toes[iSegment].z() << "]\n";
 
+
     string start_str = "\n" + string(64,'=') + "\n" +
+        "WIC DEBUG Version: June 30 2017 " + // + ctime (&rawtime) +
         "[ComputeWellBlocks (wellindexcalculator.cpp)] "
         "Starting xyz well segment:\n";
     print_wic_dbg(dbg_mode, true, start_str, dbg_msg.str());
@@ -114,7 +143,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
 };
 
 /*!
- * \brief
+ * \brief Test b-box after heuristic expansion
  */
 inline void dbg_ComputeWellBlocks_bbox_f(
     bool dbg_mode,

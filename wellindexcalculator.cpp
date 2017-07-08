@@ -25,9 +25,10 @@
 ******************************************************************************/
 
 #include "wellindexcalculator.h"
-#include <map>
+//#include <map>
 #include <iostream>
-#include <stdexcept>
+//#include <stdexcept>
+//#include <limits>
 
 #include "tests/wic_debug.hpp"
 
@@ -62,11 +63,11 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
         // Compute an overall bounding box per well --> speed up cell searching
         double xi, yi, zi, xf, yf, zf;
         xi = numeric_limits<double>::max();
-        xf = numeric_limits<double>::min();
+        xf = numeric_limits<double>::lowest();
         yi = numeric_limits<double>::max();
-        yf = numeric_limits<double>::min();
+        yf = numeric_limits<double>::lowest();
         zi = numeric_limits<double>::max();
-        zf = numeric_limits<double>::min();
+        zf = numeric_limits<double>::lowest();
 
         // Loop through all segments -> find outermost coordinates for entire well
         for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment ) {
@@ -150,7 +151,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
                                                          Vector3d(bb_xf, bb_yf, bb_zf),
                                                          start_pt, end_pt);
     if (well_is_outside || segment_is_outside) {
-        cout << "Well or segment is outside the reservoir." << endl;
+        cout << "WIC: Well or segment is outside the reservoir." << endl;
         return;
     }
 
@@ -158,7 +159,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     Grid::Cell first_cell, last_cell;
     if (!findEndpoint(bb_cells, start_pt, end_pt, first_cell) ||
         !findEndpoint(bb_cells, end_pt, start_pt, last_cell)) {
-        cout << "Failed to move well endpoints inside the reservoir." << endl;
+        cout << "WIC: Failed to move well endpoints inside the reservoir." << endl;
         return;
     }
 
@@ -225,7 +226,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
             if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index())
             {
-                cout << "WARNING: Expected last cell does not match "
+                cout << "WIC WARNING: Expected last cell does not match "
                     "found last cell. Returning empty list." << endl;
                 isc_cells.clear();
             }
@@ -237,7 +238,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             continue;
         }
         else { // We should never end up here.
-            throw runtime_error("Something unexpected happened when trying "
+            throw runtime_error("WIC: Something unexpected happened when trying "
                                     "to find the next intersected cell.");
         }
     }
@@ -256,7 +257,7 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
     Vector3d prev_entry_point = prev_cell.get_segment_entry_point(prev_cell.num_segments()-1);
     Vector3d prev_exit_point = prev_cell.get_segment_exit_point(prev_cell.num_segments()-1);
 
-    cout << "Recovering from cycle." << endl;
+    cout << "WIC: Recovering from cycle." << endl;
     cout << "  Old exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
     cout << "  Old next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
 
@@ -273,7 +274,8 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
             next_cell = grid_->GetCellEnvelopingPoint(entry_pt, bb_cells);
         }
         catch (const runtime_error &e) {
-            cout << "Something unexpected occured when recovering from cycle (finding next cell)." << endl;
+            cout << "WIC: Something unexpected occured when recovering "
+                 << "from cycle (finding next cell)." << endl;
             throw runtime_error("Error recovering from cycle in WIC.");
         }
     } while ((next_cell.global_index() == prev_cell.global_index() || !next_cell.is_active()) && step <= 1.0);
@@ -281,8 +283,8 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
     /* Update the exit point in the previous cell. */
     prev_cell.update_last_segment_exit_point(prev_exit_point);
 
-    cout << "  New exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
-    cout << "  New next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
+    cout << "WIC: New exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
+    cout << "WIC: New next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
 }
 
 bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
@@ -299,7 +301,7 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
         {
             cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
             if (!cell.is_active())
-                throw runtime_error("The cell is inactive.");
+                throw runtime_error("WIC: The cell is inactive.");
             break;
         }
         catch (const runtime_error &e)
@@ -323,7 +325,7 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
             start_pt = org_start_pt * (1 - step) + end_point * step;
             cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
             if (!cell.is_active())
-                throw runtime_error("The cell is inactive.");
+                throw runtime_error("WIC: The cell is inactive.");
         }
         catch (const runtime_error &e)
         {
