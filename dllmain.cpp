@@ -1,5 +1,6 @@
 
 #include "dllmain.hpp"
+#include "main.hpp"
 #include "wellindexcalculator.h"
 #include "Reservoir/grid/eclgrid.h"
 #include "intersected_cell.h"
@@ -9,7 +10,6 @@
 
 #include <stdbool.h>
 #include <iostream>
-#include <fstream>
 #include <stdexcept>
 #include <stdlib.h>
 
@@ -95,7 +95,6 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
     // Initialize the Grid and WellIndexCalculator objects
     if (grid == NULL)
       grid = new Reservoir::Grid::ECLGrid(gridpth);
-
     auto wic = WellIndexCalculator((Reservoir::Grid::Grid*)grid);
 
     // Compute the well blocks
@@ -107,8 +106,8 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
     wells.at(0).radii.push_back(*wellbore_radius);
     wells.at(0).skins.push_back(0.0);
 
-
     auto well_indices = wic.ComputeWellBlocks(wells);
+    printCompdat(well_indices);
     vector<IntersectedCell>& well_blocks = well_indices.at("unnamed_well");
     *nblks = well_blocks.size();
 

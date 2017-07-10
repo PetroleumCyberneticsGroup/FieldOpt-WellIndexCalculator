@@ -50,18 +50,18 @@
     #endif
 #else
 #if _WIN32
-    #ifdef __cplusplus
+#ifdef __cplusplus
     #define WELLINDEXCALCULATOR_API extern "C" __declspec(dllimport)
     #else
     #define WELLINDEXCALCULATOR_API __declspec(dllimport)
     #endif
 #else
-    #ifdef __cplusplus
-    #define WELLINDEXCALCULATOR_API extern "C"
-    #else
-    #define WELLINDEXCALCULATOR_API
-    #endif
-    #endif
+#ifdef __cplusplus
+#define WELLINDEXCALCULATOR_API extern "C"
+#else
+#define WELLINDEXCALCULATOR_API
+#endif
+#endif
 #endif
 
 // This is the constructor of a class that has been exported.

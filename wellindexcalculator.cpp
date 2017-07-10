@@ -189,59 +189,63 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     isc_cells.at(isc_cell_idx).add_new_segment(start_pt, exit_pt, wb_rad, skin_fac);
 
     // remaining cells
-    while (step <= 1.0)
-    {
+    while (step <= 1.0) {
         // Move into the next cell, add it to the list and set the entry point
         step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
         Reservoir::Grid::Cell new_cell;
         do {
             step += epsilon;
             entry_pt = start_pt + step * (end_pt - start_pt);
-            try {
-                new_cell = grid_->GetCellEnvelopingPoint(entry_pt, bb_cells);
-            }
-            catch (const runtime_error &e) {
+
+            // OV: 20170709
+            if ( !grid_->GetCellEnvelopingPoint(new_cell, entry_pt, bb_cells) ) {
                 continue;
             }
+            // try {
+            //     new_cell = grid_->GetCellEnvelopingPoint(entry_pt, bb_cells);
+            // }
+            // catch (const runtime_error &e) {
+            //     continue;
+            // }
         } while ((new_cell.global_index() == prev_cell.global_index() ||
             !new_cell.is_active()) && step <= 1.0);
 
-        if (introduces_cycle(isc_cells, new_cell)) {
-            recover_from_cycle(isc_cells[isc_cells.size()-1], new_cell, bb_cells,
-                               entry_pt, exit_pt, start_pt, end_pt, step, epsilon);
-        }
-
-        isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, new_cell);
-
-        if (new_cell.global_index() != prev_cell.global_index() &&
-            new_cell.global_index() != last_cell.global_index() &&
-            step <= 1.0)
-        {
-            exit_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, end_pt, exit_pt);
-            isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
-            prev_cell = new_cell;
-        }
-        else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) // We've already found the last cell; return.
-        {
-            isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
-            if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index())
-            {
-                cout << "WIC WARNING: Expected last cell does not match "
-                    "found last cell. Returning empty list." << endl;
-                isc_cells.clear();
-            }
-            return;
-        }
-        else if (new_cell.global_index() == prev_cell.global_index()) { // Did not find a new cell
-            /* Either we're still inside the old one, or we've
-             * stepped into an inactive cell. Step further. */
-            continue;
-        }
-        else { // We should never end up here.
-            throw runtime_error("WIC: Something unexpected happened when trying "
-                                    "to find the next intersected cell.");
-        }
+    if (introduces_cycle(isc_cells, new_cell)) {
+        recover_from_cycle(isc_cells[isc_cells.size()-1], new_cell, bb_cells,
+                           entry_pt, exit_pt, start_pt, end_pt, step, epsilon);
     }
+
+    isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, new_cell);
+
+    if (new_cell.global_index() != prev_cell.global_index() &&
+        new_cell.global_index() != last_cell.global_index() &&
+        step <= 1.0)
+    {
+        exit_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, end_pt, exit_pt);
+        isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
+        prev_cell = new_cell;
+    }
+    else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) // We've already found the last cell; return.
+    {
+        isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
+        if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index())
+        {
+            cout << "WIC WARNING: Expected last cell does not match "
+                "found last cell. Returning empty list." << endl;
+            isc_cells.clear();
+        }
+        return;
+    }
+    else if (new_cell.global_index() == prev_cell.global_index()) { // Did not find a new cell
+        /* Either we're still inside the old one, or we've
+         * stepped into an inactive cell. Step further. */
+        continue;
+    }
+    else { // We should never end up here.
+        throw runtime_error("WIC: Something unexpected happened when trying "
+                                "to find the next intersected cell.");
+    }
+} // while (step <= 1.0)
 }
 
 void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
@@ -270,69 +274,111 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
         prev_exit_point = entry_pt;
         step += epsilon;
         entry_pt = start_pt + step * (end_pt - start_pt);
-        try {
-            next_cell = grid_->GetCellEnvelopingPoint(entry_pt, bb_cells);
+
+        // OV: 20170709
+        if ( !grid_->GetCellEnvelopingPoint(next_cell, entry_pt, bb_cells) ) {
+            continue;
         }
-        catch (const runtime_error &e) {
+        // try {
+        //     next_cell = grid_->GetCellEnvelopingPoint(entry_pt, bb_cells);
+        // }
+        // catch (const runtime_error &e) {
+        /*{
             cout << "WIC: Something unexpected occured when recovering "
                  << "from cycle (finding next cell)." << endl;
             throw runtime_error("Error recovering from cycle in WIC.");
-        }
-    } while ((next_cell.global_index() == prev_cell.global_index() || !next_cell.is_active()) && step <= 1.0);
+        }*/
+    }
+
+    while ((next_cell.global_index() == prev_cell.global_index() ||
+        !next_cell.is_active()) && step <= 1.0);
 
     /* Update the exit point in the previous cell. */
     prev_cell.update_last_segment_exit_point(prev_exit_point);
 
-    cout << "WIC: New exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
-    cout << "WIC: New next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
+    cout << "WIC: New exit point: ("
+         << prev_exit_point.x() << ", "
+         << prev_exit_point.y() << ", "
+         << prev_exit_point.z() << ")\n";
+    cout << "WIC: New next cell: "
+         << next_cell.global_index() << " "
+         << next_cell.ijk_index().to_string() << endl;
 }
 
 bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
                                        Vector3d &start_pt,
                                        Vector3d end_point,
                                        Grid::Cell &cell) const {
+
     // First, traverse the segment until we're inside a cell.
     double step = 0.0;
     Vector3d org_start_pt = start_pt;
     // Set step size to half of the smallest dimension of the smallest grid block
     double epsilon = smallest_grid_cell_dimension_ / (2.0 * (start_pt-end_point).norm());
+
+    // OV: 20170709
     while (step <= 1.0) {
-        try
-        {
-            cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
-            if (!cell.is_active())
-                throw runtime_error("WIC: The cell is inactive.");
-            break;
+        if ( grid_->GetCellEnvelopingPoint(cell, start_pt, bb_cells) ) {
+            if ( cell.is_active() ) {
+                break;
+            }
         }
-        catch (const runtime_error &e)
-        {
-            step += epsilon;
-            start_pt = org_start_pt * (1 - step) + end_point * step;
-        }
+
+        step += epsilon;
+        start_pt = org_start_pt * (1 - step) + end_point * step;
     }
-    if (step > 1.0)
+    // while (step <= 1.0) {
+    //     try
+    //     {
+    //         cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
+    //         if (!cell.is_active())
+    //             throw runtime_error("WIC: The cell is inactive.");
+    //         break;
+    //     }
+    //     catch (const runtime_error &e)
+    //     {
+    //         step += epsilon;
+    //         start_pt = org_start_pt * (1 - step) + end_point * step;
+    //     }
+    // }
+
+    if (step > 1.0) {
         return false; // Return if we failed to step into the reservoir
-    else if (step == 0.0) {
+    } else if (step == 0.0) {
         return true; // Return if we didn't have to move
     }
 
     // Then, traverse back with a smaller step size until we're outside again.
     epsilon = epsilon / 1e2;
-    while (true) {
-        try
+    // OV: 20170709
+    while (true)
+    {
+        step -= epsilon;
+        start_pt = org_start_pt * (1 - step) + end_point * step;
+        if ( grid_->GetCellEnvelopingPoint(cell, start_pt, bb_cells) )
         {
-            step -= epsilon;
-            start_pt = org_start_pt * (1 - step) + end_point * step;
-            cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
-            if (!cell.is_active())
-                throw runtime_error("WIC: The cell is inactive.");
+            if (!cell.is_active())  break;
         }
-        catch (const runtime_error &e)
-        {
+        else
             break;
-        }
     }
     return true;
+
+    // while (true) {
+    //     try
+    //     {
+    //         step -= epsilon;
+    //         start_pt = org_start_pt * (1 - step) + end_point * step;
+    //         cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
+    //         if (!cell.is_active())
+    //             throw runtime_error("WIC: The cell is inactive.");
+    //     }
+    //     catch (const runtime_error &e)
+    //     {
+    //         break;
+    //     }
+    // }
+    // return true;
 }
 
 Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, int cell_index,
