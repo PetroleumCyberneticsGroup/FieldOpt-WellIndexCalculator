@@ -4,6 +4,7 @@ project(wellindexcalculator)
 # Include: Eigen =======================================================
 include_directories(${EIGEN3_INCLUDE_DIR})
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(WIC_LIB_TARGET wellindexcalculator-adgprs-dbg)
 
 # wellindexcalculator lib ==============================================
 if (_WIN32) # WINDOWS
@@ -37,7 +38,7 @@ else() # LINUX --------------------------------------------------------
                 tests/wic_debug.hpp)
 
     elseif(BUILD_WIC_ADGPRS)
-        add_library(wellindexcalculator-adgprs
+        add_library(${WIC_LIB_TARGET}
                 SHARED
                 dllmain.cpp
                 intersected_cell.cpp
@@ -72,10 +73,11 @@ else() # LINUX --------------------------------------------------------
                 )
 
     elseif(BUILD_WIC_ADGPRS)
-        add_library(fieldopt::wellindexcalculator-adgprs
-                ALIAS ${PROJECT_NAME}-adgprs)
+        add_library(fieldopt::${WIC_LIB_TARGET}
+                ALIAS ${WIC_LIB_TARGET})
+            # ALIAS ${PROJECT_NAME}-adgprs
 
-        target_link_libraries(wellindexcalculator-adgprs
+        target_link_libraries(${WIC_LIB_TARGET}
                 PUBLIC fieldopt::reservoir
                 ${Boost_LIBRARIES})
 
@@ -86,14 +88,14 @@ else() # LINUX --------------------------------------------------------
                 tests/wic_debug.hpp)
 
         target_link_libraries(wicalc-adgprs
-                fieldopt::wellindexcalculator-adgprs
+                fieldopt::${WIC_LIB_TARGET}
                 ${Boost_LIBRARIES})
     endif()
 endif()
 
 
 # Testing ==============================================================
-if (BUILD_TESTING)
+if (BUILD_TESTING AND NOT BUILD_WIC_ADGPRS)
 
     # Unit tests
     find_package(GTest REQUIRED)

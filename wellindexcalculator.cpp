@@ -107,8 +107,7 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
 
         // Loop through each well segment -> find intersected cells for each segment
         vector<IntersectedCell> intersected_cells;
-        for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment)
-        {
+        for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment) {
             collect_intersected_cells(intersected_cells,
                                       wells[iWell].heels[iSegment],
                                       wells[iWell].toes[iSegment],
@@ -142,11 +141,17 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
                                                     double& bb_xi, double& bb_yi, double& bb_zi,
                                                     double& bb_xf, double& bb_yf, double& bb_zf)
 {
-    /* If no cells are found in the bounding box it means
-     * this segment is completely out of the reservoir.
-     * Additionally, we check if this particular segment
-     * is outside the reservoir. If either is true, we return.*/
+    /* Check size of bounding box: If size of bounding box is zero,
+     * i.e., if the bounding box consists of no cells, it means the
+     * well segment is not inside the reservoir grid (active or
+     * logical?).
+     */
     bool well_is_outside = (bb_cells.size() == 0);
+
+    /* Additionally, check if the segment is outside the bounding box
+     * of the reservoir, i.e., the logical grid. If either this or the
+     * above is true, the function returns with message.
+     */
     bool segment_is_outside = IsLineCompletelyOutsideBox(Vector3d(bb_xi, bb_yi, bb_zi),
                                                          Vector3d(bb_xf, bb_yf, bb_zf),
                                                          start_pt, end_pt);

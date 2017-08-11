@@ -74,6 +74,18 @@ inline ostringstream get_dbg_msg() {
     return dbg_msg;
 };
 
+inline string get_time_stamp()
+{
+    time_t ltime;
+    struct tm *Tm;
+    char time_stamp [50];
+
+    ltime = time(NULL); /* get current cal time */
+    sprintf(time_stamp, "%s", asctime( localtime(&ltime) ) );
+
+    return string(time_stamp);
+}
+
 // ---------------------------------------------------------------------
 // WellIndexCalculator.cpp
 
@@ -127,7 +139,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
 
 
     string start_str = "\n" + string(64,'=') + "\n" +
-        "WIC DEBUG Version: June 30 2017 " + // + ctime (&rawtime) +
+        "WIC DEBUG Version: " + get_time_stamp() + "\n" +
         "[ComputeWellBlocks (wellindexcalculator.cpp)] "
         "Starting xyz well segment:\n";
     print_wic_dbg(dbg_mode, true, start_str, dbg_msg.str());
@@ -138,7 +150,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
     print_wic_dbg(
-        dbg_mode, true, "[ComputeWellBlocks (wellindexcalculator.cpp)] "
+        dbg_mode, false, "[ComputeWellBlocks (wellindexcalculator.cpp)] "
             "Bounding box corresponding to xyz segment :\n", dbg_msg.str());
 };
 

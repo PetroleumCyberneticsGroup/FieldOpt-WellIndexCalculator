@@ -85,7 +85,7 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
 {
   try
   {
-    string gridpth = string(basepth) + ".GRID";
+    string gridpth = string(basepth) + ".EGRID";
     if ( !exists(gridpth.c_str()) )
       throw std::runtime_error("ComputeWellIndices: file .GRID does not exist");
 
@@ -93,8 +93,9 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
       throw std::runtime_error("ComputeWellIndices: wellbore radius is negative");
 
     // Initialize the Grid and WellIndexCalculator objects
-    if (grid == NULL)
+    if (grid == NULL) {
       grid = new Reservoir::Grid::ECLGrid(gridpth);
+    }
     auto wic = WellIndexCalculator((Reservoir::Grid::Grid*)grid);
 
     // Compute the well blocks
