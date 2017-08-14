@@ -146,7 +146,7 @@ WELLINDEXCALCULATOR_API int computeBlockCenter(const char* basepth,
 {
   try
   {
-    string gridpth = string(basepth) + ".GRID";
+    string gridpth = string(basepth) + ".EGRID";
     if ( !exists(gridpth.c_str()) )
       throw std::runtime_error("ComputeBlockCenter: file .GRID does not exist");
 

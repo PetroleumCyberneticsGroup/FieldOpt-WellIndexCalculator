@@ -31,7 +31,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-//#include <time.h>
 
 using namespace std;
 
@@ -87,11 +86,13 @@ inline string get_time_stamp()
 }
 
 // ---------------------------------------------------------------------
-// WellIndexCalculator.cpp
+// wellindexcalculator.cpp
 
 /*!
- * \brief Test numeric limit types
+ * \brief Test numeric limit types used to find bounding box
  *
+ * Use:
+
     // Debug --------------------------------
     WICDebug::dbg_ComputeWellBlocks_num_lims(
         dbg_mode, xi, yi, zi, xf, yf, zf);
@@ -116,6 +117,13 @@ inline void dbg_ComputeWellBlocks_num_lims(
 /*!
  * \brief
  * This is the first function called by the WIC process
+ *
+ * Use:
+ 
+    // Debug ------------------------------
+    WICDebug::dbg_ComputeWellBlocks_bbox_i(
+        dbg_mode, wells, iWell, iSegment,
+        xi, yi, zi, xf, yf, zf);
  */
 inline void dbg_ComputeWellBlocks_bbox_i(
     bool dbg_mode,
@@ -155,7 +163,13 @@ inline void dbg_ComputeWellBlocks_bbox_i(
 };
 
 /*!
- * \brief Test b-box after heuristic expansion
+ * \brief Test bounding box after heuristic expansion
+ *
+ * Use:
+ 
+    // Debug ------------------------------
+    WICDebug::dbg_ComputeWellBlocks_bbox_f(
+        dbg_mode, xi, yi, zi, xf, yf, zf);
  */
 inline void dbg_ComputeWellBlocks_bbox_f(
     bool dbg_mode,
@@ -173,13 +187,18 @@ inline void dbg_ComputeWellBlocks_bbox_f(
 
 };
 
-
 // ---------------------------------------------------------------------
-// eclgrid.cpp
+// eclgrid.cpp => GetBoundingBoxCellIndices
 
 /*!
  * \brief Debug function vector<int> ECLGrid::GetBoundingBoxCellIndices
  * in eclgrid.cpp
+ *
+ * Use:
+ 
+    // Debug -------------------------------
+    WICDebug::dbg_GetBoundingBoxCellIndices(
+        dbg_mode, bb_cells);
  */
 inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
                                           vector<int> indices_list) {
@@ -198,6 +217,27 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
             "Indices of current b-box:\n",
         dbg_msg.str());
 };
+
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp
+// bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
+//                                        Vector3d &start_pt,
+//                                        Vector3d end_point,
+//                                        Grid::Cell &cell)
+
+/*!
+ * \brief 
+ * 
+ *
+ * Use:
+ 
+    // Debug -------------------------------
+    WICDebug::dbg_FindHeelToeEndPoints(dbg_mode);
+ */
+inline void dbg_FindHeelToeEndPoints(bool dbg_mode) {
+
+};
+
 
 }
 #endif //FIELDOPT_WIC_DEBUG_H

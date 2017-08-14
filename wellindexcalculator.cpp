@@ -24,15 +24,15 @@
    <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#include "wellindexcalculator.h"
+//#include "wellindexcalculator.h"
 //#include <map>
-#include <iostream>
+//#include <iostream>
 //#include <stdexcept>
 //#include <limits>
 
 #include "tests/wic_debug.hpp"
 
-using namespace std;
+//using namespace std;
 
 namespace Reservoir {
 namespace WellIndexCalculation {
@@ -41,12 +41,12 @@ WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid)
     grid_ = grid;
     auto smallest_cell = grid_->GetSmallestCell();
     smallest_grid_cell_dimension_ = 1e7;
-    for (int i = 1; i < smallest_cell.corners().size(); ++i)
-    {
+
+    for (int i = 1; i < smallest_cell.corners().size(); ++i) {
         double distance_between_corners =
             (smallest_cell.corners()[i-1] - smallest_cell.corners()[i]).norm();
-        if (distance_between_corners < smallest_grid_cell_dimension_)
-        {
+
+        if (distance_between_corners < smallest_grid_cell_dimension_) {
             smallest_grid_cell_dimension_ = distance_between_corners;
         }
     }
@@ -58,8 +58,8 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
     map<string, vector<IntersectedCell>> well_indices;
 
     // Perform well block search for each well
-    for (int iWell = 0; iWell < wells.size(); ++iWell)
-    {
+    for (int iWell = 0; iWell < wells.size(); ++iWell) {
+
         // Compute an overall bounding box per well --> speed up cell searching
         double xi, yi, zi, xf, yf, zf;
         xi = numeric_limits<double>::max();
@@ -147,6 +147,10 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
      * logical?).
      */
     bool well_is_outside = (bb_cells.size() == 0);
+    if (well_is_outside) {
+        cout << "WIC: Well or segment is outside of bounding box." << endl;
+        return;
+    }
 
     /* Additionally, check if the segment is outside the bounding box
      * of the reservoir, i.e., the logical grid. If either this or the
@@ -155,8 +159,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     bool segment_is_outside = IsLineCompletelyOutsideBox(Vector3d(bb_xi, bb_yi, bb_zi),
                                                          Vector3d(bb_xf, bb_yf, bb_zf),
                                                          start_pt, end_pt);
-    if (well_is_outside || segment_is_outside) {
-        cout << "WIC: Well or segment is outside the reservoir." << endl;
+    if (segment_is_outside) {
+        cout << "WIC: Well or segment is outside logical grid." << endl;
         return;
     }
 
@@ -323,6 +327,7 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
 
     // OV: 20170709
     while (step <= 1.0) {
+        //
         if ( grid_->GetCellEnvelopingPoint(cell, start_pt, bb_cells) ) {
             if ( cell.is_active() ) {
                 break;
