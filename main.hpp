@@ -72,18 +72,34 @@ void printCsv(map<string, vector<IntersectedCell>> &well_indices) {
     }
 
     for (auto well_name : well_names) {
+    	// Write the well name
         cout << well_name << endl;
+        
+        // Write the matrix part
         for (auto block : well_indices[well_name]) {
-            if (block.cell_well_index() > minimum_well_index) {
+            if (block.is_active_matrix() && block.cell_well_index_matrix() > minimum_well_index) {
                 auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
                                            %(block.ijk_index().i() + 1)         // %1
                                            %(block.ijk_index().j() + 1)         // %2
                                            %(block.ijk_index().k() + 1)         // %3
                                            %(block.ijk_index().k() + 1)         // %4
-                                           %block.cell_well_index());           // %5
+                                           %block.cell_well_index_matrix());    // %5
                 cout << line << endl;
             }
         }
+        
+        // Write the fracture part
+		for (auto block : well_indices[well_name]) {
+			if (block.is_active_fracture() && block.cell_well_index_fracture() > minimum_well_index) {
+				auto line = boost::str(boost::format("%d,\t%d,\t%d,\t%d,\t%s")
+										   %(block.ijk_index().i() + 1)         // %1
+										   %(block.ijk_index().j() + 1)         // %2
+										   %(block.ijk_index().k() + 1)         // %3
+										   %(block.ijk_index().k() + 1)         // %4
+										   %block.cell_well_index_fracture());  // %5
+				cout << line << endl;
+			}
+		}
     }
 }
 
@@ -101,19 +117,37 @@ void printCompdat(map<string, vector<IntersectedCell>> &well_indices) {
     }
 
     for (auto well_name : well_names) {
+    	// Write the matrix part 
         for (auto block : well_indices[well_name]) {
-            if (block.cell_well_index() > minimum_well_index) {
+            if (block.is_active_matrix() && block.cell_well_index_matrix() > minimum_well_index) {
                 auto entry = boost::str(boost::format(compdat_frmt)
                                             % well_name             			// %1
                                             %(block.ijk_index().i() + 1) 		// %2
                                             %(block.ijk_index().j() + 1) 		// %3
                                             %(block.ijk_index().k() + 1) 		// %4
                                             %(block.ijk_index().k() + 1) 		// %5
-                                            %(block.cell_well_index())     		// %6
+                                            %(block.cell_well_index_matrix())	// %6
                                             %(2*block.get_segment_radius(0)));  // %7
                 body.push_back(entry);
             }
         }
+
+        // Write the fracure part
+		for (auto block : well_indices[well_name]) {
+			if (block.is_active_fracture() && block.cell_well_index_fracture() > minimum_well_index) {
+				auto entry = boost::str(boost::format(compdat_frmt)
+											% well_name             			// %1
+											%(block.ijk_index().i() + 1) 		// %2
+											%(block.ijk_index().j() + 1) 		// %3
+											%(block.ijk_index().k() + 1) 		// %4
+											%(block.ijk_index().k() + 1) 		// %5
+											%(block.cell_well_index_fracture())	// %6
+											%(2*block.get_segment_radius(0)));  // %7
+				body.push_back(entry);
+			}
+        }
+		
+		// Write the full block to file
         string full = head + boost::algorithm::join(body, "\n") + foot;
         cout << full << endl;
     }
