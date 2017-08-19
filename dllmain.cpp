@@ -59,7 +59,7 @@ __attribute__((constructor))
 static void Initializer(int argc, char** argv, char** envp)
 {
   grid = NULL;
-  printf("DllInitializer\n");
+  printf("DllInitializer: Loading legacy WIClib\n");
 }
 
 __attribute__((destructor))
@@ -69,7 +69,7 @@ __attribute__((destructor))
  */
 static void Finalizer()
 {
-  printf("DllFinalizer\n");
+  printf("DllFinalizer: Loaded legacy WIClib\n");
 }
 
 //CP_END_EXTERN_C
@@ -86,8 +86,9 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
   try
   {
     string gridpth = string(basepth) + ".EGRID";
+    printf("Loading grid: %s\n", gridpth.c_str());
     if ( !exists(gridpth.c_str()) )
-      throw std::runtime_error("ComputeWellIndices: file .GRID does not exist");
+      throw std::runtime_error("ComputeWellIndices: file .EGRID does not exist");
 
     if ( *wellbore_radius <= 0 )
       throw std::runtime_error("ComputeWellIndices: wellbore radius is negative");
@@ -154,16 +155,16 @@ WELLINDEXCALCULATOR_API int computeBlockCenter(const char* basepth,
     if (grid == NULL)
       grid = new Reservoir::Grid::ECLGrid(gridpth);
 
-    Reservoir::Grid::Cell current_cell =
-      ((Reservoir::Grid::Grid*)grid)->GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);
-    heelxyz[0] = current_cell.center()[0];
-    heelxyz[1] = current_cell.center()[1];
-    heelxyz[2] = current_cell.center()[2];
+      Reservoir::Grid::Cell current_cell =
+        ((Reservoir::Grid::Grid*)grid)->GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);
+      heelxyz[0] = current_cell.center()[0];
+      heelxyz[1] = current_cell.center()[1];
+      heelxyz[2] = current_cell.center()[2];
 
-    current_cell = ((Reservoir::Grid::Grid*)grid)->GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
-    toexyz[0] = current_cell.center()[0];
-    toexyz[1] = current_cell.center()[1];
-    toexyz[2] = current_cell.center()[2];
+      current_cell = ((Reservoir::Grid::Grid*)grid)->GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
+      toexyz[0] = current_cell.center()[0];
+      toexyz[1] = current_cell.center()[1];
+      toexyz[2] = current_cell.center()[2];
 
     //delete grid;
   }
