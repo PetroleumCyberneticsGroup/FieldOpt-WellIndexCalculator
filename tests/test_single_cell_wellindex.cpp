@@ -95,7 +95,7 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     auto blocks = wic.ComputeWellBlocks(wells);
     auto wblocks = blocks[wells.at(0).wellname];
     EXPECT_GT(wblocks.size(), 0);
-    double wi = wblocks[0].cell_well_index();
+    double wi = wblocks[0].cell_well_index_matrix();
 
     // \todo The function cell_well_index() should deal with the case when
     // the number of well blocks is zero (which results in segfault), e.g.,
@@ -145,7 +145,7 @@ TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
 
     auto blocks = wic.ComputeWellBlocks(wells)[wells.at(0).wellname];
     EXPECT_GT(blocks.size(), 0);
-    double wi = blocks[0].cell_well_index();
+    double wi = blocks[0].cell_well_index_matrix();
 
     /* 0.555602 is the expected well transmisibility factor aka. well index.
      * For now this value is read directly from eclipse output file:

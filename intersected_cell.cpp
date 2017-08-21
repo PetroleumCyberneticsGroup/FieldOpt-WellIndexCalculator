@@ -88,12 +88,20 @@ void IntersectedCell::add_new_segment(Vector3d entry_point, Vector3d exit_point,
     segment_skin_.push_back(skin_factor);
 }
 
-double IntersectedCell::cell_well_index() const {
-    return well_index_;
+double IntersectedCell::cell_well_index_matrix() const {
+    return well_index_matrix_;
 }
 
-void IntersectedCell::set_cell_well_index(double well_index) {
-    well_index_ = well_index;
+void IntersectedCell::set_cell_well_index_matrix(double well_index) {
+    well_index_matrix_ = well_index;
+}
+
+double IntersectedCell::cell_well_index_fracture() const {
+    return well_index_fracture_;
+}
+
+void IntersectedCell::set_cell_well_index_fracture(double well_index) {
+    well_index_fracture_ = well_index;
 }
 
 void IntersectedCell::set_segment_calculation_data(int segment_index,

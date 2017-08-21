@@ -72,9 +72,12 @@ class IntersectedCell : public Grid::Cell {
 
   void update_last_segment_exit_point(Vector3d exit_point);
 
-  double cell_well_index() const;
-  void set_cell_well_index(double well_index);
+  double cell_well_index_matrix() const;
+  void set_cell_well_index_matrix(double well_index);
 
+  double cell_well_index_fracture() const;
+  void set_cell_well_index_fracture(double well_index);
+  
   void set_segment_calculation_data(int segment_index,
                                     string name,
                                     double value);
@@ -100,8 +103,9 @@ class IntersectedCell : public Grid::Cell {
   // per segment well index calculation data
   map<string, vector<double>> calculation_data_;
 
-  // well index
-  double well_index_;
+  // well indices
+  double well_index_matrix_;
+  double well_index_fracture_;
 };
 }
 }
