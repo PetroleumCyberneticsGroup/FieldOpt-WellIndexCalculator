@@ -177,7 +177,7 @@ void printDebug( map<string, vector<IntersectedCell>> &well_indices)
             data_names.push_back(it->first);
         }
 
-        debugfile << "i,\tj,\tk,\t";
+        debugfile << "i\tj\tk\t";
         for (string item : data_names) {
             debugfile << item << "\t";
         }
