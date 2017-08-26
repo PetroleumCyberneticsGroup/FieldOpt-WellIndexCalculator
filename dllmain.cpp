@@ -59,7 +59,7 @@ __attribute__((constructor))
 static void Initializer(int argc, char** argv, char** envp)
 {
   grid = NULL;
-  printf("DllInitializer: Loading legacy WIClib\n");
+  printf("DllInitializer: Loading WIClib\n");
 }
 
 __attribute__((destructor))
@@ -69,7 +69,7 @@ __attribute__((destructor))
  */
 static void Finalizer()
 {
-  printf("DllFinalizer: Loaded legacy WIClib\n");
+  printf("DllFinalizer: Loaded WIClib\n");
 }
 
 //CP_END_EXTERN_C
@@ -123,7 +123,7 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
         i[iblk] = well_blocks[iblk].ijk_index().i() + 1;
         j[iblk] = well_blocks[iblk].ijk_index().j() + 1;
         k[iblk] = well_blocks[iblk].ijk_index().k() + 1;
-        wi[iblk] = well_blocks[iblk].cell_well_index();
+        wi[iblk] = well_blocks[iblk].cell_well_index_matrix();
       }
     }
     catch (...)
