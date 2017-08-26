@@ -65,12 +65,12 @@ inline void print_wic_dbg(bool dbg_mode, bool append,
 /*!
  * \brief Format of stream
  */
-inline ostringstream get_dbg_msg() {
-    ostringstream dbg_msg;
+inline ostringstream get_dbg_msg(ostringstream &dbg_msg) {
+//    ostringstream dbg_msg;
     dbg_msg.precision(3);
     dbg_msg.setf(ios::fixed, ios::floatfield);
     dbg_msg.setf(ios::adjustfield, ios::right);
-    return dbg_msg;
+//    return dbg_msg;
 };
 
 inline string get_time_stamp()
@@ -103,7 +103,9 @@ inline void dbg_ComputeWellBlocks_num_lims(
     double xi, double yi, double zi,
     double xf, double yf, double zf) {
     int wdth = 18;
-    auto dbg_msg = get_dbg_msg();
+
+    ostringstream dbg_msg;
+    get_dbg_msg(dbg_msg);
     dbg_msg << "(xi yi zi): ["
             << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
             << "(xf yf zf): ["
@@ -119,7 +121,7 @@ inline void dbg_ComputeWellBlocks_num_lims(
  * This is the first function called by the WIC process
  *
  * Use:
- 
+
     // Debug ------------------------------
     WICDebug::dbg_ComputeWellBlocks_bbox_i(
         dbg_mode, wells, iWell, iSegment,
@@ -134,7 +136,8 @@ inline void dbg_ComputeWellBlocks_bbox_i(
 
     int wdth = 11;
     time_t rawtime;
-    auto dbg_msg = get_dbg_msg();
+    ostringstream dbg_msg;
+    get_dbg_msg(dbg_msg);
 
     dbg_msg << "Heel (xyz): ["
             << setw(wdth) << wells[iWell].heels[iSegment].x()
@@ -166,7 +169,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
  * \brief Test bounding box after heuristic expansion
  *
  * Use:
- 
+
     // Debug ------------------------------
     WICDebug::dbg_ComputeWellBlocks_bbox_f(
         dbg_mode, xi, yi, zi, xf, yf, zf);
@@ -176,7 +179,9 @@ inline void dbg_ComputeWellBlocks_bbox_f(
     double xi, double yi, double zi,
     double xf, double yf, double zf) {
     int wdth = 11;
-    auto dbg_msg = get_dbg_msg();
+
+    ostringstream dbg_msg;
+    get_dbg_msg(dbg_msg);
     dbg_msg << "(xi yi zi): ["
             << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
             << "(xf yf zf): ["
@@ -195,14 +200,15 @@ inline void dbg_ComputeWellBlocks_bbox_f(
  * in eclgrid.cpp
  *
  * Use:
- 
+
     // Debug -------------------------------
     WICDebug::dbg_GetBoundingBoxCellIndices(
         dbg_mode, bb_cells);
  */
 inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
                                           vector<int> indices_list) {
-    auto dbg_msg = get_dbg_msg();
+    ostringstream dbg_msg;
+    get_dbg_msg(dbg_msg);
     dbg_msg << "indices_list: [\n";
     for (int ii = 0; ii < indices_list.size(); ++ii) {
         dbg_msg << setw(7) << indices_list[ii] << " ";
@@ -226,11 +232,11 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
 //                                        Grid::Cell &cell)
 
 /*!
- * \brief 
- * 
+ * \brief
+ *
  *
  * Use:
- 
+
     // Debug -------------------------------
     WICDebug::dbg_FindHeelToeEndPoints(dbg_mode);
  */
