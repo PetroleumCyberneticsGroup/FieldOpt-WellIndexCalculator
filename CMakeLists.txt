@@ -84,14 +84,15 @@ else() # LINUX --------------------------------------------------------
 
         add_compile_options(-std=c++11)
 
-        add_executable(wicalc-adgprs
-                main.cpp
-                dllmain.cpp
-                tests/wic_debug.hpp)
-
-        target_link_libraries(wicalc-adgprs
-                PUBLIC fieldopt::${WIC_LIB_TARGET}
-                ${Boost_LIBRARIES})
+        # \todo Debug
+        # add_executable(wicalc-adgprs
+        #         main.cpp
+        #         dllmain.cpp
+        #         tests/wic_debug.hpp)
+        #
+        # target_link_libraries(wicalc-adgprs
+        #         PUBLIC fieldopt::${WIC_LIB_TARGET}
+        #         ${Boost_LIBRARIES})
     endif()
 endif()
 
