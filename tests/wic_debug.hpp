@@ -65,24 +65,32 @@ inline void print_wic_dbg(bool dbg_mode, bool append,
 /*!
  * \brief Format of stream
  */
-inline ostringstream get_dbg_msg(ostringstream &dbg_msg) {
+inline ostringstream get_dbg_msg(ostringstream * dbg_msg) {
 //    ostringstream dbg_msg;
-    dbg_msg.precision(3);
-    dbg_msg.setf(ios::fixed, ios::floatfield);
-    dbg_msg.setf(ios::adjustfield, ios::right);
+    dbg_msg->precision(3);
+    dbg_msg->setf(ios::fixed, ios::floatfield);
+    dbg_msg->setf(ios::adjustfield, ios::right);
 //    return dbg_msg;
 };
 
+/*!
+ * \brief Get time stamp
+ */
 inline string get_time_stamp()
 {
     time_t ltime;
     struct tm *Tm;
-    char time_stamp [50];
+    char ts_char [50];
+    string ts_str;
 
     ltime = time(NULL); /* get current cal time */
-    sprintf(time_stamp, "%s", asctime( localtime(&ltime) ) );
+    sprintf(ts_char, "%s", asctime( localtime(&ltime) ) );
+    ts_str = string(ts_char);
 
-    return string(time_stamp);
+    // Remove newline character
+    ts_str.erase(remove(ts_str.begin(), ts_str.end(), '\n'), ts_str.end());
+
+    return ts_str;
 }
 
 // ---------------------------------------------------------------------
@@ -105,7 +113,9 @@ inline void dbg_ComputeWellBlocks_num_lims(
     int wdth = 18;
 
     ostringstream dbg_msg;
-    get_dbg_msg(dbg_msg);
+    dbg_msg.precision(3);
+    dbg_msg.setf(ios::fixed, ios::floatfield);
+    dbg_msg.setf(ios::adjustfield, ios::right);
     dbg_msg << "(xi yi zi): ["
             << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
             << "(xf yf zf): ["
@@ -113,7 +123,6 @@ inline void dbg_ComputeWellBlocks_num_lims(
     print_wic_dbg(
         dbg_mode, true, "[ComputeWellBlocks (WellIndexCalculator.cpp)] "
             "Test numeric limit types: \n", dbg_msg.str());
-
 };
 
 /*!
@@ -137,7 +146,9 @@ inline void dbg_ComputeWellBlocks_bbox_i(
     int wdth = 11;
     time_t rawtime;
     ostringstream dbg_msg;
-    get_dbg_msg(dbg_msg);
+    dbg_msg.precision(3);
+    dbg_msg.setf(ios::fixed, ios::floatfield);
+    dbg_msg.setf(ios::adjustfield, ios::right);
 
     dbg_msg << "Heel (xyz): ["
             << setw(wdth) << wells[iWell].heels[iSegment].x()
@@ -181,7 +192,9 @@ inline void dbg_ComputeWellBlocks_bbox_f(
     int wdth = 11;
 
     ostringstream dbg_msg;
-    get_dbg_msg(dbg_msg);
+    dbg_msg.precision(3);
+    dbg_msg.setf(ios::fixed, ios::floatfield);
+    dbg_msg.setf(ios::adjustfield, ios::right);
     dbg_msg << "(xi yi zi): ["
             << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
             << "(xf yf zf): ["
@@ -208,7 +221,9 @@ inline void dbg_ComputeWellBlocks_bbox_f(
 inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
                                           vector<int> indices_list) {
     ostringstream dbg_msg;
-    get_dbg_msg(dbg_msg);
+    dbg_msg.precision(3);
+    dbg_msg.setf(ios::fixed, ios::floatfield);
+    dbg_msg.setf(ios::adjustfield, ios::right);
     dbg_msg << "indices_list: [\n";
     for (int ii = 0; ii < indices_list.size(); ++ii) {
         dbg_msg << setw(7) << indices_list[ii] << " ";
@@ -220,17 +235,27 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
 
     print_wic_dbg(
         dbg_mode, true, "[GetBoundingBoxCellIndices (eclgrid.cpp)] "
-            "Indices of current b-box:\n",
-        dbg_msg.str());
+            "Indices of current b-box:\n", dbg_msg.str());
 };
 
 // ---------------------------------------------------------------------
 // wellindexcalculator.cpp
-// bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
-//                                        Vector3d &start_pt,
-//                                        Vector3d end_point,
-//                                        Grid::Cell &cell)
 
+/*!
+ * \brief Test overall algorithm for finding intersected cells
+ *
+ * Use:
+
+ *
+ */
+inline void dbg_collect_intersected_cells_well_outside_box(
+        bool dbg_mode, string dbg_str) {
+    print_wic_dbg(dbg_mode, true, "[collect_intersected_cells "
+        "(WellIndexCalculator.cpp)] Error: \n", dbg_str);
+};
+
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp
 /*!
  * \brief
  *
@@ -238,11 +263,30 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
  * Use:
 
     // Debug -------------------------------
-    WICDebug::dbg_FindHeelToeEndPoints(dbg_mode);
+    WICDebug::dbg_FindHeelToeEndPoints(bool dbg_mode, string dbg_str);
  */
-inline void dbg_FindHeelToeEndPoints(bool dbg_mode) {
-
+inline void dbg_FindHeelToeEndPoints(bool dbg_mode, string dbg_str) {
+    print_wic_dbg(dbg_mode, true, "[if-statement: Find the heel and "
+            "toe cells (WellIndexCalculator.cpp)] Error: \n", dbg_str);
 };
+
+
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp
+/*!
+ * \brief
+ *
+ *
+ * Use:
+
+    // Debug -------------------------------
+    WICDebug::dbg_FindHeelToeEndPoints(bool dbg_mode, string dbg_str);
+ */
+
+// bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
+//                                        Vector3d &start_pt,
+//                                        Vector3d end_point,
+//                                        Grid::Cell &cell)
 
 
 }

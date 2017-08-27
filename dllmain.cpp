@@ -87,19 +87,23 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
   {
     string gridpth = string(basepth) + ".EGRID";
     printf("Loading grid: %s\n", gridpth.c_str());
-    if ( !exists(gridpth.c_str()) )
-      throw std::runtime_error("ComputeWellIndices: file .EGRID does not exist");
+    if ( !exists(gridpth.c_str()) ){
+        throw std::runtime_error("ComputeWellIndices: file .EGRID does not exist");
+    }
 
-    if ( *wellbore_radius <= 0 )
-      throw std::runtime_error("ComputeWellIndices: wellbore radius is negative");
+    if ( *wellbore_radius <= 0 ){
+        throw std::runtime_error("ComputeWellIndices: wellbore radius is negative");
+    }
 
-    // Initialize the Grid and WellIndexCalculator objects
+    printf("Initializing Grid object.\n");
     if (grid == NULL) {
       grid = new Reservoir::Grid::ECLGrid(gridpth);
     }
+
+    printf("Initializing WellIndexCalculator object.\n");
     auto wic = WellIndexCalculator((Reservoir::Grid::Grid*)grid);
 
-    // Compute the well blocks
+    printf("Compute well blocks.\n");
     vector<WellDefinition> wells;
     wells.push_back(WellDefinition());
     wells.at(0).wellname = "unnamed_well";
@@ -108,8 +112,11 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
     wells.at(0).radii.push_back(*wellbore_radius);
     wells.at(0).skins.push_back(0.0);
 
+
     auto well_indices = wic.ComputeWellBlocks(wells);
+    printf("Computed well indices.\n");
     printCompdat(well_indices);
+
     vector<IntersectedCell>& well_blocks = well_indices.at("unnamed_well");
     *nblks = well_blocks.size();
 
