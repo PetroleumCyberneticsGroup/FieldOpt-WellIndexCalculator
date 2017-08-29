@@ -121,8 +121,9 @@ inline void dbg_ComputeWellBlocks_num_lims(
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
     print_wic_dbg(
-        dbg_mode, true, "[ComputeWellBlocks (WellIndexCalculator.cpp)] "
-            "Test numeric limit types: \n", dbg_msg.str());
+        dbg_mode, true, "[TIME:" + get_time_stamp() +
+                    "]\n[ComputeWellBlocks (WellIndexCalculator.cpp)] "
+                            "Test numeric limit types: \n", dbg_msg.str());
 };
 
 /*!
@@ -172,7 +173,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
     print_wic_dbg(
-        dbg_mode, false, "[ComputeWellBlocks (wellindexcalculator.cpp)] "
+        dbg_mode, true, "[ComputeWellBlocks (wellindexcalculator.cpp)] "
             "Bounding box corresponding to xyz segment :\n", dbg_msg.str());
 };
 
