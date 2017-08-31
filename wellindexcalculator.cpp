@@ -52,10 +52,10 @@ WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid)
     }
 }
 
-map<string, vector<IntersectedCell>>
-WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
+void WellIndexCalculator::ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices,
+vector<WellDefinition> &wells)
 {
-    map<string, vector<IntersectedCell>> well_indices;
+    //map<string, vector<IntersectedCell>> well_indices;
 
     // Perform well block search for each well
     for (int iWell = 0; iWell < wells.size(); ++iWell) {
@@ -63,11 +63,11 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
         // Compute an overall bounding box per well --> speed up cell searching
         double xi, yi, zi, xf, yf, zf;
         xi = numeric_limits<double>::max();
-        xf = numeric_limits<double>::lowest();
+        xf = -numeric_limits<double>::max(); //numeric_limits<double>::lowest();
         yi = numeric_limits<double>::max();
-        yf = numeric_limits<double>::lowest();
+        yf = -numeric_limits<double>::max(); //numeric_limits<double>::lowest();
         zi = numeric_limits<double>::max();
-        zf = numeric_limits<double>::lowest();
+        zf = -numeric_limits<double>::max(); //numeric_limits<double>::lowest();
 
         // Loop through all segments -> find outermost coordinates for entire well
         for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment ) {
@@ -107,7 +107,6 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
 
         // Loop through each well segment -> find intersected cells for each segment
         vector<IntersectedCell> intersected_cells;
-
         for (int iSegment = 0; iSegment < wells[iWell].radii.size(); ++iSegment) {
             collect_intersected_cells(intersected_cells,
                                       wells[iWell].heels[iSegment],
@@ -130,7 +129,7 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
     }
 
     // Return the objects
-    return well_indices;
+    //return well_indices;
 }
 
 
@@ -469,7 +468,7 @@ bool WellIndexCalculator::introduces_cycle(vector<IntersectedCell> cells, Grid::
     }
     else {
         return false;
-    }
+}
 }
 
 //bool WellIndexCalculator::GetIntersection(double fDst1, double fDst2,
@@ -551,7 +550,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
     double well_index_x_fracture = 0;
     double well_index_y_fracture = 0;
     double well_index_z_fracture = 0;
-
+    
     IntersectedCell &icell = cells.at(cell_index);
     int num_grids = icell.permx().size();
 
@@ -574,14 +573,14 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
         vector<double> current_wx;
         vector<double> current_wy;
         vector<double> current_wz;
-
+        
         for(int igrid = 0; igrid < num_grids; igrid++)
         {
         	current_wx.push_back(dir_well_index(current_Lx, icell.dy(), icell.dz(), icell.permy()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
         	current_wy.push_back(dir_well_index(current_Ly, icell.dx(), icell.dz(), icell.permx()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
         	current_wz.push_back(dir_well_index(current_Lz, icell.dx(), icell.dy(), icell.permx()[igrid], icell.permy()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
         }
-
+        
         // Store data for later use
         icell.set_segment_calculation_data(iSegment, "dx", icell.dx());
         icell.set_segment_calculation_data(iSegment, "dy", icell.dy());
@@ -596,7 +595,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
 			icell.set_segment_calculation_data(iSegment, "permx_m", icell.permx()[0]);
 			icell.set_segment_calculation_data(iSegment, "permy_m", icell.permy()[0]);
 			icell.set_segment_calculation_data(iSegment, "permz_m", icell.permz()[0]);
-
+	
 			icell.set_segment_calculation_data(iSegment, "wx_m", current_wx[0]);
 			icell.set_segment_calculation_data(iSegment, "wy_m", current_wy[0]);
 			icell.set_segment_calculation_data(iSegment, "wz_m", current_wz[0]);
@@ -609,12 +608,12 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
         	icell.set_segment_calculation_data(iSegment, "permx_f", icell.permx()[ind]);
 			icell.set_segment_calculation_data(iSegment, "permy_f", icell.permy()[ind]);
 			icell.set_segment_calculation_data(iSegment, "permz_f", icell.permz()[ind]);
-
+	
 			icell.set_segment_calculation_data(iSegment, "wx_f", current_wx[ind]);
 			icell.set_segment_calculation_data(iSegment, "wy_f", current_wy[ind]);
 			icell.set_segment_calculation_data(iSegment, "wz_f", current_wz[ind]);
         }
-
+        
         // Compute the sum of well index for each direction.
         // For segments with equal radius this will in the end calculate
         // the well index based on the Shu formula in its original formulation
@@ -623,14 +622,14 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
         	well_index_x_matrix += current_wx[0];
         	well_index_y_matrix += current_wy[0];
         	well_index_z_matrix += current_wz[0];
-        }
+        }        
         if (icell.is_active_fracture())
         {
         	int ind = 0;
         	if (icell.is_active_matrix()) ind = 1;
         	well_index_x_fracture += current_wx[ind];
         	well_index_y_fracture += current_wy[ind];
-        	well_index_z_fracture += current_wz[ind];
+        	well_index_z_fracture += current_wz[ind];        	
         }
     }
 
@@ -651,7 +650,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
 				well_index_x_fracture * well_index_x_fracture +
 				well_index_y_fracture * well_index_y_fracture +
 				well_index_z_fracture * well_index_z_fracture));
-	}
+	}	
 }
 
 double WellIndexCalculator::dir_well_index(double Lx,

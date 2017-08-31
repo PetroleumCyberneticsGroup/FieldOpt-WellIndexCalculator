@@ -77,7 +77,7 @@ class WellIndexCalculator {
    * list of cells intersected by the well. Each intersected cell
    * has stored the well connectivity information.
    */
-  map<string, vector<IntersectedCell>> ComputeWellBlocks(vector<WellDefinition> wells);
+  void ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices, vector<WellDefinition> &wells);
 
 
  private:

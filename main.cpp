@@ -88,7 +88,8 @@ int main(int argc, const char *argv[])
     }
     
     // Compute the well blocks
-    auto well_indices = wic.ComputeWellBlocks(wells);
+    map<string, vector<IntersectedCell>> well_indices; 
+    wic.ComputeWellBlocks(well_indices, wells);
     
     // Print as a COMPDAT table if the --compdat/-c flag was given
     if (vm.count("compdat")) 

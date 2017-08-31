@@ -77,11 +77,14 @@ void* grid;
 
 // This is an example of an exported function.
 WELLINDEXCALCULATOR_API int computeWellIndices(
-    const char* gridpth,
+    const char* basepth,
     const double* heel, const double* toe, const double* wellbore_radius,
     int* n, int* i, int* j, int* k, double* wi);
 
-WELLINDEXCALCULATOR_API int computeBlockCenter(
-    const char* gridpth,
+WELLINDEXCALCULATOR_API int getBlockCenters(
+    const char* basepth,
     const int* heel,  const int* toe, double* heelxyz, double* toexyz);
 
+WELLINDEXCALCULATOR_API int getBoundaryVertices(
+    const char* filepth,
+    int* npnts, double* xes, double* yes, double* zes);
