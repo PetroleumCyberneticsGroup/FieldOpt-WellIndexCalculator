@@ -475,8 +475,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
         }
         if (icell.is_active_fracture())
         {
-        	int ind = 0;
-        	if (icell.is_active_matrix()) ind = 1;
+        	int ind = (icell.is_active_matrix())? 1: 0;
 
         	icell.set_segment_calculation_data(iSegment, "permx_f", icell.permx()[ind]);
 			icell.set_segment_calculation_data(iSegment, "permy_f", icell.permy()[ind]);
@@ -495,11 +494,11 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
         	well_index_x_matrix += current_wx[0];
         	well_index_y_matrix += current_wy[0];
         	well_index_z_matrix += current_wz[0];
-        }        
+        }
         if (icell.is_active_fracture())
         {
-        	int ind = 0;
-        	if (icell.is_active_matrix()) ind = 1;
+        	int ind = (icell.is_active_matrix())? 1: 0;
+        	
         	well_index_x_fracture += current_wx[ind];
         	well_index_y_fracture += current_wy[ind];
         	well_index_z_fracture += current_wz[ind];        	

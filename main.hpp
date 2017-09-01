@@ -116,10 +116,10 @@ void printCompdat(map<string, vector<IntersectedCell>> &well_indices) {
         well_names.push_back(it->first);
     }
 
-    for (auto well_name : well_names) {
-    	// Write the matrix part 
+    for (auto well_name : well_names) {    	 
         for (auto block : well_indices[well_name]) {
-            if (block.is_active_matrix() && block.cell_well_index_matrix() > minimum_well_index) {
+        	// Write the matrix part
+        	if (block.is_active_matrix() && block.cell_well_index_matrix() > minimum_well_index) {
                 auto entry = boost::str(boost::format(compdat_frmt)
                                             % well_name             			// %1
                                             %(block.ijk_index().i() + 1) 		// %2
@@ -129,18 +129,16 @@ void printCompdat(map<string, vector<IntersectedCell>> &well_indices) {
                                             %(block.cell_well_index_matrix())	// %6
                                             %(2*block.get_segment_radius(0)));  // %7
                 body.push_back(entry);
-            }
-        }
-
-        // Write the fracure part
-		for (auto block : well_indices[well_name]) {
+        	}
+        	
+			// Write the fracure part                
 			if (block.is_active_fracture() && block.cell_well_index_fracture() > minimum_well_index) {
 				auto entry = boost::str(boost::format(compdat_frmt)
 											% well_name             			// %1
 											%(block.ijk_index().i() + 1) 		// %2
 											%(block.ijk_index().j() + 1) 		// %3
-											%(block.ijk_index().k() + 1) 		// %4
-											%(block.ijk_index().k() + 1) 		// %5
+											%(block.k_fracture_index() + 1) 	// %4
+											%(block.k_fracture_index() + 1) 	// %5
 											%(block.cell_well_index_fracture())	// %6
 											%(2*block.get_segment_radius(0)));  // %7
 				body.push_back(entry);
