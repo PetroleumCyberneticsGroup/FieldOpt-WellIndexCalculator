@@ -77,7 +77,8 @@ class WellIndexCalculator {
    * list of cells intersected by the well. Each intersected cell
    * has stored the well connectivity information.
    */
-  void ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices, vector<WellDefinition> &wells);
+  void ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices,
+                         vector<WellDefinition> &wells, int rank = 0);
 
 
  private:
@@ -116,9 +117,11 @@ class WellIndexCalculator {
 //                    Vector3d &Hit);
 
   /*!
-   * \brief Returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
+   * \brief Returns true if the line defined by L1,L2
+   * lies completely outside the box defined by B1,B2
    */
-  bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
+  bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2,
+                                  Vector3d L1, Vector3d L2 );
 
   /*!
    * @brief Find a new endpoint (heel/toe) for a well if necessary.
@@ -163,7 +166,8 @@ class WellIndexCalculator {
                                  double wb_rad, double skin_fac,
                                  vector<int> bb_cells,
                                  double& bb_xi, double& bb_yi, double& bb_zi,
-                                 double& bb_xf, double& bb_yf, double& bb_zf);
+                                 double& bb_xf, double& bb_yf, double& bb_zf,
+                                 int rank = 0);
 
   /*!
    * \brief Find the point where the line between the start_point

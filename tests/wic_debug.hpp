@@ -31,6 +31,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <string>
 
 using namespace std;
 
@@ -46,15 +47,19 @@ namespace WICDebug {
  * @param debug_msg
  * @param dbg_loc
  */
-inline void print_wic_dbg(bool dbg_mode, bool append,
+inline void print_wic_dbg(bool dbg_mode, bool append, int rank,
                           string dbg_loc, string dbg_msg) {
-    string dbg_file = "wic.dbg";
+
+    stringstream dbg_file;
+    cout << "RANK " << rank << endl;
+    dbg_file << "wic" << setw(3) << setfill('0') << to_string(rank) << ".dbg";
+
     fstream fs;
     if (dbg_mode) {
         if (append) {
-            fs.open(dbg_file, std::fstream::out | std::fstream::app);
+            fs.open(dbg_file.str(), std::fstream::out | std::fstream::app);
         } else {
-            fs.open(dbg_file, std::fstream::out | std::fstream::trunc);
+            fs.open(dbg_file.str(), std::fstream::out | std::fstream::trunc);
         }
         fs.write(dbg_loc.c_str(), dbg_loc.size());
         fs.write(dbg_msg.c_str(), dbg_msg.size());
@@ -109,9 +114,10 @@ inline string get_time_stamp()
 inline void dbg_ComputeWellBlocks_num_lims(
     bool dbg_mode,
     double xi, double yi, double zi,
-    double xf, double yf, double zf) {
-    int wdth = 18;
+    double xf, double yf, double zf,
+    int rank) {
 
+    int wdth = 18;
     ostringstream dbg_msg;
     dbg_msg.precision(3);
     dbg_msg.setf(ios::fixed, ios::floatfield);
@@ -121,7 +127,7 @@ inline void dbg_ComputeWellBlocks_num_lims(
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
     print_wic_dbg(
-        dbg_mode, true, "[TIME:" + get_time_stamp() +
+        dbg_mode, true, rank, "[TIME:" + get_time_stamp() +
                     "]\n[ComputeWellBlocks (WellIndexCalculator.cpp)] "
                             "Test numeric limit types: \n", dbg_msg.str());
 };
@@ -142,7 +148,8 @@ inline void dbg_ComputeWellBlocks_bbox_i(
     vector<Reservoir::WellIndexCalculation::WellDefinition> wells,
     int iWell, int iSegment,
     double xi, double yi, double zi,
-    double xf, double yf, double zf) {
+    double xf, double yf, double zf,
+    int rank) {
 
     int wdth = 11;
     time_t rawtime;
@@ -165,7 +172,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
         "WIC DEBUG Version: " + get_time_stamp() + "\n" +
         "[ComputeWellBlocks (wellindexcalculator.cpp)] "
         "Starting xyz well segment:\n";
-    print_wic_dbg(dbg_mode, true, start_str, dbg_msg.str());
+    print_wic_dbg(dbg_mode, true, rank, start_str, dbg_msg.str());
     dbg_msg.str("");
 
     dbg_msg << "(xi yi zi): ["
@@ -173,7 +180,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
     print_wic_dbg(
-        dbg_mode, true, "[ComputeWellBlocks (wellindexcalculator.cpp)] "
+        dbg_mode, true, rank, "[ComputeWellBlocks (wellindexcalculator.cpp)] "
             "Bounding box corresponding to xyz segment :\n", dbg_msg.str());
 };
 
@@ -189,9 +196,10 @@ inline void dbg_ComputeWellBlocks_bbox_i(
 inline void dbg_ComputeWellBlocks_bbox_f(
     bool dbg_mode,
     double xi, double yi, double zi,
-    double xf, double yf, double zf) {
-    int wdth = 11;
+    double xf, double yf, double zf,
+    int rank) {
 
+    int wdth = 11;
     ostringstream dbg_msg;
     dbg_msg.precision(3);
     dbg_msg.setf(ios::fixed, ios::floatfield);
@@ -201,7 +209,7 @@ inline void dbg_ComputeWellBlocks_bbox_f(
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
     print_wic_dbg(
-        dbg_mode, true, "[ComputeWellBlocks (WellIndexCalculator.cpp)] "
+        dbg_mode, true, rank, "[ComputeWellBlocks (WellIndexCalculator.cpp)] "
             "B-box after heuristic increase:\n", dbg_msg.str());
 
 };
@@ -220,7 +228,8 @@ inline void dbg_ComputeWellBlocks_bbox_f(
         dbg_mode, bb_cells);
  */
 inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
-                                          vector<int> indices_list) {
+                                          vector<int> indices_list,
+                                          int rank) {
     ostringstream dbg_msg;
     dbg_msg.precision(3);
     dbg_msg.setf(ios::fixed, ios::floatfield);
@@ -235,7 +244,7 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
             << indices_list.size() << "\n";
 
     print_wic_dbg(
-        dbg_mode, true, "[GetBoundingBoxCellIndices (eclgrid.cpp)] "
+        dbg_mode, true, rank, "[GetBoundingBoxCellIndices (eclgrid.cpp)] "
             "Indices of current b-box:\n", dbg_msg.str());
 };
 
@@ -250,9 +259,11 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
  *
  */
 inline void dbg_collect_intersected_cells_well_outside_box(
-        bool dbg_mode, string dbg_str) {
-    print_wic_dbg(dbg_mode, true, "[collect_intersected_cells "
+        bool dbg_mode, string dbg_str, int rank) {
+
+    print_wic_dbg(dbg_mode, true, rank, "[collect_intersected_cells "
         "(WellIndexCalculator.cpp)] Error: \n", dbg_str);
+
 };
 
 // ---------------------------------------------------------------------
@@ -266,8 +277,8 @@ inline void dbg_collect_intersected_cells_well_outside_box(
     // Debug -------------------------------
     WICDebug::dbg_FindHeelToeEndPoints(bool dbg_mode, string dbg_str);
  */
-inline void dbg_FindHeelToeEndPoints(bool dbg_mode, string dbg_str) {
-    print_wic_dbg(dbg_mode, true, "[if-statement: Find the heel and "
+inline void dbg_FindHeelToeEndPoints(bool dbg_mode, string dbg_str, int rank) {
+    print_wic_dbg(dbg_mode, true, rank, "[if-statement: Find the heel and "
             "toe cells (WellIndexCalculator.cpp)] Error: \n", dbg_str);
 };
 

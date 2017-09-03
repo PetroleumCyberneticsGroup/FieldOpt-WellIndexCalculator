@@ -52,9 +52,11 @@ WellIndexCalculator::WellIndexCalculator(Grid::Grid *grid)
     }
 }
 
-void WellIndexCalculator::ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices,
-vector<WellDefinition> &wells)
-{
+void WellIndexCalculator::ComputeWellBlocks(
+    map<string, vector<IntersectedCell>> &well_indices,
+    vector<WellDefinition> &wells,
+    int rank) {
+
     //map<string, vector<IntersectedCell>> well_indices;
 
     // Perform well block search for each well
@@ -79,8 +81,9 @@ vector<WellDefinition> &wells)
             zf = max(zf, max(wells[iWell].heels[iSegment].z(), wells[iWell].toes[iSegment].z()));
 
             // Debug ------------------------------
-            WICDebug::dbg_ComputeWellBlocks_bbox_i(dbg_mode, wells, iWell, iSegment, xi, yi, zi, xf, yf, zf);
-            printf("WICDebug::dbg_ComputeWellBlocks_bbox_i.\n");
+            WICDebug::dbg_ComputeWellBlocks_bbox_i(
+                dbg_mode, wells, iWell, iSegment, xi, yi, zi, xf, yf, zf, rank);
+            // printf("WICDebug::dbg_ComputeWellBlocks_bbox_i.\n");
 
         }
 
@@ -90,8 +93,8 @@ vector<WellDefinition> &wells)
         zi = zi - 0.1*(zf-zi); zf = zf + 0.1*(zf-zi);
 
         // Debug ------------------------------
-        WICDebug::dbg_ComputeWellBlocks_bbox_f(dbg_mode, xi, yi, zi, xf, yf, zf);
-        printf("WICDebug::dbg_ComputeWellBlocks_bbox_f.\n");
+        WICDebug::dbg_ComputeWellBlocks_bbox_f(dbg_mode, xi, yi, zi, xf, yf, zf, rank);
+        // printf("WICDebug::dbg_ComputeWellBlocks_bbox_f.\n");
 
         // Get the list of all cells in the bounding box
         vector<int> bb_cells;
@@ -102,8 +105,8 @@ vector<WellDefinition> &wells)
                                                     bb_xf, bb_yf, bb_zf);
 
         // Debug -------------------------------
-        WICDebug::dbg_GetBoundingBoxCellIndices(dbg_mode, bb_cells);
-        printf("WICDebug::dbg_GetBoundingBoxCellIndices.\n");
+        WICDebug::dbg_GetBoundingBoxCellIndices(dbg_mode, bb_cells, rank);
+        // printf("WICDebug::dbg_GetBoundingBoxCellIndices.\n");
 
         // Loop through each well segment -> find intersected cells for each segment
         vector<IntersectedCell> intersected_cells;
@@ -115,7 +118,8 @@ vector<WellDefinition> &wells)
                                       wells[iWell].skins[iSegment],
                                       bb_cells,
                                       bb_xi, bb_yi, bb_zi,
-                                      bb_xf, bb_yf, bb_zf);
+                                      bb_xf, bb_yf, bb_zf,
+                                      rank);
         }
 
 
@@ -138,7 +142,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
                                                     double wb_rad, double skin_fac,
                                                     vector<int> bb_cells,
                                                     double& bb_xi, double& bb_yi, double& bb_zi,
-                                                    double& bb_xf, double& bb_yf, double& bb_zf) {
+                                                    double& bb_xf, double& bb_yf, double& bb_zf,
+                                                    int rank) {
 
     string dbg_str;
 
@@ -150,10 +155,9 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
      */
     bool well_is_outside = (bb_cells.size() == 0);
     if (well_is_outside) {
-        dbg_str = "WIC: Well or segment is outside of bounding box.";
-        cout << dbg_str << endl;
-        WICDebug::dbg_collect_intersected_cells_well_outside_box(dbg_mode, dbg_str);
-        printf("WICDebug::dbg_collect_intersected_cells_well_outside_box.\n");
+        dbg_str = "WIC: Well or segment is outside of bounding box."; cout << dbg_str << endl;
+        WICDebug::dbg_collect_intersected_cells_well_outside_box(dbg_mode, dbg_str, rank);
+        // printf("WICDebug::dbg_collect_intersected_cells_well_outside_box.\n");
         return;
     }
 
@@ -166,10 +170,9 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
                                                          Vector3d(bb_xf, bb_yf, bb_zf),
                                                          start_pt, end_pt);
     if (segment_is_outside) {
-        dbg_str = "WIC: Well or segment is outside logical grid.";
-        cout << dbg_str << endl;
-        WICDebug::dbg_collect_intersected_cells_well_outside_box(dbg_mode, dbg_str);
-        printf("WICDebug::dbg_collect_intersected_cells_well_outside_box.\n");
+        dbg_str = "WIC: Well or segment is outside logical grid."; cout << dbg_str << endl;
+        WICDebug::dbg_collect_intersected_cells_well_outside_box(dbg_mode, dbg_str, rank);
+        //printf("WICDebug::dbg_collect_intersected_cells_well_outside_box.\n");
         return;
     }
 
@@ -178,19 +181,18 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     Grid::Cell first_cell, last_cell;
     if (!findEndpoint(bb_cells, start_pt, end_pt, first_cell) ||
         !findEndpoint(bb_cells, end_pt, start_pt, last_cell)) {
-        dbg_str = "WIC: Failed to move well endpoints inside the reservoir.";
-        cout << dbg_str << endl;
-        WICDebug::dbg_FindHeelToeEndPoints(dbg_mode, dbg_str);
-        printf("WICDebug::dbg_FindHeelToeEndPoints.\n");
+        dbg_str = "WIC: Failed to move well endpoints inside the reservoir."; cout << dbg_str << endl;
+        WICDebug::dbg_FindHeelToeEndPoints(dbg_mode, dbg_str, rank);
+        // printf("WICDebug::dbg_FindHeelToeEndPoints.\n");
         return;
     }
 
-    printf("last_cell.global_index() == first_cell.global_index().\n");
+    // printf("last_cell.global_index() == first_cell.global_index().\n");
     // ---------------------------------------------------------------------
     /* If the first and last blocks are the same, return the block and start+end points */
     if (last_cell.global_index() == first_cell.global_index()) {
 
-        printf("IntersectedCell::GetIntersectedCellIndex.1.\n");
+        // printf("IntersectedCell::GetIntersectedCellIndex.1.\n");
         int isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, first_cell);
         isc_cells.at(isc_cell_idx).add_new_segment(start_pt, end_pt, wb_rad, skin_fac);
 
@@ -204,27 +206,27 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     double step = 0.0;
     auto prev_cell = first_cell;
 
-    printf("IntersectedCell::GetIntersectedCellIndex.2.\n");
+    // printf("IntersectedCell::GetIntersectedCellIndex.2.\n");
     int isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, first_cell);
 
     // ---------------------------------------------------------------------
     // Make sure we follow line in the correct direction. (i.e. dot product positive)
-    printf("find_exit_point.1.\n");
+    // printf("find_exit_point.1.\n");
     Vector3d exit_pt = find_exit_point(isc_cells, isc_cell_idx, start_pt, end_pt, start_pt);
 
     if ((end_pt - start_pt).dot(exit_pt - start_pt) <= 0.0) {
-        printf("find_exit_point.2.\n");
+        // printf("find_exit_point.2.\n");
         exit_pt = find_exit_point(isc_cells, isc_cell_idx, start_pt, end_pt, exit_pt);
     }
 
-    printf("isc_cells.at(isc_cell_idx).add_new_segment.\n");
+    // printf("isc_cells.at(isc_cell_idx).add_new_segment.\n");
     isc_cells.at(isc_cell_idx).add_new_segment(start_pt, exit_pt, wb_rad, skin_fac);
 
     // remaining cells
     while (step <= 1.0) {
 
         // Move into the next cell, add it to the list and set the entry point
-        printf("step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm().\n");
+        // printf("step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm().\n");
         step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
         Reservoir::Grid::Cell new_cell;
         do {
@@ -550,7 +552,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
     double well_index_x_fracture = 0;
     double well_index_y_fracture = 0;
     double well_index_z_fracture = 0;
-    
+
     IntersectedCell &icell = cells.at(cell_index);
     int num_grids = icell.permx().size();
 
@@ -573,14 +575,14 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
         vector<double> current_wx;
         vector<double> current_wy;
         vector<double> current_wz;
-        
+
         for(int igrid = 0; igrid < num_grids; igrid++)
         {
         	current_wx.push_back(dir_well_index(current_Lx, icell.dy(), icell.dz(), icell.permy()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
         	current_wy.push_back(dir_well_index(current_Ly, icell.dx(), icell.dz(), icell.permx()[igrid], icell.permz()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
         	current_wz.push_back(dir_well_index(current_Lz, icell.dx(), icell.dy(), icell.permx()[igrid], icell.permy()[igrid], icell.get_segment_radius(iSegment), icell.get_segment_skin(iSegment)));
         }
-        
+
         // Store data for later use
         icell.set_segment_calculation_data(iSegment, "dx", icell.dx());
         icell.set_segment_calculation_data(iSegment, "dy", icell.dy());
@@ -595,7 +597,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
 			icell.set_segment_calculation_data(iSegment, "permx_m", icell.permx()[0]);
 			icell.set_segment_calculation_data(iSegment, "permy_m", icell.permy()[0]);
 			icell.set_segment_calculation_data(iSegment, "permz_m", icell.permz()[0]);
-	
+
 			icell.set_segment_calculation_data(iSegment, "wx_m", current_wx[0]);
 			icell.set_segment_calculation_data(iSegment, "wy_m", current_wy[0]);
 			icell.set_segment_calculation_data(iSegment, "wz_m", current_wz[0]);
@@ -608,12 +610,12 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
         	icell.set_segment_calculation_data(iSegment, "permx_f", icell.permx()[ind]);
 			icell.set_segment_calculation_data(iSegment, "permy_f", icell.permy()[ind]);
 			icell.set_segment_calculation_data(iSegment, "permz_f", icell.permz()[ind]);
-	
+
 			icell.set_segment_calculation_data(iSegment, "wx_f", current_wx[ind]);
 			icell.set_segment_calculation_data(iSegment, "wy_f", current_wy[ind]);
 			icell.set_segment_calculation_data(iSegment, "wz_f", current_wz[ind]);
         }
-        
+
         // Compute the sum of well index for each direction.
         // For segments with equal radius this will in the end calculate
         // the well index based on the Shu formula in its original formulation
@@ -622,14 +624,14 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
         	well_index_x_matrix += current_wx[0];
         	well_index_y_matrix += current_wy[0];
         	well_index_z_matrix += current_wz[0];
-        }        
+        }
         if (icell.is_active_fracture())
         {
         	int ind = 0;
         	if (icell.is_active_matrix()) ind = 1;
         	well_index_x_fracture += current_wx[ind];
         	well_index_y_fracture += current_wy[ind];
-        	well_index_z_fracture += current_wz[ind];        	
+        	well_index_z_fracture += current_wz[ind];
         }
     }
 
@@ -650,7 +652,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
 				well_index_x_fracture * well_index_x_fracture +
 				well_index_y_fracture * well_index_y_fracture +
 				well_index_z_fracture * well_index_z_fracture));
-	}	
+	}
 }
 
 double WellIndexCalculator::dir_well_index(double Lx,
