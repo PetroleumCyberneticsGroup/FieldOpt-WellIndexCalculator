@@ -51,7 +51,6 @@ inline void print_wic_dbg(bool dbg_mode, bool append, int rank,
                           string dbg_loc, string dbg_msg) {
 
     stringstream dbg_file;
-    cout << "RANK " << rank << endl;
     dbg_file << "wic" << setw(3) << setfill('0') << rank << ".dbg";
 
     fstream fs;
