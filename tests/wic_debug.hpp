@@ -34,6 +34,7 @@
 #include <fstream>
 #include <iomanip>
 #include <string>
+#include <math.h>
 
 using namespace std;
 
@@ -362,6 +363,61 @@ inline void dbg_FindEndPointB(bool dbg_mode,
 /*!
  * \brief
  */
+inline void dbg_step(bool dbg_mode, Vector3d &start_pt,
+                     Vector3d &end_pt, Vector3d &exit_pt,
+                     int rank) {
+
+    stringstream dbg_str, step_str, nom_ol, den_ul;
+    dbg_str.precision(3);
+    dbg_str.setf(ios::fixed, ios::floatfield);
+    dbg_str.setf(ios::adjustfield, ios::right);
+
+    step_str.precision(12);
+    step_str.setf(ios::fixed, ios::floatfield);
+    step_str.setf(ios::adjustfield, ios::right);
+
+    nom_ol.precision(12);
+    nom_ol.setf(ios::fixed, ios::floatfield);
+    nom_ol.setf(ios::adjustfield, ios::right);
+
+    den_ul.precision(12);
+    den_ul.setf(ios::fixed, ios::floatfield);
+    den_ul.setf(ios::adjustfield, ios::right);
+
+    dbg_str << "\tWIC [RANK=" << rank;
+
+    nom_ol << "NOM: (exit_pt - start_pt).norm()="
+           << (exit_pt - start_pt).norm() << " -- ISNAN: "
+           << isnan((exit_pt - start_pt).norm()) << "";
+
+    if (isnan((exit_pt - start_pt).norm())) {
+        nom_ol << "\n(exit_pt=" << exit_pt.transpose() << "); "
+               << "\n(start_pt=" << start_pt.transpose() << ");\n";
+    }
+
+    den_ul << "DEN: (end_pt - start_pt).norm()="
+           << (end_pt - start_pt).norm() << " -- ISNAN: "
+           << isnan((end_pt - start_pt).norm()) << "";
+
+    if (isnan((end_pt - start_pt).norm())) {
+        nom_ol << "\n(end_pt=" << end_pt.transpose() << "); "
+               << "\n(start_pt=" << start_pt.transpose() << ");\n";
+    }
+
+    double step_loc = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
+    step_str << "(step=" << step_loc << ")";
+
+    dbg_str << step_str.str() << nom_ol.str() << den_ul.str();
+
+    dbg_str << endl;
+    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
+        dbg_str.str());
+
+};
+
+/*!
+ * \brief
+ */
 inline void dbg_TraversingCellsA(bool dbg_mode,
                                  Reservoir::Grid::Cell &new_cell,
                                  Reservoir::Grid::Cell &prev_cell,
@@ -466,7 +522,7 @@ inline void dbg_TraversingCellsB(bool dbg_mode,
 inline void dbg_TraversingCellsC(bool dbg_mode,
                                  Reservoir::Grid::Cell &new_cell,
                                  Reservoir::Grid::Cell &last_cell,
-                                 Vector3d &entry_pt, Vector3d &end_pt,                                 
+                                 Vector3d &entry_pt, Vector3d &end_pt,
                                  double step,
                                  vector<Reservoir::WellIndexCalculation::IntersectedCell> &isc_cells,
                                  int isc_cell_idx,
@@ -486,7 +542,7 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
 
     if (activity=="step-into") {
 
-        dbg_str << "]: Stepped beyond orig_well_length " << step_str.str() 
+        dbg_str << "]: Stepped beyond orig_well_length " << step_str.str()
                 << " have (end_pt=" << end_pt.transpose() << "), or at last_cell: "
                 << "(new_cell.global_index() == last_cell.global_index()) => "
                 << ( new_cell.global_index() == last_cell.global_index() );
