@@ -364,6 +364,7 @@ inline void dbg_FindEndPointB(bool dbg_mode,
  */
 inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
                                  Vector3d &end_pt, Vector3d &exit_pt,
+                                 string place,
                                  int rank) {
 
     stringstream dbg_str, step_str, nom_ol, den_ul;
@@ -406,9 +407,19 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
     }
 
     double step_loc = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
-    step_str << " (step=" << step_loc << ") --- ";
-
+    step_str << place << " (step=" << step_loc << ") --- ";
+    
     dbg_str << step_str.str() << nom_ol.str() << den_ul.str();
+
+    if (place=="LOOP") {
+
+        // dbg_str << "\nRETURN";
+
+    } else if (place=="START") {
+
+        dbg_str << "\nEND TRAVERSING OF CELLS";
+
+    }
 
     dbg_str << endl;
     print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
@@ -550,11 +561,8 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
 
     } else if (activity=="check") {
 
-        dbg_str << "]: ";
-
-        cout << "WIC [RANK=" << rank << "]: Expected last cell does not match "
-            "found last cell. (DEBUG: NOT!) Returning empty list." << endl;
-        // \TODO Debug:
+        dbg_str << "]: Expected last cell does not match found last "
+                << " cell. (DEBUG!) Returning empty list.";
 
     }
 

@@ -222,7 +222,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
         // -----------------------------------------------------------------
         // Move into the next cell, add it to the list and set the entry point
         step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
-        WICDebug::dbg_TraverseLoopStep(dbg_mode, start_pt, end_pt, exit_pt, rank);
+        WICDebug::dbg_TraverseLoopStep(dbg_mode, start_pt, end_pt, exit_pt, "START", rank);
 
         Reservoir::Grid::Cell new_cell;
 
@@ -308,6 +308,12 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             return;
 
             // ---------------------------------------------------------------------
+        } else if ( (end_pt - start_pt).isMuchSmallerThan(1e-4) ) {
+
+            WICDebug::dbg_TraverseLoopStep(dbg_mode, start_pt, end_pt, exit_pt, "LOOP", rank);
+            return;
+
+        // ---------------------------------------------------------------------
         } else if (new_cell.global_index() == prev_cell.global_index()) {
             // Did not find a new cell:
             /* Either we're still inside the old one, or we've
