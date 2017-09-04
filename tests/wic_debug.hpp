@@ -392,7 +392,7 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
 
     if (std::isnan((exit_pt - start_pt).norm()) ||
         (exit_pt - start_pt).isMuchSmallerThan(1e-4) ) {
-        nom_ol << "== WARNING: exit_pt CLOSE_TO_EQUAL_TO start_pt =="
+        nom_ol << "\n== WARNING: exit_pt CLOSE_TO_EQUAL_TO start_pt =="
                << "[(exit_pt - start_pt).isMuchSmallerThan(1e-4)]=="
                << "\n(exit_pt =" << exit_pt.transpose() << "); "
                << "\n(start_pt=" << start_pt.transpose() << ");\n";
@@ -475,7 +475,7 @@ inline void dbg_TraversingCellsA(bool dbg_mode,
 
             dbg_str << "]: While at (entry_pt=" << entry_pt.transpose() << "), we checked "
                     << "if we can find the cell enveloping this point. But this failed. "
-                    << "We discontinue this do-loop." ;
+                    << "We restart the do-loop. " ;
 
 
         }
