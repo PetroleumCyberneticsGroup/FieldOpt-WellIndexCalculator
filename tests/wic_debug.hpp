@@ -385,16 +385,16 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
 
     dbg_str << "\tWIC [RANK=" << rank;
 
-    nom_ol << "NOM: (exit_pt - start_pt).norm()="
+    nom_ol << " NOM: (exit_pt - start_pt).norm()="
            << (exit_pt - start_pt).norm() << " -- ISNAN: "
-           << std::isnan((exit_pt - start_pt).norm()) << "";
+           << std::isnan((exit_pt - start_pt).norm()) << " --- ";
 
     if (std::isnan((exit_pt - start_pt).norm())) {
         nom_ol << "\n(exit_pt=" << exit_pt.transpose() << "); "
                << "\n(start_pt=" << start_pt.transpose() << ");\n";
     }
 
-    den_ul << "DEN: (end_pt - start_pt).norm()="
+    den_ul << " DEN: (end_pt - start_pt).norm()="
            << (end_pt - start_pt).norm() << " -- ISNAN: "
            << std::isnan((end_pt - start_pt).norm()) << "";
 
@@ -404,7 +404,7 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
     }
 
     double step_loc = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
-    step_str << "(step=" << step_loc << ")";
+    step_str << " (step=" << step_loc << ") --- ";
 
     dbg_str << step_str.str() << nom_ol.str() << den_ul.str();
 

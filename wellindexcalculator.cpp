@@ -286,7 +286,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
             prev_cell = new_cell;
 
-            start_pt = exit_pt; // TEST
+            // start_pt = exit_pt; // TEST
 
             // ---------------------------------------------------------------------
             // If we've step beyond the original line, or we've already at the last
