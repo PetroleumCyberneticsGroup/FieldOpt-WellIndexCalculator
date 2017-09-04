@@ -579,6 +579,43 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
 /*!
  * \brief
  */
+inline void dbg_compute_well_index_check_cell(bool dbg_mode,
+                                 int icell_idx,
+                                 Reservoir::Grid::Cell &icell,
+                                 int isegment,
+                                 Vector3d current_vec,
+                                 string state,
+                                 int rank) {
+
+    stringstream dbg_str, cell_str;
+    dbg_str.precision(3);
+    dbg_str.setf(ios::fixed, ios::floatfield);
+    dbg_str.setf(ios::adjustfield, ios::right);
+    dbg_str << "\tWIC [RANK=" << rank;
+
+    cell_str.precision(0);
+    cell_str.setf(ios::fixed, ios::floatfield);
+    cell_str.setf(ios::adjustfield, ios::right);
+    cell_str << "[c=" << icell.to_string() 
+             << " ic=" << icell_idx 
+             << " is=" << isegment;
+
+    if (state=="") {
+
+        dbg_str << cell_str.str() << " v=" 
+                << current_vec.transpose() << "]  "; 
+
+    }
+
+    // dbg_str << endl;
+    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
+        dbg_str.str());
+
+}
+
+/*!
+ * \brief
+ */
 inline void dbg_recover_from_cycle(bool dbg_mode,
                                    string activity,
                                    int rank) {

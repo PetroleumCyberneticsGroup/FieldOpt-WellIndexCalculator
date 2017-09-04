@@ -124,7 +124,7 @@ void WellIndexCalculator::ComputeWellBlocks(
 
         // For all intersected cells compute well transmissibility factor
         for (int iCell = 0; iCell < intersected_cells.size(); ++iCell) {
-            compute_well_index(intersected_cells, iCell);
+            compute_well_index(intersected_cells, iCell, rank);
         }
 
         // Assign intersected cells to well
@@ -603,7 +603,7 @@ bool WellIndexCalculator::IsLineCompletelyOutsideBox(Vector3d B1,
 }
 
 void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
-                                             int cell_index) {
+                                             int cell_index, int rank) {
     double well_index_x_matrix = 0;
     double well_index_y_matrix = 0;
     double well_index_z_matrix = 0;
@@ -615,10 +615,12 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
     IntersectedCell &icell = cells.at(cell_index);
     int num_grids = icell.permx().size();
 
+
     for (int iSegment = 0; iSegment < icell.num_segments(); iSegment++) {
 
         // Compute vector from segment
         Vector3d current_vec = icell.get_segment_exit_point(iSegment) - icell.get_segment_entry_point(iSegment);
+        WICDebug::dbg_compute_well_index_check_cell(dbg_mode, cell_index, icell, iSegment, current_vec, "", rank);
 
         /* Projects segment vector to directional spanning vectors and determines the length.
          * of the projections. Note that we only care about the length of the projection,

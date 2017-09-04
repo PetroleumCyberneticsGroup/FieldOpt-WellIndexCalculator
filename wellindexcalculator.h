@@ -207,7 +207,8 @@ class WellIndexCalculator {
    * \param icell Well block to compute the WI in.
    * \return Well index for block/cell
   */
-  void compute_well_index(vector<IntersectedCell> &cells, int cell_index);
+  void compute_well_index(vector<IntersectedCell> &cells,
+                          int cell_index, int rank = 0);
 
   /*!
    * \brief Auxilary function for compute_well_index function
