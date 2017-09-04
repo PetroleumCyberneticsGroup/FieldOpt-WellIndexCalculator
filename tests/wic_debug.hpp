@@ -362,9 +362,9 @@ inline void dbg_FindEndPointB(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_step(bool dbg_mode, Vector3d &start_pt,
-                     Vector3d &end_pt, Vector3d &exit_pt,
-                     int rank) {
+inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
+                                 Vector3d &end_pt, Vector3d &exit_pt,
+                                 int rank) {
 
     stringstream dbg_str, step_str, nom_ol, den_ul;
     dbg_str.precision(3);

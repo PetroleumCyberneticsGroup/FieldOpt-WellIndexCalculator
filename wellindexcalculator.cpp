@@ -222,6 +222,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
         // -----------------------------------------------------------------
         // Move into the next cell, add it to the list and set the entry point
         step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
+        WICDebug::dbg_TraverseLoopStep(dbg_mode, start_pt, end_pt, exit_pt, rank);
 
         Reservoir::Grid::Cell new_cell;
 
