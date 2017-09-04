@@ -384,7 +384,7 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
     den_ul.setf(ios::fixed, ios::floatfield);
     den_ul.setf(ios::adjustfield, ios::right);
 
-    dbg_str << "\tWIC [RANK=" << rank;
+    dbg_str << "\tWIC [RANK=" << rank << "] [";
 
     nom_ol << " NOM: (exit_pt - start_pt).norm()="
            << (exit_pt - start_pt).norm() << " -- ISNAN: "
@@ -392,7 +392,9 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
 
     if (std::isnan((exit_pt - start_pt).norm()) ||
         (exit_pt - start_pt).isMuchSmallerThan(1e-4) ) {
-        nom_ol << "\n(exit_pt=" << exit_pt.transpose() << "); "
+        nom_ol << "== WARNING: exit_pt CLOSE_TO_EQUAL_TO start_pt =="
+               << "[(exit_pt - start_pt).isMuchSmallerThan(1e-4)]=="
+               << "\n(exit_pt =" << exit_pt.transpose() << "); "
                << "\n(start_pt=" << start_pt.transpose() << ");\n";
     }
 
@@ -402,23 +404,24 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
 
     if (std::isnan((end_pt - start_pt).norm()) ||
         (end_pt - start_pt).isMuchSmallerThan(1e-4) ) {
-        nom_ol << "\n(end_pt=" << end_pt.transpose() << "); "
+        den_ul << "== WARNING: end_pt CLOSE_TO_EQUAL_TO start_pt "
+               << "[(end_pt - start_pt).isMuchSmallerThan(1e-4)]=="
+               << "\n(end_pt  =" << end_pt.transpose() << "); "
                << "\n(start_pt=" << start_pt.transpose() << ");\n";
     }
 
     double step_loc = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
-    step_str << place << " (step=" << step_loc << ") --- ";
+    step_str << place << "] (step=" << step_loc << ") --- ";
     
     dbg_str << step_str.str() << nom_ol.str() << den_ul.str();
 
     if (place=="LOOP") {
 
-        // dbg_str << "\nRETURN";
+        dbg_str << "\nEND TRAVERSING OF CELLS";
 
     } else if (place=="START") {
 
-        dbg_str << "\nEND TRAVERSING OF CELLS";
-
+        // dbg_str << "\nRETURN";
     }
 
     dbg_str << endl;
@@ -562,7 +565,7 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
     } else if (activity=="check") {
 
         dbg_str << "]: Expected last cell does not match found last "
-                << " cell. (DEBUG!) Returning empty list.";
+                << " cell. (DEBUG!)."; // Returning empty list
 
     }
 
