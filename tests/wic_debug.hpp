@@ -162,7 +162,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
             << setw(wdth) << wells[iWell].toes[iSegment].z() << "]\n";
 
 
-    string start_str = "\n" + string(64,'=') + "\n" +
+    string start_str = "\n\n" + string(120,'=') + "\n" +
         "[[ WIC DEBUG ]] Timestamp: " + get_time_stamp() + "\n" +
         "@wellindexcalculator.cpp [ComputeWellBlocks ()]: "
         "Starting xyz well segment:\n";
@@ -384,7 +384,7 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
     den_ul.setf(ios::fixed, ios::floatfield);
     den_ul.setf(ios::adjustfield, ios::right);
 
-    dbg_str << "\tWIC [RANK=" << rank << "] [";
+    dbg_str << "\tWIC [RANK=" << rank << "]: [";
 
     nom_ol << " NOM: (exit_pt - start_pt).norm()="
            << (exit_pt - start_pt).norm() << " -- ISNAN: "
@@ -591,12 +591,12 @@ inline void dbg_compute_well_index_check_cell(bool dbg_mode,
     dbg_str.precision(3);
     dbg_str.setf(ios::fixed, ios::floatfield);
     dbg_str.setf(ios::adjustfield, ios::right);
-    dbg_str << "\tWIC [RANK=" << rank;
+    dbg_str << "\tWIC [RANK=" << rank << "]:";
 
     cell_str.precision(0);
     cell_str.setf(ios::fixed, ios::floatfield);
     cell_str.setf(ios::adjustfield, ios::right);
-    cell_str << "[c=" << icell.to_string() 
+    cell_str << " [" << icell.to_string() 
              << " ic=" << icell_idx 
              << " is=" << isegment;
 
@@ -607,8 +607,8 @@ inline void dbg_compute_well_index_check_cell(bool dbg_mode,
 
     }
 
-    // dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
+    dbg_str << endl;
+    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ", 
         dbg_str.str());
 
 }

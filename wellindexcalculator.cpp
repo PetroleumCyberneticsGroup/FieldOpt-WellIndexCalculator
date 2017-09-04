@@ -296,12 +296,12 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
 
             WICDebug::dbg_TraversingCellsC(dbg_mode, new_cell, last_cell, entry_pt, end_pt,
-                                           step, isc_cells, isc_cell_idx, "step-into", rank);
+                                           step, isc_cells, isc_cell_idx, (string)"step-into", rank);
 
             if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index()) {
 
                 WICDebug::dbg_TraversingCellsC(dbg_mode, new_cell, last_cell, entry_pt, end_pt,
-                                               step, isc_cells, isc_cell_idx, "check", rank);
+                                               step, isc_cells, isc_cell_idx, (string)"check", rank);
 
                 // isc_cells.clear(); // DEBUG!!!
             }
@@ -310,7 +310,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             // ---------------------------------------------------------------------
         } else if ( (end_pt - start_pt).isMuchSmallerThan(1e-4) ) {
 
-            WICDebug::dbg_TraverseLoopStep(dbg_mode, start_pt, end_pt, exit_pt, "LOOP", rank);
+            WICDebug::dbg_TraverseLoopStep(dbg_mode, start_pt, end_pt,
+                                           exit_pt, (string)"LOOP", rank);
             return;
 
         // ---------------------------------------------------------------------
