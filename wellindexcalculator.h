@@ -134,7 +134,8 @@ class WellIndexCalculator {
   bool findEndpoint(const vector<int> &bb_cells,
                     Vector3d &start_pt,
                     Vector3d end_point,
-                    Grid::Cell &cell) const;
+                    Grid::Cell &cell,
+                    int rank = 0) const;
 
  public:
   /*!
