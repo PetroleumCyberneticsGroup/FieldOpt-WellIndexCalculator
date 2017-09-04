@@ -387,18 +387,18 @@ inline void dbg_step(bool dbg_mode, Vector3d &start_pt,
 
     nom_ol << "NOM: (exit_pt - start_pt).norm()="
            << (exit_pt - start_pt).norm() << " -- ISNAN: "
-           << isnan((exit_pt - start_pt).norm()) << "";
+           << std::isnan((exit_pt - start_pt).norm()) << "";
 
-    if (isnan((exit_pt - start_pt).norm())) {
+    if (std::isnan((exit_pt - start_pt).norm())) {
         nom_ol << "\n(exit_pt=" << exit_pt.transpose() << "); "
                << "\n(start_pt=" << start_pt.transpose() << ");\n";
     }
 
     den_ul << "DEN: (end_pt - start_pt).norm()="
            << (end_pt - start_pt).norm() << " -- ISNAN: "
-           << isnan((end_pt - start_pt).norm()) << "";
+           << std::isnan((end_pt - start_pt).norm()) << "";
 
-    if (isnan((end_pt - start_pt).norm())) {
+    if (std::isnan((end_pt - start_pt).norm())) {
         nom_ol << "\n(end_pt=" << end_pt.transpose() << "); "
                << "\n(start_pt=" << start_pt.transpose() << ");\n";
     }
