@@ -221,11 +221,8 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
         // -----------------------------------------------------------------
         // Move into the next cell, add it to the list and set the entry point
-        if (isc_cells.size() == 1) {
-            step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
-        } else {
-            step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
-        }
+        step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
+
         Reservoir::Grid::Cell new_cell;
 
         do {
@@ -288,7 +285,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
             prev_cell = new_cell;
 
-            // start_pt = exit_pt; // TEST
+            start_pt = exit_pt; // TEST
 
             // ---------------------------------------------------------------------
             // If we've step beyond the original line, or we've already at the last
@@ -297,13 +294,13 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
 
-            WICDebug::dbg_TraversingCellsC(dbg_mode, new_cell, last_cell, step, isc_cells,
-                                           isc_cell_idx, "step-into", rank);
+            WICDebug::dbg_TraversingCellsC(dbg_mode, new_cell, last_cell, entry_pt, end_pt,
+                                           step, isc_cells, isc_cell_idx, "step-into", rank);
 
             if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index()) {
 
-                WICDebug::dbg_TraversingCellsC(dbg_mode, new_cell, last_cell, step, isc_cells,
-                                               isc_cell_idx, "check", rank);
+                WICDebug::dbg_TraversingCellsC(dbg_mode, new_cell, last_cell, entry_pt, end_pt,
+                                               step, isc_cells, isc_cell_idx, "check", rank);
 
                 // isc_cells.clear(); // DEBUG!!!
             }

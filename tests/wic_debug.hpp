@@ -466,6 +466,7 @@ inline void dbg_TraversingCellsB(bool dbg_mode,
 inline void dbg_TraversingCellsC(bool dbg_mode,
                                  Reservoir::Grid::Cell &new_cell,
                                  Reservoir::Grid::Cell &last_cell,
+                                 Vector3d &entry_pt, Vector3d &end_pt,                                 
                                  double step,
                                  vector<Reservoir::WellIndexCalculation::IntersectedCell> &isc_cells,
                                  int isc_cell_idx,
@@ -485,8 +486,8 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
 
     if (activity=="step-into") {
 
-        dbg_str << "]: Somehow we have stepped beyond the original well trajectory "
-                << step_str.str() << ", or we are at the last cell: "
+        dbg_str << "]: Stepped beyond orig_well_length " << step_str.str() 
+                << " have (end_pt=" << end_pt.transpose() << "), or at last_cell: "
                 << "(new_cell.global_index() == last_cell.global_index()) => "
                 << ( new_cell.global_index() == last_cell.global_index() );
 
