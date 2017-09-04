@@ -34,7 +34,6 @@
 #include <fstream>
 #include <iomanip>
 #include <string>
-#include <math.h>
 
 using namespace std;
 
