@@ -220,8 +220,11 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
     // ---------------------------------------------------------------------
     // Remaining cells in the middle
-    int steps = 0;
+    int cycle_count = 0;
+
     while (step <= 1.0) {
+
+        int steps = 0;
 
         // -----------------------------------------------------------------
         // Move into the next cell, add it to the list and set the entry point
@@ -233,7 +236,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
         do {
             step += epsilon;
-            steps += 1;
+            steps++;
 
             Vector3d old_entry_pt = entry_pt; // dbg
             entry_pt = start_pt + step * (end_pt - start_pt);
@@ -263,13 +266,16 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             // therefore, continue stepping into the new cell (if the cell is inactive, continue
             // stepping into new cell until getting into an active cell)
 
-        } while ( (new_cell.global_index() == prev_cell.global_index() || !new_cell.is_active() ||
-            !grid_->IndexIsInsideGrid(new_cell.global_index()) ) && step <= 1.0);
+        } while ( (new_cell.global_index() == prev_cell.global_index() || 
+          !new_cell.is_active() || !grid_->IndexIsInsideGrid(new_cell.global_index()) ) 
+          && step <= 1.0);
 
         // -----------------------------------------------------------------
         if (introduces_cycle(isc_cells, new_cell)) {
             recover_from_cycle(isc_cells[isc_cells.size()-1], new_cell, bb_cells,
-                               entry_pt, exit_pt, start_pt, end_pt, step, epsilon);
+                               entry_pt, exit_pt, start_pt, end_pt, step, epsilon,
+                               cycle_count);
+            cycle_count++;
         }
 
         // -----------------------------------------------------------------
@@ -348,7 +354,8 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
                                              Vector3d start_pt,
                                              Vector3d end_pt,
                                              double &step,
-                                             double epsilon) {
+                                             double epsilon,
+                                             int cycle_count) {
 
     // ---------------------------------------------------------------------
     Vector3d prev_entry_point = prev_cell.get_segment_entry_point(prev_cell.num_segments()-1);
@@ -362,7 +369,7 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
          << prev_exit_point.z() << ")\n";
     cout << "  Old next cell: "
          << next_cell.global_index() << " "
-         << next_cell.ijk_index().to_string() << endl;
+         << next_cell.ijk_index().to_string() << endl; // I and J should be +1
 
     // ---------------------------------------------------------------------
     entry_pt = prev_entry_point;
@@ -373,7 +380,7 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
      * same time, find the next cell and its entry point.*/
     do {
         prev_exit_point = entry_pt;
-        step += epsilon;
+        step += pow(10,cycle_count/6)*epsilon;
         entry_pt = start_pt + step * (end_pt - start_pt);
 
         // OV: 20170709
@@ -389,8 +396,9 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
                  << "from cycle (finding next cell)." << endl;
             throw runtime_error("Error recovering from cycle in WIC.");
         }*/
-    } while ((next_cell.global_index() == prev_cell.global_index() ||
-        !next_cell.is_active()) && step <= 1.0);
+    } while ((next_cell.global_index() == prev_cell.global_index() || 
+      !next_cell.is_active() || !grid_->IndexIsInsideGrid(next_cell.global_index()) ) 
+      && step <= 1.0);
 
     // ---------------------------------------------------------------------
     /* Update the exit point in the previous cell. */

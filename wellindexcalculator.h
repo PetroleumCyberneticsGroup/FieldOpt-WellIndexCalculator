@@ -261,6 +261,7 @@ class WellIndexCalculator {
    * @param end_pt The end point (toe) of the well segment.
    * @param step The current step.
    * @param epsilon Step increase.
+   * @param cycle_count
    */
   void recover_from_cycle(IntersectedCell &prev_cell,
                           Grid::Cell & next_cell,
@@ -269,7 +270,9 @@ class WellIndexCalculator {
                           Vector3d &exit_pt,
                           Vector3d start_pt,
                           Vector3d end_pt,
-                          double &step, double epsilon);
+                          double &step,
+                          double epsilon,
+                          int cycle_count);
 
   // WIC Debug
   bool dbg_mode = true; //!< On/off printing of debug messages
