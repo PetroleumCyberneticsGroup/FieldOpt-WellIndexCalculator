@@ -550,8 +550,6 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
     double hx, hy, hz, tx, ty, tz;
     double radius;
     double skin_factor;
-    //try
-//    {
     while (infile >> well_name >> hx >> hy >> hz >> tx >> ty >> tz >> radius >> skin_factor) {
         if (previous_well_name != well_name) {
             wells.push_back(WellDefinition());
@@ -564,8 +562,7 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
         wells.back().toes.push_back(Eigen::Vector3d(tx,ty,tz));
         wells.back().radii.push_back(radius);
         wells.back().skins.push_back(skin_factor);
-    }
-//    }
+    }	   
 }
 }
 }
