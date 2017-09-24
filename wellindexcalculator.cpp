@@ -266,9 +266,9 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             // therefore, continue stepping into the new cell (if the cell is inactive, continue
             // stepping into new cell until getting into an active cell)
 
-        } while ( (new_cell.global_index() == prev_cell.global_index() || 
-          !new_cell.is_active() || !grid_->IndexIsInsideGrid(new_cell.global_index()) ) 
-          && step <= 1.0);
+        } while ( (new_cell.global_index() == prev_cell.global_index() ||
+            !new_cell.is_active() || !grid_->IndexIsInsideGrid(new_cell.global_index()) )
+            && step <= 1.0);
 
         // -----------------------------------------------------------------
         if (introduces_cycle(isc_cells, new_cell)) {
@@ -396,9 +396,9 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
                  << "from cycle (finding next cell)." << endl;
             throw runtime_error("Error recovering from cycle in WIC.");
         }*/
-    } while ((next_cell.global_index() == prev_cell.global_index() || 
-      !next_cell.is_active() || !grid_->IndexIsInsideGrid(next_cell.global_index()) ) 
-      && step <= 1.0);
+    } while ((next_cell.global_index() == prev_cell.global_index() ||
+        !next_cell.is_active() || !grid_->IndexIsInsideGrid(next_cell.global_index()) )
+        && step <= 1.0);
 
     // ---------------------------------------------------------------------
     /* Update the exit point in the previous cell. */

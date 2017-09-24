@@ -133,6 +133,8 @@ inline void dbg_ComputeWellBlocks_num_lims(
                             "Test numeric limit types: \n", dbg_msg.str());
 };
 
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp => ComputeWellBlocks_bbox (1)
 /*!
  * \brief
  * This is the first function called by the WIC process
@@ -166,7 +168,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
         "[[ WIC DEBUG ]] Timestamp: " + get_time_stamp() + "\n" +
         "@wellindexcalculator.cpp [ComputeWellBlocks ()]: "
         "Starting xyz well segment:\n";
-    print_wic_dbg(dbg_mode, true, rank, start_str, dbg_msg.str());
+    print_wic_dbg(dbg_mode, false, rank, start_str, dbg_msg.str());
     dbg_msg.str("");
 
     dbg_msg << "(xi yi zi): ["
@@ -178,6 +180,8 @@ inline void dbg_ComputeWellBlocks_bbox_i(
             "Bounding box corresponding to xyz segment :\n", dbg_msg.str());
 };
 
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp => ComputeWellBlocks_bbox (2)
 /*!
  * \brief Test bounding box after heuristic expansion
  */
@@ -230,7 +234,7 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
 };
 
 // ---------------------------------------------------------------------
-// wellindexcalculator.cpp
+// wellindexcalculator.cpp => collect_intersected_cells_well_outside_box
 
 /*!
  * \brief Test overall algorithm for finding intersected cells
@@ -254,7 +258,7 @@ inline void dbg_collect_intersected_cells_well_outside_box(
 };
 
 // ---------------------------------------------------------------------
-// wellindexcalculator.cpp
+// wellindexcalculator.cpp => FindHeelToeEndPoints
 /*!
  * \brief
  */
@@ -286,7 +290,7 @@ inline void dbg_FindHeelToeEndPoints(bool dbg_mode,
 
 
 // ---------------------------------------------------------------------
-// wellindexcalculator.cpp
+// wellindexcalculator.cpp => FindEndPoint (1)
 /*!
  * \brief
  */
@@ -314,7 +318,7 @@ inline void dbg_FindEndPointA(bool dbg_mode,
 
 
 // ---------------------------------------------------------------------
-// wellindexcalculator.cpp
+// wellindexcalculator.cpp => FindEndPoint (2)
 /*!
  * \brief
  */
@@ -359,6 +363,8 @@ inline void dbg_FindEndPointB(bool dbg_mode,
         dbg_str.str());
 };
 
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp =>
 /*!
  * \brief
  */
@@ -430,6 +436,8 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
 
 };
 
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp =>
 /*!
  * \brief
  */
@@ -492,6 +500,8 @@ inline void dbg_TraversingCellsA(bool dbg_mode,
 
 };
 
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp =>
 /*!
  * \brief
  */
@@ -500,7 +510,8 @@ inline void dbg_TraversingCellsB(bool dbg_mode,
                                  Reservoir::Grid::Cell &prev_cell,
                                  Reservoir::Grid::Cell &last_cell,
                                  double step,
-                                 vector<Reservoir::WellIndexCalculation::IntersectedCell> &isc_cells,
+                                 vector<Reservoir::WellIndexCalculation::IntersectedCell>
+                                 &isc_cells,
                                  int isc_cell_idx,
                                  Vector3d &entry_pt, Vector3d &end_pt,
                                  Vector3d &old_exit_pt, Vector3d &exit_pt,
@@ -530,7 +541,8 @@ inline void dbg_TraversingCellsB(bool dbg_mode,
 
 };
 
-
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp =>
 /*!
  * \brief
  */
@@ -575,7 +587,8 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
 
 };
 
-
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp => compute_well_index_check_cell
 /*!
  * \brief
  */
@@ -613,6 +626,8 @@ inline void dbg_compute_well_index_check_cell(bool dbg_mode,
 
 }
 
+// ---------------------------------------------------------------------
+// wellindexcalculator.cpp => recover_from_cycle
 /*!
  * \brief
  */
