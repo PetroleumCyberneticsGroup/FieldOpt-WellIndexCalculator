@@ -475,8 +475,7 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
         }
         if (icell.is_active_fracture())
         {
-        	int ind = 0;
-        	if (icell.is_active_matrix()) ind = 1;
+        	int ind = (icell.is_active_matrix())? 1: 0;
 
         	icell.set_segment_calculation_data(iSegment, "permx_f", icell.permx()[ind]);
 			icell.set_segment_calculation_data(iSegment, "permy_f", icell.permy()[ind]);
@@ -495,11 +494,11 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells, int
         	well_index_x_matrix += current_wx[0];
         	well_index_y_matrix += current_wy[0];
         	well_index_z_matrix += current_wz[0];
-        }        
+        }
         if (icell.is_active_fracture())
         {
-        	int ind = 0;
-        	if (icell.is_active_matrix()) ind = 1;
+        	int ind = (icell.is_active_matrix())? 1: 0;
+        	
         	well_index_x_fracture += current_wx[ind];
         	well_index_y_fracture += current_wy[ind];
         	well_index_z_fracture += current_wz[ind];        	
@@ -551,8 +550,6 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
     double hx, hy, hz, tx, ty, tz;
     double radius;
     double skin_factor;
-    //try
-//    {
     while (infile >> well_name >> hx >> hy >> hz >> tx >> ty >> tz >> radius >> skin_factor) {
         if (previous_well_name != well_name) {
             wells.push_back(WellDefinition());
@@ -565,8 +562,7 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
         wells.back().toes.push_back(Eigen::Vector3d(tx,ty,tz));
         wells.back().radii.push_back(radius);
         wells.back().skins.push_back(skin_factor);
-    }
-//    }
+    }	   
 }
 }
 }
