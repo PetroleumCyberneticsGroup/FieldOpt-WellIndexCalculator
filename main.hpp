@@ -143,12 +143,12 @@ void printCompdat(map<string, vector<IntersectedCell>> &well_indices) {
 											%(2*block.get_segment_radius(0)));  // %7
 				body.push_back(entry);
 			}
-        }
-		
-		// Write the full block to file
-        string full = head + boost::algorithm::join(body, "\n") + foot;
-        cout << full << endl;
+        }		
     }
+    
+	// Write the full block to file after adding the head and the foot 
+    string full = head + boost::algorithm::join(body, "\n") + foot;
+    cout << full << endl;
 }
 
 void printDebug( map<string, vector<IntersectedCell>> &well_indices)
