@@ -129,7 +129,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
                                                          Vector3d(bb_xf, bb_yf, bb_zf),
                                                          start_pt, end_pt);
     if (well_is_outside || segment_is_outside) {
-        cout << "Well or segment is outside the reservoir." << endl;
+        cout << "-- Well or segment is outside the reservoir." << endl;
         return;
     }
 
@@ -137,7 +137,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     Grid::Cell first_cell, last_cell;
     if (!findEndpoint(bb_cells, start_pt, end_pt, first_cell) ||
         !findEndpoint(bb_cells, end_pt, start_pt, last_cell)) {
-        cout << "Failed to move well endpoints inside the reservoir." << endl;
+        cout << "-- Failed to move well endpoints inside the reservoir." << endl;
         return;
     }
 
@@ -199,7 +199,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
         else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) { // We've already found the last cell; return.
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
             if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index()) {
-                cout << "WARNING: Expected last cell does not match found last cell. Returning empty list." << endl;
+                cout << "-- WARNING: Expected last cell does not match found last cell. Returning empty list." << endl;
                 isc_cells.clear();
             }
             return;
@@ -228,9 +228,9 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
     Vector3d prev_entry_point = prev_cell.get_segment_entry_point(prev_cell.num_segments()-1);
     Vector3d prev_exit_point = prev_cell.get_segment_exit_point(prev_cell.num_segments()-1);
 
-    cout << "Recovering from cycle." << endl;
-    cout << "  Old exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
-    cout << "  Old next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
+    cout << "-- Recovering from cycle." << endl;
+    cout << "--  Old exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
+    cout << "--  Old next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
 
     entry_pt = prev_entry_point;
     step = (prev_entry_point - start_pt).norm() / (end_pt - start_pt).norm();
@@ -245,7 +245,7 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
             next_cell = grid_->GetCellEnvelopingPoint(entry_pt, bb_cells);
         }
         catch (const runtime_error &e) {
-            cout << "Something unexpected occured when recovering from cycle (finding next cell)." << endl;
+            cout << "-- Something unexpected occured when recovering from cycle (finding next cell)." << endl;
             throw runtime_error("Error recovering from cycle in WIC.");
         }
     } while ((next_cell.global_index() == prev_cell.global_index() || !next_cell.is_active()) && step <= 1.0);
@@ -253,8 +253,8 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
     /* Update the exit point in the previous cell. */
     prev_cell.update_last_segment_exit_point(prev_exit_point);
 
-    cout << "  New exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
-    cout << "  New next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
+    cout << "--  New exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
+    cout << "--  New next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
 }
 bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
                                        Vector3d &start_pt,
