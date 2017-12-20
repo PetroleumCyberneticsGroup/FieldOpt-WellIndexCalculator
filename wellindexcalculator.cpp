@@ -557,15 +557,46 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
 {
     ifstream infile(file_path);
     string previous_well_name = "";
+    string well_name_delimiter = "->";
     string well_name;
     double hx, hy, hz, tx, ty, tz;
     double radius;
     double skin_factor;
-    while (infile >> well_name >> hx >> hy >> hz >> tx >> ty >> tz >> radius >> skin_factor) {
+    
+    std::string line;
+    while (std::getline(infile, line)){
+    	// Find well name
+    	auto start_name_ind = line.find(well_name_delimiter);
+    	if (start_name_ind!=std::string::npos){
+        	well_name = line.substr(0, start_name_ind);
+        	start_name_ind += well_name_delimiter.length();
+    	}
+    	else
+    	{       	
+        	// Find the next tab
+    		start_name_ind = line.find("\t");
+    		well_name = line.substr(0, start_name_ind);
+    		start_name_ind += 1;
+    	}
+   	
+    	// Remove the well name
+    	line.erase(0, start_name_ind);
+    	
+    	// Replace tabs with whitespaces
+    	std::replace(line.begin(), line.end(), '\t', ' ');
+        char* pAux;
+  	    hx = strtod(line.c_str(), &pAux);
+	    hy = strtod(pAux, &pAux);
+	    hz = strtod(pAux, &pAux);
+	    tx = strtod(pAux, &pAux);
+	    ty = strtod(pAux, &pAux);
+	    tz = strtod(pAux, &pAux);
+	    radius  = strtod(pAux, &pAux);
+	    skin_factor = strtod(pAux, NULL);
+	    
         if (previous_well_name != well_name) {
             wells.push_back(WellDefinition());
             wells.back().wellname = well_name;
-
             previous_well_name = well_name;
         }
 
@@ -573,7 +604,7 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
         wells.back().toes.push_back(Eigen::Vector3d(tx,ty,tz));
         wells.back().radii.push_back(radius);
         wells.back().skins.push_back(skin_factor);
-    }	   
+    }
 }
 }
 }
