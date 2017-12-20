@@ -77,7 +77,7 @@ WellIndexCalculator::ComputeWellBlocks(vector<WellDefinition> wells)
         yi = yi - 0.1*(yf-yi); yf = yf + 0.1*(yf-yi);
         zi = zi - 0.1*(zf-zi); zf = zf + 0.1*(zf-zi);
 
-        // Get the list of all cell in the bounding box
+        // Get the list of all cells in the bounding box
         vector<int> bb_cells;
         double bb_xi, bb_yi, bb_zi, bb_xf, bb_yf, bb_zf;
         bb_cells = grid_->GetBoundingBoxCellIndices(xi, yi, zi,
@@ -146,11 +146,12 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     {
         int isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, first_cell);
         isc_cells.at(isc_cell_idx).add_new_segment(start_pt, end_pt, wb_rad, skin_fac);
+        cout << "-- Segment is completely inside one grid block." << endl;
         return;
     }
 
-    // First cell
-    double epsilon = smallest_grid_cell_dimension_ / (1e3 * (start_pt-end_pt).norm());
+    // First cell - used to be  / (1e3 * (start_pt-end_pt).norm())
+    double epsilon = smallest_grid_cell_dimension_ / (1e2*(start_pt-end_pt).norm());
     Vector3d entry_pt = start_pt;
     double step = 0.0;
     auto prev_cell = first_cell;
@@ -159,16 +160,15 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
     // Make sure we follow line in the correct direction. (i.e. dot product positive)
     Vector3d exit_pt = find_exit_point(isc_cells, isc_cell_idx, start_pt, end_pt, start_pt);
-
     if ((end_pt - start_pt).dot(exit_pt - start_pt) <= 0.0) {
         exit_pt = find_exit_point(isc_cells, isc_cell_idx, start_pt, end_pt, exit_pt);
     }
 
-    isc_cells.at(isc_cell_idx).add_new_segment(start_pt, exit_pt, wb_rad, skin_fac);
+    isc_cells.at(isc_cell_idx).add_new_segment(start_pt, exit_pt, wb_rad, skin_fac);    
 
     // remaining cells
     while (step <= 1.0)
-    {
+    {   	
         // Move into the next cell, add it to the list and set the entry point
         step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
         Reservoir::Grid::Cell new_cell;
@@ -181,6 +181,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             catch (const runtime_error &e) {
                 continue;
             }
+            
         } while ((new_cell.global_index() == prev_cell.global_index() || !new_cell.is_active()) && step <= 1.0);
 
         if (introduces_cycle(isc_cells, new_cell)) {
@@ -189,18 +190,24 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
         }
 
         isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, new_cell);
-
+        
         if (new_cell.global_index() != prev_cell.global_index() && step <= 1.0
             && new_cell.global_index() != last_cell.global_index()) {
-            exit_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, end_pt, exit_pt);
+            // Calculate the exact entry_point = find intersection in the opposite direction
+            entry_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, start_pt, entry_pt);
+            // Calculate the exact exit point = find intersection in the right direction
+            exit_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, end_pt, entry_pt);
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
             prev_cell = new_cell;
         }
         else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) { // We've already found the last cell; return.
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
             if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index()) {
-                cout << "-- WARNING: Expected last cell does not match found last cell. Returning empty list." << endl;
-                isc_cells.clear();
+                cout << "-- WARNING: Expected last cell does not match found last cell. Returning full (previously was empty) list." << endl;
+                cout << "-- step = " << step << 
+                		" global index of last cell found = " << isc_cells.at(isc_cell_idx).global_index() << 
+                		" global index of the expected cell found = " << last_cell.global_index() << endl; 
+                // isc_cells.clear();
             }
             return;
         }
@@ -256,6 +263,7 @@ void WellIndexCalculator::recover_from_cycle(IntersectedCell &prev_cell,
     cout << "--  New exit point: (" << prev_exit_point.x() << ", " << prev_exit_point.y() << ", " << prev_exit_point.z() << ")\n";
     cout << "--  New next cell: " << next_cell.global_index() << " " << next_cell.ijk_index().to_string() << endl;
 }
+
 bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
                                        Vector3d &start_pt,
                                        Vector3d end_point,
@@ -311,14 +319,15 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
 
     // Loop through the cell faces until we find one that the line intersects
     for (Grid::Cell::Face face : cells.at(cell_index).faces()) {
+    	
         if (face.normal_vector.dot(line) != 0) {
             // Check that the line and face are not parallel.
             auto intersect_point = face.intersection_with_line(entry_point, end_point);
-
+            
             // Check that the intersect point is on the
             // correct side of all faces (i.e. inside the cell)
             bool feasible_point = true;
-            for (auto p : cells.at(cell_index).faces()) {
+            for (auto p : cells.at(cell_index).faces()) {	
                 if (!p.point_on_same_side(intersect_point, 10e-6)) {
                     feasible_point = false;
                     break;
@@ -330,6 +339,7 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
                 && (exception_point - intersect_point).norm() > 10e-4 // not identical to exception point
                 && (entry_point - intersect_point).norm() > 10e-4 // not identical to entry point
                 && (end_point - entry_point).dot(end_point - intersect_point) >= 0) { // going in the correct direction
+
                 return intersect_point;
             }
         }
@@ -338,6 +348,7 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
     // single point (corner or edge) -> return entry_point
     return entry_point;
 }
+
 bool WellIndexCalculator::introduces_cycle(vector<IntersectedCell> cells, Grid::Cell grdcell) {
     if (cells[cells.size()-2].global_index() == grdcell.global_index()) {
         return true;
