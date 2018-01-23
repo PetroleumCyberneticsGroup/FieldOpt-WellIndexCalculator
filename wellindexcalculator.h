@@ -72,7 +72,7 @@ class WellIndexCalculator {
 
   /*!
    * \brief Compute the well block indices for all wells
-   * \param wells The list of wells
+   * \param wells Vector of wells
    * \return A map containing for each well given my its name, the
    * list of cells intersected by the well. Each intersected cell
    * has stored the well connectivity information.
@@ -275,7 +275,7 @@ class WellIndexCalculator {
                           int cycle_count);
 
   // WIC Debug
-  bool dbg_mode = true; //!< On/off printing of debug messages
+  int dbg_mode = 4; //!< On/off printing of debug messages
 
 };
 

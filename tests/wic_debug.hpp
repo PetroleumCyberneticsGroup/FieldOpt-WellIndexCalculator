@@ -113,7 +113,7 @@ inline string get_time_stamp()
  *
  */
 inline void dbg_ComputeWellBlocks_num_lims(
-    bool dbg_mode,
+    int dbg_mode,
     double xi, double yi, double zi,
     double xf, double yf, double zf,
     int rank) {
@@ -127,10 +127,11 @@ inline void dbg_ComputeWellBlocks_num_lims(
             << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
-    print_wic_dbg(
-        dbg_mode, true, rank, "[TIME:" + get_time_stamp() +
-                    "]\n[ComputeWellBlocks (WellIndexCalculator.cpp)] "
-                            "Test numeric limit types: \n", dbg_msg.str());
+    if(dbg_mode==5){
+        print_wic_dbg(true, true, rank, "[TIME:" + get_time_stamp() +
+            "]\n[ComputeWellBlocks (WellIndexCalculator.cpp)] "
+                "Test numeric limit types: \n", dbg_msg.str());
+    }
 };
 
 // ---------------------------------------------------------------------
@@ -140,7 +141,7 @@ inline void dbg_ComputeWellBlocks_num_lims(
  * This is the first function called by the WIC process
  */
 inline void dbg_ComputeWellBlocks_bbox_i(
-    bool dbg_mode,
+    int dbg_mode,
     vector<Reservoir::WellIndexCalculation::WellDefinition> wells,
     int iWell, int iSegment,
     double xi, double yi, double zi,
@@ -168,16 +169,19 @@ inline void dbg_ComputeWellBlocks_bbox_i(
         "[[ WIC DEBUG ]] Timestamp: " + get_time_stamp() + "\n" +
         "@wellindexcalculator.cpp [ComputeWellBlocks ()]: "
         "Starting xyz well segment:\n";
-    print_wic_dbg(dbg_mode, false, rank, start_str, dbg_msg.str());
+    if(dbg_mode==4) print_wic_dbg(true, false, rank, start_str, dbg_msg.str());
     dbg_msg.str("");
 
     dbg_msg << "(xi yi zi): ["
             << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
-    print_wic_dbg(
-        dbg_mode, true, rank, "@wellindexcalculator.cpp [ComputeWellBlocks()]: "
-            "Bounding box corresponding to xyz segment :\n", dbg_msg.str());
+
+    if(dbg_mode==4){
+        print_wic_dbg(
+            true, true, rank, "@wellindexcalculator.cpp [ComputeWellBlocks()]: "
+                "Bounding box corresponding to xyz segment :\n", dbg_msg.str());
+    }
 };
 
 // ---------------------------------------------------------------------
@@ -186,7 +190,7 @@ inline void dbg_ComputeWellBlocks_bbox_i(
  * \brief Test bounding box after heuristic expansion
  */
 inline void dbg_ComputeWellBlocks_bbox_f(
-    bool dbg_mode,
+    int dbg_mode,
     double xi, double yi, double zi,
     double xf, double yf, double zf,
     int rank) {
@@ -200,9 +204,12 @@ inline void dbg_ComputeWellBlocks_bbox_f(
             << setw(wdth) << xi << setw(wdth) << yi << setw(wdth) << zi << "]\n"
             << "(xf yf zf): ["
             << setw(wdth) << xf << setw(wdth) << yf << setw(wdth) << zf << "]\n";
-    print_wic_dbg(
-        dbg_mode, true, rank, "@wellindexcalculator.cpp [ComputeWellBlocks()]: "
-            "B-box after heuristic increase:\n", dbg_msg.str());
+
+    if(dbg_mode==4) {
+        print_wic_dbg(
+            true, true, rank, "@wellindexcalculator.cpp [ComputeWellBlocks()]: "
+                "B-box after heuristic increase:\n", dbg_msg.str());
+    }
 
 };
 
@@ -213,7 +220,7 @@ inline void dbg_ComputeWellBlocks_bbox_f(
  * \brief Debug function vector<int> ECLGrid::GetBoundingBoxCellIndices
  * in eclgrid.cpp
  */
-inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
+inline void dbg_GetBoundingBoxCellIndices(int dbg_mode,
                                           vector<int> indices_list,
                                           int rank) {
     ostringstream dbg_msg;
@@ -228,9 +235,11 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
     dbg_msg << "] => Total indices in B-box: "
             << indices_list.size() << "\n";
 
-    print_wic_dbg(
-        dbg_mode, true, rank, "@eclgrid.cpp [GetBoundingBoxCellIndices()]: "
-            "Indices of current b-box:\n", dbg_msg.str());
+    if(dbg_mode==5) {
+        print_wic_dbg(
+            true, true, rank, "@eclgrid.cpp [GetBoundingBoxCellIndices()]: "
+                "Indices of current b-box:\n", dbg_msg.str());
+    }
 };
 
 // ---------------------------------------------------------------------
@@ -240,7 +249,7 @@ inline void dbg_GetBoundingBoxCellIndices(bool dbg_mode,
  * \brief Test overall algorithm for finding intersected cells
  */
 inline void dbg_collect_intersected_cells_well_outside_box(
-        bool dbg_mode, int error, int rank) {
+    int dbg_mode, int error, int rank) {
 
     stringstream dbg_str;
     if (error == 1) {
@@ -252,8 +261,10 @@ inline void dbg_collect_intersected_cells_well_outside_box(
     }
     cout << dbg_str.str() << endl;
 
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp "
-        "[collect_intersected_cells()]:\nError: \n", dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(true, true, rank, "@wellindexcalculator.cpp "
+            "[collect_intersected_cells()]:\nError: \n", dbg_str.str());
+    }
 
 };
 
@@ -262,7 +273,7 @@ inline void dbg_collect_intersected_cells_well_outside_box(
 /*!
  * \brief
  */
-inline void dbg_FindHeelToeEndPoints(bool dbg_mode,
+inline void dbg_FindHeelToeEndPoints(int dbg_mode,
                                      Reservoir::Grid::Cell &first_cell,
                                      Reservoir::Grid::Cell &last_cell,
                                      string result,
@@ -284,8 +295,10 @@ inline void dbg_FindHeelToeEndPoints(bool dbg_mode,
     }
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: "
-        "[ if-statement: Find the heel and toe cells ]\n", dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(true, true, rank, "@wellindexcalculator.cpp: "
+            "[ if-statement: Find the heel and toe cells ]\n", dbg_str.str());
+    }
 };
 
 
@@ -294,12 +307,12 @@ inline void dbg_FindHeelToeEndPoints(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_FindEndPointA(bool dbg_mode,
-                             Vector3d start_pt,
-                             double step,
-                             Reservoir::Grid::Cell &cell,
-                             vector<int> bb_cells,
-                             int rank) {
+inline void dbg_FindEndPointA(int dbg_mode,
+                              Vector3d start_pt,
+                              double step,
+                              Reservoir::Grid::Cell &cell,
+                              vector<int> bb_cells,
+                              int rank) {
 
     stringstream dbg_str;
     dbg_str.precision(3);
@@ -311,9 +324,12 @@ inline void dbg_FindEndPointA(bool dbg_mode,
             << "cell that is ACTIVE (cell.is_active()=" << cell.is_active()
             << "). Breaking while loop...\n";
 
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: "
-        "[ if(grid_->GetCellEnvelopingPoint(cell, start_pt, bb_cells)) ] ",
-        dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(true, true, rank, "@wellindexcalculator.cpp: "
+                          "[ if(grid_->GetCellEnvelopingPoint(cell, start_pt, bb_cells)) ] ",
+                      dbg_str.str());
+    }
+
 };
 
 
@@ -322,12 +338,12 @@ inline void dbg_FindEndPointA(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_FindEndPointB(bool dbg_mode,
-                             Vector3d old_start_pt,
-                             Vector3d start_pt,
-                             double step,
-                             string dir,
-                             int rank) {
+inline void dbg_FindEndPointB(int dbg_mode,
+                              Vector3d old_start_pt,
+                              Vector3d start_pt,
+                              double step,
+                              string dir,
+                              int rank) {
 
     stringstream dbg_str, step_str;
     dbg_str.precision(3);
@@ -358,9 +374,12 @@ inline void dbg_FindEndPointB(bool dbg_mode,
     }
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
-        // "[ start_pt = org_start_pt * (1 - step) + end_point * step ] -- ",
-        dbg_str.str());
+
+    if(dbg_mode==4) {
+        print_wic_dbg(true, true, rank, "@wellindexcalculator.cpp: ",
+            // "[ start_pt = org_start_pt * (1 - step) + end_point * step ] -- ",
+                      dbg_str.str());
+    }
 };
 
 // ---------------------------------------------------------------------
@@ -368,7 +387,7 @@ inline void dbg_FindEndPointB(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
+inline void dbg_TraverseLoopStep(int dbg_mode, Vector3d &start_pt,
                                  Vector3d &end_pt, Vector3d &exit_pt,
                                  string place,
                                  int rank) {
@@ -431,8 +450,11 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
     }
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
-        dbg_str.str());
+
+    if(dbg_mode==4) {
+        print_wic_dbg(true, true, rank, "@wellindexcalculator.cpp: ",
+                      dbg_str.str());
+    }
 
 };
 
@@ -441,7 +463,7 @@ inline void dbg_TraverseLoopStep(bool dbg_mode, Vector3d &start_pt,
 /*!
  * \brief
  */
-inline void dbg_TraversingCellsA(bool dbg_mode,
+inline void dbg_TraversingCellsA(int dbg_mode,
                                  Reservoir::Grid::Cell &new_cell,
                                  Reservoir::Grid::Cell &prev_cell,
                                  Vector3d &old_entry_pt, Vector3d &entry_pt,
@@ -495,8 +517,10 @@ inline void dbg_TraversingCellsA(bool dbg_mode,
     }
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
-        dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(true, true, rank, "@wellindexcalculator.cpp: ",
+                      dbg_str.str());
+    }
 
 };
 
@@ -505,7 +529,7 @@ inline void dbg_TraversingCellsA(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_TraversingCellsB(bool dbg_mode,
+inline void dbg_TraversingCellsB(int dbg_mode,
                                  Reservoir::Grid::Cell &new_cell,
                                  Reservoir::Grid::Cell &prev_cell,
                                  Reservoir::Grid::Cell &last_cell,
@@ -536,8 +560,10 @@ inline void dbg_TraversingCellsB(bool dbg_mode,
             << "\n\tNEW CELL";
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
-        dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(true, true, rank, "@wellindexcalculator.cpp: ",
+                      dbg_str.str());
+    }
 
 };
 
@@ -546,7 +572,7 @@ inline void dbg_TraversingCellsB(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_TraversingCellsC(bool dbg_mode,
+inline void dbg_TraversingCellsC(int dbg_mode,
                                  Reservoir::Grid::Cell &new_cell,
                                  Reservoir::Grid::Cell &last_cell,
                                  Vector3d &entry_pt, Vector3d &end_pt,
@@ -582,8 +608,10 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
     }
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
-        dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
+                      dbg_str.str());
+    }
 
 };
 
@@ -592,13 +620,13 @@ inline void dbg_TraversingCellsC(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_compute_well_index_check_cell(bool dbg_mode,
-                                 int icell_idx,
-                                 Reservoir::Grid::Cell &icell,
-                                 int isegment,
-                                 Vector3d current_vec,
-                                 string state,
-                                 int rank) {
+inline void dbg_compute_well_index_check_cell(int dbg_mode,
+                                              int icell_idx,
+                                              Reservoir::Grid::Cell &icell,
+                                              int isegment,
+                                              Vector3d current_vec,
+                                              string state,
+                                              int rank) {
 
     stringstream dbg_str, cell_str;
     dbg_str.precision(3);
@@ -621,8 +649,10 @@ inline void dbg_compute_well_index_check_cell(bool dbg_mode,
     }
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ", 
-        dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
+                      dbg_str.str());
+    }
 
 }
 
@@ -631,7 +661,7 @@ inline void dbg_compute_well_index_check_cell(bool dbg_mode,
 /*!
  * \brief
  */
-inline void dbg_recover_from_cycle(bool dbg_mode,
+inline void dbg_recover_from_cycle(int dbg_mode,
                                    string activity,
                                    int rank) {
 
@@ -649,8 +679,10 @@ inline void dbg_recover_from_cycle(bool dbg_mode,
     }
 
     dbg_str << endl;
-    print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
-        dbg_str.str());
+    if(dbg_mode==4) {
+        print_wic_dbg(dbg_mode, true, rank, "@wellindexcalculator.cpp: ",
+                      dbg_str.str());
+    }
 
 };
 

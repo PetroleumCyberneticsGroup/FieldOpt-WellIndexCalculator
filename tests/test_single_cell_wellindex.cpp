@@ -92,8 +92,10 @@ TEST_F(SingleCellWellIndexTest, WellIndexValueWithQVector_test) {
     wells.at(0).skins.push_back(skin_factor);
     wells.at(0).wellname = "testwell";
 
-    auto blocks = wic.ComputeWellBlocks(wells);
-    auto wblocks = blocks[wells.at(0).wellname];
+    map<string, vector<IntersectedCell>> well_indices;
+    wic.ComputeWellBlocks(well_indices, wells);
+    auto wblocks = well_indices[wells.at(0).wellname];
+
     EXPECT_GT(wblocks.size(), 0);
     double wi = wblocks[0].cell_well_index_matrix();
 
@@ -143,9 +145,12 @@ TEST_F(SingleCellWellIndexTest, vertical_well_index_test) {
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "testwell";
 
-    auto blocks = wic.ComputeWellBlocks(wells)[wells.at(0).wellname];
-    EXPECT_GT(blocks.size(), 0);
-    double wi = blocks[0].cell_well_index_matrix();
+    map<string, vector<IntersectedCell>> well_indices;
+    wic.ComputeWellBlocks(well_indices, wells);
+    auto wblocks = well_indices[wells.at(0).wellname];
+
+    EXPECT_GT(wblocks.size(), 0);
+    double wi = wblocks[0].cell_well_index_matrix();
 
     /* 0.555602 is the expected well transmisibility factor aka. well index.
      * For now this value is read directly from eclipse output file:
@@ -173,7 +178,10 @@ TEST_F(SingleCellWellIndexTest, Well_index_grid_test) {
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "testwell";
 
-    auto blocks = wic.ComputeWellBlocks(wells)["testwell"];
-    EXPECT_EQ(118, blocks.size());
+    map<string, vector<IntersectedCell>> well_indices;
+    wic.ComputeWellBlocks(well_indices, wells);
+    auto wblocks = well_indices[wells.at(0).wellname];
+
+    EXPECT_EQ(118, wblocks.size());
 }
 }

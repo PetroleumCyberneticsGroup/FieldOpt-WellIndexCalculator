@@ -78,8 +78,8 @@ TEST_F(IntersectedCellsTest, find_point_test) {
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "testwell";
 
-    // cout << "-compute well blocks" << endl; // debug
-    wic_.ComputeWellBlocks(wells);
+    map<string, vector<IntersectedCell>> cells;
+    wic_.ComputeWellBlocks(cells, wells);
 
     vector<IntersectedCell> intersected_cell;
     int index_cell1 = IntersectedCell::GetIntersectedCellIndex(
@@ -130,10 +130,11 @@ TEST_F(IntersectedCellsTest, intersected_cell_test_cases) {
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "testwell";
 
-    auto cells = wic_.ComputeWellBlocks(wells);
+    map<string, vector<IntersectedCell>> cells;
+    wic_.ComputeWellBlocks(cells, wells);
 
     // obsolete?
-//    wic_.collect_intersected_cells(cells, start_point, end_point, 0.0190, std::vector<int>());
+    // wic_.collect_intersected_cells(cells, start_point, end_point, 0.0190, std::vector<int>());
 
     cout << "number of cells intersected = " << cells.size() << endl;
     for( int ii = 0; ii< cells["testwell"].size(); ii++) {
@@ -381,7 +382,7 @@ TEST_F(IntersectedCellsTest, point_inside_cell_test) {
 //}
 
 TEST_F(IntersectedCellsTest, BoundingBox) {
-    auto grid =  new ECLGrid("../examples/ECLIPSE/Brugge_xyz/BRUGGE.GRID");
+    auto grid =  new ECLGrid("../examples/ECLIPSE/Brugge_xyz/BRUGGE.EGRID");
     auto wic = WellIndexCalculator(grid);
 
     double pertx = 0, perty = 0, pertz = 0;
@@ -403,7 +404,8 @@ TEST_F(IntersectedCellsTest, BoundingBox) {
     wells.at(0).skins.push_back(0.0);
     wells.at(0).wellname = "PROD";
 
-    auto cells = wic.ComputeWellBlocks(wells);
+    map<string, vector<IntersectedCell>> cells;
+    wic_.ComputeWellBlocks(cells, wells);
 
 }
 
