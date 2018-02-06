@@ -137,7 +137,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     Grid::Cell first_cell, last_cell;
     if (!findEndpoint(bb_cells, start_pt, end_pt, first_cell) ||
         !findEndpoint(bb_cells, end_pt, start_pt, last_cell)) {
-        cout << "-- Failed to move well endpoints inside the reservoir." << endl;
+        // cout << "-- Failed to move well endpoints inside the reservoir." << endl;
         return;
     }
 
@@ -152,6 +152,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
 
     // First cell - used to be  / (1e3 * (start_pt-end_pt).norm())
     double epsilon = smallest_grid_cell_dimension_ / (1e2*(start_pt-end_pt).norm());
+    
     Vector3d entry_pt = start_pt;
     double step = 0.0;
     auto prev_cell = first_cell;
@@ -201,12 +202,17 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
             prev_cell = new_cell;
         }
         else if (step > 1.0 || new_cell.global_index() == last_cell.global_index()) { // We've already found the last cell; return.
+            // Calculate the exact entry_point = find intersection in the opposite direction
+            entry_pt = find_exit_point(isc_cells, isc_cell_idx, entry_pt, start_pt, entry_pt);
             isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, end_pt, wb_rad, skin_fac);
+            
             if (isc_cells.at(isc_cell_idx).global_index() != last_cell.global_index()) {
                 cout << "-- WARNING: Expected last cell does not match found last cell. Returning full (previously was empty) list." << endl;
                 cout << "-- step = " << step << 
                 		" global index of last cell found = " << isc_cells.at(isc_cell_idx).global_index() << 
-                		" global index of the expected cell found = " << last_cell.global_index() << endl; 
+                		" global index of the expected cell found = " << last_cell.global_index() << 
+                		" is cell active " << isc_cells.at(isc_cell_idx).is_active() << 
+                		" is last cell active " << last_cell.is_active() << endl; 
                 // isc_cells.clear();
             }
             return;
@@ -292,9 +298,9 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
     else if (step == 0.0) {
         return true; // Return if we didn't have to move
     }
-
+    
     // Then, traverse back with a smaller step size until we're outside again.
-    epsilon = epsilon / 1e2;
+    epsilon = epsilon / 1e3;
     while (true) {
         try
         {
@@ -306,6 +312,11 @@ bool WellIndexCalculator::findEndpoint(const vector<int> &bb_cells,
         }
         catch (const runtime_error &e)
         {
+        	// We went out of the cell - the last point is what we need
+            step += epsilon;
+            start_pt = org_start_pt * (1 - step) + end_point * step;
+            cell = grid_->GetCellEnvelopingPoint(start_pt, bb_cells);
+
             break;
         }
     }
@@ -543,6 +554,7 @@ double WellIndexCalculator::dir_well_index(double Lx,
     double silly_eclipse_factor = 0.008527;
     double well_index_i = silly_eclipse_factor * (2 * M_PI * sqrt(ky * kz) * Lx) /
         (log(dir_wellblock_radius(dy, dz, ky, kz) / wellbore_radius) + skin_factor);
+    
     return well_index_i;
 }
 
@@ -565,6 +577,11 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
     
     std::string line;
     while (std::getline(infile, line)){
+    	// Skip empty empty lines
+    	if (line.find_first_not_of("\t\n\v\f\r") == std::string::npos || line.empty()){
+    		continue;
+    	}
+    	
     	// Find well name
     	auto start_name_ind = line.find(well_name_delimiter);
     	if (start_name_ind!=std::string::npos){
@@ -592,7 +609,7 @@ void WellDefinition::ReadWellsFromFile(string file_path, vector<WellDefinition>&
 	    ty = strtod(pAux, &pAux);
 	    tz = strtod(pAux, &pAux);
 	    radius  = strtod(pAux, &pAux);
-	    skin_factor = strtod(pAux, NULL);
+	    skin_factor = strtod(pAux, &pAux);
 	    
         if (previous_well_name != well_name) {
             wells.push_back(WellDefinition());
