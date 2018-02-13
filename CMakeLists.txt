@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
 project(wellindexcalculator)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    add_definitions(-DCVF_LINUX)
+endif()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(CMAKE_CXX_FLAGS 		"-DCVF_LINUX -pipe -Wextra -Woverloaded-virtual -Wformat -std=c++0x")
+    set(CMAKE_CXX_FLAGS_DEBUG 	"-ggdb -g3 -O0 -DDEBUG -D_DEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNO_DEBUG")
+endif()
+
 # Include: Eigen =======================================================
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -8,8 +18,8 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 if (_WIN32) # WINDOWS
     find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
 
-include_directories(${EIGEN3_INCLUDE_DIR}
-	${ERT_INCLUDE_DIR})
+    include_directories(${EIGEN3_INCLUDE_DIR}
+            ${ERT_INCLUDE_DIR})
 
     add_library(wellindexcalculator SHARED dllmain.cpp)
 
@@ -30,14 +40,23 @@ include_directories(${EIGEN3_INCLUDE_DIR}
 else() # LINUX --------------------------------------------------------
     if (NOT BUILD_WIC_ADGPRS)
         add_library(wellindexcalculator
+                wicalc.cpp
                 intersected_cell.cpp
-                wellindexcalculator.cpp)
+                wellindexcalculator.cpp
+                resinsight/ApplicationCode/ReservoirDataModel/RigHexIntersectionTools.cpp
+                resinsight/ApplicationCode/ReservoirDataModel/RigWellPath.cpp
+                resinsight/ApplicationCode/ReservoirDataModel/RigMainGrid.cpp
+                resinsight/ApplicationCode/ReservoirDataModel/RigCell.cpp
+                resinsight/ApplicationCode/ReservoirDataModel/RigGridBase.cpp
+                )
 
     elseif(BUILD_WIC_ADGPRS)
         add_library(wellindexcalculator-adgprs SHARED
+                wicalc.cpp
                 dllmain.cpp
                 intersected_cell.cpp
-                wellindexcalculator.cpp)
+                wellindexcalculator.cpp
+                )
     endif()
 
 
@@ -49,7 +68,7 @@ else() # LINUX --------------------------------------------------------
                 PUBLIC fieldopt::reservoir
                 ${Boost_LIBRARIES})
 
-	include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
+        include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
 
         add_compile_options(-std=c++11)
 
@@ -110,19 +129,19 @@ endif()
 
 # WI benckmark =========================================================
 if (BUILD_BENCHMARK)
-add_executable(benchmark_wellindexcalculator
-        tests/well_index_benchmark/test_resource_wic_welldir.h
-        tests/well_index_benchmark/test_resource_wic_widata.h
-        tests/well_index_benchmark/test_well_index_deviated_well.cpp
-        tests/well_index_benchmark/test_resource_wic_diff_functions.h
-        )
+    add_executable(benchmark_wellindexcalculator
+            tests/well_index_benchmark/test_resource_wic_welldir.h
+            tests/well_index_benchmark/test_resource_wic_widata.h
+            tests/well_index_benchmark/test_well_index_deviated_well.cpp
+            tests/well_index_benchmark/test_resource_wic_diff_functions.h
+            )
 
-target_link_libraries(benchmark_wellindexcalculator
-        fieldopt::wellindexcalculator
-        Qt5::Core
-        ${GTEST_BOTH_LIBRARIES}
-        ${CMAKE_THREAD_LIBS_INIT}
-        ${GTEST_BOTH_LIBRARIES}
-        ${CMAKE_THREAD_LIBS_INIT}
-        ${Boost_LIBRARIES})
+    target_link_libraries(benchmark_wellindexcalculator
+            fieldopt::wellindexcalculator
+            Qt5::Core
+            ${GTEST_BOTH_LIBRARIES}
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${GTEST_BOTH_LIBRARIES}
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${Boost_LIBRARIES})
 endif()
