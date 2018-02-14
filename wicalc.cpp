@@ -2,13 +2,26 @@
 // Created by bellout on 2/13/18.
 //
 
+
+#include <iostream>
 #include "wicalc.h"
 
 wicalc::wicalc(){
 
-};
+  wellPath_ = new RigWellPath();
+  grid_ = new RigMainGrid();
+  values_ = vector<double>();
 
-wicalc::~wicalc(){};
+  calculateWellPathIntersections(wellPath_, grid_, values_);
+
+  for (unsigned int i = 0; i < values_.size(); i++) {
+    cout << values_[i] << " " << endl;
+    if (i % 10 == 1) cout << endl;
+  }
+
+}
+
+wicalc::~wicalc(){}
 
 void wicalc::calculateWellPathIntersections(const RigWellPath*   wellPath,
                                             const RigMainGrid*   grid,

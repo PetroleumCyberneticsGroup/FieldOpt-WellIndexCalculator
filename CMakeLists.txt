@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(wellindexcalculator)
 
+# ResInsight ===========================================================
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_definitions(-DCVF_LINUX)
 endif()
@@ -10,6 +11,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_CXX_FLAGS_DEBUG 	"-ggdb -g3 -O0 -DDEBUG -D_DEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNO_DEBUG")
 endif()
+
+include(ResInsight.cmake)
 
 # Include: Eigen =======================================================
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -39,15 +42,33 @@ if (_WIN32) # WINDOWS
 
 else() # LINUX --------------------------------------------------------
     if (NOT BUILD_WIC_ADGPRS)
+
+        include_directories(
+            ${RESINSIGHT_FWK_VIZFWK_LIBCORE}
+            ${RESINSIGHT_FWK_VIZFWK_LIBGEOMETRY}
+            ${RESINSIGHT_FWK_VIZFWK_LIBRENDER}
+            ${RESINSIGHT_FWK_APPFWK_CAFPROJECTDATAMODEL}
+            ${RESINSIGHT_FWK_APPFWK_CAFPROJECTDATAMODEL_CAFPDMCORE}
+            ${RESINSIGHT_FWK_APPFWK_COMMONCODE}
+            ${RESINSIGHT_APPLICATIONCODE_RESERVOIRDATAMODEL}
+            ${RESINSIGHT_APPLICATIONCODE_APPLICATION}
+            ${RESINSIGHT_APPLICATIONCODE_PROJECTDATAMODEL}
+            ${RESINSIGHT_APPLICATIONCODE_APPLICATION_TOOLS}
+            )
+
         add_library(wellindexcalculator
-                wicalc.cpp
                 intersected_cell.cpp
                 wellindexcalculator.cpp
-                resinsight/ApplicationCode/ReservoirDataModel/RigHexIntersectionTools.cpp
-                resinsight/ApplicationCode/ReservoirDataModel/RigWellPath.cpp
-                resinsight/ApplicationCode/ReservoirDataModel/RigMainGrid.cpp
-                resinsight/ApplicationCode/ReservoirDataModel/RigCell.cpp
-                resinsight/ApplicationCode/ReservoirDataModel/RigGridBase.cpp
+                #
+                wicalc.cpp
+                ${LIBCORE_SOURCE}
+                ${LIBGEOMETRY_SOURCE}
+                ${CAFPDMCORE_SOURCE}
+                ${COMMONCODE_SOURCE}
+                ${RESERVOIRDATAMODEL_SOURCE}
+                ${APPLICATION_SOURCE}
+                ${PROJECTDATAMODEL_SOURCE}
+                ${TOOLS_SOURCE}
                 )
 
     elseif(BUILD_WIC_ADGPRS)
@@ -70,15 +91,16 @@ else() # LINUX --------------------------------------------------------
 
         include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
 
-        add_compile_options(-std=c++11)
-
+        add_compile_options(-std=c++11 -fPIC)
+               set_target_properties(wellindexcalculator
+                       PROPERTIES COMPILE_FLAGS "-fPIC")
 
         add_executable(wicalc main.cpp)
         target_link_libraries(wicalc
                 fieldopt::wellindexcalculator
                 ${Boost_LIBRARIES})
 
-        install( TARGETS wicalc wellindexcalculator
+        install(TARGETS wicalc wellindexcalculator
                 RUNTIME DESTINATION bin
                 LIBRARY DESTINATION lib
                 ARCHIVE DESTINATION lib/static

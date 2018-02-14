@@ -93,7 +93,7 @@ class RigMainGrid : public RigGridBase
  private:
   std::vector<cvf::Vec3d>                 m_nodes;        ///< Global vertex table
   std::vector<RigCell>                    m_cells;        ///< Global array of all cells in the reservoir (including the ones in LGR's)
-//  cvf::Collection<RigLocalGrid>           m_localGrids;   ///< List of all the LGR's in this reservoir
+  cvf::Collection<RigLocalGrid>           m_localGrids;   ///< List of all the LGR's in this reservoir
   std::vector<size_t>                     m_gridIdToIndexMapping; ///< Mapping from LGR Id to index.
 
 

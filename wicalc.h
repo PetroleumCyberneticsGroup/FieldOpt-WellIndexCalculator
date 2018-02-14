@@ -20,6 +20,10 @@
 #include "vector"
 #include "list"
 
+using std::cout;
+using std::endl;
+using std::vector;
+
 //-----------------------------------------------------------------------------
 
 //class WellPath {
@@ -39,9 +43,14 @@ class wicalc {
 //                                      const MainGrid*      grid,
 //                                      std::vector<double>& values);
 
-  void calculateWellPathIntersections(const RigWellPath*      wellPath,
-                                      const RigMainGrid*      grid,
-                                      std::vector<double>& values);
+ private:
+  void calculateWellPathIntersections(const RigWellPath*  wellPath,
+                                      const RigMainGrid*  grid,
+                                      vector<double>&     values);
+
+  RigWellPath*  wellPath_;
+  RigMainGrid*  grid_;
+  vector<double>     values_;
 
 };
 
