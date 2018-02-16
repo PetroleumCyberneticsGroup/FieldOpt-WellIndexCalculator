@@ -26,7 +26,7 @@
 
 class RigWellPath;
 class RigMainGrid;
-class RigEclipseCaseData;
+//class RigEclipseCaseData;
 struct HexIntersectionInfo;
 struct WellPathCellIntersectionInfo;
 
@@ -36,10 +36,10 @@ struct WellPathCellIntersectionInfo;
 class RigWellPathIntersectionTools
 {
 public:
-    static std::vector<WellPathCellIntersectionInfo>
-    findCellIntersectionInfosAlongPath(const RigEclipseCaseData* caseData,
-                                       const std::vector<cvf::Vec3d>& pathCoords,
-                                       const std::vector<double>& pathMds);
+//    static std::vector<WellPathCellIntersectionInfo>
+//    findCellIntersectionInfosAlongPath(const RigEclipseCaseData* caseData,
+//                                       const std::vector<cvf::Vec3d>& pathCoords,
+//                                       const std::vector<double>& pathMds);
 
     static std::vector<HexIntersectionInfo>
     findRawHexCellIntersections(const RigMainGrid* grid,

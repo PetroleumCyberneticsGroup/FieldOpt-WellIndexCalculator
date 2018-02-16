@@ -37,57 +37,25 @@
 
 #pragma once
 
-#include "cvfObject.h"
-#include "cvfArray.h"
-#include "cvfOpenGLTypes.h"
-
 namespace cvf {
 
-class OpenGLContext;
-
-
-enum PrimitiveType
-{
-    PT_POINTS = 100,
-    PT_LINES,
-    PT_LINE_LOOP,
-    PT_LINE_STRIP,
-    PT_TRIANGLES,
-    PT_TRIANGLE_STRIP,
-    PT_TRIANGLE_FAN
-};
-
-
 
 //==================================================================================================
 //
-// 
+// Static wrapper class to control usage of TBB
 //
 //==================================================================================================
-class PrimitiveSet : public Object
+class TBBControl
 {
 public:
-    PrimitiveSet(PrimitiveType primitiveType);
-
-    PrimitiveType   primitiveType() const;
-    cvfGLenum       primitiveTypeOpenGL() const;
-
-    size_t          triangleCount() const;
-    size_t          faceCount() const;
-
-    void            getFaceIndices(size_t indexOfFace, UIntArray* indices) const;
-
-    virtual void    render(OpenGLContext* oglContext) const = 0;
-
-    virtual void    createUploadBufferObjectsGPU(OpenGLContext* oglContext) = 0;
-    virtual void    releaseBufferObjectsGPU() = 0;
-
-    virtual size_t  indexCount() const = 0;
-    virtual uint    index(size_t i) const = 0;
+    static void     enable(bool enableTBB);
+    static bool     isEnabled();
 
 private:
-    PrimitiveType   m_primitiveType;
+    static bool     sm_useTBB;
 };
 
 
-}
+} // cvf
+
+

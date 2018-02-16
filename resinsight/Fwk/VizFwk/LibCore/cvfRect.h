@@ -36,27 +36,9 @@
 
 
 #pragma once
-
-#include "cvfObject.h"
-#include "cvfArray.h"
-#include "cvfOpenGLTypes.h"
+#include "cvfVector2.h"
 
 namespace cvf {
-
-class OpenGLContext;
-
-
-enum PrimitiveType
-{
-    PT_POINTS = 100,
-    PT_LINES,
-    PT_LINE_LOOP,
-    PT_LINE_STRIP,
-    PT_TRIANGLES,
-    PT_TRIANGLE_STRIP,
-    PT_TRIANGLE_FAN
-};
-
 
 
 //==================================================================================================
@@ -64,30 +46,56 @@ enum PrimitiveType
 // 
 //
 //==================================================================================================
-class PrimitiveSet : public Object
+template <typename T>
+class Rect
 {
 public:
-    PrimitiveSet(PrimitiveType primitiveType);
+    Rect();
+    Rect(T minX, T minY, T width, T height);
+    Rect(const Vector2<T>& min, T width, T height);
+    Rect(const Rect& rect);
 
-    PrimitiveType   primitiveType() const;
-    cvfGLenum       primitiveTypeOpenGL() const;
+    Rect&   operator=(const Rect& rhs);
 
-    size_t          triangleCount() const;
-    size_t          faceCount() const;
+    Vector2<T>  min() const;
+    Vector2<T>  max() const;
+    T           width() const;
+    T           height() const;
+    Vector2<T>  center() const;
 
-    void            getFaceIndices(size_t indexOfFace, UIntArray* indices) const;
+    void        setMin(const Vector2<T>& min);
+    void        setWidth(T width);
+    void        setHeight(T height);
 
-    virtual void    render(OpenGLContext* oglContext) const = 0;
+    bool        isValid() const;
+    void        normalize();
 
-    virtual void    createUploadBufferObjectsGPU(OpenGLContext* oglContext) = 0;
-    virtual void    releaseBufferObjectsGPU() = 0;
+    void        include(const Vector2<T>& coord);
+    void        include(const Rect& rect);
 
-    virtual size_t  indexCount() const = 0;
-    virtual uint    index(size_t i) const = 0;
+    bool        contains(const Vector2<T>& coord) const;
+    bool        intersects(const Rect& rect) const;
+
+    void        translate(const Vector2<T>& offset);
+
+    bool        segmentIntersect(const Vec2d& p1, const Vec2d& p2, Vec2d* intersect1, Vec2d* intersect2);
+
+    static Rect fromMinMax(const Vector2<T>& min, const Vector2<T>& max);
 
 private:
-    PrimitiveType   m_primitiveType;
+    static bool clipTest(double p, double q, double *u1, double *u2);
+
+private:
+    Vector2<T>  m_minPos;               ///< Position of left lower corner
+    T           m_width;                ///< Width
+    T           m_height;               ///< Height
 };
 
+typedef Rect<float>     Rectf;  ///< A rect with float components
+typedef Rect<double>    Rectd;  ///< A rect with double components
+typedef Rect<int>       Recti;  ///< A rect with integer components
+typedef Rect<uint>      Rectui; ///< A rect with unsigned integer components
 
 }
+
+#include "cvfRect.inl"

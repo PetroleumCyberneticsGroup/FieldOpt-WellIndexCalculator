@@ -23,7 +23,7 @@
 //#include "RiaEclipseUnitTools.h"
 
 //#include "cafPdmField.h"
-#include "cafPdmObject.h"
+//#include "cafPdmObject.h"
 //#include "cafPdmPointer.h"
 //#include "cafPdmChildField.h"
 //#include "cafAppEnum.h"
@@ -57,7 +57,7 @@ class RimWellPathFractureCollection;
 ///  
 ///  
 //==================================================================================================
-class RimWellPath : public caf::PdmObject
+class RimWellPath //: public caf::PdmObject
 {
 //    CAF_PDM_HEADER_INIT;
 

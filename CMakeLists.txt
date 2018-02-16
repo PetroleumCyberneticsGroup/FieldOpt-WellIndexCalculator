@@ -59,8 +59,8 @@ else() # LINUX --------------------------------------------------------
         add_library(wellindexcalculator
                 intersected_cell.cpp
                 wellindexcalculator.cpp
-                #
                 wicalc.cpp
+                #
                 ${LIBCORE_SOURCE}
                 ${LIBGEOMETRY_SOURCE}
                 ${CAFPDMCORE_SOURCE}
@@ -69,6 +69,7 @@ else() # LINUX --------------------------------------------------------
                 ${APPLICATION_SOURCE}
                 ${PROJECTDATAMODEL_SOURCE}
                 ${TOOLS_SOURCE}
+                ${CAFHEXGRIDINTERSECTIONTOOLS_SOURCE}
                 )
 
     elseif(BUILD_WIC_ADGPRS)
@@ -92,10 +93,14 @@ else() # LINUX --------------------------------------------------------
         include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
 
         add_compile_options(-std=c++11 -fPIC)
-               set_target_properties(wellindexcalculator
-                       PROPERTIES COMPILE_FLAGS "-fPIC")
+        set_target_properties(wellindexcalculator
+                PROPERTIES COMPILE_FLAGS "-fPIC")
 
-        add_executable(wicalc main.cpp)
+        add_executable(wicalc
+                main.cpp
+                intersected_cell.cpp
+                wellindexcalculator.cpp
+                )
         target_link_libraries(wicalc
                 fieldopt::wellindexcalculator
                 ${Boost_LIBRARIES})

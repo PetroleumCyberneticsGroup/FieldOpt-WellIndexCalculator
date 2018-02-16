@@ -38,56 +38,56 @@
 #pragma once
 
 #include "cvfObject.h"
-#include "cvfArray.h"
-#include "cvfOpenGLTypes.h"
+#include "cvfVector3.h"
+#include "cvfMatrix4.h"
+#include "cvfString.h"
 
 namespace cvf {
 
-class OpenGLContext;
-
-
-enum PrimitiveType
-{
-    PT_POINTS = 100,
-    PT_LINES,
-    PT_LINE_LOOP,
-    PT_LINE_STRIP,
-    PT_TRIANGLES,
-    PT_TRIANGLE_STRIP,
-    PT_TRIANGLE_FAN
-};
-
+class BoundingBox;
+class Plane;
 
 
 //==================================================================================================
 //
-// 
+// Ray
 //
 //==================================================================================================
-class PrimitiveSet : public Object
+class Ray : public Object
 {
 public:
-    PrimitiveSet(PrimitiveType primitiveType);
+    Ray();
+    Ray(const Ray& other);
+    ~Ray();
 
-    PrimitiveType   primitiveType() const;
-    cvfGLenum       primitiveTypeOpenGL() const;
+    void            setOrigin(const Vec3d& orig);
+    const Vec3d&    origin() const;
+    void            setDirection(const Vec3d& dir);
+    const Vec3d&    direction() const;
 
-    size_t          triangleCount() const;
-    size_t          faceCount() const;
+    void            setMinimumDistance(double distance);
+    double          minimumDistance() const;
+    void            setMaximumDistance(double distance);
+    double          maximumDistance() const;
 
-    void            getFaceIndices(size_t indexOfFace, UIntArray* indices) const;
+    void            transform(const Mat4d& matrix);
+    const Ray       getTransformed(const Mat4d& matrix) const;
 
-    virtual void    render(OpenGLContext* oglContext) const = 0;
+    bool            triangleIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, Vec3d* intersectionPoint = NULL) const;
+    bool            quadIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, const Vec3d& v4, Vec3d* intersectionPoint = NULL) const;
+    bool            boxIntersect(const BoundingBox& box, Vec3d* intersectionPoint = NULL) const;
+    bool            planeIntersect(const Plane& plane, Vec3d* intersectionPoint = NULL) const;
 
-    virtual void    createUploadBufferObjectsGPU(OpenGLContext* oglContext) = 0;
-    virtual void    releaseBufferObjectsGPU() = 0;
-
-    virtual size_t  indexCount() const = 0;
-    virtual uint    index(size_t i) const = 0;
+    String          debugString() const;
 
 private:
-    PrimitiveType   m_primitiveType;
+    Vec3d       m_origin;		        ///< Starting point of ray
+    Vec3d		m_direction;		    ///< Vector specifying ray direction
+    double      m_minDistance;          ///< Minimum distance for a hit
+    double      m_maxDistance;          ///< Maximum distance for a hit
+    double      m_minDistanceSquared;   
+    double      m_maxDistanceSquared;   
+    bool        m_distanceLimitedRay;
 };
-
 
 }

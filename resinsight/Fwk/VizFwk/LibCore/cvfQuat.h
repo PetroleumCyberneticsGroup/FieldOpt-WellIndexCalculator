@@ -37,57 +37,64 @@
 
 #pragma once
 
-#include "cvfObject.h"
-#include "cvfArray.h"
-#include "cvfOpenGLTypes.h"
+#include "cvfVector3.h"
 
 namespace cvf {
 
-class OpenGLContext;
-
-
-enum PrimitiveType
-{
-    PT_POINTS = 100,
-    PT_LINES,
-    PT_LINE_LOOP,
-    PT_LINE_STRIP,
-    PT_TRIANGLES,
-    PT_TRIANGLE_STRIP,
-    PT_TRIANGLE_FAN
-};
-
-
 
 //==================================================================================================
 //
-// 
+// This class implements a quaternion 
 //
 //==================================================================================================
-class PrimitiveSet : public Object
+template<typename S>
+class Quat
 {
 public:
-    PrimitiveSet(PrimitiveType primitiveType);
+    Quat();
+    Quat(S x, S y, S z, S w);
+    Quat(const Quat& other);
 
-    PrimitiveType   primitiveType() const;
-    cvfGLenum       primitiveTypeOpenGL() const;
+    template<typename T>
+    explicit Quat(const T& other);
 
-    size_t          triangleCount() const;
-    size_t          faceCount() const;
+    Quat&   operator=(const Quat& rhs);
+    bool    operator==(const Quat& rhs) const;
+    bool    operator!=(const Quat& rhs) const;
 
-    void            getFaceIndices(size_t indexOfFace, UIntArray* indices) const;
+    const S&    x() const   { return m_x; }     ///< Get the X element of the quaternion
+    const S&    y() const   { return m_y; }     ///< Get the Y element of the quaternion
+    const S&    z() const   { return m_z; }     ///< Get the Z element of the quaternion
+    const S&    w() const   { return m_w; }     ///< Get the W element of the quaternion
+    S&          x()         { return m_x; }     ///< Get a reference to the X element of the quaternion. E.g. x() = 2;
+    S&          y()         { return m_y; }     ///< Get a reference to the Y element of the quaternion. E.g. y() = 2;
+    S&          z()         { return m_z; }     ///< Get a reference to the Z element of the quaternion. E.g. z() = 2;
+    S&          w()         { return m_w; }     ///< Get a reference to the W element of the quaternion. E.g. w() = 2;
 
-    virtual void    render(OpenGLContext* oglContext) const = 0;
+    void        set(S x, S y, S z, S w);
 
-    virtual void    createUploadBufferObjectsGPU(OpenGLContext* oglContext) = 0;
-    virtual void    releaseBufferObjectsGPU() = 0;
+    bool        normalize();
 
-    virtual size_t  indexCount() const = 0;
-    virtual uint    index(size_t i) const = 0;
+    // The setFromAxisAngle() function is left as a placeholder to illustrate naming of functions
+    void        setFromAxisAngle(Vector3<S> rotationAxis, S angle);
+	void        toAxisAngle(Vector3<S>* rotationAxis, S* angle) const;
+
+    Matrix3<S>  toMatrix3() const;
+    Matrix4<S>  toMatrix4() const;
+
+    static Quat fromAxisAngle(Vector3<S> rotationAxis, S angle);
+    static Quat fromRotationMatrix(const Matrix4<S>& rotMat);
 
 private:
-    PrimitiveType   m_primitiveType;
+    S   m_x;
+    S   m_y;
+    S   m_z;
+    S   m_w;
 };
 
+typedef Quat<float>  Quatf;
+typedef Quat<double> Quatd;
 
 }
+
+#include "cvfQuat.inl"

@@ -22,13 +22,13 @@
 #include "RigGridBase.h"
 #include <vector>
 #include "RigCell.h"
-#include "RigLocalGrid.h"
+//#include "RigLocalGrid.h"
 //#include "cvfCollection.h"
 //#include "cvfBoundingBox.h"
 //#include "RifReaderInterface.h"
 
 #include <QtGlobal>
-#include "RigNNCData.h"
+//#include "RigNNCData.h"
 
 #include "resinsight/Fwk/VizFwk/LibCore/cvfVector3.h"
 #include "resinsight/Fwk/VizFwk/LibCore/cvfCollection.h"
@@ -49,30 +49,32 @@ class RigMainGrid : public RigGridBase
   virtual ~RigMainGrid();
 
  public:
-  std::vector<cvf::Vec3d>&                nodes() {return m_nodes;}
-  const std::vector<cvf::Vec3d>&          nodes() const {return m_nodes;}
+  std::vector<cvf::Vec3d>&        nodes() {return m_nodes;}
+  const std::vector<cvf::Vec3d>&  nodes() const {return m_nodes;}
 
-  std::vector<RigCell>&                   globalCellArray() {return m_cells;}
-  const std::vector<RigCell>&             globalCellArray() const {return m_cells;}
+  std::vector<RigCell>&           globalCellArray() {return m_cells;}
+  const std::vector<RigCell>&     globalCellArray() const {return m_cells;}
 
-  const RigCell&                          cellByGridAndGridLocalCellIdx(size_t gridIdx, size_t gridLocalCellIdx) const;
-  size_t                                  reservoirCellIndexByGridAndGridLocalCellIndex(size_t gridIdx, size_t gridLocalCellIdx) const;
+//  const RigCell&                  cellByGridAndGridLocalCellIdx(size_t gridIdx,
+//                                                                size_t gridLocalCellIdx) const;
+//  size_t                          reservoirCellIndexByGridAndGridLocalCellIndex(size_t gridIdx,
+//                                                                                size_t gridLocalCellIdx) const;
 
-  void                                    addLocalGrid(RigLocalGrid* localGrid);
-  size_t                                  gridCount() const           { return m_localGrids.size() + 1; }
-  RigGridBase*                            gridByIndex(size_t localGridIndex);
-  const RigGridBase*                      gridByIndex(size_t localGridIndex) const;
-  RigGridBase*                            gridById(int localGridId);
+//  void                  addLocalGrid(RigLocalGrid* localGrid);
+  size_t                gridCount() const           { return m_localGrids.size() + 1; }
+  RigGridBase*          gridByIndex(size_t localGridIndex);
+  const RigGridBase*    gridByIndex(size_t localGridIndex) const;
+  RigGridBase*          gridById(int localGridId);
 
-  RigNNCData*                             nncData();
+//  RigNNCData*                             nncData();
 //  void                                    setFaults(const cvf::Collection<RigFault>& faults);
 //  const cvf::Collection<RigFault>&        faults() { return m_faults; }
-  void                                    calculateFaults(const RigActiveCellInfo* activeCellInfo);
+//  void                                    calculateFaults(const RigActiveCellInfo* activeCellInfo);
 
-  void distributeNNCsToFaults();
+//  void distributeNNCsToFaults();
 
 //  const RigFault*                         findFaultFromCellIndexAndCellFace(size_t reservoirCellIndex, cvf::StructGridInterface::FaceType face) const;
-  bool                                    isFaceNormalsOutwards() const;
+//  bool                                    isFaceNormalsOutwards() const;
 
   void                                    computeCachedData();
   void                                    initAllSubGridsParentGridPointer();
@@ -88,7 +90,7 @@ class RigMainGrid : public RigGridBase
  private:
   void                                    initAllSubCellsMainGridCellIndex();
   void                                    buildCellSearchTree();
-  bool                                    hasFaultWithName(const QString& name) const;
+//  bool                                    hasFaultWithName(const QString& name) const;
 
  private:
   std::vector<cvf::Vec3d>                 m_nodes;        ///< Global vertex table
@@ -97,9 +99,9 @@ class RigMainGrid : public RigGridBase
   std::vector<size_t>                     m_gridIdToIndexMapping; ///< Mapping from LGR Id to index.
 
 
-  cvf::Collection<RigFault>               m_faults;
-  cvf::ref<RigNNCData>                    m_nncData;
-  cvf::ref<RigFaultsPrCellAccumulator>    m_faultsPrCellAcc;
+//  cvf::Collection<RigFault>               m_faults;
+//  cvf::ref<RigNNCData>                    m_nncData;
+//  cvf::ref<RigFaultsPrCellAccumulator>    m_faultsPrCellAcc;
 
   cvf::Vec3d                              m_displayModelOffset;
   cvf::ref<cvf::BoundingBoxTree>          m_cellSearchTree;
