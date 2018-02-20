@@ -24,14 +24,14 @@
 namespace cvf
 {
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Inserts the vertex into the polygon if it fits along one of the edges within the tolerance.
 /// The method returns true if it was inserted, or if it was already in the polygon, or if it was 
 /// within the tolerance of an existing vertex in the polygon. 
 /// In the latter situation it replaces the previous vertex in the polygon.
 /// 
 /// Todo: If a vertex is replaced, the VxToCv map in TimeStepGeometry should be updated
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 template<typename VerticeArrayType, typename IndexType>
 bool GeometryTools::insertVertexInPolygon(  std::vector<IndexType> * polygon,  
                                             ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> nodeCoords, 
@@ -103,7 +103,7 @@ bool GeometryTools::insertVertexInPolygon(  std::vector<IndexType> * polygon,
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// \brief    Test if a point touches a polygon within the specified tolerance
 ///
 /// \param    polygonNorm  Polygon normal
@@ -120,7 +120,7 @@ bool GeometryTools::insertVertexInPolygon(  std::vector<IndexType> * polygon,
 ///             counting the number of times a ray from point along positive X axis 
 ///             crosses an edge. Odd number says inside.
 /// \author        SP (really by Eric Haines) and JJS
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 template<typename VerticeArrayType, typename PolygonArrayType, typename IndexType>
 bool GeometryTools::isPointTouchingIndexedPolygon(  const cvf::Vec3d& polygonNormal, 
                                                     cvf::ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> vertices, 
@@ -212,11 +212,11 @@ bool GeometryTools::isPointTouchingIndexedPolygon(  const cvf::Vec3d& polygonNor
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Returns true if we get an actual polygon
 /// The returned polygon will keep the winding from the first face.
 /// The second face must have opposite winding of the first
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 template<typename VerticeArrayType, typename IndexType>
 bool GeometryTools::calculateOverlapPolygonOfTwoQuads(std::vector<IndexType> * polygon, 
                                  std::vector<cvf::Vec3d>* createdVertexes, 
@@ -561,11 +561,11 @@ bool GeometryTools::calculateOverlapPolygonOfTwoQuads(std::vector<IndexType> * p
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// This method assumes that all intersection and mid edge vertexes are created an are already 
 /// merged into all the polygons. We can also assume that all the connection polygons are completely
 /// inside (or sharing edges with) the cube face polygon initially
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 #define DEBUG_PRINT 0
 
 //template <typename NodeArrayType, typename NodeType, typename IndicesArrayType, typename IndicesType>
@@ -843,9 +843,9 @@ void GeometryTools::calculatePartiallyFreeCubeFacePolygon(ArrayWrapperConst<Vert
 
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 template <typename IndexType>
 void EdgeIntersectStorage<IndexType>::setVertexCount(size_t size)
 {
@@ -887,9 +887,9 @@ void EdgeIntersectStorage<IndexType>::canonizeAddress(IndexType& e1P1, IndexType
         e2P2 = temp;
     }
 }
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 template <typename IndexType>
 void EdgeIntersectStorage<IndexType>::addIntersection(IndexType e1P1, IndexType e1P2, IndexType e2P1, IndexType e2P2, 
                                            IndexType vxIndexIntersectionPoint, GeometryTools::IntersectionStatus intersectionStatus, 
@@ -921,9 +921,9 @@ void EdgeIntersectStorage<IndexType>::addIntersection(IndexType e1P1, IndexType 
 
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 template <typename IndexType>
 bool EdgeIntersectStorage<IndexType>::findIntersection(IndexType e1P1, IndexType e1P2, IndexType e2P1, IndexType e2P2, 
                                             IndexType* vxIndexIntersectionPoint, GeometryTools::IntersectionStatus* intersectionStatus, 

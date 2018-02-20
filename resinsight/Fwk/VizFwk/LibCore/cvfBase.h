@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,12 +32,16 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #pragma once
 
-#if !defined(WIN32) && !defined(CVF_LINUX) && !defined(CVF_IOS) && !defined(CVF_OSX) && !defined(CVF_ANDROID)
+#if (!defined(WIN32) \
+&& !defined(CVF_LINUX) \
+&& !defined(CVF_IOS) \
+&& !defined(CVF_OSX) \
+&& !defined(CVF_ANDROID))
 #error No platform defined
 #endif
 
@@ -119,16 +123,18 @@ typedef unsigned int     uint;
 // 64bit integer support via the int64 type
 #ifdef WIN32
 typedef __int64 int64;  
-#elif defined(CVF_LINUX) || defined(CVF_IOS) || defined(CVF_OSX) || defined(CVF_ANDROID)
+#elif \
+defined(CVF_LINUX) || defined(CVF_IOS) || \
+defined(CVF_OSX) || defined(CVF_ANDROID)
 typedef int64_t int64;  
 #endif 
 
 }
 
-#include "resinsight/Fwk/VizFwk/LibCore/cvfConfigCore.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfVersion.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfAssert.h"
+//#include "resinsight/Fwk/VizFwk/LibCore/cvfConfigCore.h"
+//#include "resinsight/Fwk/VizFwk/LibCore/cvfVersion.h"
+//#include "resinsight/Fwk/VizFwk/LibCore/cvfAssert.h"
 
-//#include "cvfConfigCore.h"
-//#include "cvfVersion.h"
-//#include "cvfAssert.h"
+#include "cvfConfigCore.h"
+#include "cvfVersion.h"
+#include "cvfAssert.h"

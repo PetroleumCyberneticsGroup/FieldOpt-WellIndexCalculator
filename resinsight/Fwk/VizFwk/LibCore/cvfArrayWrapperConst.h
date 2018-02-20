@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) Ceetron Solutions AS
@@ -32,13 +32,13 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 #pragma once
 
 namespace cvf {
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
 /// \class cvf::ArrayWrapperConst
 /// \ingroup Core
@@ -55,7 +55,7 @@ namespace cvf {
 ///    myFunction (wrapArrayConst(myNodeArray), wrapArrayConst(myIndexArray), ...); 
 /// when calling a template function using ArrayWrapperConst's as input.
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 template < typename ArrayType, typename ElmType >
 class ArrayWrapperConst
@@ -71,9 +71,9 @@ private:
     size_t m_size;
 };
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Const bare-pointer array wrapper specialization
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template < typename ElmType >
 class ArrayWrapperConst <const ElmType*, ElmType>
 {
@@ -94,9 +94,9 @@ private:
 #include "cvfArray.h"
 #include <vector>
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// const cvf::Array specialization
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename ElmType>
 inline const ArrayWrapperConst< const cvf::Array<ElmType>, ElmType > wrapArrayConst(const cvf::Array<ElmType>* array )
 {
@@ -112,9 +112,9 @@ inline const ArrayWrapperConst< const cvf::Array<ElmType>, ElmType > wrapArrayCo
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// const std::vector specialization
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 template <typename ElmType>
 inline const ArrayWrapperConst<  const std::vector<ElmType>, ElmType > wrapArrayConst( const std::vector<ElmType>* array )
@@ -131,9 +131,9 @@ inline const ArrayWrapperConst<  const std::vector<ElmType>, ElmType > wrapArray
     return warr;
 }
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// const Bare-pointer specialization
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 template <typename ElmType>
 inline const ArrayWrapperConst< const  ElmType*, ElmType > wrapArrayConst( const ElmType* array, size_t size )

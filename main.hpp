@@ -247,11 +247,11 @@ po::variables_map createVariablesMap(int argc, const char **argv)
   // If called with --help or -h flag:
   if (vm.count("help") || !success_arg)
   { // Print help if --help present or input file/output dir not present
-    cout << "Usage: ./wicalc --grid gridpath --heel x1 y1 z1 "
+    cout << "Usage: ./wicalc_ri --grid gridpath --heel x1 y1 z1 "
         "--toe x2 y2 z2 --radius r --skin-factor s [options]" << endl;
     cout << "options can be --compdat --well-name Name" << endl;
     cout << "Or" << endl;
-    cout << "Usage: ./wicalc --grid gridpath --well-filedef filepath" << endl;
+    cout << "Usage: ./wicalc_ri --grid gridpath --well-filedef filepath" << endl;
     cout << desc << endl;
     exit(EXIT_SUCCESS);
   }

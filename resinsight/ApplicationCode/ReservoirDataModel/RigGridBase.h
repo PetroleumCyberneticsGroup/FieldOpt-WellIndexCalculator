@@ -20,20 +20,11 @@
 
 #pragma once
 
-//#include "cvfBase.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfBase.h"
-
-//#include "cvfVector3.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfVector3.h"
-
-//#include "cvfBoundingBox.h"
-#include "resinsight/Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
-
-//#include "cvfStructGrid.h"
-#include "resinsight/Fwk/AppFwk/CommonCode/cvfStructGrid.h"
-
-//#include "cvfStructGridGeometryGenerator.h"
-#include "resinsight/Fwk/AppFwk/CommonCode/cvfStructGridGeometryGenerator.h"
+#include "../../Fwk/VizFwk/LibCore/cvfBase.h"
+#include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
+#include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
+#include "../../Fwk/AppFwk/CommonCode/cvfStructGrid.h"
+#include "../../Fwk/AppFwk/CommonCode/cvfStructGridGeometryGenerator.h"
 
 
 //#include "cafFixedArray.h"

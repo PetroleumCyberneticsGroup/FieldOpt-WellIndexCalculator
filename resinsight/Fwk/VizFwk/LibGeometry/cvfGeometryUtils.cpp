@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,13 +32,13 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
-#include "cvfBase.h"
+#include "../LibCore/cvfBase.h"
+#include "../LibCore/cvfMatrix4.h"
 #include "cvfGeometryBuilder.h"
 #include "cvfGeometryUtils.h"
-#include "cvfMatrix4.h"
 
 #include <map>
 
@@ -46,16 +46,16 @@ namespace cvf {
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::GeometryUtils
 /// \ingroup Geometry
 ///
 /// Static helper class for creating geometries from primitive shapes.
 ///
-//==================================================================================================
+//====================================================================
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a 2D patch
 /// 
 /// \param origin       The start point of the patch
@@ -80,7 +80,7 @@ namespace cvf {
 /// 
 /// The following quad connectivities will be produced:\n
 /// <TT> &nbsp; &nbsp; (v4,v0,v1,v5)  (v5,v1,v2,v6)  (v6,v2,v3,v5) ... (v10,v6,v7,v11)</TT>
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createPatch(const Vec3f& origin, const Vec3f& uUnit, const Vec3f& vUnit, uint uCellCount, uint vCellCount, GeometryBuilder* builder)
 {
     CVF_ASSERT(uCellCount > 0);
@@ -121,7 +121,7 @@ void GeometryUtils::createPatch(const Vec3f& origin, const Vec3f& uUnit, const V
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a 3D solid box spanning diagonally from min to max
 /// 
 /// \param min      The coordinate that represent one corner of the box.
@@ -129,7 +129,7 @@ void GeometryUtils::createPatch(const Vec3f& origin, const Vec3f& uUnit, const V
 /// \param builder  Geometry builder to use when creating geometry
 ///
 /// This method creates a box with no shared vertices resulting in sharp corners during shading.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createBox(const Vec3f& min, const Vec3f& max, GeometryBuilder* builder)
 {
     // The ordering of the faces is consistent with GLviewAPI's hexahedron element.
@@ -163,7 +163,7 @@ void GeometryUtils::createBox(const Vec3f& min, const Vec3f& max, GeometryBuilde
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a 3D solid box at the specified position and with the given total extents
 /// 
 /// \param centerPos  Position of center of box
@@ -171,7 +171,7 @@ void GeometryUtils::createBox(const Vec3f& min, const Vec3f& max, GeometryBuilde
 /// \param extentY    Total extent of box along y-axis
 /// \param extentZ    Total extent of box along z-axis
 /// \param builder    Geometry builder to use when creating geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createBox(const Vec3f& centerPos, float extentX, float extentY, float extentZ, GeometryBuilder* builder)
 {
     Vec3f halfExtent(extentX/2, extentY/2, extentZ/2);
@@ -182,7 +182,7 @@ void GeometryUtils::createBox(const Vec3f& centerPos, float extentX, float exten
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a disc centered at origin with its normal along positive z-axis
 /// 
 /// \param radius     Outer radius of the disc
@@ -210,7 +210,7 @@ void GeometryUtils::createBox(const Vec3f& centerPos, float extentX, float exten
 /// 
 /// The following triangle connectivities will be produced:\n
 /// <TT> &nbsp; &nbsp; (0,1,2)  (0,2,3)  (0,3,4) ... (0,8,1)</TT>
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createDisc(double radius, uint numSlices, GeometryBuilder* builder)
 {
     CVF_ASSERT(numSlices >= 4); 
@@ -263,9 +263,9 @@ void GeometryUtils::createDisc(double radius, uint numSlices, GeometryBuilder* b
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a disk with a hole in the middle
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createDisc(double outerRadius, double innerRadius, uint numSlices, GeometryBuilder* builder)
 {
     CVF_ASSERT(numSlices >= 4); 
@@ -392,14 +392,14 @@ void GeometryUtils::createDisc(double outerRadius, double innerRadius, uint numS
 // }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a sphere with center in origin
 ///
 /// \param     radius     Radius of sphere
 /// \param     numSlices  The number of subdivisions around the z-axis (similar to lines of longitude).  
 /// \param     numStacks  The number of subdivisions along the z-axis (similar to lines of latitude). 
 /// \param     builder    Geometry builder to use when creating geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createSphere(double radius, uint numSlices, uint numStacks, GeometryBuilder* builder)
 {
     // Code is strongly inspired by mesa.
@@ -507,7 +507,7 @@ void GeometryUtils::createSphere(double radius, uint numSlices, uint numStacks, 
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a (possibly oblique) cylinder oriented along the z-axis
 ///
 /// \param	bottomRadius    Bottom radius of cylinder
@@ -526,7 +526,7 @@ void GeometryUtils::createSphere(double radius, uint numSlices, uint numStacks, 
 ///	The base of the cylinder is placed at z = 0, and the top at z = height. 
 ///	Cylinder is subdivided around the z-axis into slices.
 ///	Use the cone functions instead of setting one of the radius params to 0
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createObliqueCylinder(float bottomRadius, float topRadius, float height, float topOffsetX, float topOffsetY, uint numSlices, bool normalsOutwards, bool closedBot, bool closedTop, uint numPolysZDir, GeometryBuilder* builder)
 {
     // Create cylinder...
@@ -633,7 +633,7 @@ void GeometryUtils::createObliqueCylinder(float bottomRadius, float topRadius, f
     }
 }
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create a cone oriented along the z-axis
 ///
 /// \param	bottomRadius    Bottom radius of cone
@@ -645,7 +645,7 @@ void GeometryUtils::createObliqueCylinder(float bottomRadius, float topRadius, f
 ///                         should have its own top node.
 /// \param  builder         Geometry builder to use when creating geometry
 ///
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::createCone(float bottomRadius, float height, uint numSlices, bool normalsOutwards, bool closedBot, bool singleTopNode, GeometryBuilder* builder)
 {
     Vec3fArray verts;
@@ -728,9 +728,9 @@ void GeometryUtils::createCone(float bottomRadius, float height, uint numSlices,
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::tesselatePatchAsQuads(uint pointCountU, uint pointCountV, uint indexOffset, bool windingCCW, UIntArray* indices)
 {
     CVF_ASSERT(pointCountU >= 2);
@@ -766,9 +766,9 @@ void GeometryUtils::tesselatePatchAsQuads(uint pointCountU, uint pointCountV, ui
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::tesselatePatchAsTriangles(uint pointCountU, uint pointCountV, uint indexOffset, bool windingCCW, UIntArray* indices)
 {
     CVF_ASSERT(pointCountU >= 2);
@@ -810,9 +810,9 @@ void GeometryUtils::tesselatePatchAsTriangles(uint pointCountU, uint pointCountV
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Check if the specified quad is convex
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool GeometryUtils::isConvexQuad(const Vec3f& a, const Vec3f& b, const Vec3f& c, const Vec3f& d)
 {
     // From "Real Time Collision Detection", p60
@@ -838,9 +838,9 @@ bool GeometryUtils::isConvexQuad(const Vec3f& a, const Vec3f& b, const Vec3f& c,
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Compute surface normal for a quad
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 Vec3f GeometryUtils::quadNormal(const Vec3f& a, const Vec3f& b, const Vec3f& c, const Vec3f& d)
 {
     // From "Real Time Collision Detection", p. 495
@@ -851,9 +851,9 @@ Vec3f GeometryUtils::quadNormal(const Vec3f& a, const Vec3f& b, const Vec3f& c, 
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Compute polygon normal using Newell's method
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 Vec3f GeometryUtils::polygonNormal(const Vec3fValueArray& vertices, const uint* indices, uint indexCount)
 {
     // From "Real Time Collision Detection", p. 495
@@ -875,14 +875,14 @@ Vec3f GeometryUtils::polygonNormal(const Vec3fValueArray& vertices, const uint* 
     return normal;
 }
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Compact an array of vertex indices by removing 'unused' indices
 /// 
 /// \param[in]  vertexIndices     The original vertex indices
 /// \param[out] newVertexIndices  New compacted vertex indices  
 /// \param[out] newToOldMapping   For each 'new' vertex, will contain its original index
 /// \param[in]  maxVertexCount    The maximum resulting vertex count after removing unused vertices
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void GeometryUtils::removeUnusedVertices(const UIntValueArray& vertexIndices, UIntArray* newVertexIndices, UIntArray* newToOldMapping, uint maxVertexCount)
 {
     if (vertexIndices.size() == 0 || maxVertexCount == 0)

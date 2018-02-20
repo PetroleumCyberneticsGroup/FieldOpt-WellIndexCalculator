@@ -47,7 +47,8 @@ class WellDefinition {
   vector<double> skins;
 
  public:
-  static void ReadWellsFromFile(string file_path, vector<WellDefinition>& wells);
+  static void ReadWellsFromFile(string file_path,
+                                vector<WellDefinition>& wells);
 };
 
 /*!

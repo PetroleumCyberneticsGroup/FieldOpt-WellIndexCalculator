@@ -1,4 +1,4 @@
-//##################################################################################################
+//##################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,95 +32,88 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//##################################################################
 
 
-#include "cvfBase.h"
+#include "../LibCore/cvfBase.h"
 #include "cvfEdgeKey.h"
 
 namespace cvf {
 
-
-
-//==================================================================================================
-///
+//==================================================================
 /// \class cvf::EdgeKey
 /// \ingroup Geometry
-///
-/// 
-///
-//==================================================================================================
-EdgeKey::EdgeKey(uint vertexIdx1, uint vertexIdx2)
-{
-    if (vertexIdx1 <= vertexIdx2)
-    {
-        m_vertexIdx1 = vertexIdx1;
-        m_vertexIdx2 = vertexIdx2;
-    }
-    else
-    {
-        m_vertexIdx1 = vertexIdx2;
-        m_vertexIdx2 = vertexIdx1;
-    }
+//==================================================================
+EdgeKey::EdgeKey(uint vertexIdx1, uint vertexIdx2) {
+  if (vertexIdx1 <= vertexIdx2)
+  {
+    m_vertexIdx1 = vertexIdx1;
+    m_vertexIdx2 = vertexIdx2;
+  }
+  else
+  {
+    m_vertexIdx1 = vertexIdx2;
+    m_vertexIdx2 = vertexIdx1;
+  }
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool EdgeKey::operator==(const EdgeKey& rhs) const
 {
-    if (m_vertexIdx1 == rhs.m_vertexIdx1 && m_vertexIdx2 == rhs.m_vertexIdx2)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+  if (m_vertexIdx1 == rhs.m_vertexIdx1 && m_vertexIdx2 == rhs.m_vertexIdx2)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool EdgeKey::operator<(const EdgeKey& rhs) const
 {
-    if (m_vertexIdx1 == rhs.m_vertexIdx1)
-    {
-        return (m_vertexIdx2 < rhs.m_vertexIdx2);
-    }
-    else
-    {
-        return (m_vertexIdx1 < rhs.m_vertexIdx1);
-    }
+  if (m_vertexIdx1 == rhs.m_vertexIdx1)
+  {
+    return (m_vertexIdx2 < rhs.m_vertexIdx2);
+  }
+  else
+  {
+    return (m_vertexIdx1 < rhs.m_vertexIdx1);
+  }
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 int64 EdgeKey::toKeyVal() const
 {
-    int64 edgeKey = m_vertexIdx1;
-    edgeKey <<= 32;
-    edgeKey += m_vertexIdx2;
+  int64 edgeKey = m_vertexIdx1;
+  edgeKey <<= 32;
+  edgeKey += m_vertexIdx2;
 
-    return edgeKey;
+  return edgeKey;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 EdgeKey EdgeKey::fromkeyVal(int64 edgeKeyVal)
 {
-    uint vertexIdx2 = static_cast<uint>(edgeKeyVal);
+  uint vertexIdx2 = static_cast<uint>(edgeKeyVal);
 
-    edgeKeyVal >>= 32;
-    uint vertexIdx1 = static_cast<uint>(edgeKeyVal);
+  edgeKeyVal >>= 32;
+  uint vertexIdx1 = static_cast<uint>(edgeKeyVal);
 
-    return EdgeKey(vertexIdx1, vertexIdx2);
+  return EdgeKey(vertexIdx1, vertexIdx2);
 }
 
 

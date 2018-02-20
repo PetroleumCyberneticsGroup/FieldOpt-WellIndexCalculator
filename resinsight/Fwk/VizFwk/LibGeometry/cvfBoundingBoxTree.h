@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) Ceetron Solutions AS
@@ -32,23 +32,23 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 #pragma once
 
-#include "cvfBase.h"
-#include "cvfObject.h"
+#include "../LibCore/cvfBase.h"
+#include "../LibCore/cvfObject.h"
 #include "cvfBoundingBox.h"
 
 namespace cvf {
 
 class BoundingBoxTreeImpl;
 
-//==================================================================================================
+//====================================================================
 //
 // An axis-aligned bounding-box search tree class 
 //
-//==================================================================================================
+//====================================================================
 class BoundingBoxTree : public cvf::Object
 {
 public:

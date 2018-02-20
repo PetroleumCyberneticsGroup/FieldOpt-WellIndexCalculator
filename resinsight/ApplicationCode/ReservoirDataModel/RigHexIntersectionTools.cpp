@@ -27,9 +27,9 @@
 
 #include "resinsight/Fwk/AppFwk/cafVizExtensions/cafHexGridIntersectionTools/cafHexGridIntersectionTools.h"
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 int RigHexIntersectionTools::lineHexCellIntersection(
     const cvf::Vec3d p1,
     const cvf::Vec3d p2,
@@ -88,9 +88,9 @@ int RigHexIntersectionTools::lineHexCellIntersection(
   return intersectionCount;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool
 RigHexIntersectionTools::isPointInCell(const cvf::Vec3d point,
                                        const cvf::Vec3d hexCorners[8])
@@ -126,9 +126,9 @@ RigHexIntersectionTools::isPointInCell(const cvf::Vec3d point,
   return intersections % 2 == 1;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool RigHexIntersectionTools::planeHexCellIntersection(
     cvf::Vec3d* hexCorners,
     cvf::Plane fracturePlane,
@@ -177,9 +177,9 @@ bool RigHexIntersectionTools::planeHexCellIntersection(
   }    return isCellIntersected;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool RigHexIntersectionTools::planeHexIntersectionPolygons(std::array<cvf::Vec3d, 8> hexCorners,
                                                            cvf::Mat4d transformMatrixForPlane,
                                                            std::vector<std::vector<cvf::Vec3d> >& polygons)
@@ -200,9 +200,9 @@ bool RigHexIntersectionTools::planeHexIntersectionPolygons(std::array<cvf::Vec3d
   return isCellIntersected;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool operator<(const HexIntersectionInfo& hi1, const HexIntersectionInfo& hi2)
 {
   const double tolerance = 1e-6;

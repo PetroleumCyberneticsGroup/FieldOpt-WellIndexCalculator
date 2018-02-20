@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,18 +32,18 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #pragma once
 
-//#include "cvfSystem.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfSystem.h"
+#include "cvfSystem.h"
+//#include "resinsight/Fwk/VizFwk/LibCore/cvfSystem.h"
 
 #include <set>
 
-//#include "cvfAtomicCounter.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfAtomicCounter.h"
+#include "cvfAtomicCounter.h"
+//#include "resinsight/Fwk/VizFwk/LibCore/cvfAtomicCounter.h"
 
 #if !defined(CVF_ATOMIC_COUNTER_CLASS_EXISTS) && !defined(CVF_USE_NON_THREADSAFE_REFERENCE_COUNT)
 #error No support for atomics. Define CVF_USE_NON_THREADSAFE_REFERENCE_COUNT to be able to compile
@@ -52,11 +52,11 @@
 namespace cvf {
 
 
-//==================================================================================================
+//====================================================================
 //
 // Base class for all reference counted objects
 //
-//==================================================================================================
+//====================================================================
 class Object
 {
 public:
@@ -87,11 +87,11 @@ private:
 
 
 
-//==================================================================================================
+//====================================================================
 //
 // Smart pointer class
 //
-//==================================================================================================
+//====================================================================
 template <typename T>
 class ref
 {
@@ -140,11 +140,11 @@ template<typename T> inline void swap(ref<T>& a, ref<T>& b)   { a.swap(b); }
 
 
 
-//==================================================================================================
+//====================================================================
 //
 // Smart pointer class for const pointers
 //
-//==================================================================================================
+//====================================================================
 template <typename T>
 class cref
 {

@@ -1,4 +1,4 @@
-//##################################################################################################
+//##################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,21 +32,17 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//##################################################################
 
 
 #pragma once
 
 #include <cstddef>
-//#include "cvfObject.h"
-//#include "cvfVector3.h"
-
-#include "resinsight/Fwk/VizFwk/LibCore/cvfObject.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfVector3.h"
+#include "../../VizFwk/LibCore/cvfObject.h"
+#include "../../VizFwk/LibCore/cvfVector3.h"
 
 //#include "cafAppEnum.h"
-#include "resinsight/Fwk/AppFwk/cafProjectDataModel/cafPdmCore/cafAppEnum.h"
-
+#include "../../AppFwk/cafProjectDataModel/cafPdmCore/cafAppEnum.h"
 
 namespace cvf {
 
@@ -55,67 +51,65 @@ class CellFilterBase;
 // Navneforslag
 //    StructGridGeometryGeneratorInterface
 
-// Main purpose of this class is to define the interface to be used by geometry generators
-class StructGridInterface : public Object
-{
-public:
-    enum FaceType
-    {
-        POS_I,
-        NEG_I,
-        POS_J,
-        NEG_J,
-        POS_K,
-        NEG_K,
-        NO_FACE
-    };
+
+// Main purpose of this class is to define the interface
+// to be used by geometry generators
+class StructGridInterface : public cvf::Object {
+ public:
+
+  enum FaceType {
+    POS_I, NEG_I,
+    POS_J, NEG_J,
+    POS_K, NEG_K,
+    NO_FACE
+  };
 
     typedef caf::AppEnum<StructGridInterface::FaceType> FaceEnum;
 
+ public:
+  StructGridInterface();
 
-public:
-    StructGridInterface();
+  virtual size_t gridPointCountI() const = 0;
+  virtual size_t gridPointCountJ() const = 0;
+  virtual size_t gridPointCountK() const = 0;
 
-    virtual size_t   gridPointCountI() const = 0;
-    virtual size_t   gridPointCountJ() const = 0;
-    virtual size_t   gridPointCountK() const = 0;
+  size_t cellCountI() const;
+  size_t cellCountJ() const;
+  size_t cellCountK() const;
 
-    size_t           cellCountI() const;
-    size_t           cellCountJ() const;
-    size_t           cellCountK() const;
+  virtual bool        isCellValid(size_t i, size_t j, size_t k) const = 0;
 
-    virtual bool        isCellValid(size_t i, size_t j, size_t k) const = 0;
+  virtual cvf::Vec3d  minCoordinate() const = 0;
+  virtual cvf::Vec3d  maxCoordinate() const = 0;
+  void                characteristicCellSizes(double* iSize, double* jSize, double* kSize) const;
 
-    virtual cvf::Vec3d  minCoordinate() const = 0;
-    virtual cvf::Vec3d  maxCoordinate() const = 0;
-    void                characteristicCellSizes(double* iSize, double* jSize, double* kSize) const;
+  virtual cvf::Vec3d  displayModelOffset() const;
 
-    virtual cvf::Vec3d  displayModelOffset() const;
+  virtual bool        cellIJKNeighbor(size_t i, size_t j, size_t k, FaceType face, size_t* neighborCellIndex) const = 0;
 
-    virtual bool        cellIJKNeighbor(size_t i, size_t j, size_t k, FaceType face, size_t* neighborCellIndex) const = 0;
+  virtual size_t      cellIndexFromIJK(size_t i, size_t j, size_t k) const = 0;
+  virtual bool        ijkFromCellIndex(size_t cellIndex, size_t* i, size_t* j, size_t* k) const = 0;
 
-    virtual size_t      cellIndexFromIJK(size_t i, size_t j, size_t k) const = 0;
-    virtual bool        ijkFromCellIndex(size_t cellIndex, size_t* i, size_t* j, size_t* k) const = 0;
+  virtual bool        cellIJKFromCoordinate(const cvf::Vec3d& coord, size_t* i, size_t* j, size_t* k) const = 0;
 
-    virtual bool        cellIJKFromCoordinate(const cvf::Vec3d& coord, size_t* i, size_t* j, size_t* k) const = 0;
+  virtual void        cellCornerVertices(size_t cellIndex, cvf::Vec3d vertices[8]) const = 0;
+  virtual cvf::Vec3d  cellCentroid(size_t cellIndex) const = 0;
+  virtual void        cellMinMaxCordinates(size_t cellIndex, cvf::Vec3d* minCoordinate, cvf::Vec3d* maxCoordinate) const = 0;
 
-    virtual void        cellCornerVertices(size_t cellIndex, cvf::Vec3d vertices[8]) const = 0;
-    virtual cvf::Vec3d  cellCentroid(size_t cellIndex) const = 0;
-    virtual void        cellMinMaxCordinates(size_t cellIndex, cvf::Vec3d* minCoordinate, cvf::Vec3d* maxCoordinate) const = 0;
-
-    virtual size_t      gridPointIndexFromIJK(size_t i, size_t j, size_t k) const = 0;
-    virtual cvf::Vec3d  gridPointCoordinate(size_t i, size_t j, size_t k) const = 0;
+  virtual size_t      gridPointIndexFromIJK(size_t i, size_t j, size_t k) const = 0;
+  virtual cvf::Vec3d  gridPointCoordinate(size_t i, size_t j, size_t k) const = 0;
 
 
-public:
-    static void cellFaceVertexIndices(FaceType face, cvf::ubyte vertexIndices[4]);
-    static FaceType oppositeFace(FaceType face);
-    static void neighborIJKAtCellFace(size_t i, size_t j, size_t k, StructGridInterface::FaceType face, size_t* ni, size_t* nj, size_t* nk);
+ public:
+  static void cellFaceVertexIndices(FaceType face, cvf::ubyte vertexIndices[4]);
+  static FaceType oppositeFace(FaceType face);
+  static void neighborIJKAtCellFace(size_t i, size_t j, size_t k, StructGridInterface::FaceType face, size_t* ni, size_t* nj, size_t* nk);
 
-private:
-    mutable double m_characteristicCellSizeI;
-    mutable double m_characteristicCellSizeJ;
-    mutable double m_characteristicCellSizeK;
+ private:
+  mutable double m_characteristicCellSizeI;
+  mutable double m_characteristicCellSizeJ;
+  mutable double m_characteristicCellSizeK;
+
 };
 
 } // namespace cvf

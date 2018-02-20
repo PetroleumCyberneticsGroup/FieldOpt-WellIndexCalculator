@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,13 +32,13 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 namespace cvf {
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::Array
 /// \ingroup Core
@@ -49,37 +49,31 @@ namespace cvf {
 /// Will only work on simple types and classes that do not rely on a constructor or 
 /// destructor (as they are not called).
 /// 
-//==================================================================================================
+//====================================================================
 
-
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create an empty array
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-Array<T>::Array()
-{
+Array<T>::Array() {
     ground();
 }
 
-
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create an array with the given number of elements
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-Array<T>::Array(size_t size)
-{
+Array<T>::Array(size_t size) {
     CVF_ASSERT(size > 0);
     ground();
     resize(size);
 }
 
-
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create the array and assign (copy) the given data
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-Array<T>::Array(const T* data, size_t size)
-{
+Array<T>::Array(const T* data, size_t size) {
     CVF_ASSERT(data);
     CVF_ASSERT(size > 0);
 
@@ -87,65 +81,56 @@ Array<T>::Array(const T* data, size_t size)
     assign(data, size);
 }
 
-
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create the array and assign (copy) the given data
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 Array<T>::Array(const Array& other)
-: Object(), ValueArray<T>()
-{
+: Object(), ValueArray<T>(){
     ground();
 
-    if (other.size() > 0)
-    {
+    if (other.size() > 0){
         assign(other.m_data, other.size());
     }
 }
 
-
-//--------------------------------------------------------------------------------------------------
-/// Explicit constructor to create the array and assign (copy) the passed value array
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
+/// Explicit constructor to create the array and assign (copy) the 
+/// passed value array
+//--------------------------------------------------------------------
 template <typename T>
-Array<T>::Array(const ValueArray<T>& other)
-{
+Array<T>::Array(const ValueArray<T>& other) {
     ground();
 
-    if (other.size() > 0)
-    {
+    if (other.size() > 0){
         resize(other.size());
 
         size_t i;
-        for (i = 0; i < other.size(); i++)
-        {
+        for (i = 0; i < other.size(); i++){
             set(i, other.val(i));
         }
     }
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Explicit constructor to create the array and assign (copy) the passed std::vector
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-Array<T>::Array(const std::vector<T>& other)
-{
+Array<T>::Array(const std::vector<T>& other) {
     ground();
 
-    if (other.size() > 0)
-    {
+    if (other.size() > 0){
         assign(other);
     }
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Init all members
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-void Array<T>::ground()
-{
+void Array<T>::ground() {
     m_size = 0;
     m_data = NULL;
     m_capacity = 0;   
@@ -153,22 +138,20 @@ void Array<T>::ground()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Destructor. Deletes the data.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-Array<T>::~Array()
-{
+Array<T>::~Array() {
     clear();
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns a const reference to the element at the given index.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-inline const T& Array<T>::operator[] (size_t index) const
-{
+inline const T& Array<T>::operator[] (size_t index) const {
     CVF_TIGHT_ASSERT(this && m_data);
     CVF_TIGHT_ASSERT(index < m_size);
 
@@ -176,12 +159,11 @@ inline const T& Array<T>::operator[] (size_t index) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns a modifiable reference to the element at the given index.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-inline T& Array<T>::operator[] (size_t index)
-{
+inline T& Array<T>::operator[] (size_t index) {
     CVF_TIGHT_ASSERT(this && m_data);
     CVF_TIGHT_ASSERT(index < m_size);
 
@@ -189,12 +171,11 @@ inline T& Array<T>::operator[] (size_t index)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Assign (copy) the data in the given array
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
-Array<T>& Array<T>::operator=(Array rhs)
-{
+Array<T>& Array<T>::operator=(Array rhs) {
     CVF_TIGHT_ASSERT(!m_sharedData);
 
     rhs.swap(*this);
@@ -203,11 +184,11 @@ Array<T>& Array<T>::operator=(Array rhs)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Resize the array to the given size.
 /// The current contents (data) will be kept (as much as possible). Any new elements will be unassigned.
 /// Calling resize(0) is the same as clear().
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::resize(size_t size)
 {
@@ -241,10 +222,10 @@ void Array<T>::resize(size_t size)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Clear the array, freeing all memory (if not shared) and setting capacity and size to zero.
 /// If the array was in shared mode, it will not be in shared mode anymore.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::clear()
 {
@@ -257,9 +238,9 @@ void Array<T>::clear()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the number of elements in the array
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline size_t Array<T>::size() const
 {
@@ -267,9 +248,9 @@ inline size_t Array<T>::size() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the element at the given index. Index must be < size()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline void Array<T>::set(size_t index, const T& val)
 {
@@ -279,9 +260,9 @@ inline void Array<T>::set(size_t index, const T& val)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set all elements in the array to the given value
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline void Array<T>::setAll(const T& val)
 {
@@ -293,11 +274,11 @@ inline void Array<T>::setAll(const T& val)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Assign consecutive values to the elements in the array
 /// 
 /// Example: setConsecutive(2) on an array with size=3 gives: {2,3,4}
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::setConsecutive(const T& startValue)
 {
@@ -310,9 +291,9 @@ void Array<T>::setConsecutive(const T& startValue)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns a const reference to the element at the given index
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 const T& cvf::Array<T>::get(size_t index) const
 {
@@ -321,9 +302,9 @@ const T& cvf::Array<T>::get(size_t index) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 T cvf::Array<T>::val(size_t index) const
 {
@@ -332,9 +313,9 @@ T cvf::Array<T>::val(size_t index) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns a const native pointer to the array storing the data
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline const T* Array<T>::ptr() const
 {
@@ -343,9 +324,9 @@ inline const T* Array<T>::ptr() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the native pointer to the array storing the data
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline T* Array<T>::ptr()
 {
@@ -355,9 +336,9 @@ inline T* Array<T>::ptr()
 
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns a const native pointer to the array storing the data
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline const T* Array<T>::ptr(size_t index) const
 {
@@ -368,9 +349,9 @@ inline const T* Array<T>::ptr(size_t index) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the native pointer to the array storing the data
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline T* Array<T>::ptr(size_t index)
 {
@@ -381,12 +362,12 @@ inline T* Array<T>::ptr(size_t index)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Data shared with another class. Will not delete on destruction. 
 ///
 /// Any method that reallocates data (resize, assign & setPtr) is not allowed and will assert
 /// The only way to break the shared 'connection' is via clear()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::setSharedPtr(T* data, size_t size)
 {
@@ -400,11 +381,11 @@ void Array<T>::setSharedPtr(T* data, size_t size)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the data in the array to use the passed array. 
 /// 
 /// This class takes ownership of the passed data.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::setPtr(T* data, size_t size)
 {
@@ -421,9 +402,9 @@ void Array<T>::setPtr(T* data, size_t size)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Delete any current data and set from the given data pointer
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::assign(const T* data, size_t size)
 {
@@ -439,9 +420,9 @@ void Array<T>::assign(const T* data, size_t size)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Delete any current data and set from the given data
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::assign(const std::vector<T>& data)
 {
@@ -459,11 +440,11 @@ void Array<T>::assign(const std::vector<T>& data)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Copy data into the array
 /// 
 /// \warning Must have enough room for the new data, meaning the array must be resize()'ed before use
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::copyData(const T* pSource, size_t numElementsToCopy, size_t destIndex)
 {
@@ -476,11 +457,11 @@ void Array<T>::copyData(const T* pSource, size_t numElementsToCopy, size_t destI
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Copy data into the array
 /// 
 /// \warning Must have enough room for the new data, meaning the array must be resize()'ed before use
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::copyData(const Array<T>& source, size_t numElementsToCopy, size_t destIndex, size_t sourceIndex)
 {
@@ -492,10 +473,10 @@ void Array<T>::copyData(const Array<T>& source, size_t numElementsToCopy, size_t
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Copy data into this array with conversion. 
 /// Data in source array will be converted using static_cast
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 template <typename U>
 void Array<T>::copyConvertedData(const Array<U>& source, size_t numElementsToCopy, size_t destIndex, size_t sourceIndex)
@@ -514,7 +495,7 @@ void Array<T>::copyConvertedData(const Array<U>& source, size_t numElementsToCop
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns an array containing the specified elements
 /// 
 /// Example:
@@ -523,7 +504,7 @@ void Array<T>::copyConvertedData(const Array<U>& source, size_t numElementsToCop
 ///   elementIndices = {  0,     2,   1,   0,     2}
 ///   -> output      = {2.0, 100.0, 5.5, 2.0, 100.0}
 /// </PRE>
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 template <typename U>
 ref<Array<T> > Array<T>::extractElements(const Array<U>& elementIndices) const
@@ -547,9 +528,9 @@ ref<Array<T> > Array<T>::extractElements(const Array<U>& elementIndices) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Copy the contents of the array to the given std::vector
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::toStdVector(std::vector<T>* vec) const
 {
@@ -566,7 +547,7 @@ void Array<T>::toStdVector(std::vector<T>* vec) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the current capacity of the array (the size of the buffer). This will return a number >= size(), 
 /// depending on if reserve() has been used or not.
 /// If capacity() > size(), then add() is allowed on the array.
@@ -576,7 +557,7 @@ void Array<T>::toStdVector(std::vector<T>* vec) const
 ///  - add()
 ///  - squeeze()
 ///  - setSizeZero()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 size_t Array<T>::capacity() const
 {
@@ -584,7 +565,7 @@ size_t Array<T>::capacity() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Reserve (allocate) at least the given number of items.
 /// If capacity is less than the current buffer, nothing is done.
 /// size() of the array is not changed.
@@ -594,7 +575,7 @@ size_t Array<T>::capacity() const
 ///  - add()
 ///  - squeeze()
 ///  - setSizeZero()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::reserve(size_t capacity)
 {
@@ -631,7 +612,7 @@ void Array<T>::reserve(size_t capacity)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Realloc the array to the current size(). Removing any reserved memory created by reserve().
 ///
 /// \sa
@@ -639,7 +620,7 @@ void Array<T>::reserve(size_t capacity)
 ///  - capacity()
 ///  - add()
 ///  - setSizeZero()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::squeeze()
 {
@@ -667,7 +648,7 @@ void Array<T>::squeeze()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the size (number of items) in the array to zero, but keep the buffer. Items in the buffer 
 /// are not modified.
 ///
@@ -676,7 +657,7 @@ void Array<T>::squeeze()
 ///  - capacity()
 ///  - add()
 ///  - squeeze()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::setSizeZero()
 {
@@ -686,7 +667,7 @@ void Array<T>::setSizeZero()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Add an item to the array. 
 ///
 /// Note that this will not grow the array, so the array needs to be pre-allocated with reserve() 
@@ -697,7 +678,7 @@ void Array<T>::setSizeZero()
 ///  - capacity()
 ///  - squeeze()
 ///  - setSizeZero()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 inline void Array<T>::add(const T& val)
 {
@@ -709,11 +690,11 @@ inline void Array<T>::add(const T& val)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the min value and optionally the index of the (first) min value
 /// Works only on arrays with types that implement comparison operators
 /// Empty arrays will return std::numeric_limits<T>::max() and not modify index
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 T Array<T>::min(size_t* index) const
 {
@@ -737,11 +718,11 @@ T Array<T>::min(size_t* index) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the min value and optionally the index of the (first) min value
 /// Works only on arrays with types that implement comparison operators
 /// Empty arrays will return std::numeric_limits<T>::max() and not modify index
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 T Array<T>::max(size_t* index) const
 {
@@ -765,14 +746,14 @@ T Array<T>::max(size_t* index) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Exchanges the contents of the two arrays.
 /// 
 /// \param other  Modifiable reference to the array that should have its contents swapped.
 /// 
 /// \warning Note that signature differs from normal practice. This is done to be 
 ///          consistent with the signature of std::swap()
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 template <typename T>
 void Array<T>::swap(Array& other)
 {

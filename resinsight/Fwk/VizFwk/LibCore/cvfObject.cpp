@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,7 +32,7 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #include "cvfBase.h"
@@ -43,9 +43,7 @@
 
 namespace cvf {
 
-
-
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::Object
 /// \ingroup Core
@@ -57,16 +55,16 @@ namespace cvf {
 ///
 /// The copy constructor and assignment operator is disabled by default so you will get compiler errors 
 /// instead of unexpected behavior if you pass objects (that derive from Object) by value or assign objects.
-//==================================================================================================
+//====================================================================
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the set of currently active/allocated object instances
 /// 
 /// Note that unless the define CVF_TRACK_ACTIVE_OBJECT_INSTANCES is set to 1, this function 
 /// will always return an empty set.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 std::set<Object*>* Object::activeObjectInstances()
-{ 
+{
     static std::set<Object*>*  sl_activeObjects = NULL;
     if (!sl_activeObjects)
     {
@@ -77,19 +75,19 @@ std::set<Object*>* Object::activeObjectInstances()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Dump list of active object instances using Trace class
 /// 
 /// Currently this function utilizes RTTI and typeid to get the class names. 
 /// Data on active instances will only be present if CVF_TRACK_ACTIVE_OBJECT_INSTANCES is defined
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void Object::dumpActiveObjectInstances()
 {
     Trace::show("Dumping active object instances:");
 
     std::set<Object*>* objInstances = Object::activeObjectInstances();
     size_t numInstances = objInstances->size();
-    
+
 #if ((CVF_TRACK_ACTIVE_OBJECT_INSTANCES >= 1 && defined(_DEBUG)) || CVF_TRACK_ACTIVE_OBJECT_INSTANCES == 2)
 
     // Use a map to count the number of occurences of each class

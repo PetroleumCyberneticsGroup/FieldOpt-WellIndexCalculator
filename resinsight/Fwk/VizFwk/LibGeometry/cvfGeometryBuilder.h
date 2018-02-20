@@ -1,4 +1,4 @@
-//##################################################################################################
+////////////////////////////////////////////////////////////////////
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,24 +32,19 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
-
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include "cvfObject.h"
-#include "cvfArray.h"
-#include "cvfMatrix4.h"
+#include "../LibCore/cvfObject.h"
+#include "../LibCore/cvfArray.h"
+#include "../LibCore/cvfMatrix4.h"
 
 namespace cvf {
 
-
-
-//==================================================================================================
-//
+//==================================================================
 // Abstract base class for building geometry using the Builder pattern
-//
-//==================================================================================================
+//==================================================================
 class GeometryBuilder : public Object
 {
 public:

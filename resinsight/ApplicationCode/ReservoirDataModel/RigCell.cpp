@@ -34,9 +34,9 @@ static size_t undefinedCornersArray[8] = {cvf::UNDEFINED_SIZE_T,
                                           cvf::UNDEFINED_SIZE_T,
                                           cvf::UNDEFINED_SIZE_T,
                                           cvf::UNDEFINED_SIZE_T };
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 RigCell::RigCell() : 
     m_parentCellIndex(cvf::UNDEFINED_SIZE_T),
     m_mainGridCellIndex(cvf::UNDEFINED_SIZE_T),
@@ -56,17 +56,17 @@ RigCell::RigCell() :
     m_cellFaceFaults[5] = false;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 RigCell::~RigCell()
 {
 
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 cvf::Vec3d RigCell::center() const
 {
     cvf::Vec3d avg(cvf::Vec3d::ZERO);
@@ -96,9 +96,9 @@ bool isNear(const cvf::Vec3d& p1, const cvf::Vec3d& p2, double tolerance)
     }
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool RigCell::isLongPyramidCell(double maxHeightFactor, double nodeNearTolerance ) const
 {
     cvf::ubyte faceVertexIndices[4];
@@ -219,9 +219,9 @@ bool RigCell::isLongPyramidCell(double maxHeightFactor, double nodeNearTolerance
     return false;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool RigCell::isCollapsedCell(double nodeNearTolerance) const
 {
     const std::vector<cvf::Vec3d>& nodes = m_hostGrid->mainGrid()->nodes();
@@ -261,9 +261,9 @@ bool RigCell::isCollapsedCell(double nodeNearTolerance) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 cvf::Vec3d RigCell::faceCenter(cvf::StructGridInterface::FaceType face) const
 {
     cvf::Vec3d avg(cvf::Vec3d::ZERO);
@@ -284,13 +284,13 @@ cvf::Vec3d RigCell::faceCenter(cvf::StructGridInterface::FaceType face) const
     return avg;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Returns an area vector for the cell face. The direction is the face normal, and the length is 
 /// equal to the face area (projected to the plane represented by the diagonal in case of warp)
 /// The components of this area vector are equal to the area of the face projection onto 
 /// the corresponding plane.
 /// See http://geomalgorithms.com/a01-_area.html
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 cvf::Vec3d RigCell::faceNormalWithAreaLenght(cvf::StructGridInterface::FaceType face) const
 {
     cvf::ubyte faceVertexIndices[4];
@@ -301,12 +301,12 @@ cvf::Vec3d RigCell::faceNormalWithAreaLenght(cvf::StructGridInterface::FaceType 
                ( nodeCoords[m_cornerIndices[faceVertexIndices[3]]] - nodeCoords[m_cornerIndices[faceVertexIndices[1]]]); 
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Find the intersection between the cell and the ray. The point closest to the ray origin is returned
 /// in \a intersectionPoint, while the return value is the total number of intersections with the 24 triangles
 /// the cell is interpreted as.
 /// If no intersection is found, the intersection point is untouched.
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 int RigCell::firstIntersectionPoint(const cvf::Ray& ray, cvf::Vec3d* intersectionPoint) const
 {
     CVF_ASSERT(intersectionPoint != NULL);
@@ -352,9 +352,9 @@ int RigCell::firstIntersectionPoint(const cvf::Ray& ray, cvf::Vec3d* intersectio
     return intersectionCount;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void RigCell::faceIndices(cvf::StructGridInterface::FaceType face, caf::SizeTArray4* indices) const
 {
     cvf::ubyte faceVertexIndices[4];

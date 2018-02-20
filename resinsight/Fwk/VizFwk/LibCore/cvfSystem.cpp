@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,7 +32,7 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #include "cvfBase.h"
@@ -48,29 +48,29 @@ namespace cvf {
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::System
 /// \ingroup Core
 ///
 /// Static wrapper class for system functions
 /// 
-//==================================================================================================
+//====================================================================
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Check if we're running 64bit 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool System::is64Bit()
 {
     return (sizeof(void*) == 8) ? true : false;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Check if we are running on a big endian system.
 /// 
 /// \return  Returns true if we're on big endian, false for little endian.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool System::isBigEndian()
 {
     int iInt = 1;
@@ -80,9 +80,9 @@ bool System::isBigEndian()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 ///  
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool System::memcpy(void* dst, size_t dstSizeInBytes, const void* src, size_t numBytesToCopy)
 {
 #if WIN32
@@ -121,9 +121,9 @@ bool System::memcpy(void* dst, size_t dstSizeInBytes, const void* src, size_t nu
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 ///  
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool System::strcpy(char* strDestination, size_t maxNumElementsInDestination, const char* strSource)
 {
 #ifdef WIN32
@@ -151,13 +151,13 @@ bool System::strcpy(char* strDestination, size_t maxNumElementsInDestination, co
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Append a string 
 /// 
 /// \param  strDestination               Null-terminated destination string buffer
 /// \param  maxNumElementsInDestination  Total size of the destination string buffer in characters
 /// \param  strSource                    Null-terminated source string buffer
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool System::strcat(char* strDestination, size_t maxNumElementsInDestination, const char* strSource)
 {
 #ifdef WIN32
@@ -197,7 +197,7 @@ bool System::strcat(char* strDestination, size_t maxNumElementsInDestination, co
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Wrapper for sprintf
 /// 
 /// \param buffer                  The buffer to write into
@@ -209,7 +209,7 @@ bool System::strcat(char* strDestination, size_t maxNumElementsInDestination, co
 /// 
 /// Not that at most maxNumElementsInBuffer - 1 characters are ever written into the buffer since
 /// a termination character is always written to the last position in the buffer.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 int System::sprintf(char* buffer, size_t maxNumElementsInBuffer, const char* format, ...)
 {
     if (!buffer || maxNumElementsInBuffer == 0 || !format)
@@ -246,7 +246,7 @@ int System::sprintf(char* buffer, size_t maxNumElementsInBuffer, const char* for
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Wrapper for sprintf
 /// 
 /// \param buffer                  The buffer to write into
@@ -258,7 +258,7 @@ int System::sprintf(char* buffer, size_t maxNumElementsInBuffer, const char* for
 /// 
 /// Not that at most maxNumElementsInBuffer - 1 characters are ever written into the buffer since
 /// a termination character is always written to the last position in the buffer.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 int System::swprintf(wchar_t* buffer, size_t maxNumElementsInBuffer, const wchar_t* format, ...)
 {
     if (!buffer || maxNumElementsInBuffer == 0 || !format)
@@ -283,9 +283,9 @@ int System::swprintf(wchar_t* buffer, size_t maxNumElementsInBuffer, const wchar
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 size_t System::strlen(const char* str)
 {
     if (str)
@@ -299,9 +299,9 @@ size_t System::strlen(const char* str)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 int System::strcmp(const char* str1, const char* str2)
 {
     if (str1 == NULL || str2 == NULL)

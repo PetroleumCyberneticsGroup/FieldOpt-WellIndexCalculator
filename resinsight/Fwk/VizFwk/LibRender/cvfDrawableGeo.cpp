@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,7 +32,7 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #include "cvfBase.h"
@@ -53,7 +53,7 @@ namespace cvf {
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::DrawableGeo
 /// \ingroup Render
@@ -65,11 +65,11 @@ namespace cvf {
 /// 
 /// The geometry can be rendered in immediate mode (glBegin..), with vertex arrays or using VBO.  
 ///
-//==================================================================================================
+//====================================================================
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 DrawableGeo::DrawableGeo()
 :   m_vertexBundle(new VertexBundle),
     m_renderMode(VERTEX_ARRAY)
@@ -77,18 +77,18 @@ DrawableGeo::DrawableGeo()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Deletes all OpenGL resources created by this drawable geo
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 DrawableGeo::~DrawableGeo()
 {
     releaseBufferObjectsGPU();
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 ref<DrawableGeo> DrawableGeo::shallowCopy() const
 {
     ref<DrawableGeo> newGeo = new DrawableGeo;
@@ -110,7 +110,7 @@ ref<DrawableGeo> DrawableGeo::shallowCopy() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Main shader based rendering path for the geometry 
 /// 
 /// Will render from either client vertex arrays or buffer objects (VBOs). 
@@ -118,7 +118,7 @@ ref<DrawableGeo> DrawableGeo::shallowCopy() const
 /// \note    In order to get rendering from buffer objects, the buffer objects must already be created
 ///          and uploaded through a previous call to createUploadBufferObjectsGPU().
 /// \warning Requires at least OpenGL 2.0
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::render(OpenGLContext* oglContext, ShaderProgram* shaderProgram, const MatrixState&)
 {
     // This is shader based path so...
@@ -147,14 +147,14 @@ void DrawableGeo::render(OpenGLContext* oglContext, ShaderProgram* shaderProgram
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Render the geometry using fixed function style of specifying the arrays. 
 ///
 /// The main difference between this render path and that of render() is that this path will
 /// specify all client arrays or buffer objects using 'old style' glVertexArray(), glNormalArray() etc
 /// 
 /// \warning Requires at least OpenGL 1.5 since it uses buffer objects.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::renderFixedFunction(OpenGLContext* oglContext, const MatrixState&)
 {
     CVF_ASSERT(BufferObjectManaged::supportedOpenGL(oglContext));
@@ -189,13 +189,13 @@ void DrawableGeo::renderFixedFunction(OpenGLContext* oglContext, const MatrixSta
     }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Create any needed buffer objects and upload data to the GPU
 ///
 /// Buffer objects are created only if renderMode is set to VBO.
 /// 
 /// \warning Requires at least OpenGL 1.5
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::createUploadBufferObjectsGPU(OpenGLContext* oglContext)
 {
     CVF_TIGHT_ASSERT(oglContext);
@@ -219,14 +219,14 @@ void DrawableGeo::createUploadBufferObjectsGPU(OpenGLContext* oglContext)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Releases all buffer objects (BOs) held by this drawable
 ///
 /// \warning The OpenGL context in which the resources were created or a context that is being
 ///          shared must be current in the calling thread.
 /// \warning In order to assure that the actual OpenGL resources get deleted, you must call 
 ///          OpenGLResourceManager::deleteOrphanedManagedBufferObjects() afterwards.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::releaseBufferObjectsGPU()
 {
     m_vertexBundle->releaseBufferObjectsGPU();
@@ -242,9 +242,9 @@ void DrawableGeo::releaseBufferObjectsGPU()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Do immediate mode rendering
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::renderImmediateMode(OpenGLContext* oglContext, const MatrixState&)
 {
 #ifdef CVF_OPENGL_ES
@@ -297,18 +297,18 @@ void DrawableGeo::renderImmediateMode(OpenGLContext* oglContext, const MatrixSta
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the number of vertices (nodes, points) in the drawable
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 size_t DrawableGeo::vertexCount() const
 {
     return m_vertexBundle->vertexCount();
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the number of triangles in the drawable. A quad is not 2 triangles.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 size_t DrawableGeo::triangleCount() const
 {
     size_t count = 0;
@@ -327,9 +327,9 @@ size_t DrawableGeo::triangleCount() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the total number of OpenGL primitives (sum of lines, points, quads, etc.) 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 size_t DrawableGeo::faceCount() const
 {
     size_t count = 0;
@@ -348,9 +348,9 @@ size_t DrawableGeo::faceCount() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the render mode (immediate, vertex array or VBO) to use when rendering the geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setRenderMode(RenderMode renderMode)
 {
     if (m_renderMode != renderMode)
@@ -361,18 +361,18 @@ void DrawableGeo::setRenderMode(RenderMode renderMode)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the current render mode used to draw the geometry.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 DrawableGeo::RenderMode DrawableGeo::renderMode() const
 {
     return m_renderMode;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the vertices (node coordinates) of this geometry. 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setVertexArray(Vec3fArray* vertexArray)
 {
     m_vertexBundle->setVertexArray(vertexArray);
@@ -380,84 +380,84 @@ void DrawableGeo::setVertexArray(Vec3fArray* vertexArray)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the per node normals of this geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setNormalArray(Vec3fArray* normalArray)
 {
     m_vertexBundle->setNormalArray(normalArray);
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the per node colors of this geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setColorArray(Color3ubArray* colorArray)
 {
     m_vertexBundle->setColorArray(colorArray);
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the vertices (node coordinates) of this geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 const Vec3fArray* DrawableGeo::vertexArray() const
 {
     return m_vertexBundle->vertexArray();
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns pointer to the normal array for this geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 const Vec3fArray* DrawableGeo::normalArray() const
 {
     return m_vertexBundle->normalArray();
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setTextureCoordArray(Vec2fArray* textureCoordArray)
 {
     m_vertexBundle->setTextureCoordArray(textureCoordArray);
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 const Vec2fArray* DrawableGeo::textureCoordArray() const
 {
     return m_vertexBundle->textureCoordArray();
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Replace or add a vertex attribute to this DrawableGeo's vertex attribute set
 /// 
 /// If a vertex attribute with the same name as the incoming attribute is already present, the 
 /// existing attribute will be replaced.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setVertexAttribute(VertexAttribute* vertexAttribute)
 {
     m_vertexBundle->setGenericAttribute(vertexAttribute);
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the number of primitive sets in this geometry
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 size_t DrawableGeo::primitiveSetCount() const
 {
     return m_primitiveSets.size();
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Add the given primitive set to the drawable. primitives cannot be NULL.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::addPrimitiveSet(PrimitiveSet* primitiveSet)
 {
     CVF_ASSERT(primitiveSet);
@@ -466,9 +466,9 @@ void DrawableGeo::addPrimitiveSet(PrimitiveSet* primitiveSet)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the primitive set at the given index
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 const PrimitiveSet* DrawableGeo::primitiveSet(size_t index) const
 {
     CVF_ASSERT(index < primitiveSetCount());
@@ -476,9 +476,9 @@ const PrimitiveSet* DrawableGeo::primitiveSet(size_t index) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the primitive set at the given index
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 PrimitiveSet* DrawableGeo::primitiveSet(size_t index) 
 {
     CVF_ASSERT(index < primitiveSetCount());
@@ -486,12 +486,12 @@ PrimitiveSet* DrawableGeo::primitiveSet(size_t index)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get connectivity table for the specified face
 /// 
 /// \param indexOfFace  Index of the face being queried.
 /// \param indices      Will receive the connectivity table for the specified face
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::getFaceIndices(size_t indexOfFace, UIntArray* indices) const
 {
     CVF_ASSERT(indices);
@@ -519,7 +519,7 @@ void DrawableGeo::getFaceIndices(size_t indexOfFace, UIntArray* indices) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Sets the DrawableGeo object's geometry representation from a face list
 /// 
 /// \param faceList Face list
@@ -528,7 +528,7 @@ void DrawableGeo::getFaceIndices(size_t indexOfFace, UIntArray* indices) const
 ///
 /// \note This method will use more temporary memory than strictly needed in order to optimize 
 ///       performance.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setFromFaceList(const UIntArray& faceList)
 {
     m_primitiveSets.clear();
@@ -596,12 +596,12 @@ void DrawableGeo::setFromFaceList(const UIntArray& faceList)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Setup a geometry with triangles from an array of vertices (3 vertices per triangle).
 /// 
 /// This method sets the vertices to the passed vertexArray, and then creates one PrimitiveSet with 
 /// one triangle for every three vertices in vertexArray.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setFromTriangleVertexArray(Vec3fArray* vertexArray)
 {
     CVF_ASSERT(vertexArray);
@@ -629,12 +629,12 @@ void DrawableGeo::setFromTriangleVertexArray(Vec3fArray* vertexArray)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Setup geometry with quads from an array of vertices (4 vertices per quad).
 /// 
 /// This method sets the vertices to the passed vertexArray, and then creates one PrimitiveSet with 
 /// two triangles for every four vertices in vertexArray.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::setFromQuadVertexArray(Vec3fArray* vertexArray)
 {
     CVF_ASSERT(vertexArray);
@@ -672,11 +672,11 @@ void DrawableGeo::setFromQuadVertexArray(Vec3fArray* vertexArray)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Weld vertices based on vertex distance
 ///
 /// \warning Calling this function will delete all vertex related data except the vertex positions
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::weldVertices(double weldDistance)
 {
     size_t numVertices = m_vertexBundle->vertexCount();
@@ -734,7 +734,7 @@ void DrawableGeo::weldVertices(double weldDistance)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Merge a collection of drawable geometry objects into this drawable
 /// 
 /// \param drawableGeos Collection of drawable geometries to be merged
@@ -743,7 +743,7 @@ void DrawableGeo::weldVertices(double weldDistance)
 /// Primitives are copied and indices updated.
 /// 
 /// \warning All other vertex attribute data such as normals, texture coordinates etc will be set to NULL
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::mergeInto(const Collection<DrawableGeo>& drawableGeos)
 {
     size_t totalVertexCount = m_vertexBundle->vertexCount();
@@ -813,7 +813,7 @@ void DrawableGeo::mergeInto(const Collection<DrawableGeo>& drawableGeos)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Merge a drawable geometry object with this drawable possibly with transformation.
 /// 
 /// \param drawableGeo Drawable geometries to be merged
@@ -823,7 +823,7 @@ void DrawableGeo::mergeInto(const Collection<DrawableGeo>& drawableGeos)
 /// Vertex arrays are appended to the merged vertex array. Primitives are copied and indices updated.
 /// 
 /// \warning All other vertex attribute data such as normals, texture coordinates etc will be set to NULL
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::mergeInto(const DrawableGeo& drawableGeo, const Mat4d* transformation)
 {
     size_t totalVertexCount = m_vertexBundle->vertexCount();
@@ -899,11 +899,11 @@ void DrawableGeo::mergeInto(const DrawableGeo& drawableGeo, const Mat4d* transfo
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Convert indexed primitive set to unsigned short if possible
 /// 
 /// \return  The number of primitive sets that was converted.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 int DrawableGeo::convertFromUIntToUShort()
 {
     int numConverted = 0;
@@ -975,12 +975,12 @@ int DrawableGeo::convertFromUIntToUShort()
     return numConverted;
 }
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Transforms all vertices in this drawable geometry using the specified matrix
 /// 
 /// \warning Calling this function will create a new internal vertex array.
 /// \warning Normals may have to be recomputed after this function has been called.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::transform(const Mat4d& transformation)
 {
     size_t numVertices = m_vertexBundle->vertexCount();
@@ -1010,9 +1010,9 @@ void DrawableGeo::transform(const Mat4d& transformation)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Compute per node normals based on all primitive sets.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::computeNormals()
 {
     size_t numVertices = m_vertexBundle->vertexCount();
@@ -1149,13 +1149,13 @@ void DrawableGeo::computeNormals()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Updated the cached bounding box in this drawable geo.
 /// 
 /// Normally you will not need to call this function directly. Member functions that change the
 /// vertex coordinates will automatically update the bounding box. The exception is if you manually
 /// modify the vertices by directly manipulating the array returned by vertexArray().
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void DrawableGeo::recomputeBoundingBox()
 {
     m_boundingBox.reset();
@@ -1168,9 +1168,9 @@ void DrawableGeo::recomputeBoundingBox()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns the content of this geometry as a face list.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 ref<UIntArray> DrawableGeo::toFaceList() const
 {
     ref<UIntArray> faceList = new UIntArray;
@@ -1275,20 +1275,20 @@ ref<UIntArray> DrawableGeo::toFaceList() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Get the bounding box
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 BoundingBox DrawableGeo::boundingBox() const
 {
     return m_boundingBox;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Intersect the drawable geo with the ray and return the closest intersection point and the face hit
 ///
 /// Returns true if anything was hit.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool DrawableGeo::rayIntersect(const Ray& ray, Vec3d* intersectionPoint, uint* faceHit) const
 {
     bool anyHits = false;
@@ -1371,9 +1371,9 @@ bool DrawableGeo::rayIntersect(const Ray& ray, Vec3d* intersectionPoint, uint* f
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool DrawableGeo::rayIntersect(const Ray& ray, Vec3dArray* intersectionPoints, UIntArray* facesHit) const
 {
     if (intersectionPoints) intersectionPoints->setSizeZero();
@@ -1442,9 +1442,9 @@ bool DrawableGeo::rayIntersect(const Ray& ray, Vec3dArray* intersectionPoints, U
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool DrawableGeo::rayIntersectCreateDetail(const Ray& ray, Vec3d* intersectionPoint, ref<HitDetail>* hitDetail) const
 {
     uint faceIdx = 0;
@@ -1464,27 +1464,27 @@ bool DrawableGeo::rayIntersectCreateDetail(const Ray& ray, Vec3d* intersectionPo
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::HitDetailDrawableGeo
 /// \ingroup Render
 ///
 /// 
 ///
-//==================================================================================================
+//====================================================================
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 HitDetailDrawableGeo::HitDetailDrawableGeo(uint faceIndex)
 :   m_faceIndex(faceIndex)
 {
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 uint HitDetailDrawableGeo::faceIndex() const
 {
     return m_faceIndex;

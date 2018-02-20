@@ -1,46 +1,50 @@
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 //
 //  Copyright (C) 2011-     Statoil ASA
 //  Copyright (C) 2013-     Ceetron Solutions AS
 //  Copyright (C) 2011-2012 Ceetron AS
-// 
+//
 //  ResInsight is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
 //  WARRANTY; without even the implied warranty of MERCHANTABILITY or
 //  FITNESS FOR A PARTICULAR PURPOSE.
-// 
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
+//
+//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
 //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 #include "RigGridBase.h"
-#include <vector>
 #include "RigCell.h"
-//#include "RigLocalGrid.h"
-//#include "cvfCollection.h"
-//#include "cvfBoundingBox.h"
-//#include "RifReaderInterface.h"
+#include "RigFault.h"
+#include "RigNNCData.h"
+#include "RigLocalGrid.h"
+#include "RigActiveCellInfo.h"
+
+#include "../FileInterface/RifReaderInterface.h"
+//#include "RiaLogging.h"
+//#include "RiaDefines.h"
+//#include "RigFault.h"
+
+#include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
+#include "../../Fwk/VizFwk/LibCore/cvfCollection.h"
+#include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
+//#include "../../Fwk/AppFwk/CommonCode/cvfStructGrid.h"
 
 #include <QtGlobal>
-//#include "RigNNCData.h"
-
-#include "resinsight/Fwk/VizFwk/LibCore/cvfVector3.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfCollection.h"
-#include "resinsight/Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
+#include <vector>
 
 class RigActiveCellInfo;
 
-namespace cvf
-{
+namespace cvf {
 class BoundingBoxTree;
+class StructGridInterface;
 }
-
 
 class RigMainGrid : public RigGridBase
 {
@@ -49,48 +53,60 @@ class RigMainGrid : public RigGridBase
   virtual ~RigMainGrid();
 
  public:
-  std::vector<cvf::Vec3d>&        nodes() {return m_nodes;}
-  const std::vector<cvf::Vec3d>&  nodes() const {return m_nodes;}
 
-  std::vector<RigCell>&           globalCellArray() {return m_cells;}
-  const std::vector<RigCell>&     globalCellArray() const {return m_cells;}
+  // CELL ------------------------------------------------------------
+  std::vector<cvf::Vec3d>& nodes() {return m_nodes;}
+  const std::vector<cvf::Vec3d>& nodes() const {return m_nodes;}
 
-//  const RigCell&                  cellByGridAndGridLocalCellIdx(size_t gridIdx,
-//                                                                size_t gridLocalCellIdx) const;
-//  size_t                          reservoirCellIndexByGridAndGridLocalCellIndex(size_t gridIdx,
-//                                                                                size_t gridLocalCellIdx) const;
+  std::vector<RigCell>& globalCellArray() {return m_cells;}
+  const std::vector<RigCell>& globalCellArray() const {return m_cells;}
 
-//  void                  addLocalGrid(RigLocalGrid* localGrid);
-  size_t                gridCount() const           { return m_localGrids.size() + 1; }
-  RigGridBase*          gridByIndex(size_t localGridIndex);
-  const RigGridBase*    gridByIndex(size_t localGridIndex) const;
-  RigGridBase*          gridById(int localGridId);
+//  const RigCell& cellByGridAndGridLocalCellIdx(size_t gridIdx,
+//                                               size_t gridLocalCellIdx) const;
+//  size_t reservoirCellIndexByGridAndGridLocalCellIndex(size_t gridIdx,
+//                                                       size_t gridLocalCellIdx) const;
 
-//  RigNNCData*                             nncData();
-//  void                                    setFaults(const cvf::Collection<RigFault>& faults);
-//  const cvf::Collection<RigFault>&        faults() { return m_faults; }
-//  void                                    calculateFaults(const RigActiveCellInfo* activeCellInfo);
 
-//  void distributeNNCsToFaults();
+  // GRID ------------------------------------------------------------
+  void addLocalGrid(RigLocalGrid* localGrid);
 
-//  const RigFault*                         findFaultFromCellIndexAndCellFace(size_t reservoirCellIndex, cvf::StructGridInterface::FaceType face) const;
-//  bool                                    isFaceNormalsOutwards() const;
+  size_t gridCount() const { return m_localGrids.size() + 1; }
 
-  void                                    computeCachedData();
-  void                                    initAllSubGridsParentGridPointer();
+  RigGridBase* gridByIndex(size_t localGridIndex);
+  const RigGridBase* gridByIndex(size_t localGridIndex) const;
+  RigGridBase* gridById(int localGridId);
 
-  // Overrides
-  virtual cvf::Vec3d                      displayModelOffset() const;
-  void                                    setDisplayModelOffset(cvf::Vec3d offset);
+  // NNC -------------------------------------------------------------
+  RigNNCData* nncData();
+  void setFaults(const cvf::Collection<RigFault>& faults);
 
-  void                                    setFlipAxis(bool flipXAxis, bool flipYAxis);
-  void                                    findIntersectingCells(const cvf::BoundingBox& inputBB, std::vector<size_t>* cellIndices) const;
+  const cvf::Collection<RigFault>& faults() { return m_faults; }
 
-  cvf::BoundingBox                        boundingBox() const;
+  void calculateFaults(const RigActiveCellInfo* activeCellInfo);
+
+  void distributeNNCsToFaults();
+//  const RigFault* findFaultFromCellIndexAndCellFace(
+//      size_t reservoirCellIndex,
+//      cvf::StructGridInterface::FaceType face) const;
+////  bool isFaceNormalsOutwards() const;
+
+  void computeCachedData();
+  void initAllSubGridsParentGridPointer();
+
+  // OVERRIDES -------------------------------------------------------
+  virtual cvf::Vec3d displayModelOffset() const;
+  void setDisplayModelOffset(cvf::Vec3d offset);
+
+  void setFlipAxis(bool flipXAxis, bool flipYAxis);
+  void findIntersectingCells(const cvf::BoundingBox& inputBB,
+                             std::vector<size_t>* cellIndices) const;
+  cvf::BoundingBox boundingBox() const;
+
+
  private:
   void                                    initAllSubCellsMainGridCellIndex();
   void                                    buildCellSearchTree();
-//  bool                                    hasFaultWithName(const QString& name) const;
+  bool                                    hasFaultWithName(const QString& name) const;
 
  private:
   std::vector<cvf::Vec3d>                 m_nodes;        ///< Global vertex table
@@ -99,9 +115,9 @@ class RigMainGrid : public RigGridBase
   std::vector<size_t>                     m_gridIdToIndexMapping; ///< Mapping from LGR Id to index.
 
 
-//  cvf::Collection<RigFault>               m_faults;
-//  cvf::ref<RigNNCData>                    m_nncData;
-//  cvf::ref<RigFaultsPrCellAccumulator>    m_faultsPrCellAcc;
+  cvf::Collection<RigFault>               m_faults;
+  cvf::ref<RigNNCData>                    m_nncData;
+  cvf::ref<RigFaultsPrCellAccumulator>    m_faultsPrCellAcc;
 
   cvf::Vec3d                              m_displayModelOffset;
   cvf::ref<cvf::BoundingBoxTree>          m_cellSearchTree;

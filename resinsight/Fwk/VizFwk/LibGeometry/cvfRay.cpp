@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,45 +32,43 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
-#include "cvfBase.h"
+#include "../LibCore/cvfBase.h"
 #include "cvfRay.h"
 #include "cvfBoundingBox.h"
-#include "cvfPlane.h"
+#include "../LibCore/cvfPlane.h"
 
 namespace cvf {
 
-
-
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::Ray
 /// \ingroup Geometry
 ///
 /// A ray that can be used for intersection testing.
 ///
-//==================================================================================================
+//====================================================================
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 Ray::Ray()
-:   m_origin(Vec3d::ZERO),
-    m_direction(-Vec3d::Z_AXIS),
-    m_minDistance(cvf::UNDEFINED_DOUBLE),
-    m_maxDistance(cvf::UNDEFINED_DOUBLE),
-    m_minDistanceSquared(cvf::UNDEFINED_DOUBLE),
-    m_maxDistanceSquared(cvf::UNDEFINED_DOUBLE),
-    m_distanceLimitedRay(false)
+    :   m_origin(Vec3d::ZERO),
+        m_direction(-Vec3d::Z_AXIS),
+        m_minDistance(cvf::UNDEFINED_DOUBLE),
+        m_maxDistance(cvf::UNDEFINED_DOUBLE),
+        m_minDistanceSquared(cvf::UNDEFINED_DOUBLE),
+        m_maxDistanceSquared(cvf::UNDEFINED_DOUBLE),
+        m_distanceLimitedRay(false)
 {
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 Ray::Ray(const Ray& other) : Object()
 {
     m_origin = other.origin();
@@ -83,53 +81,53 @@ Ray::Ray(const Ray& other) : Object()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 Ray::~Ray()
 {
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Sets the origin (starting point) of the ray
-//--------------------------------------------------------------------------------------------------
-void Ray::setOrigin(const Vec3d& orig) 
-{ 
-    m_origin = orig; 
+//--------------------------------------------------------------------
+void Ray::setOrigin(const Vec3d& orig)
+{
+    m_origin = orig;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
-const Vec3d& Ray::origin() const 
-{ 
-    return m_origin; 
+//--------------------------------------------------------------------
+const Vec3d& Ray::origin() const
+{
+    return m_origin;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Sets the direction of the ray
-//--------------------------------------------------------------------------------------------------
-void Ray::setDirection(const Vec3d& dir) 
-{ 
-    m_direction = dir; 
+//--------------------------------------------------------------------
+void Ray::setDirection(const Vec3d& dir)
+{
+    m_direction = dir;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
-const Vec3d& Ray::direction() const 
-{ 
-    return m_direction; 
+//--------------------------------------------------------------------
+const Vec3d& Ray::direction() const
+{
+    return m_direction;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Transforms the origin and direction with the given transformation matrix
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void Ray::transform(const Mat4d& matrix)
 {
     m_origin.transformPoint(matrix);
@@ -137,9 +135,9 @@ void Ray::transform(const Mat4d& matrix)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns this ray transformed with the given transformation matrix
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 const Ray Ray::getTransformed(const Mat4d& matrix) const
 {
     Ray ray(*this);
@@ -149,27 +147,27 @@ const Ray Ray::getTransformed(const Mat4d& matrix) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns true if the ray intersects the triangle. 
 /// 
 /// intersectionPoint (if not NULL) will be set to the ray intersection point on the triangle.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool Ray::triangleIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, Vec3d* intersectionPoint) const
 {
     Vec3d v12 = v2 - v1;
     Vec3d v13 = v3 - v1;
 
     Vec3d n = (v12 ^ v13).getNormalized();
-    
+
     double det = n * direction();
-    
+
     if (det == 0.0f)
     {
         return false;
     }
 
     double t = n * ((v1 - origin()) / det);
-    
+
     if (t < 0)
     {
         return false;
@@ -177,12 +175,12 @@ bool Ray::triangleIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, V
 
     Vec3d fp = origin() + direction()*t;
     Vec3d pts[] = { v1, v2, v3, v1 };
-    
+
     int i;
     for(i = 0; i <  3; i++)
     {
         Vec3d bi_norm = -((pts[i+1]-pts[i]) ^ n).getNormalized();
-        
+
         if (((fp-pts[i]) * bi_norm) < 0)
         {
             return false;
@@ -196,16 +194,16 @@ bool Ray::triangleIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, V
 
         if (m_minDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared < m_minDistanceSquared)
         {
-            return false;   
+            return false;
         }
 
         if (m_maxDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared > m_maxDistanceSquared)
         {
-            return false;   
+            return false;
         }
     }
 
-    if (intersectionPoint) 
+    if (intersectionPoint)
     {
         *intersectionPoint = fp;
     }
@@ -214,11 +212,11 @@ bool Ray::triangleIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, V
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns true if the ray intersects the quad. 
 /// 
 /// intersectionPoint (if not NULL) will be set to the ray intersection point on the quad.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool Ray::quadIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, const Vec3d& v4, Vec3d* intersectionPoint) const
 {
     Vec3d v12 = v2 - v1;
@@ -261,16 +259,16 @@ bool Ray::quadIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, const
 
         if (m_minDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared < m_minDistanceSquared)
         {
-            return false;   
+            return false;
         }
 
         if (m_maxDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared > m_maxDistanceSquared)
         {
-            return false;   
+            return false;
         }
     }
 
-    if (intersectionPoint) 
+    if (intersectionPoint)
     {
         *intersectionPoint = fp;
     }
@@ -279,11 +277,11 @@ bool Ray::quadIntersect(const Vec3d& v1, const Vec3d& v2, const Vec3d& v3, const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns true if the ray intersects the bounding box. 
 /// 
 /// intersectionPoint (if not NULL) will be set to the ray intersection point on the bounding box.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool Ray::boxIntersect(const BoundingBox& box, Vec3d* intersectionPoint) const
 {
     if (!box.isValid()) return false;
@@ -304,26 +302,26 @@ bool Ray::boxIntersect(const BoundingBox& box, Vec3d* intersectionPoint) const
     int i;
     for (i = 0; i < 3; i++)
     {
-        if(m_origin[i] < min[i]) 
+        if(m_origin[i] < min[i])
         {
             quadrant[i] = LEFT;
             candidatePlane[i] = min[i];
             inside = false;
         }
-        else if (m_origin[i] > max[i]) 
+        else if (m_origin[i] > max[i])
         {
             quadrant[i] = RIGHT;
             candidatePlane[i] = max[i];
             inside = false;
         }
-        else	
+        else
         {
             quadrant[i] = MIDDLE;
         }
     }
 
     // Ray origin inside bounding box
-    if (inside)	
+    if (inside)
     {
         // Return intersection point
         if (intersectionPoint) *intersectionPoint = m_origin;
@@ -359,13 +357,13 @@ bool Ray::boxIntersect(const BoundingBox& box, Vec3d* intersectionPoint) const
 
     for (i = 0; i < 3; i++)
     {
-        if (whichPlane != i) 
+        if (whichPlane != i)
         {
             hitPoint[i] = m_origin[i] + maxT[whichPlane] * m_direction[i];
 
             if (hitPoint[i] < min[i] || hitPoint[i] > max[i]) return false;
-        } 
-        else 
+        }
+        else
         {
             hitPoint[i] = candidatePlane[i];
         }
@@ -378,12 +376,12 @@ bool Ray::boxIntersect(const BoundingBox& box, Vec3d* intersectionPoint) const
 
         if (m_minDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared < m_minDistanceSquared)
         {
-            return false;   
+            return false;
         }
 
         if (m_maxDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared > m_maxDistanceSquared)
         {
-            return false;   
+            return false;
         }
     }
 
@@ -393,13 +391,13 @@ bool Ray::boxIntersect(const BoundingBox& box, Vec3d* intersectionPoint) const
     }
 
     // Ray hits box
-    return true;				
+    return true;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Returns true if the ray intersects the ray
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 bool Ray::planeIntersect(const Plane& plane, Vec3d* intersectionPoint) const
 {
     Vec3d pn = plane.normal();
@@ -409,7 +407,7 @@ bool Ray::planeIntersect(const Plane& plane, Vec3d* intersectionPoint) const
 
     // If vd > 0, the plane normal is pointing 'away' from the ray
     // We want the plane normal facing the ray so flip direction of the plane
-    if (vd > 0) 
+    if (vd > 0)
     {
         pn *= -1;
         D *= -1;
@@ -430,12 +428,12 @@ bool Ray::planeIntersect(const Plane& plane, Vec3d* intersectionPoint) const
 
                 if (m_minDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared < m_minDistanceSquared)
                 {
-                    return false;   
+                    return false;
                 }
 
                 if (m_maxDistanceSquared < cvf::UNDEFINED_DOUBLE_THRESHOLD && distanceSquared > m_maxDistanceSquared)
                 {
-                    return false;   
+                    return false;
                 }
             }
 
@@ -452,9 +450,9 @@ bool Ray::planeIntersect(const Plane& plane, Vec3d* intersectionPoint) const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 String Ray::debugString() const
 {
     String str = "Ray: ";
@@ -467,12 +465,12 @@ String Ray::debugString() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the minimum distance (from the origin) that the ray will hit. 
 /// 
 /// Useful for limiting the ray when picking on models with clipping planes.
 /// Set to tsv::UNDEFINED_DOUBLE
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void Ray::setMinimumDistance(double distance)
 {
     m_minDistance = distance;
@@ -490,11 +488,11 @@ void Ray::setMinimumDistance(double distance)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Set the maximum distance (from the origin) that the ray will hit. 
 /// 
 /// Useful for limiting the ray when picking on models with clipping planes
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void Ray::setMaximumDistance(double distance)
 {
     m_maxDistance = distance;
@@ -512,18 +510,18 @@ void Ray::setMaximumDistance(double distance)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Minimum distance (from the origin) that the ray will hit. 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 double Ray::minimumDistance() const
 {
     return m_minDistance;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Maximum distance (from the origin) that the ray will hit
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 double Ray::maximumDistance() const
 {
     return m_maxDistance;

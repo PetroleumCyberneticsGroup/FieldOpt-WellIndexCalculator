@@ -1,4 +1,4 @@
-//##################################################################################################
+////////////////////////////////////////////////////////////////////
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -29,30 +29,23 @@
 //   WARRANTY; without even the implied warranty of MERCHANTABILITY or
 //   FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
+//   See the GNU Lesser General Public License at
+//   <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
-
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include "resinsight/Fwk/VizFwk/LibCore/cvfArray.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfMatrix4.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfString.h"
-
-//#include "cvfArray.h"
-//#include "cvfMatrix4.h"
-//#include "cvfString.h"
+#include "../LibCore/cvfArray.h"
+#include "../LibCore/cvfMatrix4.h"
+#include "../LibCore/cvfString.h"
 
 namespace cvf {
 
-
-//==================================================================================================
-//
+//==================================================================
 // Axis aligned bounding box
-//
-//==================================================================================================
+//==================================================================
 class BoundingBox
 {
 public:

@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 //
 //  Copyright (C) 2011-     Statoil ASA
 //  Copyright (C) 2013-     Ceetron Solutions AS
@@ -16,14 +16,15 @@
 //  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
 //  for more details.
 //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include "cvfBase.h"
-#include "cvfObject.h"
-#include "cvfVector3.h"
-#include "cvfBoundingBox.h"
+#include "../../Fwk/VizFwk/LibCore/cvfBase.h"
+//#include "cvfBase.h"
+#include "../../Fwk/VizFwk/LibCore/cvfObject.h"
+#include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
+#include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
 
 #include <vector>
 

@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,7 +32,7 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #include "cvfBase.h"
@@ -63,14 +63,14 @@ static const int USERACTION_ABORT       = 2;
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::AssertHandler
 /// \ingroup Core
 ///
 /// Base class for assert handlers
 ///
-//==================================================================================================
+//====================================================================
 class AssertHandler
 {
 public:
@@ -80,14 +80,14 @@ public:
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::AssertHandlerConsole
 /// \ingroup Core
 ///
 /// Assert handler for basic assert output to console
 ///
-//==================================================================================================
+//====================================================================
 class AssertHandlerConsole : public AssertHandler
 {
 public:
@@ -102,11 +102,11 @@ private:
 };
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Show report of a failed assert in console and abort execution
 /// 
 /// On Windows, a console will be created if one doesn't exist (GUI applications)
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 Assert::FailAction AssertHandlerConsole::handleAssert(const char* fileName, int lineNumber, const char* expr, const char* msg)
 {
     // Just shows assert message in console.
@@ -129,9 +129,9 @@ Assert::FailAction AssertHandlerConsole::handleAssert(const char* fileName, int 
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void AssertHandlerConsole::reportToConsole(const char* fileName, int lineNumber, const char* expr, const char* msg)
 {
 #ifdef WIN32
@@ -160,11 +160,11 @@ void AssertHandlerConsole::reportToConsole(const char* fileName, int lineNumber,
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Ask for user action using console input
 /// 
 /// \return  One of the USERACTION_ constants
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 int AssertHandlerConsole::askForUserActionUsingConsole()
 {
 #ifdef WIN32
@@ -212,14 +212,14 @@ int AssertHandlerConsole::askForUserActionUsingConsole()
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Creates a console and redirects I/O from/to it (Windows only)
 /// 
 /// \param redirectInput  If true, input will also be redirected.
 /// 
 /// Function is useful for Windows GUI applications. Allocates a console if it doesn't exist and 
 /// then redirects output to the console. Also redirects input if \a redirectInput is true
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 #ifdef WIN32
 void AssertHandlerConsole::winCreateConsoleAndRedirectIO(bool redirectInput)
 {
@@ -270,14 +270,14 @@ void AssertHandlerConsole::winCreateConsoleAndRedirectIO(bool redirectInput)
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::AssertHandlerWinDialog
 /// \ingroup Core
 ///
 /// Assert handler for Windows, using a dialog with interaction
 ///
-//==================================================================================================
+//====================================================================
 #ifdef WIN32
 class AssertHandlerWinDialog : public AssertHandler
 {
@@ -293,9 +293,9 @@ private:
 #endif
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 #ifdef WIN32
 Assert::FailAction AssertHandlerWinDialog::handleAssert(const char* fileName, int lineNumber, const char* expr, const char* msg)
 {
@@ -329,7 +329,7 @@ Assert::FailAction AssertHandlerWinDialog::handleAssert(const char* fileName, in
 #endif
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Shows message in interactive dialog and lets user choose how to proceed
 /// 
 /// \return Returns one of the USERACTION_ constants depending on which button the user chooses.
@@ -339,7 +339,7 @@ Assert::FailAction AssertHandlerWinDialog::handleAssert(const char* fileName, in
 /// USERACTION_ABORT instead.
 /// 
 /// \todo  Must add code to handle case where new assert is triggered while handling an assert
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 #ifdef WIN32
 int AssertHandlerWinDialog::handleUsingDialog(const char* fileName, int lineNumber, const char* expr, const char* msg)
 {
@@ -387,12 +387,12 @@ int AssertHandlerWinDialog::handleUsingDialog(const char* fileName, int lineNumb
 #endif
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Wrapper function for the CRT _CrtDbgReport() function 
 /// 
 /// This function never returns if the user chooses 'Abort'
 /// Note that the underlying function is only available in debug builds
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 #if defined WIN32 && defined _DEBUG
 int AssertHandlerWinDialog::handleUsingCrtDbgReport(const char* fileName, int lineNumber, const char* expr, const char* msg)
 {
@@ -421,14 +421,14 @@ int AssertHandlerWinDialog::handleUsingCrtDbgReport(const char* fileName, int li
 
 
 
-//==================================================================================================
+//====================================================================
 ///
 /// \class cvf::Assert
 /// \ingroup Core
 ///
 /// Helper class to customize assert 
 /// 
-//==================================================================================================
+//====================================================================
 
 #ifdef WIN32
 AssertHandler* Assert::sm_handler = new AssertHandlerWinDialog;
@@ -436,9 +436,9 @@ AssertHandler* Assert::sm_handler = new AssertHandlerWinDialog;
 AssertHandler* Assert::sm_handler = new AssertHandlerConsole;
 #endif
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 void Assert::setReportMode(ReportMode reportMode)
 {
 #ifndef WIN32
@@ -461,7 +461,7 @@ void Assert::setReportMode(ReportMode reportMode)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// Show report of a failed assert
 /// 
 /// If assertions are configured to be interactive, a message box will be shown on Windows and
@@ -470,7 +470,7 @@ void Assert::setReportMode(ReportMode reportMode)
 /// 
 /// \todo  Add handling of cases where we get another assert while processing the first one AND
 ///        asserts from multiple threads.
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 Assert::FailAction Assert::reportFailedAssert(const char* fileName, int lineNumber, const char* expr, const char* msg)
 {
     if (sm_handler)

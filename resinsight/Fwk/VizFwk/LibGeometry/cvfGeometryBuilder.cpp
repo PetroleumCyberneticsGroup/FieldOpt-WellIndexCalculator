@@ -1,4 +1,4 @@
-//##################################################################################################
+////////////////////////////////////////////////////////////////////
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,17 +32,15 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+////////////////////////////////////////////////////////////////////
 
 
-#include "cvfBase.h"
+#include "../LibCore/cvfBase.h"
 #include "cvfGeometryBuilder.h"
 
 namespace cvf {
 
-
-
-//==================================================================================================
+//==================================================================
 ///
 /// \class cvf::GeometryBuilder
 /// \ingroup Geometry
@@ -50,11 +48,11 @@ namespace cvf {
 /// Abstract base class for building geometry using the Builder pattern.
 /// \sa GeometryUtils
 ///
-//==================================================================================================
+//==================================================================
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::setTotalVertexCountHint(size_t totalVertexCountHint)
 {
     CVF_UNUSED(totalVertexCountHint);
@@ -62,30 +60,30 @@ void GeometryBuilder::setTotalVertexCountHint(size_t totalVertexCountHint)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// \fn virtual int GeometryBuilder::addVertices(const Vec3fArray& vertices) = 0;
 /// 
 /// Add vertex coordinates
 /// 
 /// \return  The resulting index of the first vertex in the \a vertices array.
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// \fn virtual int GeometryBuilder::addTriangle(int i0, int i1, int i2) = 0;
 /// 
 /// Add a single triangle by specifying the indices into the vertex array.
 /// 
 /// \sa addTriangles()
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Add multiple triangles
 /// 
 /// \remarks There must be at least 3 entries in the \a indices array, and the total number of 
 ///          entries must be a multiple of 3.   
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addTriangles(const UIntArray& indices)
 {
     size_t numIndices = indices.size();
@@ -104,9 +102,9 @@ void GeometryBuilder::addTriangles(const UIntArray& indices)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addTriangles(const IntArray& indices)
 {
     size_t numIndices = indices.size();
@@ -126,7 +124,7 @@ void GeometryBuilder::addTriangles(const IntArray& indices)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Add a triangle fan
 /// 
 /// Vertex ordering for triangle fans:
@@ -142,7 +140,7 @@ void GeometryBuilder::addTriangles(const IntArray& indices)
 ///              * v1 </PRE>
 /// 
 /// \remarks The number of entries in the \a indices array must be at least 3.
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addTriangleFan(const UIntArray& indices)
 {
     size_t numIndices = indices.size();
@@ -159,7 +157,7 @@ void GeometryBuilder::addTriangleFan(const UIntArray& indices)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Add a triangle strip
 /// 
 /// Vertex ordering for triangle strips:
@@ -173,7 +171,7 @@ void GeometryBuilder::addTriangleFan(const UIntArray& indices)
 ///      v1      v3      v5 </PRE>
 /// 
 /// \remarks The number of entries in the \a indices array must be at least 3.
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addTriangleStrip(const UIntArray& indices)
 {
     size_t numIndices = indices.size();
@@ -197,9 +195,9 @@ void GeometryBuilder::addTriangleStrip(const UIntArray& indices)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addTriangleByVertices(const Vec3f& v0, const Vec3f& v1, const Vec3f& v2)
 {
     Vec3fArray verts;
@@ -214,14 +212,14 @@ void GeometryBuilder::addTriangleByVertices(const Vec3f& v0, const Vec3f& v1, co
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Add a single quad by specifying the indices into the vertex array
 /// 
 /// The default implementation will split the quad into two triangles (i0,i1,i2 and i0,i2,i3) and
 /// add them using addTriangle().
 /// 
 /// \sa addTriangle(), addQuads()
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addQuad(uint i0, uint i1, uint i2, uint i3)
 {
     addTriangle(i0, i1, i2);
@@ -229,14 +227,14 @@ void GeometryBuilder::addQuad(uint i0, uint i1, uint i2, uint i3)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Add multiple quads
 /// 
 /// The default implementation utilizes addQuad() to add each quad separately.
 /// 
 /// \remarks There must be at least 4 entries in the \a indices array, and the total number of 
 ///          entries must be a multiple of 4.
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addQuads(const UIntArray& indices)
 {
     size_t numIndices = indices.size();
@@ -255,9 +253,9 @@ void GeometryBuilder::addQuads(const UIntArray& indices)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addQuads(const IntArray& indices)
 {
     size_t numIndices = indices.size();
@@ -277,7 +275,7 @@ void GeometryBuilder::addQuads(const IntArray& indices)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Add a quad strip
 /// 
 /// Vertex ordering for quad strips:
@@ -292,7 +290,7 @@ void GeometryBuilder::addQuads(const IntArray& indices)
 /// 
 /// \remarks There must be at least 4 entries in the \a indices array, and the total number of 
 ///          entries must be a multiple of 2.
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addQuadStrip(const UIntArray& indices)
 {
     size_t numIndices = indices.size();
@@ -310,9 +308,9 @@ void GeometryBuilder::addQuadStrip(const UIntArray& indices)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addQuadByVertices(const Vec3f& v0, const Vec3f& v1, const Vec3f& v2, const Vec3f& v3)
 {
     Vec3fArray verts;
@@ -328,14 +326,14 @@ void GeometryBuilder::addQuadByVertices(const Vec3f& v0, const Vec3f& v1, const 
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Add one face 
 /// 
 /// The type of primitive added will be determined from the number of indices passed in \a indices
 /// 
 /// \remarks Currently, points and lines are not supported. Faces with more than 4 indices will
 ///          be triangulated using fanning
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void GeometryBuilder::addFace(const UIntArray& indices)
 {
     size_t numIndices = indices.size();

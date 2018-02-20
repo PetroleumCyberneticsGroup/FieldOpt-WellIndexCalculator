@@ -32,9 +32,9 @@
 //#include "RigEclipseWellLogExtractor.h"
 //#include "RimEclipseCase.h"
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 //std::vector<WellPathCellIntersectionInfo>
 //RigWellPathIntersectionTools::findCellIntersectionInfosAlongPath(
 //    const RigEclipseCaseData* caseData,
@@ -59,9 +59,9 @@
 //  return extractor->cellIntersectionInfosAlongWellPath();
 //}
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 std::vector<HexIntersectionInfo>
 RigWellPathIntersectionTools::findRawHexCellIntersections(
     const RigMainGrid* grid,
@@ -94,9 +94,9 @@ RigWellPathIntersectionTools::findRawHexCellIntersections(
   return intersections;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 cvf::Vec3d
 RigWellPathIntersectionTools::calculateLengthInCell(
     const std::array<cvf::Vec3d, 8>& hexCorners,
@@ -119,9 +119,9 @@ RigWellPathIntersectionTools::calculateLengthInCell(
   return vec.getTransformedVector(localCellCoordinateSystem.getInverted());
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 cvf::Vec3d
 RigWellPathIntersectionTools::calculateLengthInCell(
     const RigMainGrid* grid,
@@ -135,9 +135,9 @@ RigWellPathIntersectionTools::calculateLengthInCell(
   return calculateLengthInCell(hexCorners, startPoint, endPoint);
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 std::vector<size_t>
 RigWellPathIntersectionTools::findCloseCells(
     const RigMainGrid* grid,
@@ -148,9 +148,9 @@ RigWellPathIntersectionTools::findCloseCells(
   return closeCells;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 size_t
 RigWellPathIntersectionTools::findCellFromCoords
     (const RigMainGrid* grid,

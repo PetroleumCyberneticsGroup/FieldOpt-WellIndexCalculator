@@ -31,9 +31,9 @@
 
 #include <map>
 
-//==================================================================================================
+//====================================================================
 /// 
-//==================================================================================================
+//====================================================================
 
 RigEclipseWellLogExtractor::RigEclipseWellLogExtractor(const RigEclipseCaseData* aCase, const RigWellPath* wellpath, const std::string& wellCaseErrorMsgName)
     : m_caseData(aCase), RigWellLogExtractor(wellpath, wellCaseErrorMsgName)
@@ -42,9 +42,9 @@ RigEclipseWellLogExtractor::RigEclipseWellLogExtractor(const RigEclipseCaseData*
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void RigEclipseWellLogExtractor::calculateIntersection()
 {
     std::map<RigMDCellIdxEnterLeaveKey, HexIntersectionInfo > uniqueIntersections;
@@ -117,9 +117,9 @@ void RigEclipseWellLogExtractor::calculateIntersection()
     this->populateReturnArrays(uniqueIntersections);
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void RigEclipseWellLogExtractor::curveData(const RigResultAccessor* resultAccessor, std::vector<double>* values)
 {
     CVF_TIGHT_ASSERT(values);
@@ -135,9 +135,9 @@ void RigEclipseWellLogExtractor::curveData(const RigResultAccessor* resultAccess
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 std::vector<size_t> RigEclipseWellLogExtractor::findCloseCells(const cvf::BoundingBox& bb)
 {
     std::vector<size_t> closeCells;
@@ -145,9 +145,9 @@ std::vector<size_t> RigEclipseWellLogExtractor::findCloseCells(const cvf::Boundi
     return closeCells;
 }
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 cvf::Vec3d RigEclipseWellLogExtractor::calculateLengthInCell(size_t cellIndex, const cvf::Vec3d& startPoint, const cvf::Vec3d& endPoint) const
 {
     std::array<cvf::Vec3d, 8> hexCorners;

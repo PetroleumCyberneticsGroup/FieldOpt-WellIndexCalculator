@@ -1,4 +1,4 @@
-//##################################################################################################
+//##################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,46 +32,39 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//##################################################################
 
 
-#include "cvfBase.h"
+#include "../LibCore/cvfBase.h"
 #include "cvfOutlineEdgeExtractor.h"
 #include "cvfEdgeKey.h"
 #include "cvfGeometryUtils.h"
 
 namespace cvf {
 
-
-
-//==================================================================================================
-///
+//==================================================================
 /// \class cvf::OutlineEdgeExtractor
 /// \ingroup Geometry
-///
-/// 
-///
-//==================================================================================================
+//==================================================================
 
 static const size_t OEE_OUTLINE_EDGE        = cvf::UNDEFINED_SIZE_T;        // This is an outline edge
 static const size_t OEE_NON_OUTLINE_EDGE    = cvf::UNDEFINED_SIZE_T - 1;    // Marked as an interior edge
 static const size_t OEE_MULTIREF_EDGE       = cvf::UNDEFINED_SIZE_T - 2;    // An edge with more than two faces connected to it.
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Constructor
 /// 
 /// creaseAngle is specified in radians
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 OutlineEdgeExtractor::OutlineEdgeExtractor(double creaseAngle, const Vec3fValueArray& vertexArray)
 :   m_creaseAngle(creaseAngle),
-    m_vertexArray(vertexArray)
-{
+    m_vertexArray(vertexArray) {
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void OutlineEdgeExtractor::addPrimitives(uint verticesPerPrimitive, const uint* indices, size_t indexCount)
 {
     CVF_ASSERT(verticesPerPrimitive > 0);
@@ -141,9 +134,9 @@ void OutlineEdgeExtractor::addPrimitives(uint verticesPerPrimitive, const uint* 
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void OutlineEdgeExtractor::addPrimitives(uint verticesPerPrimitive, const UIntArray& indices)
 {
     CVF_ASSERT(verticesPerPrimitive > 0);
@@ -158,9 +151,9 @@ void OutlineEdgeExtractor::addPrimitives(uint verticesPerPrimitive, const UIntAr
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 void OutlineEdgeExtractor::addFaceList(const UIntArray& faceList)
 {
     size_t numFaceListEntries = faceList.size();
@@ -180,9 +173,9 @@ void OutlineEdgeExtractor::addFaceList(const UIntArray& faceList)
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 ref<UIntArray> OutlineEdgeExtractor::lineIndices() const
 {
     ref<UIntArray> indices = new UIntArray;
@@ -211,18 +204,18 @@ ref<UIntArray> OutlineEdgeExtractor::lineIndices() const
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// Returns the worker array with one normal per face (primitive)
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 const std::vector<Vec3f>& OutlineEdgeExtractor::faceNormals()
 {
     return m_faceNormals;
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 Vec3f OutlineEdgeExtractor::computeFaceNormal(const uint* faceVertexIndices, uint numVerticesInFace) const
 {
     // Init to zero so that points and lines return a zero normal
@@ -256,9 +249,9 @@ Vec3f OutlineEdgeExtractor::computeFaceNormal(const uint* faceVertexIndices, uin
 }
 
 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
 bool OutlineEdgeExtractor::isFaceAngleAboveThreshold(size_t faceIdx1, size_t faceIdx2) const
 {
     const Vec3f& n1 = m_faceNormals[faceIdx1];

@@ -53,7 +53,7 @@ coordinates. The executable is called `WellIndexCalculator`.
 ```bash
 ./WellIndexCalculator --help
 
-Usage: ./wicalc gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r --skin-factor s [options]
+Usage: ./wicalc_ri gridpath --heel x1 y1 z1 --toe x2 y2 z2 --radius r --skin-factor s [options]
 FieldOpt options:
   --help                      print help message
   -g [ --grid ] arg           path to model grid file (e.g. *.GRID)

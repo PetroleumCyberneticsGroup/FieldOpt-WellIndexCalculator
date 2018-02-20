@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,15 +32,15 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #pragma once
 
-#include "cvfObject.h"
-#include "cvfVector3.h"
-#include "cvfMatrix4.h"
-#include "cvfString.h"
+#include "../LibCore/cvfObject.h"
+#include "../LibCore/cvfVector3.h"
+#include "../LibCore/cvfMatrix4.h"
+#include "../LibCore/cvfString.h"
 
 namespace cvf {
 
@@ -48,11 +48,11 @@ class BoundingBox;
 class Plane;
 
 
-//==================================================================================================
+//====================================================================
 //
 // Ray
 //
-//==================================================================================================
+//====================================================================
 class Ray : public Object
 {
 public:

@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 //
 //  Copyright (C) 2017     Statoil ASA
 // 
@@ -14,45 +14,42 @@
 //  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
 //  for more details.
 //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 
-#include "cvfBase.h"
-#include "cvfVector3.h"
-
-#include "cvfBoundingBox.h"
-#include "cvfPlane.h"
+#include "../../Fwk/VizFwk/LibCore/cvfBase.h"
+#include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
+#include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
+#include "../../Fwk/VizFwk/LibCore/cvfPlane.h"
 
 #include <array>
 #include <list>
 #include <vector>
 
-
-
 class RigCellGeometryTools
 {
-public:
+ public:
 
-    static void createPolygonFromLineSegments(std::list<std::pair<cvf::Vec3d, cvf::Vec3d>> &intersectionLineSegments, std::vector<std::vector<cvf::Vec3d>> &polygons);
+  static void createPolygonFromLineSegments(std::list<std::pair<cvf::Vec3d, cvf::Vec3d>> &intersectionLineSegments, std::vector<std::vector<cvf::Vec3d>> &polygons);
 
-    static void findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hexCorners, cvf::Vec3d &localXdirection, cvf::Vec3d &localYdirection, cvf::Vec3d &localZdirection);
+  static void findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hexCorners, cvf::Vec3d &localXdirection, cvf::Vec3d &localYdirection, cvf::Vec3d &localZdirection);
 
-    static double polygonLengthInLocalXdirWeightedByArea(std::vector<cvf::Vec3d> polygon2d);
-   
-    static std::vector<std::vector<cvf::Vec3d> >  intersectPolygons(std::vector<cvf::Vec3d> polygon1, std::vector<cvf::Vec3d> polygon2);
+  static double polygonLengthInLocalXdirWeightedByArea(std::vector<cvf::Vec3d> polygon2d);
 
-    enum ZInterpolationType { INTERPOLATE_LINE_Z, USE_HUGEVAL, USE_ZERO};
-    static std::vector<std::vector<cvf::Vec3d> >  clipPolylineByPolygon(const std::vector<cvf::Vec3d>& polyLine, 
-                                                                        const std::vector<cvf::Vec3d>& polygon, 
-                                                                        ZInterpolationType interpolType = USE_ZERO);
+  static std::vector<std::vector<cvf::Vec3d> >  intersectPolygons(std::vector<cvf::Vec3d> polygon1, std::vector<cvf::Vec3d> polygon2);
 
-    static std::pair<cvf::Vec3d, cvf::Vec3d> getLineThroughBoundingBox(cvf::Vec3d lineDirection, cvf::BoundingBox polygonBBox, cvf::Vec3d pointOnLine);
+  enum ZInterpolationType { INTERPOLATE_LINE_Z, USE_HUGEVAL, USE_ZERO};
+  static std::vector<std::vector<cvf::Vec3d> >  clipPolylineByPolygon(const std::vector<cvf::Vec3d>& polyLine,
+                                                                      const std::vector<cvf::Vec3d>& polygon,
+                                                                      ZInterpolationType interpolType = USE_ZERO);
 
-    static double getLengthOfPolygonAlongLine(const std::pair<cvf::Vec3d, cvf::Vec3d>& line, const std::vector<cvf::Vec3d>& polygon);
+  static std::pair<cvf::Vec3d, cvf::Vec3d> getLineThroughBoundingBox(cvf::Vec3d lineDirection, cvf::BoundingBox polygonBBox, cvf::Vec3d pointOnLine);
 
-private:
-    static std::vector<cvf::Vec3d> ajustPolygonToAvoidIntersectionsAtVertex(const std::vector<cvf::Vec3d>& polyLine, 
-                                                                            const std::vector<cvf::Vec3d>& polygon);
+  static double getLengthOfPolygonAlongLine(const std::pair<cvf::Vec3d, cvf::Vec3d>& line, const std::vector<cvf::Vec3d>& polygon);
+
+ private:
+  static std::vector<cvf::Vec3d> ajustPolygonToAvoidIntersectionsAtVertex(const std::vector<cvf::Vec3d>& polyLine,
+                                                                          const std::vector<cvf::Vec3d>& polygon);
 
 };

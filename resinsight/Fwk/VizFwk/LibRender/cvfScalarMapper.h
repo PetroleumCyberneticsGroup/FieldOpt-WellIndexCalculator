@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,7 +32,7 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
+//####################################################################
 
 
 #pragma once
@@ -47,13 +47,13 @@ namespace cvf {
 class TextureImage;
 
 
-//==================================================================================================
+//====================================================================
 //
 // Abstract base class for mapping scalar values to texture coordinates/colors
 // It also provides an interface that OverlayScalarMapperLegend's use to draw consistent colors 
 // and labels/ticks
 //
-//==================================================================================================
+//====================================================================
 class ScalarMapper : public Object
 {
 public:

@@ -19,34 +19,23 @@
 
 #pragma once
 
-#include "resinsight/Fwk/VizFwk/LibCore/cvfBase.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfObject.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfVector3.h"
+#include "../../Fwk/VizFwk/LibCore/cvfBase.h"
+#include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
+#include "../../Fwk/VizFwk/LibCore/cvfObject.h"
+#include "../../Fwk/AppFwk/CommonCode/cvfStructGrid.h"
+#include "../../Fwk/AppFwk/CommonCode/cvfCellRange.h"
 
-//#include "cvfBase.h"
-//#include "cvfObject.h"
-//#include "cvfVector3.h"
-//#include "cvfBoundingBox.h"
+#include "../../Fwk/AppFwk/cafProjectDataModel/cafFixedArray.h"
+#include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
 
 #include <vector>
-
 #include <QString>
-//#include "cvfStructGrid.h"
-#include "resinsight/Fwk/AppFwk/CommonCode/cvfStructGrid.h"
-
-//#include "cvfCellRange.h"
-#include "resinsight/Fwk/AppFwk/CommonCode/cvfCellRange.h"
-
-//#include "cafFixedArray.h"
-#include "resinsight/Fwk/AppFwk/cafProjectDataModel/cafFixedArray.h"
-
-#include "resinsight/Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
 
 class RigMainGrid;
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 class RigFaultsPrCellAccumulator : public cvf::Object
 {
@@ -78,9 +67,9 @@ private:
 
 
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 /// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 class RigFault : public cvf::Object
 {

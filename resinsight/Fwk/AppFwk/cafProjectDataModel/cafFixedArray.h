@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,34 +32,32 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
-
+//####################################################################
 
 #pragma once
 
-#include "cafAssert.h"
+#include "cafPdmCore/cafAssert.h"
 
+namespace caf {
 
-namespace caf
-{
-
-//==================================================================================================
-/// A fixed array class. Used to create small fixed size index arrays typically
-//==================================================================================================
+//====================================================================
+/// A fixed array class. Used to create small fixed size index arrays
+/// typically
+//====================================================================
 
 template < typename T, size_t size >
 class FixedArray
 {
-    T m_array[size];
-public:
+  T m_array[size];
+ public:
 
-    const T* data() const { return m_array; }
-    T*       data()       { return m_array; }
+  const T* data() const { return m_array; }
+  T*       data()       { return m_array; }
 
-    FixedArray<T, size>& operator=(const T* ptr) { for (size_t i = 0; i < size ; ++i) m_array[i] = ptr[i]; return *this;} 
+  FixedArray<T, size>& operator=(const T* ptr) { for (size_t i = 0; i < size ; ++i) m_array[i] = ptr[i]; return *this;}
 
-    template<typename IndexType>       T& operator[](const IndexType& index)       { CAF_ASSERT(static_cast<size_t>(index) < size); return m_array[index]; }
-    template<typename IndexType> const T& operator[](const IndexType& index) const { CAF_ASSERT(static_cast<size_t>(index) < size); return m_array[index]; }
+  template<typename IndexType>       T& operator[](const IndexType& index)       { CAF_ASSERT(static_cast<size_t>(index) < size); return m_array[index]; }
+  template<typename IndexType> const T& operator[](const IndexType& index) const { CAF_ASSERT(static_cast<size_t>(index) < size); return m_array[index]; }
 };
 
 typedef FixedArray<int, 3>    IntArray3;

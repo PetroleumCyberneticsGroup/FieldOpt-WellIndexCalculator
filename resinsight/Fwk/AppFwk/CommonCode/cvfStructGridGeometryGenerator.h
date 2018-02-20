@@ -1,4 +1,4 @@
-//##################################################################################################
+//####################################################################
 //
 //   Custom Visualization Core library
 //   Copyright (C) 2011-2013 Ceetron AS
@@ -32,21 +32,14 @@
 //   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 //   for more details.
 //
-//##################################################################################################
-
+//####################################################################
 
 #pragma once
 
-//#include "cvfObject.h"
-//#include "cvfArray.h"
-//#include "cvfStructGrid.h"
-//#include "cvfCollection.h"
-
-#include "resinsight/Fwk/VizFwk/LibCore/cvfObject.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfArray.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfCollection.h"
-
-#include "resinsight/Fwk/AppFwk/CommonCode/cvfStructGrid.h"
+#include "../../VizFwk/LibCore/cvfObject.h"
+#include "../../VizFwk/LibCore/cvfArray.h"
+#include "../../VizFwk/LibCore/cvfCollection.h"
+#include "../../AppFwk/CommonCode/cvfStructGrid.h"
 
 namespace cvf {
 
@@ -54,166 +47,166 @@ class DrawableGeo;
 class ScalarMapper;
 class StructGridScalarDataAccess;
 
-//--------------------------------------------------------------------------------------------------
-/// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
+///
+//--------------------------------------------------------------------
 class CellRangeFilter
 {
-public:
-    CellRangeFilter();
+ public:
+  CellRangeFilter();
 
-    void addCellIncludeRange(size_t minI, size_t minJ, size_t minK, size_t maxI, size_t maxJ, size_t maxK, bool applyToSubGridAreas);
-    void addCellInclude(size_t i, size_t j, size_t k, bool applyToSubGridAreas);
+  void addCellIncludeRange(size_t minI, size_t minJ, size_t minK, size_t maxI, size_t maxJ, size_t maxK, bool applyToSubGridAreas);
+  void addCellInclude(size_t i, size_t j, size_t k, bool applyToSubGridAreas);
 
-    void addCellExcludeRange(size_t minI, size_t minJ, size_t minK, size_t maxI, size_t maxJ, size_t maxK, bool applyToSubGridAreas);
+  void addCellExcludeRange(size_t minI, size_t minJ, size_t minK, size_t maxI, size_t maxJ, size_t maxK, bool applyToSubGridAreas);
 
-    bool isCellVisible(size_t i, size_t j, size_t k, bool isInSubGridArea) const;
-    bool isCellExcluded(size_t i, size_t j, size_t k, bool isInSubGridArea) const;
+  bool isCellVisible(size_t i, size_t j, size_t k, bool isInSubGridArea) const;
+  bool isCellExcluded(size_t i, size_t j, size_t k, bool isInSubGridArea) const;
 
-    bool hasIncludeRanges() const; 
+  bool hasIncludeRanges() const;
 
-private:
-    class CellRange
+ private:
+  class CellRange
+  {
+   public:
+    CellRange()
+        : m_min(cvf::Vec3st::ZERO),
+          m_max(UNDEFINED_SIZE_T, UNDEFINED_SIZE_T, UNDEFINED_SIZE_T),
+          m_applyToSubGridAreas(true)
     {
-    public:
-        CellRange()
-            : m_min(cvf::Vec3st::ZERO),
-            m_max(UNDEFINED_SIZE_T, UNDEFINED_SIZE_T, UNDEFINED_SIZE_T),
-            m_applyToSubGridAreas(true)
-        {
-        }
+    }
 
-        CellRange(size_t minI, size_t minJ, size_t minK, size_t maxI, size_t maxJ, size_t maxK, bool applyToSubGridAreas)
-            : m_min(minI, minJ, minK),
-            m_max(maxI, maxJ, maxK),
-            m_applyToSubGridAreas(applyToSubGridAreas)
-        {
-        }
+    CellRange(size_t minI, size_t minJ, size_t minK, size_t maxI, size_t maxJ, size_t maxK, bool applyToSubGridAreas)
+        : m_min(minI, minJ, minK),
+          m_max(maxI, maxJ, maxK),
+          m_applyToSubGridAreas(applyToSubGridAreas)
+    {
+    }
 
-        bool isInRange(size_t i, size_t j, size_t k, bool isInSubGridArea) const
-        {
-            if (isInSubGridArea && !m_applyToSubGridAreas) return false;
-            cvf::Vec3st test(i, j, k);
+    bool isInRange(size_t i, size_t j, size_t k, bool isInSubGridArea) const
+    {
+        if (isInSubGridArea && !m_applyToSubGridAreas) return false;
+        cvf::Vec3st test(i, j, k);
 
-            int idx;
-            for (idx = 0; idx < 3; idx++)
+        int idx;
+        for (idx = 0; idx < 3; idx++)
+        {
+            if (test[idx] < m_min[idx] || m_max[idx] <= test[idx])
             {
-                if (test[idx] < m_min[idx] || m_max[idx] <= test[idx])
-                {
-                    return false;
-                }
+                return false;
             }
-
-            return true;
         }
 
-    public:
-        cvf::Vec3st m_min;
-        cvf::Vec3st m_max;
-        bool m_applyToSubGridAreas;
-    };
+        return true;
+    }
 
-private:
-    std::vector<CellRange> m_includeRanges;
-    std::vector<CellRange> m_excludeRanges;
+   public:
+    cvf::Vec3st m_min;
+    cvf::Vec3st m_max;
+    bool m_applyToSubGridAreas;
+  };
+
+ private:
+  std::vector<CellRange> m_includeRanges;
+  std::vector<CellRange> m_excludeRanges;
 };
 
 
-//--------------------------------------------------------------------------------------------------
-/// 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------
+///
+//--------------------------------------------------------------------
 class CellFaceVisibilityFilter
 {
-public:
-    virtual bool isFaceVisible(size_t i, size_t j, size_t k, StructGridInterface::FaceType face, const UByteArray* cellVisibility) const = 0;
+ public:
+  virtual bool isFaceVisible(size_t i, size_t j, size_t k, StructGridInterface::FaceType face, const UByteArray* cellVisibility) const = 0;
 };
 
 
 class StructGridQuadToCellFaceMapper : public Object
 {
-public:
-    size_t quadCount() const                { return m_quadsToCells.size();}
+ public:
+  size_t quadCount() const                { return m_quadsToCells.size();}
 
-    size_t cellIndex(size_t quadIdx) const  {return m_quadsToCells[quadIdx]; }
-    StructGridInterface::FaceType cellFace(size_t quadIdx) const {return m_quadsToFace[quadIdx]; }
+  size_t cellIndex(size_t quadIdx) const  {return m_quadsToCells[quadIdx]; }
+  StructGridInterface::FaceType cellFace(size_t quadIdx) const {return m_quadsToFace[quadIdx]; }
 
-    // Interface for building the mappings
-    std::vector<size_t>& quadToCellIndexMap()   { return m_quadsToCells; }
-    std::vector<StructGridInterface::FaceType>& quadToCellFaceMap() { return m_quadsToFace; } 
- 
-private:
-    std::vector<size_t>                          m_quadsToCells;
-    std::vector<StructGridInterface::FaceType>   m_quadsToFace;
+  // Interface for building the mappings
+  std::vector<size_t>& quadToCellIndexMap()   { return m_quadsToCells; }
+  std::vector<StructGridInterface::FaceType>& quadToCellFaceMap() { return m_quadsToFace; }
+
+ private:
+  std::vector<size_t>                          m_quadsToCells;
+  std::vector<StructGridInterface::FaceType>   m_quadsToFace;
 };
 
 
 class StuctGridTriangleToCellFaceMapper : public Object
 {
-public:
-    explicit StuctGridTriangleToCellFaceMapper(const StructGridQuadToCellFaceMapper* quadMapper) { m_quadMapper = quadMapper; }
-    size_t triangleCount() const                            { return 2* m_quadMapper->quadCount();}
+ public:
+  explicit StuctGridTriangleToCellFaceMapper(const StructGridQuadToCellFaceMapper* quadMapper) { m_quadMapper = quadMapper; }
+  size_t triangleCount() const                            { return 2* m_quadMapper->quadCount();}
 
-    size_t cellIndex(size_t triangleIdx) const              {return m_quadMapper->cellIndex(triangleIdx/2); }
-    StructGridInterface::FaceType cellFace(size_t triangleIdx) const {return m_quadMapper->cellFace(triangleIdx/2); }
+  size_t cellIndex(size_t triangleIdx) const              {return m_quadMapper->cellIndex(triangleIdx/2); }
+  StructGridInterface::FaceType cellFace(size_t triangleIdx) const {return m_quadMapper->cellFace(triangleIdx/2); }
 
-private:
-    cref<StructGridQuadToCellFaceMapper> m_quadMapper;
+ private:
+  cref<StructGridQuadToCellFaceMapper> m_quadMapper;
 };
 
 
-//==================================================================================================
+//====================================================================
 //
-// 
 //
-//==================================================================================================
+//
+//====================================================================
 class StructGridGeometryGenerator : public Object
 {
-public:
-    explicit StructGridGeometryGenerator(const StructGridInterface* grid);
-    ~StructGridGeometryGenerator();
+ public:
+  explicit StructGridGeometryGenerator(const StructGridInterface* grid);
+  ~StructGridGeometryGenerator();
 
-    // Setup methods
+  // Setup methods
 
-    void                setCellVisibility(const UByteArray* cellVisibility);
-    void                addFaceVisibilityFilter(const CellFaceVisibilityFilter* cellVisibilityFilter);
+  void                setCellVisibility(const UByteArray* cellVisibility);
+  void                addFaceVisibilityFilter(const CellFaceVisibilityFilter* cellVisibilityFilter);
 
-    // Access, valid after generation is done
+  // Access, valid after generation is done
 
-    const StructGridInterface* activeGrid() { return m_grid.p(); }
+  const StructGridInterface* activeGrid() { return m_grid.p(); }
 
-    void                textureCoordinates(Vec2fArray* textureCoords, const StructGridScalarDataAccess* resultAccessor, const ScalarMapper* mapper) const;
+  void                textureCoordinates(Vec2fArray* textureCoords, const StructGridScalarDataAccess* resultAccessor, const ScalarMapper* mapper) const;
 
-    // Mapping between cells and geometry
+  // Mapping between cells and geometry
 
-    const StructGridQuadToCellFaceMapper *    quadToCellFaceMapper()     { return m_quadMapper.p(); }
-    const StuctGridTriangleToCellFaceMapper * triangleToCellFaceMapper() { return m_triangleMapper.p(); }
+  const StructGridQuadToCellFaceMapper *    quadToCellFaceMapper()     { return m_quadMapper.p(); }
+  const StuctGridTriangleToCellFaceMapper * triangleToCellFaceMapper() { return m_triangleMapper.p(); }
 
-    // Generated geometry
-    ref<DrawableGeo>    generateSurface();
-    ref<DrawableGeo>    createMeshDrawable();
-    ref<DrawableGeo>    createOutlineMeshDrawable(double creaseAngle);
+  // Generated geometry
+  ref<DrawableGeo>    generateSurface();
+  ref<DrawableGeo>    createMeshDrawable();
+  ref<DrawableGeo>    createOutlineMeshDrawable(double creaseAngle);
 
-    static ref<DrawableGeo> createMeshDrawableFromSingleCell(const StructGridInterface* grid, size_t cellIndex);
+  static ref<DrawableGeo> createMeshDrawableFromSingleCell(const StructGridInterface* grid, size_t cellIndex);
 
-private:
-    static ref<UIntArray> 
-                        lineIndicesFromQuadVertexArray(const Vec3fArray* vertexArray);
-    bool                isCellFaceVisible(size_t i, size_t j, size_t k, StructGridInterface::FaceType face) const;
-    
-    void                computeArrays();
+ private:
+  static ref<UIntArray>
+  lineIndicesFromQuadVertexArray(const Vec3fArray* vertexArray);
+  bool                isCellFaceVisible(size_t i, size_t j, size_t k, StructGridInterface::FaceType face) const;
 
-private:
-    // Input
-    cref<StructGridInterface>                    m_grid;                     // The grid being processed
-    std::vector<const CellFaceVisibilityFilter*> m_cellVisibilityFilters;
-    cref<UByteArray>                             m_cellVisibility;
+  void                computeArrays();
 
-    // Created arrays
-    cvf::ref<cvf::Vec3fArray>                    m_vertices;
+ private:
+  // Input
+  cref<StructGridInterface>                    m_grid;                     // The grid being processed
+  std::vector<const CellFaceVisibilityFilter*> m_cellVisibilityFilters;
+  cref<UByteArray>                             m_cellVisibility;
 
-    // Mappings
-    ref<StructGridQuadToCellFaceMapper>          m_quadMapper;
-    ref<StuctGridTriangleToCellFaceMapper>       m_triangleMapper;
+  // Created arrays
+  cvf::ref<cvf::Vec3fArray>                    m_vertices;
+
+  // Mappings
+  ref<StructGridQuadToCellFaceMapper>          m_quadMapper;
+  ref<StuctGridTriangleToCellFaceMapper>       m_triangleMapper;
 };
 
 }

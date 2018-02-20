@@ -18,43 +18,38 @@
 
 #pragma once
 
-#include "resinsight/Fwk/VizFwk/LibCore/cvfBase.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfObject.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfMath.h"
-#include "resinsight/Fwk/VizFwk/LibCore/cvfVector3.h"
-
-//#include "cvfBase.h"
-//#include "cvfObject.h"
-//#include "cvfMath.h"
-//#include "cvfVector3.h"
+#include "../../Fwk/VizFwk/LibCore/cvfBase.h"
+#include "../../Fwk/VizFwk/LibCore/cvfObject.h"
+#include "../../Fwk/VizFwk/LibCore/cvfMath.h"
+#include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
 
 #include <vector>
 
 
-//==================================================================================================
+//====================================================================
 /// 
-//==================================================================================================
+//====================================================================
 class RigWellPath : public cvf::Object
 {
-public:
-    RigWellPath();
+ public:
+  RigWellPath();
 
-    std::vector<cvf::Vec3d>     m_wellPathPoints;
-    std::vector<double>         m_measuredDepths;
+  std::vector<cvf::Vec3d>     m_wellPathPoints;
+  std::vector<double>         m_measuredDepths;
 
-    void                        setDatumElevation(double value);
-    bool                        hasDatumElevation() const;
-    double                      datumElevation() const;
-    cvf::Vec3d                  interpolatedPointAlongWellPath(double measuredDepth) const;
-    double                      wellPathAzimuthAngle(const cvf::Vec3d& position) const;
-    void                        twoClosestPoints(const cvf::Vec3d& position, cvf::Vec3d* p1, cvf::Vec3d* p2) const;
+  void                        setDatumElevation(double value);
+  bool                        hasDatumElevation() const;
+  double                      datumElevation() const;
+  cvf::Vec3d                  interpolatedPointAlongWellPath(double measuredDepth) const;
+  double                      wellPathAzimuthAngle(const cvf::Vec3d& position) const;
+  void                        twoClosestPoints(const cvf::Vec3d& position, cvf::Vec3d* p1, cvf::Vec3d* p2) const;
 
-    std::pair<std::vector<cvf::Vec3d>, std::vector<double> > 
-                                clippedPointSubset(double startMD, double endMD) const;
+  std::pair<std::vector<cvf::Vec3d>, std::vector<double> >
+  clippedPointSubset(double startMD, double endMD) const;
 
-    std::vector<cvf::Vec3d>     wellPathPointsIncludingInterpolatedIntersectionPoint(double intersectionMeasuredDepth) const;
+  std::vector<cvf::Vec3d>     wellPathPointsIncludingInterpolatedIntersectionPoint(double intersectionMeasuredDepth) const;
 
-private:
-    bool    m_hasDatumElevation;
-    double  m_datumElevation;
+ private:
+  bool    m_hasDatumElevation;
+  double  m_datumElevation;
 };
