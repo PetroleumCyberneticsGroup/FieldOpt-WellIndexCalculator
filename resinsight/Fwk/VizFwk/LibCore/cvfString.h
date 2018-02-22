@@ -46,94 +46,98 @@ namespace cvf {
 
 
 //====================================================================
-//
-// A general unicode based string class 
-//
+// A general unicode based string class
 //====================================================================
 class String
 {
-public:
-    String();
-    String(const std::string& str);
-    String(const std::wstring& str);
-    String(const String& str);
-    String(const char* str);
-    String(const wchar_t* str);
+ public:
+  String();
+  String(const std::string& str);
+  String(const std::wstring& str);
+  String(const String& str);
+  String(const char* str);
+  String(const wchar_t* str);
 
-    explicit String(char c);
-    
-    explicit String(int number);
-    explicit String(int64 number);
-    explicit String(uint number);
-    explicit String(float number);
-    explicit String(double number);
+  explicit String(char c);
 
-    String&         operator=(String rhs);
-    bool            operator==(const String& rhs) const;
-    bool            operator==(const wchar_t* rhs) const;
-    bool            operator<(const String& rhs) const;
-    bool            operator!=(const String& rhs) const;
-    const String    operator+(const String& rhs) const;
-    String&         operator+=(const String& rhs);
+  explicit String(int number);
+  explicit String(int64 number);
+  explicit String(uint number);
+  explicit String(float number);
+  explicit String(double number);
 
-    const wchar_t&  operator[](size_t pos) const;
-    wchar_t&        operator[](size_t pos);
+  String&         operator=(String rhs);
+  bool            operator==(const String& rhs) const;
+  bool            operator==(const wchar_t* rhs) const;
+  bool            operator<(const String& rhs) const;
+  bool            operator!=(const String& rhs) const;
+  const String    operator+(const String& rhs) const;
+  String&         operator+=(const String& rhs);
 
-    String              toLower() const;
-    String              toUpper() const;
-    String              trimmedRight() const;
-    String              trimmedLeft() const;
-    String              trimmed() const;
-    String              simplified() const;
+  const wchar_t&  operator[](size_t pos) const;
+  wchar_t&        operator[](size_t pos);
 
-    std::vector<String> split(const String& delimiters = " ") const;
-    size_t              find(const String& str, size_t start = 0) const;
-    bool                startsWith(const String& str) const;
-    String              subString(size_t start, size_t length = npos) const;
-	void                replace(const String& before, const String& after);
+  String              toLower() const;
+  String              toUpper() const;
+  String              trimmedRight() const;
+  String              trimmedLeft() const;
+  String              trimmed() const;
+  String              simplified() const;
 
-    const wchar_t*      c_str() const;
-    CharArray           toAscii() const;                // Useful when you need a const char* pointer.
-    std::string         toStdString() const;
-    std::wstring        toStdWString() const;
-    CharArray           toUtf8() const;
+  std::vector<String> split(const String& delimiters = " ") const;
+  size_t              find(const String& str, size_t start = 0) const;
+  bool                startsWith(const String& str) const;
+  String              subString(size_t start, size_t length = npos) const;
+  void                replace(const String& before, const String& after);
 
-    static String       fromAscii(const char* str, size_t strSize = npos);
-    static String       fromUtf8(const char* str);
+  const wchar_t*      c_str() const;
+  CharArray           toAscii() const;                // Useful when you need a const char* pointer.
+  std::string         toStdString() const;
+  std::wstring        toStdWString() const;
+  CharArray           toUtf8() const;
 
-    bool                isEmpty() const;
-    size_t              size() const;
-    void                resize(size_t size);
+  static String       fromAscii(const char* str, size_t strSize = npos);
+  static String       fromUtf8(const char* str);
 
-    static String       number(float n, char format = 'g', int precision = -1);
-    static String       number(double n, char format = 'g', int precision = -1);
+  bool                isEmpty() const;
+  size_t              size() const;
+  void                resize(size_t size);
 
-    double              toDouble(bool* ok = NULL) const;
-    double              toDouble(double defaultValue) const;
-    float               toFloat(bool* ok = NULL) const;
-    float               toFloat(float defaultValue) const;
-    int                 toInt(bool* ok = NULL) const;
-    int                 toInt(int defaultValue) const;
-    uint                toUInt(bool* ok = NULL) const;
-    uint                toUInt(uint defaultValue) const;
-    int64               toInt64(bool* ok = NULL) const;
-    int64               toInt64(int64 defaultValue) const;
+  static String       number(float n, char format = 'g', int precision = -1);
+  static String       number(double n, char format = 'g', int precision = -1);
+  static String number_coord(double n, char format = 'f', int precision = 3);
 
-    String              arg(const String& a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
-    String              arg(char a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
+  double              toDouble(bool* ok = NULL) const;
+  double              toDouble(double defaultValue) const;
+  float               toFloat(bool* ok = NULL) const;
+  float               toFloat(float defaultValue) const;
+  int                 toInt(bool* ok = NULL) const;
+  int                 toInt(int defaultValue) const;
+  uint                toUInt(bool* ok = NULL) const;
+  uint                toUInt(uint defaultValue) const;
+  int64               toInt64(bool* ok = NULL) const;
+  int64               toInt64(int64 defaultValue) const;
 
-    String              arg(int a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
-    String              arg(int64 a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
-    String              arg(uint a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
-    String              arg(float a, int fieldWidth = 0, char format = 'g', int precision = -1, const wchar_t& fillChar = ' ') const;
-    String              arg(double a, int fieldWidth = 0, char format = 'g', int precision = -1, const wchar_t& fillChar = ' ') const;
+  String              arg(const String& a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
+  String              arg(char a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
 
-    void                swap(String& other);
+  String              arg(int a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
+  String              arg(int64 a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
+  String              arg(uint a, int fieldWidth = 0, const wchar_t& fillChar = ' ') const;
+  String              arg(float a, int fieldWidth = 0, char format = 'g', int precision = -1, const wchar_t& fillChar = ' ') const;
+  String              arg(double a, int fieldWidth = 0, char format = 'g', int precision = -1, const wchar_t& fillChar = ' ') const;
 
-    static const size_t npos;       // Same as std::string::npos. This value, when used as the value for a count parameter n in string's member functions, roughly indicates "as many as possible".
-                                    // As a return value it is usually used to indicate failure.
-private:
-    std::wstring m_string;
+  void                swap(String& other);
+
+  //--------------------------------------------------------------------
+  // Same as std::string::npos. This value, when used as the value for
+  // a count parameter n in string's member functions, roughly indicates
+  // "as many as possible".
+  static const size_t npos;
+
+  // As a return value it is usually used to indicate failure.
+ private:
+  std::wstring m_string;
 };
 
 String   operator+(const char* str1, const String& str2);

@@ -19,6 +19,8 @@
 ////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+// RESINSIGHT: APPLICATIONCODE/RESERVOIRDATAMODEL ------------------
 #include "RigGridBase.h"
 #include "RigCell.h"
 #include "RigFault.h"
@@ -26,14 +28,18 @@
 #include "RigLocalGrid.h"
 #include "RigActiveCellInfo.h"
 
+// RESINSIGHT: APPLICATIONCODE/FILEINTERFACE -----------------------
 #include "../FileInterface/RifReaderInterface.h"
 //#include "RiaLogging.h"
 //#include "RiaDefines.h"
 //#include "RigFault.h"
 
+// RESINSIGHT: FWK/VIZFWK/LIBCORE ----------------------------------
 #include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
 #include "../../Fwk/VizFwk/LibCore/cvfCollection.h"
 #include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
+
+// RESINSIGHT: FWK/APPFWK/COMMONCODE -------------------------------
 //#include "../../Fwk/AppFwk/CommonCode/cvfStructGrid.h"
 
 #include <QtGlobal>
@@ -63,6 +69,7 @@ class RigMainGrid : public RigGridBase
 
 //  const RigCell& cellByGridAndGridLocalCellIdx(size_t gridIdx,
 //                                               size_t gridLocalCellIdx) const;
+
 //  size_t reservoirCellIndexByGridAndGridLocalCellIndex(size_t gridIdx,
 //                                                       size_t gridLocalCellIdx) const;
 
@@ -73,7 +80,9 @@ class RigMainGrid : public RigGridBase
   size_t gridCount() const { return m_localGrids.size() + 1; }
 
   RigGridBase* gridByIndex(size_t localGridIndex);
+
   const RigGridBase* gridByIndex(size_t localGridIndex) const;
+
   RigGridBase* gridById(int localGridId);
 
   // NNC -------------------------------------------------------------
@@ -104,26 +113,33 @@ class RigMainGrid : public RigGridBase
 
 
  private:
-  void                                    initAllSubCellsMainGridCellIndex();
-  void                                    buildCellSearchTree();
-  bool                                    hasFaultWithName(const QString& name) const;
+  void initAllSubCellsMainGridCellIndex();
+  void buildCellSearchTree();
+  bool hasFaultWithName(const QString& name) const;
 
  private:
-  std::vector<cvf::Vec3d>                 m_nodes;        ///< Global vertex table
-  std::vector<RigCell>                    m_cells;        ///< Global array of all cells in the reservoir (including the ones in LGR's)
-  cvf::Collection<RigLocalGrid>           m_localGrids;   ///< List of all the LGR's in this reservoir
-  std::vector<size_t>                     m_gridIdToIndexMapping; ///< Mapping from LGR Id to index.
 
+  ///< Global vertex table
+  std::vector<cvf::Vec3d> m_nodes;
 
-  cvf::Collection<RigFault>               m_faults;
-  cvf::ref<RigNNCData>                    m_nncData;
-  cvf::ref<RigFaultsPrCellAccumulator>    m_faultsPrCellAcc;
+  ///< Global array of all cells in the reservoir (including the ones in LGR's)
+  std::vector<RigCell> m_cells;
 
-  cvf::Vec3d                              m_displayModelOffset;
-  cvf::ref<cvf::BoundingBoxTree>          m_cellSearchTree;
-  mutable cvf::BoundingBox                m_boundingBox;
+  ///< List of all the LGR's in this reservoir
+  cvf::Collection<RigLocalGrid> m_localGrids;
 
-  bool                                    m_flipXAxis;
-  bool                                    m_flipYAxis;
+  ///< Mapping from LGR Id to index.
+  std::vector<size_t> m_gridIdToIndexMapping;
+
+  cvf::Collection<RigFault> m_faults;
+  cvf::ref<RigNNCData> m_nncData;
+  cvf::ref<RigFaultsPrCellAccumulator> m_faultsPrCellAcc;
+
+  cvf::Vec3d m_displayModelOffset;
+  cvf::ref<cvf::BoundingBoxTree> m_cellSearchTree;
+  mutable cvf::BoundingBox m_boundingBox;
+
+  bool m_flipXAxis;
+  bool m_flipYAxis;
 };
 

@@ -36,8 +36,21 @@
 
 #pragma once
 
+// STD -------------------------------------------------------------
+
+// QT --------------------------------------------------------------
+#include <QDateTime>
+
+// FIELDOPT: UTILITIES ---------------------------------------------
+#include <Utilities/time.hpp>
+#include <Utilities/debug.hpp>
+#include <Utilities/colors.hpp>
+
+// RESINSIGHT: FWK/VIZFWK/LIBCORE ----------------------------------
 #include "../LibCore/cvfBase.h"
 #include "../LibCore/cvfObject.h"
+
+// RESINSIGHT: FWK/VIZFWK/LIBGEOMETRY ------------------------------
 #include "cvfBoundingBox.h"
 
 namespace cvf {
@@ -45,20 +58,19 @@ namespace cvf {
 class BoundingBoxTreeImpl;
 
 //====================================================================
-//
-// An axis-aligned bounding-box search tree class 
-//
+// An axis-aligned bounding-box search tree class
 //====================================================================
 class BoundingBoxTree : public cvf::Object
 {
 public:
     BoundingBoxTree();
     ~BoundingBoxTree();
-    
+
     void buildTreeFromBoundingBoxes(const std::vector<cvf::BoundingBox>& boundingBoxes,
                                     const std::vector<size_t>* optionalBoundingBoxIds);
-    
-    void findIntersections(const cvf::BoundingBox& inputBB, std::vector<size_t>* bbIdsOrIndexesIntersected) const;
+
+    void findIntersections(const cvf::BoundingBox& inputBB,
+                           std::vector<size_t>* bbIdsOrIndexesIntersected) const;
 
 private:
 

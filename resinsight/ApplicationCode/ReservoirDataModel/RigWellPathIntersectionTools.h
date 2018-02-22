@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 //
 //  Copyright (C) 2017 Statoil ASA
 //
@@ -14,15 +14,25 @@
 //  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
 //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 
+// FIELDOPT: UTILITIES ---------------------------------------------
+#include <Utilities/time.hpp>
+#include <Utilities/debug.hpp>
+#include <Utilities/colors.hpp>
+
+// RESINSIGHT: FWK/VIZFWK/LIBCORE ----------------------------------
 #include "../../Fwk/VizFwk/LibCore/cvfBase.h"
 #include "../../Fwk/VizFwk/LibCore/cvfVector3.h"
 #include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
 
+// STD -------------------------------------------------------------
 #include <array>
+
+// QT --------------------------------------------------------------
+#include <QDateTime>
 
 class RigWellPath;
 class RigMainGrid;

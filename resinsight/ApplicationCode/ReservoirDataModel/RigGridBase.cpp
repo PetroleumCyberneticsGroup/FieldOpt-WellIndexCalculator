@@ -3,23 +3,24 @@
 //  Copyright (C) 2011-     Statoil ASA
 //  Copyright (C) 2013-     Ceetron Solutions AS
 //  Copyright (C) 2011-2012 Ceetron AS
-// 
+//
 //  ResInsight is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
 //  WARRANTY; without even the implied warranty of MERCHANTABILITY or
 //  FITNESS FOR A PARTICULAR PURPOSE.
-// 
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
+//
+//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 #include "RigGridBase.h"
 #include "RigMainGrid.h"
+
 //#include "RigCell.h"
 //#include "RigCaseCellResultsData.h"
 //#include "RigResultAccessorFactory.h"
@@ -32,13 +33,11 @@ RigGridBase::RigGridBase(RigMainGrid* mainGrid):
     m_mainGrid(mainGrid),
     m_indexToStartOfCells(0)
 {
-  if (mainGrid == NULL)
-  {
+  if (mainGrid == NULL) {
     m_gridIndex = 0;
     m_gridId    = 0;
   }
-  else
-  {
+  else {
     m_gridIndex = cvf::UNDEFINED_SIZE_T;
     m_gridId = cvf::UNDEFINED_INT;
   }
@@ -50,26 +49,23 @@ RigGridBase::~RigGridBase(void)
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-void RigGridBase::setGridName(const std::string& gridName)
-{
+void RigGridBase::setGridName(const std::string& gridName) {
   m_gridName = gridName;
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-std::string RigGridBase::gridName() const
-{
+std::string RigGridBase::gridName() const {
   return m_gridName;
 }
 
 // -----------------------------------------------------------------
 /// Do we need this ?
 // -----------------------------------------------------------------
-RigCell& RigGridBase::cell(size_t gridLocalCellIndex)
-{
+RigCell& RigGridBase::cell(size_t gridLocalCellIndex) {
   CVF_ASSERT(m_mainGrid);
 
   CVF_ASSERT(m_indexToStartOfCells + gridLocalCellIndex < m_mainGrid->globalCellArray().size());
@@ -78,62 +74,56 @@ RigCell& RigGridBase::cell(size_t gridLocalCellIndex)
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-const RigCell& RigGridBase::cell(size_t gridLocalCellIndex) const
-{
+const RigCell& RigGridBase::cell(size_t gridLocalCellIndex) const {
   CVF_ASSERT(m_mainGrid);
 
   return m_mainGrid->globalCellArray()[m_indexToStartOfCells + gridLocalCellIndex];
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-void RigGridBase::initSubGridParentPointer()
-{
+void RigGridBase::initSubGridParentPointer() {
   RigGridBase* grid = this;
 
   size_t cellIdx;
-  for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx)
-  {
+  for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx) {
     RigCell& cell = grid->cell(cellIdx);
-    if (cell.subGrid())
-    {
+
+    if (cell.subGrid()) {
       cell.subGrid()->setParentGrid(grid);
     }
   }
 }
 
 // -----------------------------------------------------------------
-/// Find the cell index to the maingrid cell containing this cell, and store it as 
-/// m_mainGridCellIndex in each cell.
+/// Find the cell index to the maingrid cell containing this cell,
+/// and store it as m_mainGridCellIndex in each cell.
 // -----------------------------------------------------------------
 void RigGridBase::initSubCellsMainGridCellIndex()
 {
   RigGridBase* grid = this;
-  if (grid->isMainGrid())
-  {
+
+  if (grid->isMainGrid()) {
+
     size_t cellIdx;
-    for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx)
-    {
+    for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx) {
       RigCell& cell = grid->cell(cellIdx);
       cell.setMainGridCellIndex(cellIdx);
     }
   }
-  else
-  {
+  else {
     size_t cellIdx;
-    for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx)
-    {
+    for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx) {
       RigLocalGrid* localGrid = static_cast<RigLocalGrid*>(grid);
       RigGridBase* parentGrid = localGrid->parentGrid();
 
       RigCell& cell = localGrid->cell(cellIdx);
       size_t parentCellIndex = cell.parentCellIndex();
 
-      while (!parentGrid->isMainGrid())
-      {
+      while (!parentGrid->isMainGrid()) {
         const RigCell& parentCell = parentGrid->cell(parentCellIndex);
         parentCellIndex = parentCell.parentCellIndex();
 
@@ -169,7 +159,7 @@ void RigGridBase::cellCornerVertices(size_t cellIndex,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 size_t RigGridBase::cellIndexFromIJK(size_t i,
                                      size_t j,
@@ -183,7 +173,7 @@ size_t RigGridBase::cellIndexFromIJK(size_t i,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void RigGridBase::cellMinMaxCordinates(size_t cellIndex,
                                        cvf::Vec3d* minCoordinate,
@@ -193,7 +183,7 @@ void RigGridBase::cellMinMaxCordinates(size_t cellIndex,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 bool RigGridBase::ijkFromCellIndex(size_t cellIndex,
                                    size_t* i, size_t* j, size_t* k) const
@@ -218,7 +208,7 @@ bool RigGridBase::ijkFromCellIndex(size_t cellIndex,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 size_t RigGridBase::gridPointIndexFromIJK(size_t i, size_t j, size_t k) const
 {
@@ -226,7 +216,7 @@ size_t RigGridBase::gridPointIndexFromIJK(size_t i, size_t j, size_t k) const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 bool RigGridBase::cellIJKFromCoordinate(const cvf::Vec3d& coord,
                                         size_t* i, size_t* j, size_t* k) const
@@ -235,7 +225,7 @@ bool RigGridBase::cellIJKFromCoordinate(const cvf::Vec3d& coord,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 cvf::Vec3d RigGridBase::gridPointCoordinate(size_t i, size_t j, size_t k) const
 {
@@ -245,7 +235,7 @@ cvf::Vec3d RigGridBase::gridPointCoordinate(size_t i, size_t j, size_t k) const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 cvf::Vec3d RigGridBase::minCoordinate() const
 {
@@ -255,7 +245,7 @@ cvf::Vec3d RigGridBase::minCoordinate() const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 size_t RigGridBase::gridPointCountI() const
 {
@@ -263,7 +253,7 @@ size_t RigGridBase::gridPointCountI() const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 size_t RigGridBase::gridPointCountJ() const
 {
@@ -271,7 +261,7 @@ size_t RigGridBase::gridPointCountJ() const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 size_t RigGridBase::gridPointCountK() const
 {
@@ -279,7 +269,7 @@ size_t RigGridBase::gridPointCountK() const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 cvf::Vec3d RigGridBase::cellCentroid(size_t cellIndex) const
 {
@@ -289,7 +279,7 @@ cvf::Vec3d RigGridBase::cellCentroid(size_t cellIndex) const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 cvf::Vec3d RigGridBase::maxCoordinate() const
 {
@@ -300,7 +290,7 @@ cvf::Vec3d RigGridBase::maxCoordinate() const
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 bool RigGridBase::isCellValid(size_t i, size_t j, size_t k) const
 {
@@ -316,7 +306,7 @@ bool RigGridBase::isCellValid(size_t i, size_t j, size_t k) const
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 bool RigGridBase::cellIJKNeighbor(size_t i, size_t j, size_t k,
                                   FaceType face,
@@ -339,7 +329,7 @@ bool RigGridBase::cellIJKNeighbor(size_t i, size_t j, size_t k,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 bool RigGridBase::isMainGrid() const
 {
@@ -380,7 +370,7 @@ double RigGridBase::characteristicIJCellSize() const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 size_t RigGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const
 {
@@ -388,7 +378,7 @@ size_t RigGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //size_t RigGridBase::addCoarseningBox(size_t i1, size_t i2,
 //                                     size_t j1, size_t j2,
@@ -426,7 +416,7 @@ size_t RigGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //void RigGridBase::coarseningBox(size_t coarseningBoxIndex,
 //                                size_t* i1, size_t* i2,
@@ -447,7 +437,7 @@ size_t RigGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 cvf::BoundingBox RigGridBase::boundingBox()
 {
@@ -470,7 +460,7 @@ cvf::BoundingBox RigGridBase::boundingBox()
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //bool RigGridCellFaceVisibilityFilter::isFaceVisible(
 //    size_t i, size_t j, size_t k,

@@ -3,17 +3,17 @@
 //  Copyright (C) 2011-     Statoil ASA
 //  Copyright (C) 2013-     Ceetron Solutions AS
 //  Copyright (C) 2011-2012 Ceetron AS
-// 
+//
 //  ResInsight is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
 //  WARRANTY; without even the implied warranty of MERCHANTABILITY or
 //  FITNESS FOR A PARTICULAR PURPOSE.
-// 
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
+//
+//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@
 #include <QDebug>
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //RigEclipseCaseData::RigEclipseCaseData(RimEclipseCase* ownerCase) {
 RigEclipseCaseData::RigEclipseCaseData() {
@@ -59,26 +59,26 @@ RigEclipseCaseData::RigEclipseCaseData() {
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 RigEclipseCaseData::~RigEclipseCaseData() {}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 RigMainGrid* RigEclipseCaseData::mainGrid() {
   return m_mainGrid.p();
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 const RigMainGrid* RigEclipseCaseData::mainGrid() const {
   return m_mainGrid.p();
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void RigEclipseCaseData::setMainGrid(RigMainGrid* mainGrid)
 {
@@ -89,7 +89,7 @@ void RigEclipseCaseData::setMainGrid(RigMainGrid* mainGrid)
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void RigEclipseCaseData::allGrids(std::vector<RigGridBase*>* grids) {
 
@@ -106,7 +106,7 @@ void RigEclipseCaseData::allGrids(std::vector<RigGridBase*>* grids) {
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void RigEclipseCaseData::allGrids(std::vector<const RigGridBase*>* grids) const {
   CVF_ASSERT(grids);
@@ -141,7 +141,7 @@ RigGridBase* RigEclipseCaseData::grid(size_t index) {
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 size_t RigEclipseCaseData::gridCount() const {
 
@@ -151,7 +151,7 @@ size_t RigEclipseCaseData::gridCount() const {
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //void RigEclipseCaseData::computeWellCellsPrGrid() {
 //
@@ -238,7 +238,7 @@ size_t RigEclipseCaseData::gridCount() const {
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //void RigEclipseCaseData::setSimWellData(
 //    const cvf::Collection<RigSimWellData>& data)
@@ -252,7 +252,7 @@ size_t RigEclipseCaseData::gridCount() const {
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //std::set<QString> RigEclipseCaseData::findSortedWellNames() const
 //{
@@ -269,7 +269,7 @@ size_t RigEclipseCaseData::gridCount() const {
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //const RigSimWellData* RigEclipseCaseData::findSimWellData(QString wellName) const
 //{
@@ -285,7 +285,7 @@ size_t RigEclipseCaseData::gridCount() const {
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //const cvf::UByteArray* RigEclipseCaseData::wellCellsInGrid(size_t gridIndex)
 //{
@@ -297,7 +297,7 @@ size_t RigEclipseCaseData::gridCount() const {
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //const cvf::UIntArray* RigEclipseCaseData::gridCellToResultWellIndex(size_t gridIndex)
 //{
@@ -308,7 +308,7 @@ size_t RigEclipseCaseData::gridCount() const {
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //const RigCell& RigEclipseCaseData::cellFromWellResultCell(
 //    const RigWellResultPoint& wellResultCell) const
@@ -325,7 +325,7 @@ size_t RigEclipseCaseData::gridCount() const {
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //bool RigEclipseCaseData::findSharedSourceFace(cvf::StructGridInterface::FaceType& sharedSourceFace,
 //                                              const RigWellResultPoint& sourceWellCellResult,
@@ -404,47 +404,49 @@ class CellRangeBB
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-void RigEclipseCaseData::computeActiveCellIJKBBox()
-{
-  if (m_mainGrid.notNull() && m_activeCellInfo.notNull() && m_fractureActiveCellInfo.notNull())
-  {
+void RigEclipseCaseData::computeActiveCellIJKBBox() {
+
+  if (m_mainGrid.notNull() && m_activeCellInfo.notNull()
+      && m_fractureActiveCellInfo.notNull()) {
+
     CellRangeBB matrixModelActiveBB;
     CellRangeBB fractureModelActiveBB;
 
     size_t idx;
-    for (idx = 0; idx < m_mainGrid->cellCount(); idx++)
-    {
+    for (idx = 0; idx < m_mainGrid->cellCount(); idx++) {
+
       size_t i, j, k;
       m_mainGrid->ijkFromCellIndex(idx, &i, &j, &k);
 
-      if (m_activeCellInfo->isActive(idx))
-      {
+      if (m_activeCellInfo->isActive(idx)) {
         matrixModelActiveBB.add(i, j, k);
       }
 
-      if (m_fractureActiveCellInfo->isActive(idx))
-      {
+      if (m_fractureActiveCellInfo->isActive(idx)) {
         fractureModelActiveBB.add(i, j, k);
       }
     }
-    m_activeCellInfo->setIJKBoundingBox(matrixModelActiveBB.m_min, matrixModelActiveBB.m_max);
-    m_fractureActiveCellInfo->setIJKBoundingBox(fractureModelActiveBB.m_min, fractureModelActiveBB.m_max);
+
+    m_activeCellInfo->setIJKBoundingBox(matrixModelActiveBB.m_min,
+                                        matrixModelActiveBB.m_max);
+
+    m_fractureActiveCellInfo->setIJKBoundingBox(fractureModelActiveBB.m_min,
+                                                fractureModelActiveBB.m_max);
   }
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-void RigEclipseCaseData::computeActiveCellBoundingBoxes()
-{
+void RigEclipseCaseData::computeActiveCellBoundingBoxes() {
   computeActiveCellIJKBBox();
   computeActiveCellsGeometryBoundingBox();
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //std::vector<QString> RigEclipseCaseData::simulationWellNames() const
 //{
@@ -457,7 +459,7 @@ void RigEclipseCaseData::computeActiveCellBoundingBoxes()
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //bool RigEclipseCaseData::hasSimulationWell(const QString& simWellName) const
 //{
@@ -517,7 +519,7 @@ void RigEclipseCaseData::computeActiveCellBoundingBoxes()
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 RigActiveCellInfo* RigEclipseCaseData::activeCellInfo(
     RiaDefines::PorosityModelType porosityModel)
@@ -531,7 +533,7 @@ RigActiveCellInfo* RigEclipseCaseData::activeCellInfo(
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 const RigActiveCellInfo* RigEclipseCaseData::activeCellInfo(
     RiaDefines::PorosityModelType porosityModel) const
@@ -545,7 +547,7 @@ const RigActiveCellInfo* RigEclipseCaseData::activeCellInfo(
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void RigEclipseCaseData::setActiveCellInfo(RiaDefines::PorosityModelType porosityModel,
                                            RigActiveCellInfo* activeCellInfo)
@@ -564,7 +566,7 @@ void RigEclipseCaseData::setActiveCellInfo(RiaDefines::PorosityModelType porosit
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 {
@@ -618,7 +620,7 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //void RigEclipseCaseData::setActiveFormationNames(RigFormationNames* activeFormationNames)
 //{
@@ -690,7 +692,7 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //RigFormationNames* RigEclipseCaseData::activeFormationNames()
 //{
@@ -698,7 +700,7 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //RigCaseCellResultsData* RigEclipseCaseData::results(RiaDefines::PorosityModelType porosityModel)
 //{
@@ -711,7 +713,7 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //const RigCaseCellResultsData* RigEclipseCaseData::results(RiaDefines::PorosityModelType porosityModel) const
 //{
@@ -724,7 +726,7 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 //}
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 //const std::vector<double>* RigEclipseCaseData::resultValues(RiaDefines::PorosityModelType porosityModel,
 //                                                            RiaDefines::ResultCatType type,
@@ -745,7 +747,7 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 
 /*
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void RigCaseData::closeReaderInterface()
 {
