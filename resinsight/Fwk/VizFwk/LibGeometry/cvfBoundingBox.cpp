@@ -252,18 +252,16 @@ const Vec3d& BoundingBox::max() const
 ///
 /// Note that a point on the box's surface is classified as being contained
 //--------------------------------------------------------------------
-bool BoundingBox::contains(const Vec3d& point) const
-{
+bool BoundingBox::contains(const Vec3d& point) const {
+
   CVF_TIGHT_ASSERT(isValid());
 
   if (point.x() >= m_min.x() && point.x() <= m_max.x() &&
       point.y() >= m_min.y() && point.y() <= m_max.y() &&
-      point.z() >= m_min.z() && point.z() <= m_max.z())
-  {
+      point.z() >= m_min.z() && point.z() <= m_max.z()) {
     return true;
   }
-  else
-  {
+  else {
     return false;
   }
 }
@@ -272,8 +270,8 @@ bool BoundingBox::contains(const Vec3d& point) const
 //--------------------------------------------------------------------
 ///
 //--------------------------------------------------------------------
-bool BoundingBox::intersects(const BoundingBox& box) const
-{
+bool BoundingBox::intersects(const BoundingBox& box) const {
+
   CVF_TIGHT_ASSERT(isValid());
   CVF_TIGHT_ASSERT(box.isValid());
 
@@ -302,6 +300,7 @@ bool BoundingBox::intersects(const BoundingBox& box) const
 ///
 //--------------------------------------------------------------------
 void BoundingBox::cornerVertices(Vec3d corners[8]) const {
+
   corners[0].set(m_min.x(), m_min.y(), m_min.z());
   corners[1].set(m_max.x(), m_min.y(), m_min.z());
   corners[2].set(m_max.x(), m_max.y(), m_min.z());
@@ -338,6 +337,7 @@ void BoundingBox::expand(double amount)
 /// matrix
 //--------------------------------------------------------------------
 void BoundingBox::transform(const Mat4d& matrix) {
+
   // Check if box is invalid, and don't transform if so
   if (!isValid()) return;
 

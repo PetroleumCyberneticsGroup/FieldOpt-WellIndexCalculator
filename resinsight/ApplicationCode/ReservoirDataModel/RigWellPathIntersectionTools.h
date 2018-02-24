@@ -36,7 +36,7 @@
 
 class RigWellPath;
 class RigMainGrid;
-//class RigEclipseCaseData;
+class RigEclipseCaseData;
 struct HexIntersectionInfo;
 struct WellPathCellIntersectionInfo;
 

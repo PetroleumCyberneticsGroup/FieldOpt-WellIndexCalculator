@@ -3,17 +3,17 @@
 //  Copyright (C) 2011-     Statoil ASA
 //  Copyright (C) 2013-     Ceetron Solutions AS
 //  Copyright (C) 2011-2012 Ceetron AS
-// 
+//
 //  ResInsight is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
 //  WARRANTY; without even the implied warranty of MERCHANTABILITY or
 //  FITNESS FOR A PARTICULAR PURPOSE.
-// 
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
+//
+//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ class RigWellPath;
 struct RigWellResultPoint;
 
 //--------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------
 class RigEclipseCaseData : public cvf::Object
 {
@@ -81,8 +81,8 @@ class RigEclipseCaseData : public cvf::Object
   RigGridBase* grid(size_t index);
   size_t gridCount() const;
 
-//    RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel);
-//    const RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel) const;
+  RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel);
+  const RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel) const;
 
 //    const std::vector<double>* resultValues(RiaDefines::PorosityModelType porosityModel,
 //                                            RiaDefines::ResultCatType type,
@@ -98,14 +98,19 @@ class RigEclipseCaseData : public cvf::Object
 //  RigFormationNames* activeFormationNames();
 
 //  void setSimWellData(const cvf::Collection<RigSimWellData>& data);
+
 //  const cvf::Collection<RigSimWellData>& wellResults() const { return m_simWellData; }
+
 //  std::set<QString> findSortedWellNames() const;
+
 //  const RigSimWellData* findSimWellData(QString wellName) const;
 
 //  const cvf::UByteArray* wellCellsInGrid(size_t gridIndex);
+
 //  const cvf::UIntArray* gridCellToResultWellIndex(size_t gridIndex);
 
 //  const RigCell& cellFromWellResultCell(const RigWellResultPoint& wellResultCell) const;
+
 //  bool indSharedSourceFace(cvf::StructGridInterface::FaceType& sharedSourceFace,
 //                           const RigWellResultPoint& sourceWellCellResult,
 //                           const RigWellResultPoint& otherWellCellResult) const;

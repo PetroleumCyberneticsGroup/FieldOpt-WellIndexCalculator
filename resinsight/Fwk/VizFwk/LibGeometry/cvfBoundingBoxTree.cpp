@@ -942,8 +942,8 @@ void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
   ss << node->boundingBox().debugString().toStdString();
   ss << std::setw(10) << std::setprecision(3) << std::fixed
      << " -- n=" << cvIndices.size();
-  if ( cvIndices.size() < 3 )
-    print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 0);
+//  if ( cvIndices.size() < 3 )
+//    print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 0);
 
   if (node && bb.intersects(node->boundingBox())) {
 

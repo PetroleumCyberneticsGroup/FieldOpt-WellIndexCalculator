@@ -101,9 +101,9 @@ else() # LINUX --------------------------------------------------------
     add_library(wellindexcalculator
         intersected_cell.cpp
         wellindexcalculator.cpp
-        wicalc_ri.cpp
+        wicalc_rins.cpp
         ${RESINSIGHT_SOURCE}
-        )
+        wicalc_rinx.cpp wicalc_rinx.h)
 
     add_library(fieldopt::wellindexcalculator
         ALIAS ${PROJECT_NAME})
@@ -150,7 +150,7 @@ else() # LINUX --------------------------------------------------------
     #        main.cpp
     #        intersected_cell.cpp
     #        wellindexcalculator.cpp
-    #        wicalc_ri.cpp
+    #        wicalc_rins.cpp
     #        ${RESINSIGHT_SOURCE}
     #        )
     #

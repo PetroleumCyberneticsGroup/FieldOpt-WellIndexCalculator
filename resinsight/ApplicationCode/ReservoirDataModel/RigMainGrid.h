@@ -20,6 +20,14 @@
 
 #pragma once
 
+// -----------------------------------------------------------------
+// STD
+#include <vector>
+
+// -----------------------------------------------------------------
+// Qt
+#include <QtGlobal>
+
 // RESINSIGHT: APPLICATIONCODE/RESERVOIRDATAMODEL ------------------
 #include "RigGridBase.h"
 #include "RigCell.h"
@@ -40,10 +48,7 @@
 #include "../../Fwk/VizFwk/LibGeometry/cvfBoundingBox.h"
 
 // RESINSIGHT: FWK/APPFWK/COMMONCODE -------------------------------
-//#include "../../Fwk/AppFwk/CommonCode/cvfStructGrid.h"
-
-#include <QtGlobal>
-#include <vector>
+#include "../../Fwk/AppFwk/CommonCode/cvfStructGrid.h"
 
 class RigActiveCellInfo;
 
@@ -97,7 +102,7 @@ class RigMainGrid : public RigGridBase
 //  const RigFault* findFaultFromCellIndexAndCellFace(
 //      size_t reservoirCellIndex,
 //      cvf::StructGridInterface::FaceType face) const;
-////  bool isFaceNormalsOutwards() const;
+  bool isFaceNormalsOutwards() const;
 
   void computeCachedData();
   void initAllSubGridsParentGridPointer();

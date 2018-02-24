@@ -585,7 +585,8 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 
   RigActiveCellInfo* activeInfos[2];
   activeInfos[0] = m_fractureActiveCellInfo.p();
-  activeInfos[1] = m_activeCellInfo.p(); // Last, to make this bb.min become display offset
+  // Last, to make this bb.min become display offset
+  activeInfos[1] = m_activeCellInfo.p();
 
   cvf::BoundingBox bb;
   for (int acIdx = 0; acIdx < 2; ++acIdx)
@@ -702,28 +703,28 @@ void RigEclipseCaseData::computeActiveCellsGeometryBoundingBox()
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-//RigCaseCellResultsData* RigEclipseCaseData::results(RiaDefines::PorosityModelType porosityModel)
-//{
-//  if (porosityModel == RiaDefines::MATRIX_MODEL)
-//  {
-//    return m_matrixModelResults.p();
-//  }
-//
-//  return m_fractureModelResults.p();
-//}
+RigCaseCellResultsData*
+RigEclipseCaseData::results(RiaDefines::PorosityModelType porosityModel) {
+
+  if (porosityModel == RiaDefines::MATRIX_MODEL) {
+    return m_matrixModelResults.p();
+  }
+
+  return m_fractureModelResults.p();
+}
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-//const RigCaseCellResultsData* RigEclipseCaseData::results(RiaDefines::PorosityModelType porosityModel) const
-//{
-//  if (porosityModel == RiaDefines::MATRIX_MODEL)
-//  {
-//    return m_matrixModelResults.p();
-//  }
-//
-//  return m_fractureModelResults.p();
-//}
+const RigCaseCellResultsData*
+RigEclipseCaseData::results(RiaDefines::PorosityModelType porosityModel) const {
+
+  if (porosityModel == RiaDefines::MATRIX_MODEL) {
+    return m_matrixModelResults.p();
+  }
+
+  return m_fractureModelResults.p();
+}
 
 // -----------------------------------------------------------------
 ///

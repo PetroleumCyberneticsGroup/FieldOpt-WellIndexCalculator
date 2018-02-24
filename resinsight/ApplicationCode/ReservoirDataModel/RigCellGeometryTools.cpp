@@ -1,17 +1,17 @@
 ////////////////////////////////////////////////////////////////////
 //
 //  Copyright (C) 2017     Statoil ASA
-// 
+//
 //  ResInsight is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
 //  WARRANTY; without even the implied warranty of MERCHANTABILITY or
 //  FITNESS FOR A PARTICULAR PURPOSE.
-// 
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
+//
+//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
 //
 ////////////////////////////////////////////////////////////////////
@@ -30,10 +30,12 @@
 //#include <vector>
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-void RigCellGeometryTools::createPolygonFromLineSegments(std::list<std::pair<cvf::Vec3d, cvf::Vec3d>> &intersectionLineSegments, std::vector<std::vector<cvf::Vec3d>> &polygons)
-{
+void RigCellGeometryTools::createPolygonFromLineSegments(
+    std::list<std::pair<cvf::Vec3d, cvf::Vec3d>> &intersectionLineSegments,
+    std::vector<std::vector<cvf::Vec3d>> &polygons) {
+
   bool startNewPolygon = true;
   while (!intersectionLineSegments.empty())
   {
@@ -105,43 +107,71 @@ void RigCellGeometryTools::createPolygonFromLineSegments(std::list<std::pair<cvf
 }
 
 //====================================================================
-/// 
+///
 //====================================================================
-void RigCellGeometryTools::findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hexCorners, cvf::Vec3d& localXdirection, cvf::Vec3d& localYdirection, cvf::Vec3d& localZdirection)
-{
+void
+RigCellGeometryTools::findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hexCorners,
+                                       cvf::Vec3d& localXdirection,
+                                       cvf::Vec3d& localYdirection,
+                                       cvf::Vec3d& localZdirection) {
+
   cvf::ubyte faceVertexIndices[4];
   cvf::StructGridInterface::FaceEnum face;
 
   face = cvf::StructGridInterface::NEG_I;
-  cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
-  cvf::Vec3d faceCenterNegI = cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]], hexCorners[faceVertexIndices[1]], hexCorners[faceVertexIndices[2]], hexCorners[faceVertexIndices[3]]);
+  cvf::StructGridInterface::cellFaceVertexIndices(face,
+                                                  faceVertexIndices);
+
+  cvf::Vec3d faceCenterNegI =
+      cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]],
+                                            hexCorners[faceVertexIndices[1]],
+                                            hexCorners[faceVertexIndices[2]],
+                                            hexCorners[faceVertexIndices[3]]);
   //TODO: Should we use face centroids instead of face centers?
 
   face = cvf::StructGridInterface::POS_I;
   cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
-  cvf::Vec3d faceCenterPosI = cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]], hexCorners[faceVertexIndices[1]], hexCorners[faceVertexIndices[2]], hexCorners[faceVertexIndices[3]]);
+
+  cvf::Vec3d faceCenterPosI =
+      cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]],
+                                            hexCorners[faceVertexIndices[1]],
+                                            hexCorners[faceVertexIndices[2]],
+                                            hexCorners[faceVertexIndices[3]]);
 
   face = cvf::StructGridInterface::NEG_J;
   cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
-  cvf::Vec3d faceCenterNegJ = cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]], hexCorners[faceVertexIndices[1]], hexCorners[faceVertexIndices[2]], hexCorners[faceVertexIndices[3]]);
+
+  cvf::Vec3d faceCenterNegJ =
+      cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]],
+                                            hexCorners[faceVertexIndices[1]],
+                                            hexCorners[faceVertexIndices[2]],
+                                            hexCorners[faceVertexIndices[3]]);
 
   face = cvf::StructGridInterface::POS_J;
   cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
-  cvf::Vec3d faceCenterPosJ = cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]], hexCorners[faceVertexIndices[1]], hexCorners[faceVertexIndices[2]], hexCorners[faceVertexIndices[3]]);
+
+  cvf::Vec3d faceCenterPosJ =
+      cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]],
+                                            hexCorners[faceVertexIndices[1]],
+                                            hexCorners[faceVertexIndices[2]],
+                                            hexCorners[faceVertexIndices[3]]);
 
   cvf::Vec3d faceCenterCenterVectorI = faceCenterPosI - faceCenterNegI;
   cvf::Vec3d faceCenterCenterVectorJ = faceCenterPosJ - faceCenterNegJ;
 
-  localZdirection.cross(faceCenterCenterVectorI, faceCenterCenterVectorJ);
+  localZdirection.cross(faceCenterCenterVectorI,
+                        faceCenterCenterVectorJ);
   localZdirection.normalize();
 
   cvf::Vec3d crossPoductJZ;
   crossPoductJZ.cross(faceCenterCenterVectorJ, localZdirection);
+
   localXdirection = faceCenterCenterVectorI + crossPoductJZ;
   localXdirection.normalize();
 
   cvf::Vec3d crossPoductIZ;
   crossPoductIZ.cross(faceCenterCenterVectorI, localZdirection);
+
   localYdirection = faceCenterCenterVectorJ - crossPoductIZ;
   localYdirection.normalize();
 
@@ -149,16 +179,17 @@ void RigCellGeometryTools::findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hex
 }
 
 // -----------------------------------------------------------------
-///  
+///
 // -----------------------------------------------------------------
-double RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(std::vector<cvf::Vec3d> polygonToCalcLengthOf)
-{
+double
+RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(
+    std::vector<cvf::Vec3d> polygonToCalcLengthOf) {
+
   //Find bounding box
   cvf::BoundingBox polygonBBox;
   for (cvf::Vec3d nodeCoord : polygonToCalcLengthOf) polygonBBox.add(nodeCoord);
   cvf::Vec3d bboxCorners[8];
   polygonBBox.cornerVertices(bboxCorners);
-
 
   //Split bounding box in multiple polygons (2D)
   int resolutionOfLengthCalc = 20;
@@ -169,17 +200,23 @@ double RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(std::vector<
 
   cvf::Vec3d directionOfLength(1, 0, 0);
 
-  for (int i = 0; i < resolutionOfLengthCalc; i++)
-  {
-    cvf::Vec3d pointOnLine1(bboxCorners[0].x(), bboxCorners[0].y() + i*widthOfPolygon, 0);
-    cvf::Vec3d pointOnLine2(bboxCorners[0].x(), bboxCorners[0].y() + (i + 1)*widthOfPolygon, 0);
+  for (int i = 0; i < resolutionOfLengthCalc; i++) {
 
-    std::pair<cvf::Vec3d, cvf::Vec3d> line1 = getLineThroughBoundingBox(directionOfLength,
-                                                                        polygonBBox,
-                                                                        pointOnLine1);
-    std::pair<cvf::Vec3d, cvf::Vec3d> line2 = getLineThroughBoundingBox(directionOfLength,
-                                                                        polygonBBox,
-                                                                        pointOnLine2);
+    cvf::Vec3d pointOnLine1(bboxCorners[0].x(),
+                            bboxCorners[0].y() + i*widthOfPolygon, 0);
+
+    cvf::Vec3d pointOnLine2(bboxCorners[0].x(),
+                            bboxCorners[0].y() + (i + 1)*widthOfPolygon, 0);
+
+    std::pair<cvf::Vec3d, cvf::Vec3d> line1 =
+        getLineThroughBoundingBox(directionOfLength,
+                                  polygonBBox,
+                                  pointOnLine1);
+
+    std::pair<cvf::Vec3d, cvf::Vec3d> line2 =
+        getLineThroughBoundingBox(directionOfLength,
+                                  polygonBBox,
+                                  pointOnLine2);
 
     std::vector<cvf::Vec3d> polygon;
     polygon.push_back(line1.first);
@@ -188,15 +225,15 @@ double RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(std::vector<
     polygon.push_back(line2.first);
 
     //Use clipper to find overlap between bbpolygon and fracture
-    std::vector<std::vector<cvf::Vec3d> > clippedPolygons = intersectPolygons(polygonToCalcLengthOf, polygon);
+    std::vector<std::vector<cvf::Vec3d> > clippedPolygons =
+        intersectPolygons(polygonToCalcLengthOf, polygon);
 
     double area = 0;
     double length = 0;
     cvf::Vec3d areaVector = cvf::Vec3d::ZERO;
 
     //Calculate length (max-min) and area
-    for (std::vector<cvf::Vec3d> clippedPolygon : clippedPolygons)
-    {
+    for (std::vector<cvf::Vec3d> clippedPolygon : clippedPolygons) {
       areaVector = cvf::GeometryTools::polygonAreaNormal3D(clippedPolygon);
       area += areaVector.length();
       length += (getLengthOfPolygonAlongLine(line1, clippedPolygon)
@@ -210,8 +247,7 @@ double RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(std::vector<
   double totalArea = 0.0;
   double totalAreaXlength = 0.0;
 
-  for (size_t i = 0; i < areasOfPolygonContributions.size(); i++)
-  {
+  for (size_t i = 0; i < areasOfPolygonContributions.size(); i++) {
     totalArea += areasOfPolygonContributions[i];
     totalAreaXlength += (areasOfPolygonContributions[i] * lengthOfPolygonContributions[i]);
   }
@@ -222,25 +258,25 @@ double RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(std::vector<
 
 #ifdef USE_PROTOTYPE_FEATURE_FRACTURES
 
-double clipperConversionFactor = 10000; //For transform to clipper int 
+double clipperConversionFactor = 10000; //For transform to clipper int
 
 ClipperLib::IntPoint toClipperPoint(const cvf::Vec3d& cvfPoint)
 {
     int xInt = cvfPoint.x()*clipperConversionFactor;
     int yInt = cvfPoint.y()*clipperConversionFactor;
     int zInt = cvfPoint.z()*clipperConversionFactor;
-    return  ClipperLib::IntPoint(xInt, yInt, zInt); 
+    return  ClipperLib::IntPoint(xInt, yInt, zInt);
 }
 
 cvf::Vec3d fromClipperPoint(const ClipperLib::IntPoint& clipPoint)
 {
-    double zDValue; 
-    
-    if (clipPoint.Z == std::numeric_limits<int>::max()) 
+    double zDValue;
+
+    if (clipPoint.Z == std::numeric_limits<int>::max())
     {
         zDValue = HUGE_VAL;
     }
-    else 
+    else
     {
         zDValue = clipPoint.Z;
     }
@@ -250,10 +286,12 @@ cvf::Vec3d fromClipperPoint(const ClipperLib::IntPoint& clipPoint)
 #endif // USE_PROTOTYPE_FEATURE_FRACTURES
 
 // -----------------------------------------------------------------
-///  
+///
 // -----------------------------------------------------------------
-std::vector<std::vector<cvf::Vec3d> > RigCellGeometryTools::intersectPolygons(std::vector<cvf::Vec3d> polygon1, std::vector<cvf::Vec3d> polygon2)
-{
+std::vector<std::vector<cvf::Vec3d> >
+RigCellGeometryTools::intersectPolygons(std::vector<cvf::Vec3d> polygon1,
+                                        std::vector<cvf::Vec3d> polygon2) {
+
   std::vector<std::vector<cvf::Vec3d> > clippedPolygons;
 
 #ifdef USE_PROTOTYPE_FEATURE_FRACTURES
@@ -293,7 +331,7 @@ std::vector<std::vector<cvf::Vec3d> > RigCellGeometryTools::intersectPolygons(st
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 #ifdef USE_PROTOTYPE_FEATURE_FRACTURES
 void fillInterpolatedSubjectZ(ClipperLib::IntPoint& e1bot,
@@ -305,7 +343,7 @@ void fillInterpolatedSubjectZ(ClipperLib::IntPoint& e1bot,
     ClipperLib::IntPoint ePLbot;
     ClipperLib::IntPoint ePLtop;
 
-    if (e1top.Z == std::numeric_limits<int>::max()) 
+    if (e1top.Z == std::numeric_limits<int>::max())
     {
         ePLtop = e2top;
         ePLbot = e2bot;
@@ -320,7 +358,7 @@ void fillInterpolatedSubjectZ(ClipperLib::IntPoint& e1bot,
     double ePLYRange = (ePLtop.Y - ePLbot.Y);
 
     double ePLLength =  sqrt(ePLXRange*ePLXRange + ePLYRange*ePLYRange);
-    
+
     if (ePLLength <= 1)
     {
         pt.Z = ePLbot.Z;
@@ -338,7 +376,7 @@ void fillInterpolatedSubjectZ(ClipperLib::IntPoint& e1bot,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void fillUndefinedZ(ClipperLib::IntPoint& e1bot,
                               ClipperLib::IntPoint& e1top,
@@ -353,10 +391,11 @@ void fillUndefinedZ(ClipperLib::IntPoint& e1bot,
 // -----------------------------------------------------------------
 /// Assumes x.y plane polygon. Polyline might have a Z, and the returned Z is the polyline Z, interpolated if it is clipped.
 // -----------------------------------------------------------------
-std::vector<std::vector<cvf::Vec3d> > RigCellGeometryTools::clipPolylineByPolygon(const std::vector<cvf::Vec3d>& polyLine,
-                                                                                  const std::vector<cvf::Vec3d>& polygon,
-                                                                                  ZInterpolationType interpolType)
-{
+std::vector<std::vector<cvf::Vec3d> >
+RigCellGeometryTools::clipPolylineByPolygon(const std::vector<cvf::Vec3d>& polyLine,
+                                            const std::vector<cvf::Vec3d>& polygon,
+                                            ZInterpolationType interpolType) {
+
   std::vector<std::vector<cvf::Vec3d> > clippedPolyline;
 
 #ifdef USE_PROTOTYPE_FEATURE_FRACTURES
@@ -414,10 +453,13 @@ std::vector<std::vector<cvf::Vec3d> > RigCellGeometryTools::clipPolylineByPolygo
 }
 
 // -----------------------------------------------------------------
-///  
+///
 // -----------------------------------------------------------------
-std::pair<cvf::Vec3d, cvf::Vec3d> RigCellGeometryTools::getLineThroughBoundingBox(cvf::Vec3d lineDirection, cvf::BoundingBox polygonBBox, cvf::Vec3d pointOnLine)
-{
+std::pair<cvf::Vec3d, cvf::Vec3d>
+RigCellGeometryTools::getLineThroughBoundingBox(cvf::Vec3d lineDirection,
+                                                cvf::BoundingBox polygonBBox,
+                                                cvf::Vec3d pointOnLine) {
+
   cvf::Vec3d bboxCorners[8];
   polygonBBox.cornerVertices(bboxCorners);
 
@@ -425,18 +467,19 @@ std::pair<cvf::Vec3d, cvf::Vec3d> RigCellGeometryTools::getLineThroughBoundingBo
   cvf::Vec3d endPoint = pointOnLine;
 
 
-  //To avoid doing many iterations in loops below linedirection should be quite large.
+  // To avoid doing many iterations in loops
+  // below linedirection should be quite large.
   lineDirection.normalize();
-  lineDirection = lineDirection * polygonBBox.extent().length() / 5;
+  lineDirection =
+      lineDirection * polygonBBox.extent().length() / 5;
 
-  //Extend line in positive direction
-  while (polygonBBox.contains(startPoint))
-  {
+  // Extend line in positive direction
+  while (polygonBBox.contains(startPoint)) {
     startPoint = startPoint + lineDirection;
   }
-  //Extend line in negative direction
-  while (polygonBBox.contains(endPoint))
-  {
+
+  // Extend line in negative direction
+  while (polygonBBox.contains(endPoint)) {
     endPoint = endPoint - lineDirection;
   }
 
@@ -446,15 +489,21 @@ std::pair<cvf::Vec3d, cvf::Vec3d> RigCellGeometryTools::getLineThroughBoundingBo
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-double RigCellGeometryTools::getLengthOfPolygonAlongLine(const std::pair<cvf::Vec3d, cvf::Vec3d>& line, const std::vector<cvf::Vec3d>& polygon)
-{
+double
+RigCellGeometryTools::getLengthOfPolygonAlongLine(
+    const std::pair<cvf::Vec3d, cvf::Vec3d>& line,
+    const std::vector<cvf::Vec3d>& polygon) {
+
   cvf::BoundingBox lineBoundingBox;
 
-  for (cvf::Vec3d polygonPoint : polygon)
-  {
-    cvf::Vec3d pointOnLine = cvf::GeometryTools::projectPointOnLine(line.first, line.second, polygonPoint, nullptr);
+  for (cvf::Vec3d polygonPoint : polygon) {
+    cvf::Vec3d pointOnLine =
+        cvf::GeometryTools::projectPointOnLine(line.first,
+                                               line.second,
+                                               polygonPoint,
+                                               nullptr);
     lineBoundingBox.add(pointOnLine);
   }
 
@@ -464,30 +513,41 @@ double RigCellGeometryTools::getLengthOfPolygonAlongLine(const std::pair<cvf::Ve
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
-std::vector<cvf::Vec3d> RigCellGeometryTools::ajustPolygonToAvoidIntersectionsAtVertex(const std::vector<cvf::Vec3d>& polyLine,
-                                                                                       const std::vector<cvf::Vec3d>& polygon)
-{
+std::vector<cvf::Vec3d>
+RigCellGeometryTools::ajustPolygonToAvoidIntersectionsAtVertex(
+    const std::vector<cvf::Vec3d>& polyLine,
+    const std::vector<cvf::Vec3d>& polygon) {
+
   std::vector<cvf::Vec3d> adjustedPolygon;
 
-  double treshold =  (1.0 / 10000.0) * 5; //5 times polygonScaleFactor for converting to int for clipper
+  //5 times polygonScaleFactor for converting to int for clipper
+  double treshold =  (1.0 / 10000.0) * 5;
 
-  for (cvf::Vec3d polygonPoint : polygon)
-  {
+  for (cvf::Vec3d polygonPoint : polygon) {
 
-    for (size_t i = 0; i < polyLine.size() - 1; i++)
-    {
+    for (size_t i = 0; i < polyLine.size() - 1; i++) {
+
       cvf::Vec3d linePoint1(polyLine[i].x(), polyLine[i].y(), 0.0);
       cvf::Vec3d linePoint2(polyLine[i + 1].x(), polyLine[i + 1].y(), 0.0);
 
-      double pointDistanceFromLine = cvf::GeometryTools::linePointSquareDist(linePoint1, linePoint2, polygonPoint);
-      if (pointDistanceFromLine < treshold)
-      {
-        //calculate new polygonPoint
+      double pointDistanceFromLine =
+          cvf::GeometryTools::linePointSquareDist(linePoint1,
+                                                  linePoint2,
+                                                  polygonPoint);
+
+      if (pointDistanceFromLine < treshold) {
+
+        // Calculate new polygonPoint
         cvf::Vec3d directionOfLineSegment = linePoint2 - linePoint1;
-        //finding normal to the direction of the line segment in the XY plane (z=0)
-        cvf::Vec3d normalToLine(-directionOfLineSegment.y(), directionOfLineSegment.x(), 0.0);
+
+        // Finding normal to the direction of the line segment
+        // in the XY plane (z=0)
+        cvf::Vec3d normalToLine(-directionOfLineSegment.y(),
+                                directionOfLineSegment.x(),
+                                0.0);
+
         normalToLine.normalize();
         polygonPoint = polygonPoint + normalToLine * 0.005;
       }

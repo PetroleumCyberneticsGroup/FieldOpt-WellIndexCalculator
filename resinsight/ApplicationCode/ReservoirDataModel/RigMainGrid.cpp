@@ -441,40 +441,38 @@ void RigMainGrid::distributeNNCsToFaults() {
 /// The cell is normally inverted due to Depth becoming -Z at import,
 /// but if (only) one of the flipX/Y is done, the cell is back to normal
 // -----------------------------------------------------------------
-//bool RigMainGrid::isFaceNormalsOutwards() const
-//{
-//
-//  for (int gcIdx = 0 ; gcIdx < static_cast<int>(m_cells.size()); ++gcIdx)
-//  {
-//    if (!m_cells[gcIdx].isInvalid())
-//    {
-//      cvf::Vec3d cellCenter = m_cells[gcIdx].center();
-//      cvf::Vec3d faceCenter = m_cells[gcIdx].faceCenter(StructGridInterface::POS_I);
-//      cvf::Vec3d faceNormal = m_cells[gcIdx].faceNormalWithAreaLenght(StructGridInterface::POS_I);
-//
-//      double typicalIJCellSize =  characteristicIJCellSize();
-//      double dummy, dummy2, typicalKSize;
-//      characteristicCellSizes(&dummy, &dummy2, &typicalKSize);
-//
-//      if (   (faceCenter - cellCenter).length() > 0.2 * typicalIJCellSize
-//          && (faceNormal.length() > (0.2 * typicalIJCellSize * 0.2* typicalKSize)))
-//      {
-//        // Cell is assumed ok to use, so calculate whether the normals are outwards or inwards
-//
-//        if ((faceCenter - cellCenter) * faceNormal >= 0)
-//        {
-//          return true;
-//        }
-//        else
-//        {
-//          return false;
-//        }
-//      }
-//    }
-//  }
-//
-//  return false;
-//}
+bool RigMainGrid::isFaceNormalsOutwards() const
+{
+
+  for (int gcIdx = 0 ; gcIdx < static_cast<int>(m_cells.size()); ++gcIdx)
+  {
+    if (!m_cells[gcIdx].isInvalid())
+    {
+      cvf::Vec3d cellCenter = m_cells[gcIdx].center();
+      cvf::Vec3d faceCenter = m_cells[gcIdx].faceCenter(StructGridInterface::POS_I);
+      cvf::Vec3d faceNormal = m_cells[gcIdx].faceNormalWithAreaLenght(StructGridInterface::POS_I);
+
+      double typicalIJCellSize =  characteristicIJCellSize();
+      double dummy, dummy2, typicalKSize;
+      characteristicCellSizes(&dummy, &dummy2, &typicalKSize);
+
+      if ((faceCenter - cellCenter).length() > 0.2 * typicalIJCellSize &&
+          (faceNormal.length() > (0.2 * typicalIJCellSize * 0.2* typicalKSize))) {
+
+        // Cell is assumed ok to use, so calculate
+        // whether the normals are outwards or inwards
+        if ((faceCenter - cellCenter) * faceNormal >= 0) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+    }
+  }
+
+  return false;
+}
 
 // -----------------------------------------------------------------
 ///

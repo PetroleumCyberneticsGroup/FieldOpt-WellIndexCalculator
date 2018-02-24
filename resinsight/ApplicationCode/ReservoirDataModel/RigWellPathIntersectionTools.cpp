@@ -24,6 +24,7 @@
 #include "RigCellGeometryTools.h"
 #include "cvfGeometryTools.h"
 #include "cvfMatrix3.h"
+#include "RigEclipseWellLogExtractor.h"
 
 //#include "RiaLogging.h"
 //#include "RigWellPath.h"
@@ -128,7 +129,7 @@ RigWellPathIntersectionTools::findRawHexCellIntersections(
                << hexCorners[i].y() << ", "
                << hexCorners[i].z() << " ) -- intersection.sz = "
                << intersections.size();
-          print_dbg_msg_wic_ri(__func__, str1.str(), 0.0, 0);
+//          print_dbg_msg_wic_ri(__func__, str1.str(), 0.0, 0);
         }
       }
 
@@ -136,7 +137,7 @@ RigWellPathIntersectionTools::findRawHexCellIntersections(
       RigHexIntersectionTools::lineHexCellIntersection(
           coords[i], coords[i + 1], hexCorners.data(),
           closeCell, &intersections);
-    }
+    } // End: for (size_t closeCell : closeCells)
   }
 
   str1.str("");
