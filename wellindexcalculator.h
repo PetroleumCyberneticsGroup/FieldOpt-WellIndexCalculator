@@ -35,6 +35,7 @@
 
 namespace Reservoir {
 namespace WellIndexCalculation {
+
 using namespace Eigen;
 using namespace std;
 
@@ -71,12 +72,13 @@ class WellIndexCalculator {
 
   /*!
    * \brief Compute the well block indices for all wells
-   * \param wells The list of wells
+   * \param wells Vector of wells
    * \return A map containing for each well given my its name, the
    * list of cells intersected by the well. Each intersected cell
    * has stored the well connectivity information.
    */
-  map<string, vector<IntersectedCell>> ComputeWellBlocks(vector<WellDefinition> wells);
+  void ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices,
+                         vector<WellDefinition> &wells, int rank = 0);
 
 
  private:
@@ -115,9 +117,11 @@ class WellIndexCalculator {
 //                    Vector3d &Hit);
 
   /*!
-   * \brief returns true if the line defined by L1,L2 lies completely outside the box defined by B1,B2
+   * \brief Returns true if the line defined by L1,L2
+   * lies completely outside the box defined by B1,B2
    */
-  bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2, Vector3d L1, Vector3d L2 );
+  bool IsLineCompletelyOutsideBox(Vector3d B1, Vector3d B2,
+                                  Vector3d L1, Vector3d L2 );
 
   /*!
    * @brief Find a new endpoint (heel/toe) for a well if necessary.
@@ -130,7 +134,8 @@ class WellIndexCalculator {
   bool findEndpoint(const vector<int> &bb_cells,
                     Vector3d &start_pt,
                     Vector3d end_point,
-                    Grid::Cell &cell) const;
+                    Grid::Cell &cell,
+                    int rank = 0) const;
 
  public:
   /*!
@@ -162,7 +167,8 @@ class WellIndexCalculator {
                                  double wb_rad, double skin_fac,
                                  vector<int> bb_cells,
                                  double& bb_xi, double& bb_yi, double& bb_zi,
-                                 double& bb_xf, double& bb_yf, double& bb_zf);
+                                 double& bb_xf, double& bb_yf, double& bb_zf,
+                                 int rank = 0);
 
   /*!
    * \brief Find the point where the line between the start_point
@@ -201,7 +207,8 @@ class WellIndexCalculator {
    * \param icell Well block to compute the WI in.
    * \return Well index for block/cell
   */
-  void compute_well_index(vector<IntersectedCell> &cells, int cell_index);
+  void compute_well_index(vector<IntersectedCell> &cells,
+                          int cell_index, int rank = 0);
 
   /*!
    * \brief Auxilary function for compute_well_index function
@@ -254,6 +261,7 @@ class WellIndexCalculator {
    * @param end_pt The end point (toe) of the well segment.
    * @param step The current step.
    * @param epsilon Step increase.
+   * @param cycle_count
    */
   void recover_from_cycle(IntersectedCell &prev_cell,
                           Grid::Cell & next_cell,
@@ -262,8 +270,15 @@ class WellIndexCalculator {
                           Vector3d &exit_pt,
                           Vector3d start_pt,
                           Vector3d end_pt,
-                          double &step, double epsilon);
+                          double &step,
+                          double epsilon,
+                          int cycle_count);
+
+  // WIC Debug
+  int dbg_mode = 4; //!< On/off printing of debug messages
+
 };
+
 }
 }
 

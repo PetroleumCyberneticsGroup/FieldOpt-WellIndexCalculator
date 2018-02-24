@@ -25,6 +25,7 @@
 ******************************************************************************/
 #include "intersected_cell.h"
 #include <iostream>
+#include <stdexcept>
 
 using namespace std;
 

@@ -6,6 +6,10 @@ message("=============================================================")
 message(STATUS "PROJECT_NAME => ${PROJECT_NAME}")
 message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(WIC_LIB_TARGET wellindexcalculator)
+set(WIC_LIB_TARGET_ADG wellindexcalculator-adgprs-dbg)
+
 include(ResInsight.cmake)
 
 # Include: Eigen =======================================================
@@ -48,8 +52,6 @@ find_library(ert_geometry
     HINTS ${CMAKE_BINARY_DIR}/libraries/lib
     REQUIRED)
 
-
-
 include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
 message(STATUS "ERT_INCLUDE_DIR: ${ERT_INCLUDE_DIR}")
 
@@ -61,10 +63,10 @@ if (_WIN32) # WINDOWS
       ${EIGEN3_INCLUDE_DIR}
       ${ERT_INCLUDE_DIR})
 
-  add_library(wellindexcalculator SHARED dllmain.cpp)
+  add_library(${WIC_LIB_TARGET} SHARED dllmain.cpp)
 
-  target_link_libraries(wellindexcalculator
-      fieldopt::wellindexcalculator
+  target_link_libraries(${WIC_LIB_TARGET}
+      fieldopt::${WIC_LIB_TARGET}
       ${Boost_LIBRARIES}
       ${SHLWAPI_LIBRARY})
 
@@ -98,23 +100,25 @@ else() # LINUX --------------------------------------------------------
         ${EIGEN3_INCLUDE_DIR}
         ${ERT_INCLUDE_DIR})
 
-    add_library(wellindexcalculator
+    add_library(${WIC_LIB_TARGET}
         intersected_cell.cpp
         wellindexcalculator.cpp
         wicalc_rins.cpp
         ${RESINSIGHT_SOURCE}
-        wicalc_rinx.cpp wicalc_rinx.h)
+        wicalc_rinx.cpp
+        tests/wic_debug.hpp)
 
-    add_library(fieldopt::wellindexcalculator
+    add_library(fieldopt::${WIC_LIB_TARGET}
         ALIAS ${PROJECT_NAME})
 
     message(STATUS "RESINSIGHT_SOURCE: ${RESINSIGHT_SOURCE}")
 
   elseif(BUILD_WIC_ADGPRS)
-    add_library(wellindexcalculator-adgprs SHARED
+    add_library(${WIC_LIB_TARGET_ADG} SHARED
         dllmain.cpp
         intersected_cell.cpp
         wellindexcalculator.cpp
+        tests/wic_debug.hpp
         )
   endif()
 
@@ -123,11 +127,11 @@ else() # LINUX --------------------------------------------------------
     include_directories(${CMAKE_BINARY_DIR}/libraries/include/)
 
     add_compile_options(-std=c++11)
-    set_target_properties(wellindexcalculator
+    set_target_properties(${WIC_LIB_TARGET}
         PROPERTIES COMPILE_FLAGS "-fPIC")
 
-    target_link_libraries(wellindexcalculator
-        PUBLIC fieldopt::wellindexcalculator
+    target_link_libraries(${WIC_LIB_TARGET}
+        PUBLIC fieldopt::${WIC_LIB_TARGET}
         PUBLIC fieldopt::reservoir
         PUBLIC ${Boost_LIBRARIES}
         PUBLIC Qt5::Core
@@ -155,7 +159,7 @@ else() # LINUX --------------------------------------------------------
     #        )
     #
     #    target_link_libraries(wicalc
-    #        PUBLIC fieldopt::wellindexcalculator
+    #        PUBLIC fieldopt::${WIC_LIB_TARGET}
     #        PUBLIC ${Boost_LIBRARIES}
     #        PUBLIC Qt5::Core
     #        PUBLIC ${ert_ecl}
@@ -170,10 +174,10 @@ else() # LINUX --------------------------------------------------------
     #        )
 
   elseif(BUILD_WIC_ADGPRS)
-    add_library(fieldopt::wellindexcalculator-adgprs
+    add_library(fieldopt::${WIC_LIB_TARGET_ADG}
         ALIAS ${PROJECT_NAME}-adgprs)
 
-    target_link_libraries (wellindexcalculator-adgprs
+    target_link_libraries (${WIC_LIB_TARGET_ADG}
         PUBLIC fieldopt::reservoir
         PUBLIC Qt5::Core
         ${Boost_LIBRARIES})
@@ -183,7 +187,7 @@ else() # LINUX --------------------------------------------------------
     add_executable(wicalc-adgprs dllmain.cpp)
 
     target_link_libraries(wicalc-adgprs
-        fieldopt::wellindexcalculator-adgprs
+        fieldopt::${WIC_LIB_TARGET_ADG}
         PUBLIC Qt5::Core
         ${Boost_LIBRARIES}
         )
@@ -192,7 +196,7 @@ endif()
 
 
 # Testing ==============================================================
-if (BUILD_TESTING)
+if (BUILD_TESTING AND NOT BUILD_WIC_ADGPRS)
 
   # Unit tests
   find_package(GTest REQUIRED)

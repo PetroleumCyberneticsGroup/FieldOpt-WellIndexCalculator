@@ -1,5 +1,6 @@
 
 #include "dllmain.hpp"
+#include "main.hpp"
 #include "wellindexcalculator.h"
 #include "Reservoir/grid/eclgrid.h"
 #include "intersected_cell.h"
@@ -9,6 +10,7 @@
 
 #include <stdbool.h>
 #include <iostream>
+#include <stdexcept>
 #include <stdlib.h>
 
 inline bool exists(const char* name)
@@ -57,7 +59,7 @@ __attribute__((constructor))
 static void Initializer(int argc, char** argv, char** envp)
 {
   grid = NULL;
-  printf("DllInitializer\n");
+  printf("DllInitializer: Loading WIClib\n");
 }
 
 __attribute__((destructor))
@@ -67,7 +69,7 @@ __attribute__((destructor))
  */
 static void Finalizer()
 {
-  printf("DllFinalizer\n");
+  printf("DllFinalizer: Loaded WIClib\n");
 }
 
 //CP_END_EXTERN_C
@@ -83,33 +85,61 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
 {
   try
   {
-    string gridpth = string(basepth) + ".GRID";
-    if ( !exists(gridpth.c_str()) )
-      throw std::runtime_error("ComputeWellIndices: file .GRID does not exist");
+    string gridpth = string(basepth) + ".EGRID";
+    printf("Loading grid: %s\n", gridpth.c_str());
 
-    if ( *wellbore_radius <= 0 )
+    if ( !exists(gridpth.c_str()) ) {
+      throw std::runtime_error("ComputeWellIndices: file .EGRID does not exist");
+    }
+
+    if ( *wellbore_radius <= 0 ){
       throw std::runtime_error("ComputeWellIndices: wellbore radius is negative");
+    }
 
-    // Initialize the Grid and WellIndexCalculator objects
-    if (grid == NULL)
+    printf("Initializing Grid object.\n");
+    Reservoir::Grid::ECLGrid gridnew(gridpth);
+    /*if (grid == NULL)
+    {
       grid = new Reservoir::Grid::ECLGrid(gridpth);
-    auto wic = WellIndexCalculator((Reservoir::Grid::Grid*)grid);
+      cout << "Making new grid\n";
+    }*/
+    
+    printf("Initializing WellIndexCalculator object.\n");
+    // auto wic = WellIndexCalculator((Reservoir::Grid::Grid*)grid);
+    auto wic = WellIndexCalculator(&gridnew);
 
-    // Compute the well blocks
-    auto well_blocks = wic.ComputeWellBlocks(Eigen::Vector3d(heel), Eigen::Vector3d(toe), *wellbore_radius);
+    printf("Compute well blocks.\n");
+    vector<WellDefinition> wells;
+    wells.push_back(WellDefinition());
+    wells.at(0).wellname = "unnamed_well";
+    wells.at(0).heels.push_back(Eigen::Vector3d(heel));
+    wells.at(0).toes.push_back(Eigen::Vector3d(toe));
+    wells.at(0).radii.push_back(*wellbore_radius);
+    wells.at(0).skins.push_back(0.0);
+
+    map<string, vector<IntersectedCell>> well_indices;
+    wic.ComputeWellBlocks(well_indices, wells);
+    //printCompdat(well_indices);
+    vector<IntersectedCell>& well_blocks = well_indices.at("unnamed_well");
     *nblks = well_blocks.size();
 
     if ( (i == NULL) || (j == NULL) || (k == NULL) || (wi == NULL) )
-      throw std::runtime_error("ComputeWellIndices: allocate memory for I, J, K, WI");
+      throw std::runtime_error("ComputeWellIndices: I, J, K, WI not allocated");
 
-    for (size_t iblk = 0; iblk < *nblks; iblk++)
+    try
     {
-      i[iblk] = well_blocks[iblk].ijk_index().i() + 1;
-      j[iblk] = well_blocks[iblk].ijk_index().j() + 1;
-      k[iblk] = well_blocks[iblk].ijk_index().k() + 1;
-      wi[iblk] = well_blocks[iblk].well_index();
+      for (size_t iblk = 0; iblk < *nblks; iblk++)
+      {
+        i[iblk] = well_blocks[iblk].ijk_index().i() + 1;
+        j[iblk] = well_blocks[iblk].ijk_index().j() + 1;
+        k[iblk] = well_blocks[iblk].ijk_index().k() + 1;
+        wi[iblk] = well_blocks[iblk].cell_well_index_matrix();
+      }
     }
-
+    catch (...)
+    {
+      throw std::runtime_error("ComputeWellIndices: problem with copying I, J, K, WI");
+    }
     //delete grid;
   }
   catch (std::runtime_error& e)
@@ -122,31 +152,80 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
   return EXIT_SUCCESS;
 }
 
-WELLINDEXCALCULATOR_API int computeBlockCenter(const char* basepth,
+WELLINDEXCALCULATOR_API int getBlockCenters(const char* basepth,
     const int* heel,  const int* toe, double* heelxyz, double* toexyz)
 {
   try
   {
-    string gridpth = string(basepth) + ".GRID";
+    string gridpth = string(basepth) + ".EGRID";
     if ( !exists(gridpth.c_str()) )
-      throw std::runtime_error("ComputeBlockCenter: file .GRID does not exist");
+      throw std::runtime_error("getBlockCenters: file .GRID does not exist");
 
     // Initialize the Grid and WellIndexCalculator objects
-    if (grid == NULL)
+    Reservoir::Grid::ECLGrid gridnew(gridpth);
+    /*if (grid == NULL)
+    {
       grid = new Reservoir::Grid::ECLGrid(gridpth);
+      cout << "Making new grid\n";
+    }*/
 
-    Reservoir::Grid::Cell current_cell =
-      ((Reservoir::Grid::Grid*)grid)->GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);
-    heelxyz[0] = current_cell.center()[0];
-    heelxyz[1] = current_cell.center()[1];
-    heelxyz[2] = current_cell.center()[2];
+    if ( (heel == NULL) || (toe == NULL) || (heelxyz == NULL) || (toexyz == NULL) )
+      throw std::runtime_error("getBlockCenters: input and output not allocated");
 
-    current_cell = ((Reservoir::Grid::Grid*)grid)->GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
-    toexyz[0] = current_cell.center()[0];
-    toexyz[1] = current_cell.center()[1];
-    toexyz[2] = current_cell.center()[2];
+    try
+    {
+      /*Reservoir::Grid::Cell current_cell =
+        ((Reservoir::Grid::Grid*)grid)->GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);*/
+      Reservoir::Grid::Cell current_cell = gridnew.GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);
+      heelxyz[0] = current_cell.center()[0];
+      heelxyz[1] = current_cell.center()[1];
+      heelxyz[2] = current_cell.center()[2];
 
-    //delete grid;
+      //current_cell = ((Reservoir::Grid::Grid*)grid)->GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
+      current_cell = gridnew.GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
+      toexyz[0] = current_cell.center()[0];
+      toexyz[1] = current_cell.center()[1];
+      toexyz[2] = current_cell.center()[2];
+    }
+    catch (...)
+    {
+      throw std::runtime_error("getBlockCenters: error in computing X,Y,Z");
+    }
+  }
+  catch (std::runtime_error& e)
+  {
+    printf("%s", e.what());
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+
+WELLINDEXCALCULATOR_API int getBoundaryVertices(const char* filepth,
+    int* npnts, double* xes, double* yes, double* zes)
+{
+  try
+  {
+    string bndrypth = string(filepth);
+    if ( !exists(bndrypth.c_str()) )
+      throw std::runtime_error("getBoundaryVertices: file does not exist");
+
+    try
+    {
+      ifstream fbndry(bndrypth, ios::in);
+      *npnts = 0;
+      while ( fbndry >> xes[*npnts] )
+      {
+        fbndry >> yes[*npnts] >> zes[*npnts];
+        *npnts = *npnts + 1;
+      }
+    }
+    catch (...)
+    {
+      throw std::runtime_error("getBoundaryVertices: error in reading file");
+    }
+
   }
   catch (std::runtime_error& e)
   {
