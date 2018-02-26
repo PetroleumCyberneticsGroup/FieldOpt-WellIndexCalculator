@@ -44,6 +44,9 @@ class WellDefinition {
   string wellname;
   vector<Vector3d> heels;
   vector<Vector3d> toes;
+  vector<double> heel_md;
+  vector<double> toe_md;
+  vector<double> well_length;
   vector<double> radii;
   vector<double> skins;
 
@@ -275,7 +278,7 @@ class WellIndexCalculator {
                           int cycle_count);
 
   // WIC Debug
-  int dbg_mode = 4; //!< On/off printing of debug messages
+  int dbg_mode = 1; //!< On/off printing of debug messages
 
 };
 

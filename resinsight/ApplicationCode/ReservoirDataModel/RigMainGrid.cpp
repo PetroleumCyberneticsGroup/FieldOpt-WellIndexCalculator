@@ -534,7 +534,7 @@ void RigMainGrid::findIntersectingCells(
   CVF_ASSERT(m_cellSearchTree.notNull());
   m_cellSearchTree->findIntersections(inputBB, cellIndices);
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_milliseconds(tstart), 2);
+  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 }
 
 // -----------------------------------------------------------------
@@ -577,8 +577,7 @@ void RigMainGrid::buildCellSearchTree() {
     m_cellSearchTree = new cvf::BoundingBoxTree;
     m_cellSearchTree->buildTreeFromBoundingBoxes(cellBoundingBoxes, NULL);
 
-    print_dbg_msg_wic_ri(__func__, ss.str(),
-                         time_since_milliseconds(tstart), 2);
+    print_dbg_msg_wic_ri(__func__, ss.str(), time_since_msecs(tstart), 2);
 
   }
 }

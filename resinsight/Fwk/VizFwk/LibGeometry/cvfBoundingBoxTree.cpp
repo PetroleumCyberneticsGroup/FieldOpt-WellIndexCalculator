@@ -923,7 +923,7 @@ void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
     findIntersections(bb, m_pRoot, indices);
   }
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_milliseconds(tstart), 2);
+  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 //  get_tend(tstart2);
 }
 
@@ -1018,7 +1018,7 @@ void BoundingBoxTree::findIntersections(const cvf::BoundingBox& bb,
   CVF_ASSERT(bbIdsOrIndices);
   m_implTree->findIntersections(bb, *bbIdsOrIndices);
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_milliseconds(tstart), 2);
+  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 }
 
 } // namespace cvf

@@ -30,6 +30,7 @@
 //#include <stdexcept>
 //#include <limits>
 
+#include <Utilities/colors.hpp>
 #include "wellindexcalculator.h"
 #include "tests/wic_debug.hpp"
 
@@ -122,7 +123,6 @@ void WellIndexCalculator::ComputeWellBlocks(
                                 rank);
     }
 
-
     // For all intersected cells compute well transmissibility factor
     for (int iCell = 0; iCell < intersected_cells.size(); ++iCell) {
       compute_well_index(intersected_cells, iCell, rank);
@@ -189,6 +189,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
   if (last_cell.global_index() == first_cell.global_index()) {
 
     int isc_cell_idx = IntersectedCell::GetIntersectedCellIndex(isc_cells, first_cell);
+    cout << FLRED << "isc_cell_idx = " << isc_cell_idx << AEND << endl;
     isc_cells.at(isc_cell_idx).add_new_segment(start_pt, end_pt, wb_rad, skin_fac);
 
     return;
@@ -239,7 +240,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
       step += epsilon;
       steps++;
 
-      Vector3d old_entry_pt = entry_pt; // dbg
+      Vector3d old_entry_pt = entry_pt; // for dbg
       entry_pt = start_pt + step * (end_pt - start_pt);
       WICDebug::dbg_TraversingCellsA(dbg_mode, new_cell, prev_cell, old_entry_pt,
                                      entry_pt, start_pt, end_pt, step, epsilon,
@@ -301,7 +302,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
       isc_cells.at(isc_cell_idx).add_new_segment(entry_pt, exit_pt, wb_rad, skin_fac);
       prev_cell = new_cell;
 
-      // start_pt = exit_pt; // TEST
+       start_pt = exit_pt; // TEST
 
       // ---------------------------------------------------------------------
       // If we've step beyond the original line, or we've already at the last

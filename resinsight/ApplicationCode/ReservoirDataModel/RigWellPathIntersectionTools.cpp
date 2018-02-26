@@ -73,15 +73,10 @@ RigWellPathIntersectionTools::findRawHexCellIntersections(
   const QDateTime tstart = QDateTime::currentDateTime();
   std::stringstream str0, str1;
   str0 << "Find raw hexcell intersections. grid->nodes().size() = "
-       << grid->nodes().size() << " ";
+       << grid->nodes().size() << " coords.size() = " << coords.size();
   print_dbg_msg_wic_ri(__func__, str0.str(), 0.0, 1);
 
   for (size_t i = 0; i < coords.size() - 1; ++i) {
-
-    // Add coords to bbox
-    cvf::BoundingBox bb;
-    bb.add(coords[i]);
-    bb.add(coords[i + 1]);
 
     // Dbg: coord i
     str1.str("");
@@ -100,6 +95,11 @@ RigWellPathIntersectionTools::findRawHexCellIntersections(
          << coords[i+1].y() << ", "
          << coords[i+1].z() << " )";
     print_dbg_msg_wic_ri(__func__, str1.str(), 0.0, 0);
+
+    // Add coords to bbox
+    cvf::BoundingBox bb;
+    bb.add(coords[i]);
+    bb.add(coords[i + 1]);
 
     // Find cells close to bbox
     std::vector<size_t> closeCells = findCloseCells(grid, bb);
@@ -144,8 +144,7 @@ RigWellPathIntersectionTools::findRawHexCellIntersections(
   str1 << "# of interections found = " << intersections.size();
   print_dbg_msg_wic_ri(__func__, str1.str(), 0.0, 0);
 
-  print_dbg_msg_wic_ri(__func__, str0.str(),
-                       time_since_milliseconds(tstart), 2);
+  print_dbg_msg_wic_ri(__func__, str0.str(), time_since_msecs(tstart), 2);
 
   return intersections;
 }
@@ -207,7 +206,7 @@ RigWellPathIntersectionTools::findCloseCells(const RigMainGrid* grid,
 
   grid->findIntersectingCells(bb, &closeCells);
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_milliseconds(tstart), 2);
+  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
   return closeCells;
 }
 
@@ -230,7 +229,7 @@ RigWellPathIntersectionTools::findCellFromCoords
 
   std::vector<size_t> closeCells = findCloseCells(grid, bb);
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_milliseconds(tstart), 2);
+  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 
   // ---------------------------------------------------------------
   str = "Looping through close cells.";
@@ -250,7 +249,7 @@ RigWellPathIntersectionTools::findCellFromCoords
     }
   }
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_milliseconds(tstart), 2);
+  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 
   // ---------------------------------------------------------------
   *foundCell = false;
