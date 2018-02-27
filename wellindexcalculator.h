@@ -278,7 +278,7 @@ class WellIndexCalculator {
                           int cycle_count);
 
   // WIC Debug
-  int dbg_mode = 1; //!< On/off printing of debug messages
+  int dbg_mode = 4; //!< On/off printing of debug messages
 
 };
 

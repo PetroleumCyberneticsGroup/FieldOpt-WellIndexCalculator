@@ -543,12 +543,15 @@ Vector3d WellIndexCalculator::find_exit_point(vector<IntersectedCell> &cells, in
   return entry_point;
 }
 
-bool WellIndexCalculator::introduces_cycle(vector<IntersectedCell> cells, Grid::Cell grdcell) {
-  if (cells[cells.size()-2].global_index() == grdcell.global_index()) {
-    return true;
-  } else {
-    return false;
-  }
+bool WellIndexCalculator::introduces_cycle(vector<IntersectedCell> cells,
+                                           Grid::Cell grdcell) {
+  if (cells.size() > 1) {
+    if (cells[cells.size()-2].global_index() == grdcell.global_index()) {
+      return true;
+    } else {
+      return false;
+    }
+  } else return false;
 }
 
 //bool WellIndexCalculator::GetIntersection(double fDst1, double fDst2,
