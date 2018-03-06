@@ -34,10 +34,7 @@
 //
 //####################################################################
 
-
 namespace cvf {
-
-
 
 //====================================================================
 ///
@@ -50,10 +47,10 @@ namespace cvf {
 ///  - cvf::Vec2f (Vector2<float>)
 ///  - cvf::Vec2d (Vector2<double>)
 ///  - cvf::Vec2i (Vector2<int>)
-/// 
+///
 //====================================================================
 
-template<typename S> Vector2<S> const Vector2<S>::X_AXIS(1, 0);    
+template<typename S> Vector2<S> const Vector2<S>::X_AXIS(1, 0);
 template<typename S> Vector2<S> const Vector2<S>::Y_AXIS(0, 1);
 template<typename S> Vector2<S> const Vector2<S>::ZERO(0, 0);
 
@@ -61,7 +58,7 @@ template<typename S> Vector2<S> const Vector2<S>::ZERO(0, 0);
 /// Set the vector to <x,y>
 //--------------------------------------------------------------------
 template<typename S>
-Vector2<S>::Vector2(S x, S y) 
+Vector2<S>::Vector2(S x, S y)
 {
     m_v[0] = x;
     m_v[1] = y;
@@ -72,9 +69,9 @@ Vector2<S>::Vector2(S x, S y)
 /// Set the vector to the same as other
 //--------------------------------------------------------------------
 template<typename S>
-Vector2<S>::Vector2(const Vector2& other) 
-{ 
-    *this = other; 
+Vector2<S>::Vector2(const Vector2& other)
+{
+    *this = other;
 }
 
 
@@ -229,10 +226,10 @@ const Vector2<S> Vector2<S>::operator-() const
 //--------------------------------------------------------------------
 template<typename S>
 inline Vector2<S>& Vector2<S>::operator+=(const Vector2& v)
-{ 
-    m_v[0] += v.x(); 
-    m_v[1] += v.y(); 
-    return *this; 
+{
+    m_v[0] += v.x();
+    m_v[1] += v.y();
+    return *this;
 }
 
 
@@ -241,10 +238,10 @@ inline Vector2<S>& Vector2<S>::operator+=(const Vector2& v)
 //--------------------------------------------------------------------
 template<typename S>
 inline Vector2<S>& Vector2<S>::operator-=(const Vector2& v)
-{ 
-    m_v[0] -= v.x(); 
-    m_v[1] -= v.y(); 
-    return *this; 
+{
+    m_v[0] -= v.x();
+    m_v[1] -= v.y();
+    return *this;
 }
 
 
@@ -253,10 +250,10 @@ inline Vector2<S>& Vector2<S>::operator-=(const Vector2& v)
 //--------------------------------------------------------------------
 template<typename S>
 inline Vector2<S>& Vector2<S>::operator*=(S scalar)
-{ 
-    m_v[0] *= scalar; 
-    m_v[1] *= scalar; 
-    return *this; 
+{
+    m_v[0] *= scalar;
+    m_v[1] *= scalar;
+    return *this;
 }
 
 
@@ -265,10 +262,10 @@ inline Vector2<S>& Vector2<S>::operator*=(S scalar)
 //--------------------------------------------------------------------
 template<typename S>
 inline Vector2<S>& Vector2<S>::operator/=(S scalar)
-{ 
-    m_v[0] /= scalar; 
-    m_v[1] /= scalar; 
-    return *this; 
+{
+    m_v[0] /= scalar;
+    m_v[1] /= scalar;
+    return *this;
 }
 
 
@@ -310,7 +307,7 @@ S Vector2<S>::dot(const Vector2& other) const
 
 //--------------------------------------------------------------------
 /// Compute the dot product of this and rhs and return the result (scalar)
-/// 
+///
 /// Formula:
 /// \code
 /// S = tx*rx + ty*ry
@@ -337,7 +334,7 @@ void Vector2<S>::set(const T& other)
 
 //--------------------------------------------------------------------
 /// Get the length of the vector
-/// 
+///
 /// Formula:
 /// \code
 /// len = sqrt(x*x + y*y)
@@ -352,7 +349,7 @@ inline S Vector2<S>::length() const
 
 //--------------------------------------------------------------------
 /// Get the squared length (L2) of the vector
-/// 
+///
 /// Formula:
 /// \code
 /// len = x*x + y*y
@@ -366,9 +363,9 @@ inline S Vector2<S>::lengthSquared() const
 
 
 //--------------------------------------------------------------------
-/// Set the length of the vector to \a newLength. 
-/// 
-/// \sa Vector3::setLength() 
+/// Set the length of the vector to \a newLength.
+///
+/// \sa Vector3::setLength()
 //--------------------------------------------------------------------
 template<typename S>
 bool Vector2<S>::setLength(S newLength)
@@ -396,7 +393,7 @@ bool Vector2<S>::setLength(S newLength)
 
 //--------------------------------------------------------------------
 /// Return a unit length perpendicular vector
-/// 
+///
 /// Returns the vector (y,-x), normalized. This can be thought of as the 'right' vector.
 //--------------------------------------------------------------------
 template<typename S>
@@ -417,7 +414,7 @@ const Vector2<S> Vector2<S>::perpendicularVector() const
 
 //--------------------------------------------------------------------
 /// Normalize the vector (make sure the length is 1.0).
-/// 
+///
 /// \return  Returns true if normalization was possible. Returns false if length is zero or a NaN vector.
 //--------------------------------------------------------------------
 template<typename S>
@@ -438,7 +435,7 @@ bool Vector2<S>::normalize()
         // Might be NaN, so set it to zero
         m_v[0] = 0;
         m_v[1] = 0;
-        
+
         return false;
     }
 }
@@ -489,7 +486,7 @@ inline bool Vector2<S>::isZero() const
 
 //--------------------------------------------------------------------
 /// Check if vector is undefined
-/// 
+///
 /// \return Returns true if any one of the components is undefined
 //--------------------------------------------------------------------
 template<typename S>
