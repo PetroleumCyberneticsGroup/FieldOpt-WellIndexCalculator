@@ -19,6 +19,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 #include "RigLocalGrid.h"
 #include "../../Fwk/AppFwk/CommonCode/cvfStructGrid.h"
 #include "../../Fwk/AppFwk/cafProjectDataModel/cafFixedArray.h"

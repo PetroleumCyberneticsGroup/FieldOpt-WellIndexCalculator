@@ -2,16 +2,16 @@
 //
 //  Copyright (C) Statoil ASA
 //  Copyright (C) Ceetron Solutions AS
-// 
+//
 //  ResInsight is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published
 //  by the Free Software Foundation, either version 3 of the License,
 //  or (at your option) any later version.
-// 
+//
 //  ResInsight is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 //  See the GNU General Public License at
 // <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
@@ -25,7 +25,7 @@ namespace cvf
 {
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 cvf::Vec3d GeometryTools::computeFaceCenter(const cvf::Vec3d& v0,
                                             const cvf::Vec3d& v1,
@@ -41,7 +41,8 @@ cvf::Vec3d GeometryTools::computeFaceCenter(const cvf::Vec3d& v0,
 }
 
 // -----------------------------------------------------------------
-/// Ez = Plane normal, Ex = in XY plane (horizontal), Ey = semi vertical upwards
+/// Ez = Plane normal, Ex = in XY plane (horizontal),
+/// Ey = semi vertical upwards
 // -----------------------------------------------------------------
 cvf::Mat3f
 GeometryTools::computePlaneHorizontalRotationMx(const cvf::Vec3f& inPlaneVec0,
@@ -72,7 +73,7 @@ GeometryTools::computePlaneHorizontalRotationMx(const cvf::Vec3f& inPlaneVec0,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 
 int GeometryTools::findClosestAxis(const cvf::Vec3d& vec) {
@@ -166,7 +167,7 @@ double GeometryTools::getAngle(const cvf::Vec3d& v1,
 
 // -----------------------------------------------------------------
 /*
-   Determine the intersection point of two line segments  
+   Determine the intersection point of two line segments
    From Paul Bourke, but modified to really handle coincident lines
    and lines with touching vertexes.
    Returns an intersection status telling what kind of intersection it is (if any)
@@ -554,7 +555,7 @@ inline double TriArea2D(double x1, double y1,
 }
 
 // -----------------------------------------------------------------
-// Compute barycentric coordinates (area coordinates) (u, v, w) for 
+// Compute barycentric coordinates (area coordinates) (u, v, w) for
 // point p with respect to triangle (t0, t1, t2)
 // These can be used as weights for interpolating scalar values across the triangle
 // Based on section 3.4 in "Real Time collision detection" by Christer Ericson
@@ -633,7 +634,7 @@ cvf::Vec4d GeometryTools::barycentricCoords(const cvf::Vec3d& v0,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 double GeometryTools::interpolateQuad(const cvf::Vec3d& v1, double s1,
                                       const cvf::Vec3d& v2, double s2,
@@ -647,7 +648,7 @@ double GeometryTools::interpolateQuad(const cvf::Vec3d& v1, double s1,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void GeometryTools::addMidEdgeNodes(
     std::list<std::pair<cvf::uint, bool> >* polygon,
@@ -764,7 +765,7 @@ cvf::Vec3d GeometryTools::polygonAreaNormal3D(const std::vector<cvf::Vec3d>& pol
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EdgeSplitStorage::setVertexCount(size_t size)
 {
@@ -772,7 +773,7 @@ void EdgeSplitStorage::setVertexCount(size_t size)
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 bool EdgeSplitStorage::findSplitPoint(size_t edgeP1Index,
                                       size_t edgeP2Index,
@@ -791,7 +792,7 @@ bool EdgeSplitStorage::findSplitPoint(size_t edgeP1Index,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EdgeSplitStorage::addSplitPoint(size_t edgeP1Index,
                                      size_t edgeP2Index,
@@ -802,7 +803,7 @@ void EdgeSplitStorage::addSplitPoint(size_t edgeP1Index,
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EdgeSplitStorage::canonizeAddress(size_t& edgeP1Index,
                                        size_t& edgeP2Index) {
@@ -817,7 +818,7 @@ void EdgeSplitStorage::canonizeAddress(size_t& edgeP1Index,
 
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 EarClipTesselator::EarClipTesselator():
     m_X(-1),
@@ -832,7 +833,7 @@ EarClipTesselator::EarClipTesselator():
 /// \brief      Do the main processing/actual triangulation
 /// \param      triangleIndices Array that will receive the
 /// indices of the triangles resulting from the triangulation
-/// \return        true when a tesselation was successully created 
+/// \return        true when a tesselation was successully created
 // -----------------------------------------------------------------
 
 bool EarClipTesselator::calculateTriangles( std::vector<size_t>* triangleIndices ) {
@@ -1027,7 +1028,7 @@ double EarClipTesselator::calculateProjectedPolygonArea() const
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EarClipTesselator::setNormal(const cvf::Vec3d& polygonNormal) {
   int Z = GeometryTools::findClosestAxis(polygonNormal);
@@ -1037,14 +1038,14 @@ void EarClipTesselator::setNormal(const cvf::Vec3d& polygonNormal) {
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EarClipTesselator::setPolygonIndices(const std::list<size_t>& polygon) {
   m_polygonIndices = polygon;
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EarClipTesselator::setPolygonIndices(const std::vector<size_t>& polygon) {
 
@@ -1056,21 +1057,21 @@ void EarClipTesselator::setPolygonIndices(const std::vector<size_t>& polygon) {
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EarClipTesselator::setMinTriangleArea(double areaTolerance) {
   m_areaTolerance = 2*areaTolerance; // Convert to trapesoidal area
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void EarClipTesselator::setGlobalNodeArray(const cvf::Vec3dArray& nodeCoords) {
   m_nodeCoords = &nodeCoords;
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 FanEarClipTesselator::FanEarClipTesselator() :
     m_centerNodeIndex(std::numeric_limits<size_t>::max()) {
@@ -1078,14 +1079,14 @@ FanEarClipTesselator::FanEarClipTesselator() :
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 void FanEarClipTesselator::setCenterNode(size_t centerNodeIndex) {
   m_centerNodeIndex = centerNodeIndex;
 }
 
 // -----------------------------------------------------------------
-/// 
+///
 // -----------------------------------------------------------------
 bool FanEarClipTesselator::calculateTriangles(std::vector<size_t>* triangles) {
 

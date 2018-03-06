@@ -127,11 +127,10 @@ void RigMainGrid::setDisplayModelOffset(cvf::Vec3d offset) {
 }
 
 // -----------------------------------------------------------------
-/// Initialize pointers from grid to parent grid
-/// Compute cell ranges for active and valid cells
-/// Compute bounding box in world coordinates based
-/// on node coordinates
-// -----------------------------------------------------------------
+// Initialize pointers from grid to parent grid
+// Compute cell ranges for active and valid cells
+// Compute bounding box in world coordinates based
+// on node coordinates
 void RigMainGrid::computeCachedData() {
 
   initAllSubGridsParentGridPointer();
@@ -141,9 +140,8 @@ void RigMainGrid::computeCachedData() {
 }
 
 // -----------------------------------------------------------------
-/// Returns the grid with index \a localGridIndex.
-/// Main Grid itself has index 0. First LGR starts on 1
-// -----------------------------------------------------------------
+// Returns the grid with index \a localGridIndex.
+// Main Grid itself has index 0. First LGR starts on 1
 RigGridBase* RigMainGrid::gridByIndex(size_t localGridIndex) {
 
   if (localGridIndex == 0) return this;
@@ -154,7 +152,6 @@ RigGridBase* RigMainGrid::gridByIndex(size_t localGridIndex) {
 // -----------------------------------------------------------------
 /// Returns the grid with index \a localGridIndex.
 /// Main Grid itself has index 0. First LGR starts on 1
-// -----------------------------------------------------------------
 const RigGridBase* RigMainGrid::gridByIndex(
     size_t localGridIndex) const {
 
@@ -163,8 +160,6 @@ const RigGridBase* RigMainGrid::gridByIndex(
   return m_localGrids[localGridIndex-1].p();
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 void RigMainGrid::setFlipAxis(bool flipXAxis, bool flipYAxis) {
 
@@ -196,20 +191,14 @@ void RigMainGrid::setFlipAxis(bool flipXAxis, bool flipYAxis) {
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-RigGridBase* RigMainGrid::gridById(int localGridId)
-{
+RigGridBase* RigMainGrid::gridById(int localGridId) {
   CVF_ASSERT (localGridId >= 0 &&
       static_cast<size_t>(localGridId) < m_gridIdToIndexMapping.size());
   return this->gridByIndex(m_gridIdToIndexMapping[localGridId]);
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-RigNNCData* RigMainGrid::nncData()
-{
+RigNNCData* RigMainGrid::nncData() {
   if (m_nncData.isNull()) {
     m_nncData = new RigNNCData;
   }
@@ -217,8 +206,6 @@ RigNNCData* RigMainGrid::nncData()
   return m_nncData.p();
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 void RigMainGrid::setFaults(const cvf::Collection<RigFault>& faults) {
     m_faults = faults;
@@ -230,8 +217,6 @@ void RigMainGrid::setFaults(const cvf::Collection<RigFault>& faults) {
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 bool RigMainGrid::hasFaultWithName(const QString& name) const {
 
   for (auto fault : m_faults) {
@@ -242,8 +227,6 @@ bool RigMainGrid::hasFaultWithName(const QString& name) const {
   return false;
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 void
 RigMainGrid::calculateFaults(const RigActiveCellInfo* activeCellInfo) {
@@ -386,8 +369,6 @@ RigMainGrid::calculateFaults(const RigActiveCellInfo* activeCellInfo) {
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 void RigMainGrid::distributeNNCsToFaults() {
 
   const std::vector<RigConnection>& nncs = this->nncData()->connections();
@@ -438,11 +419,10 @@ void RigMainGrid::distributeNNCsToFaults() {
 }
 
 // -----------------------------------------------------------------
-/// The cell is normally inverted due to Depth becoming -Z at import,
-/// but if (only) one of the flipX/Y is done, the cell is back to normal
-// -----------------------------------------------------------------
-bool RigMainGrid::isFaceNormalsOutwards() const
-{
+// The cell is normally inverted due to Depth becoming -Z at
+// import, but if (only) one of the flipX/Y is done, the cell
+// is back to normal
+bool RigMainGrid::isFaceNormalsOutwards() const {
 
   for (int gcIdx = 0 ; gcIdx < static_cast<int>(m_cells.size()); ++gcIdx)
   {

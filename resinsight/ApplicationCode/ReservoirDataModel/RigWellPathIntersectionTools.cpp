@@ -164,7 +164,9 @@ RigWellPathIntersectionTools::calculateLengthInCell(
   cvf::Vec3d kAxisDirection;
 
   RigCellGeometryTools::findCellLocalXYZ(hexCorners,
-                                         iAxisDirection, jAxisDirection, kAxisDirection);
+                                         iAxisDirection,
+                                         jAxisDirection,
+                                         kAxisDirection);
 
   cvf::Mat3d localCellCoordinateSystem(
       iAxisDirection.x(), jAxisDirection.x(), kAxisDirection.x(),

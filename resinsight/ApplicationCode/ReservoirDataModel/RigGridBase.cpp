@@ -99,9 +99,8 @@ void RigGridBase::initSubGridParentPointer() {
 }
 
 // -----------------------------------------------------------------
-/// Find the cell index to the maingrid cell containing this cell,
-/// and store it as m_mainGridCellIndex in each cell.
-// -----------------------------------------------------------------
+// Find the cell index to the maingrid cell containing this cell,
+// and store it as m_mainGridCellIndex in each cell.
 void RigGridBase::initSubCellsMainGridCellIndex()
 {
   RigGridBase* grid = this;
@@ -142,7 +141,6 @@ void RigGridBase::initSubCellsMainGridCellIndex()
 /// retreiving the correct lgr cells as well. the cell() call
 /// retreives correct cell, because main grid has offset of 0,
 /// and we access the global cell array in main grid.
-// -----------------------------------------------------------------
 void RigGridBase::cellCornerVertices(size_t cellIndex,
                                      cvf::Vec3d vertices[8]) const
 {
@@ -161,24 +159,30 @@ void RigGridBase::cellCornerVertices(size_t cellIndex,
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-size_t RigGridBase::cellIndexFromIJK(size_t i,
-                                     size_t j,
-                                     size_t k) const
-{
-  CVF_TIGHT_ASSERT(i != cvf::UNDEFINED_SIZE_T && j != cvf::UNDEFINED_SIZE_T && k != cvf::UNDEFINED_SIZE_T );
-  CVF_TIGHT_ASSERT(i < m_gridPointDimensions.x() && j < m_gridPointDimensions.y() && k < m_gridPointDimensions.z()  );
+size_t
+RigGridBase::cellIndexFromIJK(size_t i, size_t j, size_t k) const {
 
-  size_t ci = i + j*(m_gridPointDimensions.x() - 1) + k*((m_gridPointDimensions.x() - 1)*(m_gridPointDimensions.y() - 1));
+  CVF_TIGHT_ASSERT(i != cvf::UNDEFINED_SIZE_T
+                       && j != cvf::UNDEFINED_SIZE_T
+                       && k != cvf::UNDEFINED_SIZE_T );
+  CVF_TIGHT_ASSERT(i < m_gridPointDimensions.x()
+                       && j < m_gridPointDimensions.y()
+                       && k < m_gridPointDimensions.z()  );
+
+  size_t ci = i +
+      j*(m_gridPointDimensions.x() - 1) +
+      k*((m_gridPointDimensions.x() - 1)*(m_gridPointDimensions.y() - 1));
+
   return ci;
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-void RigGridBase::cellMinMaxCordinates(size_t cellIndex,
-                                       cvf::Vec3d* minCoordinate,
-                                       cvf::Vec3d* maxCoordinate) const
-{
+void
+RigGridBase::cellMinMaxCordinates(size_t cellIndex,
+                                  cvf::Vec3d* minCoordinate,
+                                  cvf::Vec3d* maxCoordinate) const {
 
 }
 
@@ -210,81 +214,72 @@ bool RigGridBase::ijkFromCellIndex(size_t cellIndex,
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-size_t RigGridBase::gridPointIndexFromIJK(size_t i, size_t j, size_t k) const
-{
+size_t
+RigGridBase::gridPointIndexFromIJK(size_t i, size_t j, size_t k) const {
   return 0;
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-bool RigGridBase::cellIJKFromCoordinate(const cvf::Vec3d& coord,
-                                        size_t* i, size_t* j, size_t* k) const
-{
+bool
+RigGridBase::cellIJKFromCoordinate(const cvf::Vec3d& coord,
+                                   size_t* i, size_t* j, size_t* k) const {
   return false;
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-cvf::Vec3d RigGridBase::gridPointCoordinate(size_t i, size_t j, size_t k) const
-{
-  cvf::Vec3d pos;
+cvf::Vec3d
+RigGridBase::gridPointCoordinate(size_t i, size_t j, size_t k) const {
 
+  cvf::Vec3d pos;
   return pos;
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-cvf::Vec3d RigGridBase::minCoordinate() const
-{
+cvf::Vec3d RigGridBase::minCoordinate() const {
   cvf::Vec3d v;
-
   return v;
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-size_t RigGridBase::gridPointCountI() const
-{
+size_t RigGridBase::gridPointCountI() const {
   return m_gridPointDimensions.x();
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-size_t RigGridBase::gridPointCountJ() const
-{
+size_t RigGridBase::gridPointCountJ() const {
   return m_gridPointDimensions.y();
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-size_t RigGridBase::gridPointCountK() const
-{
+size_t RigGridBase::gridPointCountK() const {
   return m_gridPointDimensions.z();
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-cvf::Vec3d RigGridBase::cellCentroid(size_t cellIndex) const
-{
+cvf::Vec3d RigGridBase::cellCentroid(size_t cellIndex) const {
   cvf::Vec3d v;
-
   return v;
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-cvf::Vec3d RigGridBase::maxCoordinate() const
-{
+cvf::Vec3d RigGridBase::maxCoordinate() const {
   cvf::Vec3d v;
-
   return v;
 }
 
@@ -292,10 +287,9 @@ cvf::Vec3d RigGridBase::maxCoordinate() const
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-bool RigGridBase::isCellValid(size_t i, size_t j, size_t k) const
-{
-  if (i >= cellCountI() || j >= cellCountJ() || k >= cellCountK())
-  {
+bool RigGridBase::isCellValid(size_t i, size_t j, size_t k) const {
+
+  if (i >= cellCountI() || j >= cellCountJ() || k >= cellCountK()) {
     return false;
   }
 
@@ -310,18 +304,16 @@ bool RigGridBase::isCellValid(size_t i, size_t j, size_t k) const
 // -----------------------------------------------------------------
 bool RigGridBase::cellIJKNeighbor(size_t i, size_t j, size_t k,
                                   FaceType face,
-                                  size_t* neighborCellIndex) const
-{
+                                  size_t* neighborCellIndex) const {
+
   size_t ni, nj, nk;
   neighborIJKAtCellFace(i, j, k, face, &ni, &nj, &nk);
 
-  if (!isCellValid(ni, nj, nk))
-  {
+  if (!isCellValid(ni, nj, nk)) {
     return false;
   }
 
-  if (neighborCellIndex)
-  {
+  if (neighborCellIndex) {
     *neighborCellIndex = cellIndexFromIJK(ni, nj, nk);
   }
 
@@ -337,27 +329,24 @@ bool RigGridBase::isMainGrid() const
 }
 
 // -----------------------------------------------------------------
-/// Models with large absolute values for coordinate scalars will
-/// often end up with z-fighting due to numerical limits in float
-/// used by OpenGL to represent a position. displayModelOffset()
-/// is intended to be subtracted from domain model coordinate when
-/// building geometry for visualization
-///
+// Models with large absolute values for coordinate scalars will
+// often end up with z-fighting due to numerical limits in float
+// used by OpenGL to represent a position. displayModelOffset()
+// is intended to be subtracted from domain model coordinate when
+// building geometry for visualization
+//
 //  Vec3d domainModelCoord
 //  Vec3d coordForVisualization
-// -----------------------------------------------------------------
-cvf::Vec3d RigGridBase::displayModelOffset() const
-{
+cvf::Vec3d RigGridBase::displayModelOffset() const {
   return m_mainGrid->displayModelOffset();
 }
 
 // -----------------------------------------------------------------
-/// Returns the min size of the I and J charactristic cell sizes
-// -----------------------------------------------------------------
-double RigGridBase::characteristicIJCellSize() const
-{
-//  double characteristicCellSize = HUGE_VAL;
-  double characteristicCellSize = 1e12;
+// Returns the min size of the I and J characteristic cell sizes
+double RigGridBase::characteristicIJCellSize() const {
+
+  double characteristicCellSize = HUGE_VAL;
+//  double characteristicCellSize = 1e12;
 
   double cellSizeI, cellSizeJ, cellSizeK;
   this->characteristicCellSizes(&cellSizeI, &cellSizeJ, &cellSizeK);
@@ -365,15 +354,14 @@ double RigGridBase::characteristicIJCellSize() const
   if (cellSizeI < characteristicCellSize) characteristicCellSize = cellSizeI;
   if (cellSizeJ < characteristicCellSize) characteristicCellSize = cellSizeJ;
 
-
   return characteristicCellSize;
 }
 
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-size_t RigGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const
-{
+size_t
+RigGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const {
   return m_indexToStartOfCells + gridLocalCellIndex;
 }
 

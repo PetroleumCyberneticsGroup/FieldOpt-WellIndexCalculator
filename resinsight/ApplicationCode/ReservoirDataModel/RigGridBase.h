@@ -1,22 +1,22 @@
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) 2011-     Statoil ASA
-//  Copyright (C) 2013-     Ceetron Solutions AS
-//  Copyright (C) 2011-2012 Ceetron AS
+// Copyright (C) 2011-     Statoil ASA
+// Copyright (C) 2013-     Ceetron Solutions AS
+// Copyright (C) 2011-2012 Ceetron AS
 //
-//  ResInsight is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
 //
-//  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
-//  WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//  FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
-//  for more details.
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html> for more details.
 //
-/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -46,7 +46,6 @@ class RigGridBase : public cvf::StructGridInterface
  public:
   explicit RigGridBase(RigMainGrid* mainGrid);
   virtual ~RigGridBase(void);
-
 
   void setGridPointDimensions(const cvf::Vec3st& gridDimensions)
   { m_gridPointDimensions = gridDimensions;}
@@ -106,16 +105,20 @@ class RigGridBase : public cvf::StructGridInterface
   virtual cvf::Vec3d maxCoordinate() const;
   virtual cvf::Vec3d displayModelOffset() const;
 
-  virtual size_t cellIndexFromIJK(size_t i, size_t j, size_t k ) const;
+  virtual size_t cellIndexFromIJK(
+      size_t i, size_t j, size_t k ) const;
 
-  virtual bool ijkFromCellIndex(size_t cellIndex,
-                                size_t* i, size_t* j, size_t* k ) const;
+  virtual bool ijkFromCellIndex(
+      size_t cellIndex,
+      size_t* i, size_t* j, size_t* k ) const;
 
-  virtual bool cellIJKFromCoordinate(const cvf::Vec3d& coord,
-                                     size_t* i, size_t* j, size_t* k ) const;
+  virtual bool cellIJKFromCoordinate(
+      const cvf::Vec3d& coord,
+      size_t* i, size_t* j, size_t* k ) const;
 
-  virtual void cellCornerVertices(size_t cellIndex,
-                                  cvf::Vec3d vertices[8] ) const;
+  virtual void cellCornerVertices(
+      size_t cellIndex,
+      cvf::Vec3d vertices[8] ) const;
 
   virtual cvf::Vec3d cellCentroid(size_t cellIndex ) const;
 
