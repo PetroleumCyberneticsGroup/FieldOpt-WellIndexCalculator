@@ -108,7 +108,7 @@ void IntersectedCell::set_segment_calculation_data(int segment_index,
                                                    string name,
                                                    double value) {
   // Check if this name already exists
-  map<std::string, vector<double>>::iterator it = calculation_data_.find(name);
+  map<string, vector<double>>::iterator it = calculation_data_.find(name);
 
   if(it != calculation_data_.end()) {
     if (segment_index >= 0 && segment_index < calculation_data_[name].size()) {
@@ -126,8 +126,35 @@ void IntersectedCell::set_segment_calculation_data(int segment_index,
   }
 }
 
-std::map<std::string, std::vector<double>>& IntersectedCell::get_calculation_data() {
+map<string, vector<double>>& IntersectedCell::get_calculation_data() {
   return calculation_data_;
+}
+
+void IntersectedCell::set_segment_calculation_data_3d(int segment_index,
+                                                   string name,
+                                                      Vector3d value3d) {
+  // Check if this name already exists
+  map<string, vector<Vector3d>>::iterator
+      it = calculation_data_3d_.find(name);
+
+  if(it != calculation_data_3d_.end()) {
+    if (segment_index >= 0 && segment_index < calculation_data_3d_[name].size()) {
+      calculation_data_3d_[name].at(segment_index) = value3d;
+    }
+    else if(segment_index == calculation_data_3d_[name].size()) {
+      calculation_data_3d_[name].push_back(value3d);
+    }
+    else {
+      runtime_error("This segment index is out of bounds.");
+    }
+  }
+  else {
+    calculation_data_3d_[name].push_back(value3d);
+  }
+}
+
+map<string, vector<Vector3d>>& IntersectedCell::get_calculation_data_3d() {
+  return calculation_data_3d_;
 }
 
 int IntersectedCell::GetIntersectedCellIndex(vector<IntersectedCell> &cells,

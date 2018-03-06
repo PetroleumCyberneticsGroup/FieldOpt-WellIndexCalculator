@@ -62,6 +62,15 @@ class IntersectedCell : public Grid::Cell {
   double dy() const;
   double dz() const;
 
+  // Custom adding of cell size dx/dy/dz
+//  void set_dx(double dx) { dx_ = dx; };
+//  void set_dy(double dy) { dy_ = dy; };
+//  void set_dz(double dz) { dz_ = dz; };
+//
+//  double get_dx() { return dx_; };
+//  double get_dy() { return dy_; };
+//  double get_dz() { return dz_; };
+
   void add_new_segment(Vector3d entry_point, Vector3d exit_point,
                        double segment_radius, double segment_skin);
   int num_segments() const;
@@ -82,7 +91,13 @@ class IntersectedCell : public Grid::Cell {
   void set_segment_calculation_data(int segment_index,
                                     string name,
                                     double value);
+
+  void set_segment_calculation_data_3d(int segment_index,
+                                    string name,
+                                       Vector3d value3d);
+
   map<string, vector<double>>& get_calculation_data();
+  map<string, vector<Vector3d>>& get_calculation_data_3d();
 
   /*!
    * @brief Get the index of an intersected cell. If it is not found in
@@ -102,8 +117,12 @@ class IntersectedCell : public Grid::Cell {
   vector<double> segment_radius_;
   vector<double> segment_skin_;
 
+  double dx_, dy_, dz_;
+  int i_, j_, k_;
+
   // per segment well index calculation data
   map<string, vector<double>> calculation_data_;
+  map<string, vector<Vector3d>> calculation_data_3d_;
 
   // well indices
   double well_index_matrix_;

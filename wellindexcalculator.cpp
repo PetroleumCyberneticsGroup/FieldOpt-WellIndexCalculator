@@ -647,9 +647,21 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
        * not the spatial position. Also adds the lengths of previous segments in case there
        * is more than one segment within the well.
        */
-      double current_Lx = (icell.xvec() * icell.xvec().dot(current_vec) / icell.xvec().dot(icell.xvec())).norm();
-      double current_Ly = (icell.yvec() * icell.yvec().dot(current_vec) / icell.yvec().dot(icell.yvec())).norm();
-      double current_Lz = (icell.zvec() * icell.zvec().dot(current_vec) / icell.zvec().dot(icell.zvec())).norm();
+
+      // (*** WRONG FOR Z ***) CURRENT_VECTOR(cv) -- PROJECTED ONTO -- XVEC(xv) / YVEC(yv) / ZVEC(zv) CELL_SIDES
+      double current_Lx__cv_onto_xv = (icell.xvec() * icell.xvec().dot(current_vec) / icell.xvec().dot(icell.xvec())).norm();
+      double current_Ly__cv_onto_yv = (icell.yvec() * icell.yvec().dot(current_vec) / icell.yvec().dot(icell.yvec())).norm();
+      double current_Lz__cv_onto_zv = (icell.zvec() * icell.zvec().dot(current_vec) / icell.zvec().dot(icell.zvec())).norm();
+
+      // XVEC(xv) / YVEC(yv) / ZVEC(zv) CELL_SIDES -- PROJECTED ONTO -- CURRENT_VECTOR(cv)
+      double current_Lx__xv_onto_cv = (current_vec * icell.xvec().dot(current_vec) / current_vec.dot(current_vec)).norm();
+      double current_Ly__yv_onto_cv = (current_vec * icell.yvec().dot(current_vec) / current_vec.dot(current_vec)).norm();
+      double current_Lz__zv_onto_cv = (current_vec * icell.zvec().dot(current_vec) / current_vec.dot(current_vec)).norm();
+
+      // CORRECTION
+      double current_Lx = current_Lx__xv_onto_cv;
+      double current_Ly = current_Ly__yv_onto_cv;
+      double current_Lz = current_Lz__zv_onto_cv;
 
       // Compute Well Index from formula provided by Shu (\todo Introduce ref/year) per Segment
       // (Note that this has a glich since segments from the same well could have different radius (e.g. radial well))
@@ -672,6 +684,19 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
       icell.set_segment_calculation_data(iSegment, "Lx", current_Lx);
       icell.set_segment_calculation_data(iSegment, "Ly", current_Ly);
       icell.set_segment_calculation_data(iSegment, "Lz", current_Lz);
+
+      icell.set_segment_calculation_data(iSegment, "current_Lx__cv_onto_xv", current_Lx__cv_onto_xv);
+      icell.set_segment_calculation_data(iSegment, "current_Ly__cv_onto_yv", current_Ly__cv_onto_yv);
+      icell.set_segment_calculation_data(iSegment, "current_Lz__cv_onto_zv", current_Lz__cv_onto_zv);
+
+      icell.set_segment_calculation_data(iSegment, "current_Lx__xv_onto_cv", current_Lx__xv_onto_cv);
+      icell.set_segment_calculation_data(iSegment, "current_Ly__yv_onto_cv", current_Ly__yv_onto_cv);
+      icell.set_segment_calculation_data(iSegment, "current_Lz__zv_onto_cv", current_Lz__zv_onto_cv);
+
+      icell.set_segment_calculation_data_3d(iSegment, "xvec", icell.xvec());
+      icell.set_segment_calculation_data_3d(iSegment, "yvec", icell.yvec());
+      icell.set_segment_calculation_data_3d(iSegment, "zvec", icell.zvec());
+      icell.set_segment_calculation_data_3d(iSegment, "cvec", current_vec);
 
       if (icell.is_active_matrix())
       {

@@ -10,7 +10,20 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(WIC_LIB_TARGET wellindexcalculator)
 set(WIC_LIB_TARGET_ADG wellindexcalculator-adgprs-dbg)
 
-include(ResInsight.cmake)
+# ResInsight ===========================================================
+#if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#  add_definitions(-DCVF_LINUX)
+#  message(STATUS "CMAKE_SYSTEM_NAME => ${CMAKE_SYSTEM_NAME}")
+#endif()
+#
+#if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -DCVF_LINUX -pipe -Wextra ")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+#  set(CMAKE_CXX_FLAGS_DEBUG "-ggdb -g3 -O0 -DDEBUG -D_DEBUG")
+#  set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNO_DEBUG")
+#endif()
+
+#include(ResInsight.cmake)
 
 # Include: Eigen =======================================================
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -22,10 +35,10 @@ message(STATUS "Qt5Core_INCLUDE_DIRS: ${Qt5Core_INCLUDE_DIRS}")
 
 # Include: ERT =========================================================
 
-#find_library(ert_ecl
-#    NAMES ecl
-#    HINTS ${CMAKE_BINARY_DIR}/libraries/lib
-#    REQUIRED)
+find_library(ert_ecl
+    NAMES ecl
+    HINTS ${CMAKE_BINARY_DIR}/libraries/lib
+    REQUIRED)
 
 #find_library(ert_eclxx
 #    NAMES ecl
@@ -82,19 +95,26 @@ if (_WIN32) # WINDOWS
 else() # LINUX --------------------------------------------------------
   if (NOT BUILD_WIC_ADGPRS)
 
+    #    include_directories(
+    #        ${RESINSIGHT_FWK_VIZFWK_LIBCORE}
+    #        ${RESINSIGHT_FWK_VIZFWK_LIBGEOMETRY}
+    #        ${RESINSIGHT_FWK_VIZFWK_LIBRENDER}
+    #        ${RESINSIGHT_FWK_APPFWK_CAFPROJECTDATAMODEL}
+    #        ${RESINSIGHT_FWK_APPFWK_CAFPROJECTDATAMODEL_CAFPDMCORE}
+    #        ${RESINSIGHT_FWK_APPFWK_COMMONCODE}
+    #        ${RESINSIGHT_APPLICATIONCODE_RESERVOIRDATAMODEL}
+    #        ${RESINSIGHT_APPLICATIONCODE_APPLICATION}
+    #        ${RESINSIGHT_APPLICATIONCODE_PROJECTDATAMODEL}
+    #        ${RESINSIGHT_APPLICATIONCODE_APPLICATION_TOOLS}
+    #        ${RESINSIGHT_APPLICATIONCODE_FILEINTERFACE}
+    #        )
+
     include_directories(
-        ${RESINSIGHT_FWK_VIZFWK_LIBCORE}
-        ${RESINSIGHT_FWK_VIZFWK_LIBGEOMETRY}
-        ${RESINSIGHT_FWK_VIZFWK_LIBRENDER}
-        ${RESINSIGHT_FWK_APPFWK_CAFPROJECTDATAMODEL}
-        ${RESINSIGHT_FWK_APPFWK_CAFPROJECTDATAMODEL_CAFPDMCORE}
-        ${RESINSIGHT_FWK_APPFWK_COMMONCODE}
-        ${RESINSIGHT_APPLICATIONCODE_RESERVOIRDATAMODEL}
-        ${RESINSIGHT_APPLICATIONCODE_APPLICATION}
-        ${RESINSIGHT_APPLICATIONCODE_PROJECTDATAMODEL}
-        ${RESINSIGHT_APPLICATIONCODE_APPLICATION_TOOLS}
-        ${RESINSIGHT_APPLICATIONCODE_FILEINTERFACE}
-        )
+        resinxx/rixx_app_fwk
+        resinxx/rixx_core_geom
+        resinxx/rixx_res_mod
+        resinxx/rixx_grid
+    )
 
     include_directories(
         ${EIGEN3_INCLUDE_DIR}
@@ -103,10 +123,37 @@ else() # LINUX --------------------------------------------------------
     add_library(${WIC_LIB_TARGET}
         intersected_cell.cpp
         wellindexcalculator.cpp
-        wicalc_rins.cpp
-        ${RESINSIGHT_SOURCE}
-        wicalc_rinx.cpp
-        tests/wic_debug.hpp)
+#        wicalc_rins.cpp
+#        ${RESINSIGHT_SOURCE}
+#        wicalc_rinx.cpp
+        //
+        wicalc_rixx.cpp
+        resinxx/rixx_grid/rifaultncc.cpp
+        resinxx/rixx_grid/rigrid.cpp
+        resinxx/rixx_grid/ricell.cpp
+        //
+        resinxx/well_path.cpp
+        resinxx/geometry_tools.cpp
+        //
+        resinxx/rixx_app_fwk/cvfStructGrid.cpp
+        resinxx/rixx_app_fwk/cafHexGridIntersectionTools.cpp
+        //
+        resinxx/rixx_core_geom/cvfAssert.cpp
+        resinxx/rixx_core_geom/cvfBoundingBox.cpp
+        resinxx/rixx_core_geom/cvfCharArray.cpp
+        resinxx/rixx_core_geom/cvfMath.cpp
+        resinxx/rixx_core_geom/cvfPlane.cpp
+        resinxx/rixx_core_geom/cvfRay.cpp
+        resinxx/rixx_core_geom/cvfSystem.cpp
+        resinxx/rixx_core_geom/cvfVector2.cpp
+        resinxx/rixx_core_geom/cvfVector3.cpp
+        resinxx/rixx_core_geom/cvfVector4.cpp
+        //
+        resinxx/rixx_res_mod/cvfGeometryTools.cpp
+        resinxx/rixx_res_mod/RigCellGeometryTools.cpp
+        //
+        tests/wic_debug.hpp
+        )
 
     add_library(fieldopt::${WIC_LIB_TARGET}
         ALIAS ${PROJECT_NAME})
@@ -118,6 +165,7 @@ else() # LINUX --------------------------------------------------------
         dllmain.cpp
         intersected_cell.cpp
         wellindexcalculator.cpp
+        wicalc_rixx.cpp
         tests/wic_debug.hpp
         )
   endif()
@@ -226,7 +274,7 @@ if (BUILD_BENCHMARK)
       tests/well_index_benchmark/test_resource_wic_widata.h
       tests/well_index_benchmark/test_well_index_deviated_well.cpp
       tests/well_index_benchmark/test_resource_wic_diff_functions.h
-      )
+      resinxx/well_path.cpp resinxx/well_path.h resinxx/geometry_tools.cpp resinxx/geometry_tools.h)
 
   target_link_libraries(benchmark_wellindexcalculator
       fieldopt::wellindexcalculator
