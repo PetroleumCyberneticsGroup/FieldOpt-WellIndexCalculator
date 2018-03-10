@@ -41,8 +41,8 @@
 // ERT
 #include "ert/ecl/ecl_kw_magic.h"
 #include "ert/ecl/ecl_nnc_export.h"
-#include "ert/ecl/ecl_nnc_geometry.h"
-#include "ert/ecl/ecl_nnc_data.h"
+//#include "ert/ecl/ecl_nnc_data.h"
+//#include "ert/ecl/ecl_nnc_geometry.h"
 
 // -----------------------------------------------------------------
 #include "rigrid.h"
@@ -368,9 +368,9 @@ class RIReaderECL : public RIReaderInterface
       vector<double>* values,
       const vector<double>& fileValues);
 
-  void transferStaticNNCData(const ecl_grid_type* mainEclGrid,
-                             ecl_file_type* init_file,
-                             RIGrid* mainGrid);
+//  void transferStaticNNCData(const ecl_grid_type* mainEclGrid,
+//                             ecl_file_type* init_file,
+//                             RIGrid* mainGrid);
 
   void transferDynamicNNCData(const ecl_grid_type* mainEclGrid,
                               RIGrid* mainGrid);

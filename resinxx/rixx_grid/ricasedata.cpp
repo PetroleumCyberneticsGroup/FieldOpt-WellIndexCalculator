@@ -651,8 +651,12 @@ bool RIReaderECL::open(const QString& fileName,
   // buildMetaData();
 
   // ---------------------------------------------------------------
-   cout << "Reading NNC data" << endl;
-   transferStaticNNCData(mainEclGrid, m_ecl_init_file, eclipseCase->mainGrid());
+  // Needs:
+  //#include "ert/ecl/ecl_nnc_data.h"
+  //#include "ert/ecl/ecl_nnc_geometry.h"
+
+  // cout << "Reading NNC data" << endl;
+  // transferStaticNNCData(mainEclGrid, m_ecl_init_file, eclipseCase->mainGrid());
 
   // This test should probably be improved to test more directly for presence of NNC data
   // if (m_eclipseCase->results(MATRIX_MODEL)->hasFlowDiagUsableFluxes()) {
@@ -681,66 +685,70 @@ RIReaderECL::setFileDataAccess(RIECLRestartDataAccess* restartDataAccess) {
   m_dynamicResultsAccess = restartDataAccess;
 }
 
+// Needs:
+//#include "ert/ecl/ecl_nnc_data.h"
+//#include "ert/ecl/ecl_nnc_geometry.h"
+//
 // -----------------------------------------------------------------
-void RIReaderECL::transferStaticNNCData(
-    const ecl_grid_type* mainEclGrid,
-    ecl_file_type* init_file,
-    RIGrid* mainGrid) {
-
-  if (!m_ecl_init_file ) { return; }
-
-  CVF_ASSERT(mainEclGrid && mainGrid);
-
-  // ---------------------------------------------------------------
-  // Get the data from ERT
-  ecl_nnc_geometry_type* nnc_geo =
-      ecl_nnc_geometry_alloc(mainEclGrid);
-
-  if (nnc_geo) {
-    ecl_nnc_data_type* tran_data =
-        ecl_nnc_data_alloc_tran(mainEclGrid,
-                                nnc_geo,
-                                ecl_file_get_global_view(init_file));
-
-    // -------------------------------------------------------------
-    if (tran_data) {
-      int numNNC = ecl_nnc_data_get_size(tran_data);
-      int geometrySize = ecl_nnc_geometry_size(nnc_geo);
-      CVF_ASSERT(numNNC == geometrySize);
-
-      if (numNNC > 0) {
-        // Transform to our own data structures
-        mainGrid->nncData()->connections().resize(numNNC);
-
-        vector<double>& transmissibilityValues =
-            mainGrid->nncData()->makeStaticConnectionScalarResult(
-                RINNCData::propertyNameCombTrans());
-
-        const double* transValues = ecl_nnc_data_get_values(tran_data);
-
-        for (int nIdx = 0; nIdx < numNNC; ++nIdx) {
-          const ecl_nnc_pair_type* geometry_pair = ecl_nnc_geometry_iget(nnc_geo, nIdx);
-
-          RIGridBase* grid1 =  mainGrid->gridByIndex(geometry_pair->grid_nr1);
-
-          mainGrid->nncData()->connections()[nIdx].m_c1GlobIdx =
-              grid1->reservoirCellIndex(geometry_pair->global_index1);
-
-          RIGridBase* grid2 =  mainGrid->gridByIndex(geometry_pair->grid_nr2);
-
-          mainGrid->nncData()->connections()[nIdx].m_c2GlobIdx =
-              grid2->reservoirCellIndex(geometry_pair->global_index2);
-
-          transmissibilityValues[nIdx] = transValues[nIdx];
-        }
-      }
-
-      ecl_nnc_data_free(tran_data);
-    }
-
-    ecl_nnc_geometry_free(nnc_geo);
-  }
-}
+//void RIReaderECL::transferStaticNNCData(
+//    const ecl_grid_type* mainEclGrid,
+//    ecl_file_type* init_file,
+//    RIGrid* mainGrid) {
+//
+//  if (!m_ecl_init_file ) { return; }
+//
+//  CVF_ASSERT(mainEclGrid && mainGrid);
+//
+//  // ---------------------------------------------------------------
+//  // Get the data from ERT
+//  ecl_nnc_geometry_type* nnc_geo =
+//      ecl_nnc_geometry_alloc(mainEclGrid);
+//
+//  if (nnc_geo) {
+//    ecl_nnc_data_type* tran_data =
+//        ecl_nnc_data_alloc_tran(mainEclGrid,
+//                                nnc_geo,
+//                                ecl_file_get_global_view(init_file));
+//
+//    // -------------------------------------------------------------
+//    if (tran_data) {
+//      int numNNC = ecl_nnc_data_get_size(tran_data);
+//      int geometrySize = ecl_nnc_geometry_size(nnc_geo);
+//      CVF_ASSERT(numNNC == geometrySize);
+//
+//      if (numNNC > 0) {
+//        // Transform to our own data structures
+//        mainGrid->nncData()->connections().resize(numNNC);
+//
+//        vector<double>& transmissibilityValues =
+//            mainGrid->nncData()->makeStaticConnectionScalarResult(
+//                RINNCData::propertyNameCombTrans());
+//
+//        const double* transValues = ecl_nnc_data_get_values(tran_data);
+//
+//        for (int nIdx = 0; nIdx < numNNC; ++nIdx) {
+//          const ecl_nnc_pair_type* geometry_pair = ecl_nnc_geometry_iget(nnc_geo, nIdx);
+//
+//          RIGridBase* grid1 =  mainGrid->gridByIndex(geometry_pair->grid_nr1);
+//
+//          mainGrid->nncData()->connections()[nIdx].m_c1GlobIdx =
+//              grid1->reservoirCellIndex(geometry_pair->global_index1);
+//
+//          RIGridBase* grid2 =  mainGrid->gridByIndex(geometry_pair->grid_nr2);
+//
+//          mainGrid->nncData()->connections()[nIdx].m_c2GlobIdx =
+//              grid2->reservoirCellIndex(geometry_pair->global_index2);
+//
+//          transmissibilityValues[nIdx] = transValues[nIdx];
+//        }
+//      }
+//
+//      ecl_nnc_data_free(tran_data);
+//    }
+//
+//    ecl_nnc_geometry_free(nnc_geo);
+//  }
+//}
 
 // -----------------------------------------------------------------
 void RIReaderECL::transferDynamicNNCData(

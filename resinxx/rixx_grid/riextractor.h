@@ -46,8 +46,10 @@
 //class RIECLCaseData;
 //class WellPath;
 
-namespace Reservoir::WellIndexCalculation {
+namespace Reservoir {
+namespace WellIndexCalculation {
 class WellPath;
+}
 }
 
 // -----------------------------------------------------------------
