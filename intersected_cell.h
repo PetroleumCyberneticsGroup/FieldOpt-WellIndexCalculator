@@ -36,7 +36,8 @@ using namespace Eigen;
 using namespace std;
 
 /*!
- * \brief The IntersectedCell struct holds information about an intersected cell.
+ * \brief The IntersectedCell struct holds
+ * information about an intersected cell.
  */
 class IntersectedCell : public Grid::Cell {
  public:
@@ -77,18 +78,19 @@ class IntersectedCell : public Grid::Cell {
 
   double cell_well_index_fracture() const;
   void set_cell_well_index_fracture(double well_index);
-  
+
   void set_segment_calculation_data(int segment_index,
                                     string name,
                                     double value);
   map<string, vector<double>>& get_calculation_data();
 
   /*!
-   * @brief Get the index of an intersected cell. If it is not found, the cell is added
-   * to the list before the new index is returned.
+   * @brief Get the index of an intersected cell. If it is not found in
+   * the already intersected cell set, then the cell is added to this
+   * set before the new index is returned.
    * @param cells The cell to find the index for.
-   * @param grdcell The list of cells to search through.
-   * @return The index of grdcell in cells.
+   * @param grdcell The set of intersected cells already found.
+   * @return The index of current grdcell in the intersected cells set.
    */
   static int GetIntersectedCellIndex(vector<IntersectedCell> &cells,
                                      Grid::Cell grdcell);
