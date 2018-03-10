@@ -13,6 +13,7 @@
 namespace Reservoir {
 namespace WellIndexCalculation {
 
+// -----------------------------------------------------------------
 using std::cout;
 using std::endl;
 using std::string;
@@ -29,15 +30,29 @@ class wicalc_rixx {
   vector<double> intersections_;
   Grid::Grid* grid_;
   RIGrid* RIGrid_;
+  RICaseData* RICaseData_;
+  RIReaderECL* RIReaderECL_;
 
   WellPath *wellPath_;
+  const RIActiveCellInfo* activeCellInfo_;
 
-  void calculateWellPathIntersections(const WellPath *wellPath,
+  void collectIntersectedCells(vector<IntersectedCell> &isc_cells,
+                               vector<WellPathCellIntersectionInfo> isc_info,
+                               WellDefinition well,
+                               WellPath& wellPath,
+                               int rank=0);
+
+  void calculateWellPathIntersections(const WellPath& wellPath,
                                       const RIGrid *grid,
                                       vector<double> &isc_values);
 
   void ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices,
                          vector<WellDefinition> &wells, int rank = 0);
+
+ protected:
+  size_t grid_count_;
+  size_t cell_count_;
+  size_t gcellarray_sz_;
 
 };
 

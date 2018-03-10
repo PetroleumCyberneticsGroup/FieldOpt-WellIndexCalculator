@@ -500,8 +500,6 @@ bool RigMainGrid::isFaceNormalsOutwards() const {
 //}
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 void RigMainGrid::findIntersectingCells(
     const cvf::BoundingBox& inputBB,
     std::vector<size_t>* cellIndices) const {
@@ -517,8 +515,7 @@ void RigMainGrid::findIntersectingCells(
   print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 }
 
-// -----------------------------------------------------------------
-///
+
 // -----------------------------------------------------------------
 void RigMainGrid::buildCellSearchTree() {
 
@@ -562,8 +559,7 @@ void RigMainGrid::buildCellSearchTree() {
   }
 }
 
-// -----------------------------------------------------------------
-///
+
 // -----------------------------------------------------------------
 cvf::BoundingBox RigMainGrid::boundingBox() const {
 

@@ -18,7 +18,7 @@
 //
 ////////////////////////////////////////////////////////////////////
 //
-// Created by bellout on 3/5/18.
+// Modified by M.Bellout on 3/5/18.
 //
 
 #ifndef FIELDOPT_RICELL_H
@@ -39,6 +39,10 @@
 #include "../rixx_app_fwk/cvfStructGrid.h"
 #include "../rixx_app_fwk/cafFixedArray.h"
 
+// RESINSIGHT: FWK/VIZFWK/LIBCORE\LIBGEOMETRY ----------------------
+#include "../rixx_core_geom/cvfRay.h"
+#include "../rixx_core_geom/cvfVector3.h"
+
 // -----------------------------------------------------------------
 //#include "RigLocalGrid.h"
 #include "rigrid.h"
@@ -56,12 +60,13 @@ class StructGridInterface;
 
 class RIGridBase;
 class RIGrid;
+class RILocalGrid;
 
 using std::string;
 using std::vector;
 
-// ╦═╗  ╦  ╔═╗  ╔═╗  ╦    ╦  
-// ╠╦╝  ║  ║    ║╣   ║    ║  
+// ╦═╗  ╦  ╔═╗  ╔═╗  ╦    ╦
+// ╠╦╝  ║  ║    ║╣   ║    ║
 // ╩╚═  ╩  ╚═╝  ╚═╝  ╩═╝  ╩═╝
 // =================================================================
 class RICell : public Reservoir::Grid::Cell {
@@ -85,8 +90,8 @@ class RICell : public Reservoir::Grid::Cell {
 
   void setGridLocalCellIndex(size_t val) { m_gridLocalCellIndex = val; }
 
-//  RigLocalGrid *subGrid() const { return m_subGrid; }
-//  void setSubGrid(RigLocalGrid *subGrid) { m_subGrid = subGrid; }
+  RILocalGrid *subGrid() const { return m_subGrid; }
+  void setSubGrid(RILocalGrid *subGrid) { m_subGrid = subGrid; }
 
   RIGridBase *hostGrid() const { return m_hostGrid; }
 
@@ -130,7 +135,7 @@ class RICell : public Reservoir::Grid::Cell {
   // This cells index in the grid it belongs to.
   size_t m_gridLocalCellIndex;
   RIGridBase *m_hostGrid;
-//  RigLocalGrid *m_subGrid;
+  RILocalGrid *m_subGrid;
 
   // Grid cell index of the cell in the
   // parent grid containing this cell

@@ -37,8 +37,6 @@
 #include "RigHexIntersectionTools.h"
 
 //====================================================================
-///
-//====================================================================
 struct WellPathCellIntersectionInfo
 {
   size_t globCellIndex;
@@ -52,10 +50,9 @@ struct WellPathCellIntersectionInfo
   cvf::StructGridInterface::FaceType intersectedCellFaceOut;
 };
 
+//====================================================================
 class RigWellPath;
 
-//====================================================================
-///
 //====================================================================
 class RigWellLogExtractor : public cvf::Object
 {
@@ -79,7 +76,7 @@ class RigWellLogExtractor : public cvf::Object
       const std::vector<HexIntersectionInfo> &intersections,
       cvf::Vec3d p1,
       double md1,
-      cvf::Vec3d p2,
+      cvf::Vec3d p2,x
       double md2,
       std::map<RigMDCellIdxEnterLeaveKey, HexIntersectionInfo > *uniqueIntersections);
 

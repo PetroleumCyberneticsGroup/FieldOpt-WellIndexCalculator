@@ -20,7 +20,12 @@
 // Modified by M.Bellout on 3/5/18.
 //
 
+// -----------------------------------------------------------------
 #include "geometry_tools.h"
+
+// -----------------------------------------------------------------
+using std::vector;
+using std::set;
 
 // -----------------------------------------------------------------
 int cvf::RigHexIntersectionTools::lineHexCellIntersection(
@@ -28,11 +33,11 @@ int cvf::RigHexIntersectionTools::lineHexCellIntersection(
     const cvf::Vec3d p2,
     const cvf::Vec3d hexCorners[8],
     const size_t hexIndex,
-    std::vector<cvf::HexIntersectionInfo> *intersections) {
+    vector<cvf::HexIntersectionInfo> *intersections) {
 
   CVF_ASSERT(intersections != NULL);
 
-  std::set<cvf::HexIntersectionInfo> uniqueIntersections;
+  set<cvf::HexIntersectionInfo> uniqueIntersections;
 
   for ( int face = 0; face < 6 ; ++face )
   {
@@ -88,8 +93,8 @@ int cvf::RigHexIntersectionTools::lineHexCellIntersection(
 // -----------------------------------------------------------------
 bool
 cvf::RigHexIntersectionTools::isPointInCell(const cvf::Vec3d point,
-                                       const cvf::Vec3d hexCorners[8])
-{
+                                            const cvf::Vec3d hexCorners[8]) {
+
   cvf::Ray ray;
   ray.setOrigin(point);
   size_t intersections = 0;
@@ -125,11 +130,12 @@ cvf::RigHexIntersectionTools::isPointInCell(const cvf::Vec3d point,
 bool cvf::RigHexIntersectionTools::planeHexCellIntersection(
     cvf::Vec3d* hexCorners,
     cvf::Plane fracturePlane,
-    list<pair<cvf::Vec3d, cvf::Vec3d > >& intersectionLineSegments)
-{
+    list<pair<cvf::Vec3d, cvf::Vec3d > >& intersectionLineSegments) {
+
   bool isCellIntersected = false;
-  for (int face = 0; face < 6; ++face)
-  {
+
+  for (int face = 0; face < 6; ++face) {
+
     cvf::ubyte faceVertexIndices[4];
     cvf::StructGridInterface::cellFaceVertexIndices(
         static_cast<cvf::StructGridInterface::FaceType>(face),
@@ -141,8 +147,8 @@ bool cvf::RigHexIntersectionTools::planeHexCellIntersection(
         hexCorners[faceVertexIndices[2]],
         hexCorners[faceVertexIndices[3]]);
 
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
+
       int next = i < 3 ? i + 1 : 0;
       caf::HexGridIntersectionTools::ClipVx triangleIntersectionPoint1;
       caf::HexGridIntersectionTools::ClipVx triangleIntersectionPoint2;
@@ -199,8 +205,8 @@ bool cvf::RigHexIntersectionTools::planeHexIntersectionPolygons(
 }
 
 // -----------------------------------------------------------------
-bool operator<(const cvf::HexIntersectionInfo& hi1,
-               const cvf::HexIntersectionInfo& hi2) {
+bool cvf::operator<(const cvf::HexIntersectionInfo& hi1,
+                    const cvf::HexIntersectionInfo& hi2) {
 
   const double tolerance = 1e-6;
 

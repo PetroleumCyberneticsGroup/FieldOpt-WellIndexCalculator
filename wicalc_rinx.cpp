@@ -378,8 +378,7 @@ double wicalc_rinx::calculateTransmissibility(RigEclipseCaseData* eclipseCase,
   permyc.push_back(permy);
   permzc.push_back(permz);
 
-  icell.SetProperties(true, false,
-                      permxc, permyc, permzc);
+  icell.SetProperties(true, false, permxc, permyc, permzc);
 //  icell.set_dx(dx);
 //  icell.set_dy(dy);
 //  icell.set_dz(dz);

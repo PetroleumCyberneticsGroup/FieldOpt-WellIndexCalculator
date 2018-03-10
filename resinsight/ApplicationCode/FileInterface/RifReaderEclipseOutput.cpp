@@ -206,7 +206,7 @@ bool transferGridCellData(RigMainGrid* mainGrid,
 //------------------------------------------------------------------
 
 //------------------------------------------------------------------
-/// Constructor
+// Constructor
 //------------------------------------------------------------------
 
 RifReaderEclipseOutput::RifReaderEclipseOutput() {
@@ -220,8 +220,7 @@ RifReaderEclipseOutput::RifReaderEclipseOutput() {
 }
 
 //------------------------------------------------------------------
-/// Destructor
-//------------------------------------------------------------------
+// Destructor
 RifReaderEclipseOutput::~RifReaderEclipseOutput() {
   if (m_ecl_init_file) {
     ecl_file_close(m_ecl_init_file);
@@ -235,8 +234,7 @@ RifReaderEclipseOutput::~RifReaderEclipseOutput() {
 }
 
 //------------------------------------------------------------------
-/// Read geometry from file given by name into given reservoir object
-//------------------------------------------------------------------
+// Read geometry from file given by name into given reservoir object
 bool RifReaderEclipseOutput::transferGeometry(const ecl_grid_type* mainEclGrid,
                                               RigEclipseCaseData* eclipseCase) {
   CVF_ASSERT(eclipseCase);
@@ -658,8 +656,6 @@ void RifReaderEclipseOutput::transferStaticNNCData(
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 void RifReaderEclipseOutput::transferDynamicNNCData(
     const ecl_grid_type* mainEclGrid, RigMainGrid* mainGrid)
 {
@@ -692,11 +688,10 @@ void RifReaderEclipseOutput::transferDynamicNNCData(
 
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-bool RifReaderEclipseOutput::openAndReadActiveCellData(const QString& fileName,
-                                                       const std::vector<QDateTime>& mainCaseTimeSteps,
-                                                       RigEclipseCaseData* eclipseCase) {
+bool
+RifReaderEclipseOutput::openAndReadActiveCellData(const QString& fileName,
+                                                  const std::vector<QDateTime>& mainCaseTimeSteps,
+                                                  RigEclipseCaseData* eclipseCase) {
   CVF_ASSERT(eclipseCase);
 
   // It is required to have a main grid before reading active cell data
@@ -742,7 +737,8 @@ bool RifReaderEclipseOutput::readActiveCellInfo()
 
   if (egridFileName.size() > 0)
   {
-    ecl_file_type* ecl_file = ecl_file_open(egridFileName.toLatin1().data(), ECL_FILE_CLOSE_STREAM);
+    ecl_file_type* ecl_file = ecl_file_open(egridFileName.toLatin1().data(),
+                                            ECL_FILE_CLOSE_STREAM);
     if (!ecl_file) return false;
 
     int actnumKeywordCount = ecl_file_get_num_named_kw(ecl_file, ACTNUM_KW);
@@ -1048,8 +1044,7 @@ RifReaderEclipseOutput::staticResult(const QString& result,
 //------------------------------------------------------------------
 ///
 //------------------------------------------------------------------
-std::vector<QDateTime> RifReaderEclipseOutput::allTimeSteps() const
-{
+vector<QDateTime> RifReaderEclipseOutput::allTimeSteps() const {
   std::vector<QDateTime> steps;
   if (m_dynamicResultsAccess.notNull())
   {

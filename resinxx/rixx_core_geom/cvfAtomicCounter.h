@@ -1,7 +1,7 @@
 //####################################################################
 //
 //   Custom Visualization Core library
-//   Copyright (C) Ceetron Solutions AS
+//   Copyright (C) 2014 Ceetron Solutions AS
 //
 //   This library may be used under the terms of either the GNU General Public License or
 //   the GNU Lesser General Public License as follows:
@@ -34,51 +34,58 @@
 //
 //####################################################################
 
-// -----------------------------------------------------------------
+
 #pragma once
 
-// STD -------------------------------------------------------------
-#include <vector>
-
-// QT --------------------------------------------------------------
-//#include <QDateTime>
-
-// FIELDOPT: UTILITIES ---------------------------------------------
-#include <Utilities/time.hpp>
-#include <Utilities/debug.hpp>
-#include <Utilities/colors.hpp>
-
-// RESINSIGHT: FWK/VIZFWK/LIBCORE ----------------------------------
 #include "cvfBase.h"
-#include "cvfObject.h"
 
-// RESINSIGHT: FWK/VIZFWK/LIBGEOMETRY ------------------------------
-#include "cvfBoundingBox.h"
+#ifdef WIN32
+  #define CVF_ATOMIC_COUNTER_CLASS_EXISTS
+#elif defined(CVF_IOS) || defined(CVF_OSX)
+  #include <libkern/OSAtomic.h>
+  #define CVF_ATOMIC_COUNTER_CLASS_EXISTS
+#elif defined __GNUC__
+    #define CVF_GCC_DEFINED
+    #define CVF_ATOMIC_COUNTER_CLASS_EXISTS
+#endif
+
+#if defined(CVF_ATOMIC_COUNTER_CLASS_EXISTS)
 
 namespace cvf {
 
-class BoundingBoxTreeImpl;
+// Inspired by Poco
 
-//====================================================================
-// An axis-aligned bounding-box search tree class
-class BoundingBoxTree : public cvf::Object
+
+class AtomicCounter
 {
- public:
-  BoundingBoxTree();
-  ~BoundingBoxTree();
+public:
+    explicit AtomicCounter(int initialValue);
+    ~AtomicCounter();
 
-  void buildTreeFromBoundingBoxes(
-      const vector<cvf::BoundingBox>& boundingBoxes,
-      const vector<size_t>* optionalBoundingBoxIds);
+    operator int () const;
 
-  void findIntersections(
-      const cvf::BoundingBox& inputBB,
-      vector<size_t>* bbIdsOrIndexesIntersected) const;
+    int operator ++ ();     // prefix
+    int operator ++ (int);  // postfix
 
- private:
+    int operator -- ();     // prefix
+    int operator -- (int);  // postfix
 
-  BoundingBoxTreeImpl* m_implTree;
+private:
+    
+    CVF_DISABLE_COPY_AND_ASSIGN(AtomicCounter);
+
+#ifdef WIN32
+    typedef volatile long ImplType;
+#elif defined(CVF_IOS) || defined(CVF_OSX)
+    typedef int32_t ImplType;
+#else
+    typedef int ImplType;
+#endif
+
+    ImplType m_counter;
 };
 
-} // Namespace cvf
 
+} // namespace cvf
+
+#endif

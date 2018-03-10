@@ -1,20 +1,49 @@
+////////////////////////////////////////////////////////////////////
 //
-// Created by bellout on 3/5/18.
+// Copyright (C) 2017     Statoil ASA
+//
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html> for more details.
+//
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/5/18.
 //
 
 #ifndef FIELDOPT_GEOMETRY_TOOLS_H
 #define FIELDOPT_GEOMETRY_TOOLS_H
 
 // RESINSIGHT: FWK/VIZFWK/LIBCORE\LIBGEOMETRY ----------------------
-#include "resinxx/rixx_core_geom/cvfBase.h"
+#include "rixx_core_geom/cvfBase.h"
+#include "rixx_core_geom/cvfRay.h"
+#include "rixx_core_geom/cvfPlane.h"
+#include "rixx_core_geom/cvfVector3.h"
+#include "rixx_core_geom/cvfMatrix4.h"
+
+// RESINSIGHT: FWK/APPFWK/COMMONCODE\VIZEXT\PROJDATAMOD ------------
+#include "rixx_app_fwk/cvfStructGrid.h"
+#include "rixx_app_fwk/cafHexGridIntersectionTools.h"
+
+// RESINSIGHT: APPLICATIONCODE/RESERVOIRDATAMODEL ------------------
+#include "rixx_res_mod/cvfGeometryTools.h"
+#include "rixx_res_mod/RigCellGeometryTools.h"
 
 // FieldOpt::RESINXX -----------------------------------------------
-//
-#include "resinxx/well_path.h"
+//#include "well_path.h"
 
 // -----------------------------------------------------------------
 namespace cvf {
 
+// -----------------------------------------------------------------
 using std::vector;
 using std::array;
 using std::set;
@@ -42,8 +71,8 @@ struct HexIntersectionInfo {
 };
 
 // =================================================================
-bool operator<( const HexIntersectionInfo& hi1,
-                const HexIntersectionInfo& hi2);
+bool operator<(const HexIntersectionInfo& hi1,
+               const HexIntersectionInfo& hi2);
 
 // =================================================================
 // SAVE FOR LATER
@@ -54,7 +83,7 @@ struct RigHexIntersectionTools {
                                      const cvf::Vec3d p2,
                                      const cvf::Vec3d hexCorners[8],
                                      const size_t hexIndex,
-                                     vector<cvf::HexIntersectionInfo> *intersections);
+                                     vector<HexIntersectionInfo> *intersections);
 
   static bool isPointInCell(const cvf::Vec3d point,
                             const cvf::Vec3d hexCorners[8]);
@@ -71,6 +100,4 @@ struct RigHexIntersectionTools {
 
 }
 
-//}
-//}
 #endif //FIELDOPT_GEOMETRY_TOOLS_H

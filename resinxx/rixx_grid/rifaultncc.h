@@ -1,5 +1,24 @@
+////////////////////////////////////////////////////////////////////
 //
-// Created by bellout on 3/6/18.
+// Copyright (C) Statoil ASA
+// Copyright (C) Ceetron Solutions AS
+//
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
+//
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/6/18.
 //
 
 #ifndef FIELDOPT_RIFAULTNNC_H
@@ -42,6 +61,9 @@ using std::string;
 using std::vector;
 using std::map;
 
+// ╦═╗  ╦  ╔═╗  ╔═╗  ╔╗╔  ╔╗╔  ╔═╗  ╔═╗  ╔╦╗  ╦  ╔═╗  ╔╗╔
+// ╠╦╝  ║  ║    ║ ║  ║║║  ║║║  ║╣   ║     ║   ║  ║ ║  ║║║
+// ╩╚═  ╩  ╚═╝  ╚═╝  ╝╚╝  ╝╚╝  ╚═╝  ╚═╝   ╩   ╩  ╚═╝  ╝╚╝
 // =================================================================
 class RIConnection
 {
@@ -61,8 +83,11 @@ class RIConnection
   vector<cvf::Vec3d> m_polygon;
 };
 
+// ╦═╗  ╦  ╔╗╔  ╔╗╔  ╔═╗  ╔╦╗  ╔═╗  ╔╦╗  ╔═╗
+// ╠╦╝  ║  ║║║  ║║║  ║     ║║  ╠═╣   ║   ╠═╣
+// ╩╚═  ╩  ╝╚╝  ╝╚╝  ╚═╝  ═╩╝  ╩ ╩   ╩   ╩ ╩
 // =================================================================
-class RINNCData // : public cvf::Object
+class RINNCData : public cvf::Object
 {
  public:
   enum NNCResultType {
@@ -115,7 +140,7 @@ class RINNCData // : public cvf::Object
   vector< vector<double> >* generatedConnectionScalarResultByName(const QString& nncDataType);
   vector<double>* generatedConnectionScalarResultByName(const QString& nncDataType, size_t timeStep);
 
-  vector<QString>                      availableProperties(NNCResultType resultType) const;
+  vector<QString> availableProperties(NNCResultType resultType) const;
 
   void setScalarResultIndex(const QString& nncDataType,
                             size_t scalarResultIndex);
@@ -132,8 +157,34 @@ class RINNCData // : public cvf::Object
   map<size_t, QString> m_resultIndexToNNCDataType;
 };
 
+////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) Statoil ASA
+// Copyright (C) Ceetron Solutions AS
+//
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
+//
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/6/18.
+//
+
+// ╦═╗  ╦  ╔═╗  ╔═╗  ╦ ╦  ╦    ╔╦╗  ╔═╗  ╔═╗  ╦═╗  ╔═╗  ╔═╗  ╦    ╦
+// ╠╦╝  ║  ╠╣   ╠═╣  ║ ║  ║     ║   ╚═╗  ╠═╝  ╠╦╝  ║    ║╣   ║    ║
+// ╩╚═  ╩  ╚    ╩ ╩  ╚═╝  ╩═╝   ╩   ╚═╝  ╩    ╩╚═  ╚═╝  ╚═╝  ╩═╝  ╩═╝
 // =================================================================
-class RIFaultsPrCellAccumulator // : public cvf::Object
+class RIFaultsPrCellAccumulator : public cvf::Object
 {
  public:
   enum { NO_FAULT = -1, UNKNOWN_FAULT = -2 };
@@ -162,8 +213,34 @@ class RIFaultsPrCellAccumulator // : public cvf::Object
   vector< caf::IntArray6 > m_faultIdxForCellFace;
 };
 
+////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) Statoil ASA
+// Copyright (C) Ceetron Solutions AS
+//
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
+//
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/6/18.
+//
+
+// ╦═╗  ╦  ╔═╗  ╔═╗  ╦ ╦  ╦    ╔╦╗
+// ╠╦╝  ║  ╠╣   ╠═╣  ║ ║  ║     ║
+// ╩╚═  ╩  ╚    ╩ ╩  ╚═╝  ╩═╝   ╩
 // =================================================================
-class RIFault // : public cvf::Object
+class RIFault : public cvf::Object
 {
  public:
 
@@ -214,7 +291,7 @@ class RIFault // : public cvf::Object
   vector<FaultFace> m_faultFaces;
   vector<size_t> m_connectionIndices;
 
-  static RIFaultsPrCellAccumulator m_faultsPrCellAcc;
+  static cvf::ref<RIFaultsPrCellAccumulator> m_faultsPrCellAcc;
 };
 
 #endif //FIELDOPT_NNC_FAULT_H

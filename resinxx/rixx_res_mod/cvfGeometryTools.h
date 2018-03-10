@@ -1,41 +1,55 @@
 ////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) Statoil ASA
-//  Copyright (C) Ceetron Solutions AS
+// Copyright (C) Statoil ASA
+// Copyright (C) Ceetron Solutions AS
 //
-//  ResInsight is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
 //
-//  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
-//  WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//  FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
-//  for more details.
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
 //
 ////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/6/18.
+//
 
 // -----------------------------------------------------------------
 #pragma once
 
 // -----------------------------------------------------------------
-#include "cvfBase.h"
-#include "cvfArray.h"
-#include "cvfMatrix3.h"
-#include "cvfArrayWrapperConst.h"
-
-// -----------------------------------------------------------------
+// STD
 #include <list>
 #include <map>
 
 // -----------------------------------------------------------------
+#include "../rixx_core_geom/cvfBase.h"
+#include "../rixx_core_geom/cvfArray.h"
+#include "../rixx_core_geom/cvfMatrix3.h"
+#include "../rixx_core_geom/cvfArrayWrapperConst.h"
+
+// -----------------------------------------------------------------
 namespace cvf {
 
+// ╔═╗  ╔╦╗  ╔═╗  ╔═╗  ╔═╗  ╔═╗  ╦    ╦  ╔╦╗  ╔═╗  ╔╦╗  ╔═╗  ╦═╗
+// ║╣    ║║  ║ ╦  ║╣   ╚═╗  ╠═╝  ║    ║   ║   ╚═╗   ║   ║ ║  ╠╦╝
+// ╚═╝  ═╩╝  ╚═╝  ╚═╝  ╚═╝  ╩    ╩═╝  ╩   ╩   ╚═╝   ╩   ╚═╝  ╩╚═
+//==================================================================
 class EdgeSplitStorage;
 template <typename IndexType> class EdgeIntersectStorage;
 
+
+// ╔═╗  ╔═╗  ╔═╗  ╔╦╗  ╔═╗  ╔╦╗  ╦═╗  ╦ ╦  ╔╦╗  ╔═╗  ╔═╗  ╦    ╔═╗
+// ║ ╦  ║╣   ║ ║  ║║║  ║╣    ║   ╠╦╝  ╚╦╝   ║   ║ ║  ║ ║  ║    ╚═╗
+// ╚═╝  ╚═╝  ╚═╝  ╩ ╩  ╚═╝   ╩   ╩╚═   ╩    ╩   ╚═╝  ╚═╝  ╩═╝  ╚═╝
+//==================================================================
 class GeometryTools {
  public:
   static cvf::Vec3d computeFaceCenter(const cvf::Vec3d& v0,
@@ -91,53 +105,59 @@ class GeometryTools {
     LINES_OVERLAP
   };
 
-  static void addMidEdgeNodes(std::list<std::pair<cvf::uint, bool> >* polygon,
-                              const cvf::Vec3dArray& nodes,
-                              EdgeSplitStorage& edgeSplitStorage,
-                              std::vector<cvf::Vec3d>* createdVertexes);
+  static void
+  addMidEdgeNodes(std::list<std::pair<cvf::uint, bool> >* polygon,
+                  const cvf::Vec3dArray& nodes,
+                  EdgeSplitStorage& edgeSplitStorage,
+                  std::vector<cvf::Vec3d>* createdVertexes);
 
-  template<typename VerticeArrayType,  typename IndexType>
-  static bool insertVertexInPolygon(std::vector<IndexType> * polygon,
-                                    ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> nodeCoords,
-                                    IndexType vertexIndex,
+  template<typename VerticeArrayType,  typename IndexType> static bool
+  insertVertexInPolygon(std::vector<IndexType> * polygon,
+                        ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> nodeCoords,
+                        IndexType vertexIndex,
+                        double tolerance);
+
+  static IntersectionStatus
+  inPlaneLineIntersect3D(const cvf::Vec3d& planeNormal,
+                         const cvf::Vec3d& p1, const cvf::Vec3d& p2,
+                         const cvf::Vec3d& p3, const cvf::Vec3d& p4,
+                         cvf::Vec3d* intersectionPoint,
+                         double* fractionAlongLine1,
+                         double* fractionAlongLine2,
+                         double tolerance = 1e-6);
+
+  template<typename VerticeArrayType, typename PolygonArrayType, typename IndexType> static bool
+  isPointTouchingIndexedPolygon(const cvf::Vec3d& polygonNormal,
+                                ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> vertices,
+                                ArrayWrapperConst<PolygonArrayType, IndexType> indices,
+                                const cvf::Vec3d& point,
+                                int* touchedEdgeIndex,
+                                double tolerance = 1e-6);
+
+
+  template<typename VerticeArrayType,  typename IndexType> static bool
+  calculateOverlapPolygonOfTwoQuads(std::vector<IndexType> * polygon,
+                                    std::vector<cvf::Vec3d>* createdVertexes,
+                                    EdgeIntersectStorage<IndexType>* edgeIntersectionStorage,
+                                    ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> nodes,
+                                    const IndexType cv1CubeFaceIndices[4],
+                                    const IndexType cv2CubeFaceIndices[4],
                                     double tolerance);
 
-  static IntersectionStatus inPlaneLineIntersect3D(const cvf::Vec3d& planeNormal,
-                                                   const cvf::Vec3d& p1, const cvf::Vec3d& p2,
-                                                   const cvf::Vec3d& p3, const cvf::Vec3d& p4,
-                                                   cvf::Vec3d* intersectionPoint,
-                                                   double* fractionAlongLine1,
-                                                   double* fractionAlongLine2,
-                                                   double tolerance = 1e-6);
-
-  template<typename VerticeArrayType, typename PolygonArrayType, typename IndexType>
-  static bool isPointTouchingIndexedPolygon(const cvf::Vec3d& polygonNormal,
-                                            ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> vertices,
-                                            ArrayWrapperConst<PolygonArrayType, IndexType> indices,
-                                            const cvf::Vec3d& point,
-                                            int* touchedEdgeIndex,
-                                            double tolerance = 1e-6);
-
-
-  template<typename VerticeArrayType,  typename IndexType>
-  static bool calculateOverlapPolygonOfTwoQuads(std::vector<IndexType> * polygon,
-                                                std::vector<cvf::Vec3d>* createdVertexes,
-                                                EdgeIntersectStorage<IndexType>* edgeIntersectionStorage,
-                                                ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> nodes,
-                                                const IndexType cv1CubeFaceIndices[4],
-                                                const IndexType cv2CubeFaceIndices[4],
-                                                double tolerance);
-
-  template<typename VerticeArrayType,  typename PolygonArrayType, typename IndexType>
-  static void calculatePartiallyFreeCubeFacePolygon(ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> nodeCoords,
-                                                    ArrayWrapperConst<PolygonArrayType, IndexType> completeFacePolygon,
-                                                    const cvf::Vec3d& faceNormal,
-                                                    const std::vector< std::vector<IndexType>* >& faceOverlapPolygons,
-                                                    const std::vector<bool>& faceOverlapPolygonWindingSameAsCubeFaceFlags,
-                                                    std::vector<IndexType>* partialFacePolygon,
-                                                    bool* m_partiallyFreeCubeFaceHasHoles);
+  template<typename VerticeArrayType,  typename PolygonArrayType, typename IndexType> static void
+  calculatePartiallyFreeCubeFacePolygon(ArrayWrapperConst<VerticeArrayType, cvf::Vec3d> nodeCoords,
+                                        ArrayWrapperConst<PolygonArrayType, IndexType> completeFacePolygon,
+                                        const cvf::Vec3d& faceNormal,
+                                        const std::vector< std::vector<IndexType>* >& faceOverlapPolygons,
+                                        const std::vector<bool>& faceOverlapPolygonWindingSameAsCubeFaceFlags,
+                                        std::vector<IndexType>* partialFacePolygon,
+                                        bool* m_partiallyFreeCubeFaceHasHoles);
 };
 
+// ╔═╗  ╔╦╗  ╔═╗  ╔═╗  ╦  ╔╗╔  ╔╦╗  ╔═╗  ╦═╗  ╔═╗  ╔═╗  ╔═╗  ╔╦╗
+// ║╣    ║║  ║ ╦  ║╣   ║  ║║║   ║   ║╣   ╠╦╝  ╚═╗  ║╣   ║     ║
+// ╚═╝  ═╩╝  ╚═╝  ╚═╝  ╩  ╝╚╝   ╩   ╚═╝  ╩╚═  ╚═╝  ╚═╝  ╚═╝   ╩
+//==================================================================
 template <typename IndexType>
 class EdgeIntersectStorage
 {
@@ -177,6 +197,10 @@ class EdgeIntersectStorage
   std::vector< std::map<IndexType, std::map<IndexType, std::map<IndexType, IntersectData > > > > m_edgeIntsectMap;
 };
 
+// ╔═╗  ╔╦╗  ╔═╗  ╔═╗  ╔═╗  ╔═╗  ╦    ╦  ╔╦╗  ╔═╗  ╔╦╗  ╔═╗  ╦═╗
+// ║╣    ║║  ║ ╦  ║╣   ╚═╗  ╠═╝  ║    ║   ║   ╚═╗   ║   ║ ║  ╠╦╝
+// ╚═╝  ═╩╝  ╚═╝  ╚═╝  ╚═╝  ╩    ╩═╝  ╩   ╩   ╚═╝   ╩   ╚═╝  ╩╚═
+//==================================================================
 class EdgeSplitStorage
 {
  public:
@@ -191,7 +215,10 @@ class EdgeSplitStorage
   std::vector< std::map< size_t, size_t > > m_edgeSplitMap;
 };
 
-
+// ╔═╗  ╔═╗  ╦═╗  ╔═╗  ╦    ╦  ╔═╗  ╔╦╗  ╔═╗  ╔═╗  ╔═╗  ╔═╗  ╦
+// ║╣   ╠═╣  ╠╦╝  ║    ║    ║  ╠═╝   ║   ║╣   ╚═╗  ╚═╗  ║╣   ║
+// ╚═╝  ╩ ╩  ╩╚═  ╚═╝  ╩═╝  ╩  ╩     ╩   ╚═╝  ╚═╝  ╚═╝  ╚═╝  ╩═╝
+//==================================================================
 class EarClipTesselator
 {
  public:
@@ -224,7 +251,10 @@ class EarClipTesselator
 
 };
 
-
+// ╔═╗  ╔═╗  ╔╗╔  ╔═╗  ╔═╗  ╦═╗  ╔═╗  ╦    ╦  ╔═╗  ╔╦╗  ╔═╗  ╔═╗
+// ╠╣   ╠═╣  ║║║  ║╣   ╠═╣  ╠╦╝  ║    ║    ║  ╠═╝   ║   ║╣   ╚═╗
+// ╚    ╩ ╩  ╝╚╝  ╚═╝  ╩ ╩  ╩╚═  ╚═╝  ╩═╝  ╩  ╩     ╩   ╚═╝  ╚═╝
+//==================================================================
 class FanEarClipTesselator : public EarClipTesselator
 {
  public:

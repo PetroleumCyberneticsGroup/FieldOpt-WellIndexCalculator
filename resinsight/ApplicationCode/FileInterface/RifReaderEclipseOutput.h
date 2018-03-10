@@ -3,17 +3,17 @@
 //  Copyright (C) 2011-     Statoil ASA
 //  Copyright (C) 2013-     Ceetron Solutions AS
 //  Copyright (C) 2011-2012 Ceetron AS
-// 
+//
 //  ResInsight is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
 //  WARRANTY; without even the implied warranty of MERCHANTABILITY or
 //  FITNESS FOR A PARTICULAR PURPOSE.
-// 
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html> 
+//
+//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
 //  for more details.
 //
 ////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ class RifReaderEclipseOutput : public RifReaderInterface
   virtual ~RifReaderEclipseOutput();
 
   bool open(const QString& fileName, RigEclipseCaseData* eclipseCase);
-  
+
 //  void setHdf5FileName(const QString& fileName);
   void setFileDataAccess(RifEclipseRestartDataAccess* restartDataAccess);
 
@@ -89,7 +89,7 @@ class RifReaderEclipseOutput : public RifReaderInterface
 
  private:
   bool readActiveCellInfo();
-  
+
 //  void buildMetaData();
   void readWellCells(const ecl_grid_type* mainEclGrid,
                      bool importCompleteMswData);
@@ -135,7 +135,7 @@ class RifReaderEclipseOutput : public RifReaderInterface
  private:
   // Name of file used to start accessing Eclipse output files
   QString m_fileName;
-  
+
   // Set of files in filename's path with same base name as filename
   QStringList m_filesWithSameBaseName;
 
@@ -143,9 +143,9 @@ class RifReaderEclipseOutput : public RifReaderInterface
 
   // File access to static results
   ecl_file_type* m_ecl_init_file;
-  
+
   // File access to dynamic results
-  mutable cvf::ref<RifEclipseRestartDataAccess>  m_dynamicResultsAccess;
+  mutable cvf::ref<RifEclipseRestartDataAccess> m_dynamicResultsAccess;
 
 //  std::unique_ptr<RifHdf5ReaderInterface> m_hdfReaderInterface;
 };

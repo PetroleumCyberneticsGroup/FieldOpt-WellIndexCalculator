@@ -1,38 +1,44 @@
-////////////////////////////////////////////////////////////////////
+//##################################################################
+// Custom Visualization Core library
+// Copyright (C) 2011-2013 Ceetron AS
 //
-//   Custom Visualization Core library
-//   Copyright (C) 2011-2013 Ceetron AS
+// This library may be used under the terms of either the GNU
+// General Public License or the GNU Lesser General Public License
+// as follows:
 //
-//   This library may be used under the terms of either the GNU General Public License or
-//   the GNU Lesser General Public License as follows:
+// GNU General Public License Usage
+// This library is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of
+// the License, or (at your option) any later version.
 //
-//   GNU General Public License Usage
-//   This library is free software: you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation, either version 3 of the License, or
-//   (at your option) any later version.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License at
+// <<http://www.gnu.org/licenses/gpl.html>>
+// for more details.
 //
-//   See the GNU General Public License at <<http://www.gnu.org/licenses/gpl.html>>
-//   for more details.
+// GNU Lesser General Public License Usage
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License  as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later
+// version.
 //
-//   GNU Lesser General Public License Usage
-//   This library is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU Lesser General Public License as published by
-//   the Free Software Foundation; either version 2.1 of the License, or
-//   (at your option) any later version.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU Lesser General Public License at
+// <<http://www.gnu.org/licenses/lgpl-2.1.html>>
+// for more details.
 //
-//   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
-//   for more details.
+//##################################################################
 //
-////////////////////////////////////////////////////////////////////
+// Modified by M.Bellout on 3/5/18.
+//
 
 // -----------------------------------------------------------------
 #include "cvfBase.h"
@@ -40,26 +46,23 @@
 #include "cvfStructGrid.h"
 
 // -----------------------------------------------------------------
-//namespace caf {
-//
-//template<>
-//void cvf::StructGridInterface::FaceEnum::setUp() {
-//
-//  addItem(cvf::StructGridInterface::POS_I,   "POS I",    "");
-//  addItem(cvf::StructGridInterface::NEG_I,   "NEG I",   "");
-//  addItem(cvf::StructGridInterface::POS_J,   "POS J",    "");
-//  addItem(cvf::StructGridInterface::NEG_J,   "NEG J",   "");
-//  addItem(cvf::StructGridInterface::POS_K,   "POS K",    "");
-//  addItem(cvf::StructGridInterface::NEG_K,   "NEG K",   "");
-//  addItem(cvf::StructGridInterface::NO_FACE, "UnDef",   "");
-//}
-//}
+namespace caf {
 
+template<>
+void cvf::StructGridInterface::FaceEnum::setUp() {
+
+  addItem(cvf::StructGridInterface::POS_I,   "POS I",    "");
+  addItem(cvf::StructGridInterface::NEG_I,   "NEG I",   "");
+  addItem(cvf::StructGridInterface::POS_J,   "POS J",    "");
+  addItem(cvf::StructGridInterface::NEG_J,   "NEG J",   "");
+  addItem(cvf::StructGridInterface::POS_K,   "POS K",    "");
+  addItem(cvf::StructGridInterface::NEG_K,   "NEG K",   "");
+  addItem(cvf::StructGridInterface::NO_FACE, "UnDef",   "");
+}
+}
 
 namespace cvf {
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 StructGridInterface::StructGridInterface() {
   m_characteristicCellSizeI = cvf::UNDEFINED_DOUBLE;
@@ -67,8 +70,7 @@ StructGridInterface::StructGridInterface() {
   m_characteristicCellSizeK = cvf::UNDEFINED_DOUBLE;
 }
 
-// -----------------------------------------------------------------
-///
+
 // -----------------------------------------------------------------
 size_t StructGridInterface::cellCountI() const {
   if (gridPointCountI() == 0) return 0;
@@ -77,8 +79,6 @@ size_t StructGridInterface::cellCountI() const {
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 size_t StructGridInterface::cellCountJ() const {
   if (gridPointCountJ() == 0) return 0;
 
@@ -86,16 +86,12 @@ size_t StructGridInterface::cellCountJ() const {
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 size_t StructGridInterface::cellCountK() const {
   if (gridPointCountK() == 0) return 0;
 
   return gridPointCountK() - 1;
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 void StructGridInterface::cellFaceVertexIndices(FaceType face,
                                                 cvf::ubyte vertexIndices[4]) {
@@ -148,8 +144,6 @@ void StructGridInterface::cellFaceVertexIndices(FaceType face,
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 StructGridInterface::FaceType
 StructGridInterface::oppositeFace(FaceType face) {
   FaceType opposite;
@@ -170,9 +164,8 @@ StructGridInterface::oppositeFace(FaceType face) {
 }
 
 // -----------------------------------------------------------------
-/// Return values are set to cvf::UNDEFINED_SIZE_T if the neighbor
-/// is in the negative area
-// -----------------------------------------------------------------
+// Return values are set to cvf::UNDEFINED_SIZE_T if the neighbor
+// is in the negative area
 void StructGridInterface::neighborIJKAtCellFace(
     size_t i, size_t j, size_t k, FaceType face,
     size_t* ni, size_t* nj, size_t* nk) {
@@ -192,16 +185,15 @@ void StructGridInterface::neighborIJKAtCellFace(
 
 
 // -----------------------------------------------------------------
-/// Models with large absolute values for coordinate scalars will
-/// often end up with z-fighting due to numerical limits in float
-/// used by OpenGL. displayModelOffset() is intended to be subtracted
-/// from a domain model coordinate when building geometry
+// Models with large absolute values for coordinate scalars will
+// often end up with z-fighting due to numerical limits in float
+// used by OpenGL. displayModelOffset() is intended to be subtracted
+// from a domain model coordinate when building geometry
 //
 //  Used in StructGridGeometryGenerator::computeArrays()
 //
 //  Vec3d domainModelCoord = ...
 //  Vec3d vizCoord = domainModelCoord - displayModelOffset();
-// -----------------------------------------------------------------
 cvf::Vec3d StructGridInterface::displayModelOffset() const {
   return cvf::Vec3d::ZERO;
 }
@@ -257,20 +249,44 @@ void StructGridInterface::characteristicCellSizes(double* iSize,
             size_t cellIndex = cellIndexFromIJK(i, j, k);
             cellCornerVertices(cellIndex, cornerVerts);
 
-            iSize += (cornerVerts[faceConnPosI[0]] - cornerVerts[faceConnNegI[0]]).lengthSquared();
-            iSize += (cornerVerts[faceConnPosI[1]] - cornerVerts[faceConnNegI[3]]).lengthSquared();
-            iSize += (cornerVerts[faceConnPosI[2]] - cornerVerts[faceConnNegI[2]]).lengthSquared();
-            iSize += (cornerVerts[faceConnPosI[3]] - cornerVerts[faceConnNegI[1]]).lengthSquared();
 
-            jSize += (cornerVerts[faceConnPosJ[0]] - cornerVerts[faceConnNegJ[0]]).lengthSquared();
-            jSize += (cornerVerts[faceConnPosJ[1]] - cornerVerts[faceConnNegJ[3]]).lengthSquared();
-            jSize += (cornerVerts[faceConnPosJ[2]] - cornerVerts[faceConnNegJ[2]]).lengthSquared();
-            jSize += (cornerVerts[faceConnPosJ[3]] - cornerVerts[faceConnNegJ[1]]).lengthSquared();
+            iSize += (cornerVerts[faceConnPosI[0]] -
+                cornerVerts[faceConnNegI[0]]).lengthSquared();
 
-            kSize += (cornerVerts[faceConnPosK[0]] - cornerVerts[faceConnNegK[0]]).lengthSquared();
-            kSize += (cornerVerts[faceConnPosK[1]] - cornerVerts[faceConnNegK[3]]).lengthSquared();
-            kSize += (cornerVerts[faceConnPosK[2]] - cornerVerts[faceConnNegK[2]]).lengthSquared();
-            kSize += (cornerVerts[faceConnPosK[3]] - cornerVerts[faceConnNegK[1]]).lengthSquared();
+            iSize += (cornerVerts[faceConnPosI[1]] -
+                cornerVerts[faceConnNegI[3]]).lengthSquared();
+
+            iSize += (cornerVerts[faceConnPosI[2]] -
+                cornerVerts[faceConnNegI[2]]).lengthSquared();
+
+            iSize += (cornerVerts[faceConnPosI[3]] -
+                cornerVerts[faceConnNegI[1]]).lengthSquared();
+
+
+            jSize += (cornerVerts[faceConnPosJ[0]] -
+                cornerVerts[faceConnNegJ[0]]).lengthSquared();
+
+            jSize += (cornerVerts[faceConnPosJ[1]] -
+                cornerVerts[faceConnNegJ[3]]).lengthSquared();
+
+            jSize += (cornerVerts[faceConnPosJ[2]] -
+                cornerVerts[faceConnNegJ[2]]).lengthSquared();
+
+            jSize += (cornerVerts[faceConnPosJ[3]] -
+                cornerVerts[faceConnNegJ[1]]).lengthSquared();
+
+
+            kSize += (cornerVerts[faceConnPosK[0]] -
+                cornerVerts[faceConnNegK[0]]).lengthSquared();
+
+            kSize += (cornerVerts[faceConnPosK[1]] -
+                cornerVerts[faceConnNegK[3]]).lengthSquared();
+
+            kSize += (cornerVerts[faceConnPosK[2]] -
+                cornerVerts[faceConnNegK[2]]).lengthSquared();
+
+            kSize += (cornerVerts[faceConnPosK[3]] -
+                cornerVerts[faceConnNegK[1]]).lengthSquared();
 
             cellCount++;
           }
@@ -291,6 +307,5 @@ void StructGridInterface::characteristicCellSizes(double* iSize,
   *jSize = m_characteristicCellSizeJ;
   *kSize = m_characteristicCellSizeK;
 }
-
 
 } // namespace cvf

@@ -55,6 +55,9 @@ class RIFault;
 using std::string;
 using std::vector;
 
+// ╦═╗  ╦  ╔═╗  ╦═╗  ╦  ╔╦╗  ╔╗   ╔═╗  ╔═╗  ╔═╗
+// ╠╦╝  ║  ║ ╦  ╠╦╝  ║   ║║  ╠╩╗  ╠═╣  ╚═╗  ║╣
+// ╩╚═  ╩  ╚═╝  ╩╚═  ╩  ═╩╝  ╚═╝  ╩ ╩  ╚═╝  ╚═╝
 // =================================================================
 class RIGridBase : public cvf::StructGridInterface
 {
@@ -171,6 +174,32 @@ class RIGridBase : public cvf::StructGridInterface
 
 };
 
+////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2011-     Statoil ASA
+// Copyright (C) 2013-     Ceetron Solutions AS
+// Copyright (C) 2011-2012 Ceetron AS
+//
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html> for more details.
+//
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/5/18.
+//
+
+// ╦═╗  ╦  ╔═╗  ╦═╗  ╦  ╔╦╗
+// ╠╦╝  ║  ║ ╦  ╠╦╝  ║   ║║
+// ╩╚═  ╩  ╚═╝  ╩╚═  ╩  ═╩╝
 // =================================================================
 class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
 {
@@ -179,11 +208,11 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
   virtual ~RIGrid();
 
   // CELL ----------------------------------------------------------
-  vector<cvf::Vec3d>& nodes() {return m_nodes;}
-  const vector<cvf::Vec3d>& nodes() const {return m_nodes;}
+  vector<cvf::Vec3d>& nodes() { return m_nodes; }
+  const vector<cvf::Vec3d>& nodes() const { return m_nodes; }
 
-  vector<RICell>& globalCellArray() {return m_cells;}
-  const vector<RICell>& globalCellArray() const {return m_cells;}
+  vector<RICell>& globalCellArray() { return m_cells; }
+  const vector<RICell>& globalCellArray() const { return m_cells; }
 
 //  const RICell&
 //  cellByGridAndGridLocalCellIdx(size_t gridIdx,
@@ -263,17 +292,46 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
   vector<size_t> m_gridIdToIndexMapping;
 
   cvf::Collection<RIFault> m_faults;
-  RINNCData m_nncData;
+
+  RINNCData* m_nncData;
+//  cvf::ref<RINNCData> m_nncData;
   RIFaultsPrCellAccumulator* m_faultsPrCellAcc;
+//  cvf::ref<RIFaultsPrCellAccumulator> m_faultsPrCellAcc;
 
   cvf::Vec3d m_displayModelOffset;
-  cvf::BoundingBoxTree m_cellSearchTree;
+  cvf::ref<cvf::BoundingBoxTree> m_cellSearchTree;
   mutable cvf::BoundingBox m_boundingBox;
 
   bool m_flipXAxis;
   bool m_flipYAxis;
 };
 
+////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2011-     Statoil ASA
+// Copyright (C) 2013-     Ceetron Solutions AS
+// Copyright (C) 2011-2012 Ceetron AS
+//
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html> for more details.
+//
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/5/18.
+//
+
+// ╦═╗  ╦  ╔═╗  ╔═╗  ╔╦╗  ╦  ╦  ╦  ╔═╗  ╔═╗  ╔═╗  ╦    ╦    ╦  ╔╗╔  ╔═╗  ╔═╗
+// ╠╦╝  ║  ╠═╣  ║     ║   ║  ╚╗╔╝  ║╣   ║    ║╣   ║    ║    ║  ║║║  ╠╣   ║ ║
+// ╩╚═  ╩  ╩ ╩  ╚═╝   ╩   ╩   ╚╝   ╚═╝  ╚═╝  ╚═╝  ╩═╝  ╩═╝  ╩  ╝╚╝  ╚    ╚═╝
 // =================================================================
 class RIActiveCellInfo // : public cvf::Object
 {
@@ -341,12 +399,36 @@ class RIActiveCellInfo // : public cvf::Object
   cvf::BoundingBox m_activeCellsBoundingBox;
 };
 
+////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2011-2012 Statoil ASA, Ceetron AS
+//
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html> for more details.
+//
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/5/18.
+//
+
+// ╦═╗  ╦  ╦    ╔═╗  ╔═╗  ╔═╗  ╦    ╔═╗  ╦═╗  ╦  ╔╦╗
+// ╠╦╝  ║  ║    ║ ║  ║    ╠═╣  ║    ║ ╦  ╠╦╝  ║   ║║
+// ╩╚═  ╩  ╩═╝  ╚═╝  ╚═╝  ╩ ╩  ╩═╝  ╚═╝  ╩╚═  ╩  ═╩╝
 // =================================================================
 class RILocalGrid : public RIGridBase
 {
  public:
   explicit RILocalGrid(RIGrid* mainGrid);
-//  virtual ~RigLocalGrid();
+  virtual ~RILocalGrid();
 
   RIGridBase* parentGrid() const
   { return m_parentGrid; }

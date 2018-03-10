@@ -70,7 +70,6 @@ class RigEclipseCaseData : public cvf::Object
 //  RimEclipseCase* ownerCase() const { return m_ownerCase; }
 
   RigMainGrid* mainGrid();
-
   const RigMainGrid* mainGrid() const;
   void setMainGrid(RigMainGrid* mainGrid);
 

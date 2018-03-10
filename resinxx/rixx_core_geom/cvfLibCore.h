@@ -1,7 +1,7 @@
 //####################################################################
 //
 //   Custom Visualization Core library
-//   Copyright (C) Ceetron Solutions AS
+//   Copyright (C) 2011-2013 Ceetron AS
 //
 //   This library may be used under the terms of either the GNU General Public License or
 //   the GNU Lesser General Public License as follows:
@@ -34,51 +34,41 @@
 //
 //####################################################################
 
-// -----------------------------------------------------------------
-#pragma once
 
-// STD -------------------------------------------------------------
-#include <vector>
+// Doxygen module definition
+/// \ingroup VizFramework
+/// @{
+/// \defgroup Core Core module
+/// @}
 
-// QT --------------------------------------------------------------
-//#include <QDateTime>
+/// \defgroup VizFramework Framework Basis
 
-// FIELDOPT: UTILITIES ---------------------------------------------
-#include <Utilities/time.hpp>
-#include <Utilities/debug.hpp>
-#include <Utilities/colors.hpp>
-
-// RESINSIGHT: FWK/VIZFWK/LIBCORE ----------------------------------
+// Intentionally on top to be included first
 #include "cvfBase.h"
-#include "cvfObject.h"
 
-// RESINSIGHT: FWK/VIZFWK/LIBGEOMETRY ------------------------------
-#include "cvfBoundingBox.h"
-
-namespace cvf {
-
-class BoundingBoxTreeImpl;
-
-//====================================================================
-// An axis-aligned bounding-box search tree class
-class BoundingBoxTree : public cvf::Object
-{
- public:
-  BoundingBoxTree();
-  ~BoundingBoxTree();
-
-  void buildTreeFromBoundingBoxes(
-      const vector<cvf::BoundingBox>& boundingBoxes,
-      const vector<size_t>* optionalBoundingBoxIds);
-
-  void findIntersections(
-      const cvf::BoundingBox& inputBB,
-      vector<size_t>* bbIdsOrIndexesIntersected) const;
-
- private:
-
-  BoundingBoxTreeImpl* m_implTree;
-};
-
-} // Namespace cvf
-
+#include "cvfArray.h"
+#include "cvfAssert.h"
+//#include "cvfBase64.h"
+#include "cvfCharArray.h"
+#include "cvfCollection.h"
+//#include "cvfColor3.h"
+//#include "cvfColor4.h"
+//#include "cvfDebugTimer.h"
+//#include "cvfFlags.h"
+//#include "cvfFunctorRange.h"
+//#include "cvfLogger.h"
+#include "cvfMath.h"
+#include "cvfMatrix4.h"
+//#include "cvfObject.h"
+#include "cvfPlane.h"
+//#include "cvfRect.h"
+//#include "cvfQuat.h"
+#include "cvfString.h"
+#include "cvfSystem.h"
+//#include "cvfTBBControl.h"
+//#include "cvfTimer.h"
+//#include "cvfTrace.h"
+#include "cvfVector2.h"
+#include "cvfVector3.h"
+#include "cvfVector4.h"
+#include "cvfVersion.h"

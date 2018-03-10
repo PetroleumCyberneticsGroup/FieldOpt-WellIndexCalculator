@@ -1,31 +1,33 @@
 ////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) Statoil ASA
-//  Copyright (C) Ceetron Solutions AS
+// Copyright (C) Statoil ASA
+// Copyright (C) Ceetron Solutions AS
 //
-//  ResInsight is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published
-//  by the Free Software Foundation, either version 3 of the License,
-//  or (at your option) any later version.
+// ResInsight is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published
+// by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
 //
-//  ResInsight is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//  See the GNU General Public License at
+// See the GNU General Public License at
 // <http://www.gnu.org/licenses/gpl.html>
-//  for more details.
+// for more details.
 //
 ////////////////////////////////////////////////////////////////////
-// -----------------------------------------------------------------
+//
+// Modified by M.Bellout on 3/6/18.
+//
+
+// RESINSIGHT: APPLICATIONCODE/RESERVOIRDATAMODEL ------------------
 #include "cvfGeometryTools.h"
 
 #pragma warning (disable : 4503)
 namespace cvf
 {
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 cvf::Vec3d GeometryTools::computeFaceCenter(const cvf::Vec3d& v0,
                                             const cvf::Vec3d& v1,
@@ -43,7 +45,6 @@ cvf::Vec3d GeometryTools::computeFaceCenter(const cvf::Vec3d& v0,
 // -----------------------------------------------------------------
 /// Ez = Plane normal, Ex = in XY plane (horizontal),
 /// Ey = semi vertical upwards
-// -----------------------------------------------------------------
 cvf::Mat3f
 GeometryTools::computePlaneHorizontalRotationMx(const cvf::Vec3f& inPlaneVec0,
                                                 const cvf::Vec3f& inPlaneVec1) {
@@ -73,22 +74,17 @@ GeometryTools::computePlaneHorizontalRotationMx(const cvf::Vec3f& inPlaneVec0,
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-
 int GeometryTools::findClosestAxis(const cvf::Vec3d& vec) {
 
   int closestAxis = 0;
   double maxComponent = fabs(vec.x());
 
-  if (fabs(vec.y()) > maxComponent)
-  {
+  if (fabs(vec.y()) > maxComponent) {
     maxComponent = (float)fabs(vec.y());
     closestAxis = 1;
   }
 
-  if (fabs(vec.z()) > maxComponent)
-  {
+  if (fabs(vec.z()) > maxComponent) {
     closestAxis = 2;
   }
 
@@ -101,8 +97,6 @@ int GeometryTools::findClosestAxis(const cvf::Vec3d& vec) {
 /// This means if the angle is slightly "negative", using the right
 /// hand rule, this method will return nearly 2*PI
 ///
-// -----------------------------------------------------------------
-
 double const MY_PI = 4 * atan(1.0);
 
 double GeometryTools::getAngle(const cvf::Vec3d& positiveNormalAxis,
@@ -137,10 +131,8 @@ double GeometryTools::getAngle(const cvf::Vec3d& positiveNormalAxis,
 }
 
 // -----------------------------------------------------------------
-// / Return angle in radians between vectors [0, Pi]
-/// If v1 or v2 is zero, the method will return 0.
-// -----------------------------------------------------------------
-
+// Return angle in radians between vectors [0, Pi]
+// If v1 or v2 is zero, the method will return 0.
 double GeometryTools::getAngle(const cvf::Vec3d& v1,
                                const cvf::Vec3d& v2)
 {
@@ -166,21 +158,20 @@ double GeometryTools::getAngle(const cvf::Vec3d& v1,
 }
 
 // -----------------------------------------------------------------
-/*
-   Determine the intersection point of two line segments
-   From Paul Bourke, but modified to really handle coincident lines
-   and lines with touching vertexes.
-   Returns an intersection status telling what kind of intersection it is (if any)
-   */
-// -----------------------------------------------------------------
+// Determine the intersection point of two line segments
+// From Paul Bourke, but modified to really handle coincident
+// lines and lines with touching vertexes.
+//
+// Returns an intersection status telling what kind of intersection
+// it is (if any)
 GeometryTools::IntersectionStatus inPlaneLineIntersect(
     double x1, double y1,
     double x2, double y2,
     double x3, double y3,
     double x4, double y4,
     double l1NormalizedTolerance, double l2NormalizedTolerance,
-    double *x, double *y, double* fractionAlongLine1, double* fractionAlongLine2)
-{
+    double *x, double *y, double* fractionAlongLine1, double* fractionAlongLine2) {
+
   double mua, mub;
   double denom, numera, numerb;
 
@@ -335,11 +326,9 @@ GeometryTools::IntersectionStatus inPlaneLineIntersect(
 }
 
 // -----------------------------------------------------------------
-/// Supposed to find the intersection point if lines intersect
-/// It returns the intersection status telling if the lines only
-/// touch or are overlapping
-// -----------------------------------------------------------------
-
+// Supposed to find the intersection point if lines intersect
+// It returns the intersection status telling if the lines only
+// touch or are overlapping
 GeometryTools::IntersectionStatus
 GeometryTools::inPlaneLineIntersect3D(const cvf::Vec3d& planeNormal,
                                       const cvf::Vec3d& p1, const cvf::Vec3d& p2,
@@ -704,14 +693,13 @@ void GeometryTools::addMidEdgeNodes(
 }
 
 // -----------------------------------------------------------------
-/// Based on http://geomalgorithms.com/a01-_area.html
-/// This method returns the polygon normal with length equal to the
-/// polygon area. The components of the normal is thus the size of
-/// projected area into each of the main axis planes
-///
-// -----------------------------------------------------------------
-cvf::Vec3d GeometryTools::polygonAreaNormal3D(const std::vector<cvf::Vec3d>& polygon)
-{
+// Based on http://geomalgorithms.com/a01-_area.html
+// This method returns the polygon normal with length equal to the
+// polygon area. The components of the normal is thus the size of
+// projected area into each of the main axis planes
+cvf::Vec3d
+GeometryTools::polygonAreaNormal3D(const std::vector<cvf::Vec3d>& polygon) {
+
   size_t pSize = polygon.size();
   switch (pSize)
   {
@@ -765,15 +753,10 @@ cvf::Vec3d GeometryTools::polygonAreaNormal3D(const std::vector<cvf::Vec3d>& pol
 
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-void EdgeSplitStorage::setVertexCount(size_t size)
-{
+void EdgeSplitStorage::setVertexCount(size_t size) {
   m_edgeSplitMap.resize(size);
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 bool EdgeSplitStorage::findSplitPoint(size_t edgeP1Index,
                                       size_t edgeP2Index,
@@ -792,8 +775,6 @@ bool EdgeSplitStorage::findSplitPoint(size_t edgeP1Index,
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 void EdgeSplitStorage::addSplitPoint(size_t edgeP1Index,
                                      size_t edgeP2Index,
                                      size_t splitPointIndex) {
@@ -802,8 +783,6 @@ void EdgeSplitStorage::addSplitPoint(size_t edgeP1Index,
   m_edgeSplitMap[edgeP1Index][edgeP2Index] = splitPointIndex;
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 void EdgeSplitStorage::canonizeAddress(size_t& edgeP1Index,
                                        size_t& edgeP2Index) {
@@ -817,8 +796,6 @@ void EdgeSplitStorage::canonizeAddress(size_t& edgeP1Index,
 }
 
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 EarClipTesselator::EarClipTesselator():
     m_X(-1),
@@ -834,9 +811,8 @@ EarClipTesselator::EarClipTesselator():
 /// \param      triangleIndices Array that will receive the
 /// indices of the triangles resulting from the triangulation
 /// \return        true when a tesselation was successully created
-// -----------------------------------------------------------------
-
-bool EarClipTesselator::calculateTriangles( std::vector<size_t>* triangleIndices ) {
+bool
+EarClipTesselator::calculateTriangles( std::vector<size_t>* triangleIndices ) {
 
   CVF_ASSERT(m_nodeCoords != NULL);
   CVF_ASSERT(m_X > -1 && m_Y > -1);
@@ -910,8 +886,6 @@ bool EarClipTesselator::calculateTriangles( std::vector<size_t>* triangleIndices
 // -----------------------------------------------------------------
 /// Is this a valid triangle ?
 /// ( No points inside, and points not on a line. )
-// -----------------------------------------------------------------
-
 bool EarClipTesselator::isTriangleValid(
     std::list<size_t>::const_iterator u,
     std::list<size_t>::const_iterator v,
@@ -978,8 +952,6 @@ bool EarClipTesselator::isTriangleValid(
 /// Decides if a point P is inside of the triangle defined by A, B,
 /// C. By calculating the "double area" (cross product) of Corner
 /// to corner x Corner to point vectors
-// -----------------------------------------------------------------
-
 bool EarClipTesselator::isPointInsideTriangle(
     const cvf::Vec3d& A, const cvf::Vec3d& B,
     const cvf::Vec3d& C, const cvf::Vec3d& P) const
@@ -1003,8 +975,6 @@ bool EarClipTesselator::isPointInsideTriangle(
 
 // -----------------------------------------------------------------
 /// Computes area of the currently stored 2D polygon/contour
-// -----------------------------------------------------------------
-
 double EarClipTesselator::calculateProjectedPolygonArea() const
 {
   CVF_ASSERT(m_X > -1 && m_Y > -1);
@@ -1028,9 +998,8 @@ double EarClipTesselator::calculateProjectedPolygonArea() const
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-void EarClipTesselator::setNormal(const cvf::Vec3d& polygonNormal) {
+void
+EarClipTesselator::setNormal(const cvf::Vec3d& polygonNormal) {
   int Z = GeometryTools::findClosestAxis(polygonNormal);
   m_X = (Z + 1) % 3;
   m_Y = (Z + 2) % 3;
@@ -1038,40 +1007,33 @@ void EarClipTesselator::setNormal(const cvf::Vec3d& polygonNormal) {
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-void EarClipTesselator::setPolygonIndices(const std::list<size_t>& polygon) {
+void
+EarClipTesselator::setPolygonIndices(const std::list<size_t>& polygon) {
   m_polygonIndices = polygon;
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-void EarClipTesselator::setPolygonIndices(const std::vector<size_t>& polygon) {
+void
+EarClipTesselator::setPolygonIndices(const std::vector<size_t>& polygon) {
 
   size_t i;
-  for (i = 0; i < polygon.size();  ++i)
-  {
+  for (i = 0; i < polygon.size();  ++i) {
     m_polygonIndices.push_back(polygon[i]);
   }
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-void EarClipTesselator::setMinTriangleArea(double areaTolerance) {
+void
+EarClipTesselator::setMinTriangleArea(double areaTolerance) {
   m_areaTolerance = 2*areaTolerance; // Convert to trapesoidal area
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-void EarClipTesselator::setGlobalNodeArray(const cvf::Vec3dArray& nodeCoords) {
+void
+EarClipTesselator::setGlobalNodeArray(const cvf::Vec3dArray& nodeCoords) {
   m_nodeCoords = &nodeCoords;
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 FanEarClipTesselator::FanEarClipTesselator() :
     m_centerNodeIndex(std::numeric_limits<size_t>::max()) {
@@ -1079,16 +1041,14 @@ FanEarClipTesselator::FanEarClipTesselator() :
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-void FanEarClipTesselator::setCenterNode(size_t centerNodeIndex) {
+void
+FanEarClipTesselator::setCenterNode(size_t centerNodeIndex) {
   m_centerNodeIndex = centerNodeIndex;
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
-bool FanEarClipTesselator::calculateTriangles(std::vector<size_t>* triangles) {
+bool
+FanEarClipTesselator::calculateTriangles(std::vector<size_t>* triangles) {
 
   CVF_ASSERT(m_centerNodeIndex != std::numeric_limits<size_t>::max());
   CVF_ASSERT(m_nodeCoords != NULL);

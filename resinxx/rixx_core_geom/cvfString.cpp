@@ -1,45 +1,46 @@
-//####################################################################
+//##################################################################
 //
-//   Custom Visualization Core library
-//   Copyright (C) 2011-2013 Ceetron AS
+// Custom Visualization Core library
+// Copyright (C) 2011-2013 Ceetron AS
 //
-//   This library may be used under the terms of either the GNU General Public License or
-//   the GNU Lesser General Public License as follows:
+// This library may be used under the terms of either the GNU General
+// Public License or the GNU Lesser General Public License as follows:
 //
-//   GNU General Public License Usage
-//   This library is free software: you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation, either version 3 of the License, or
-//   (at your option) any later version.
+// GNU General Public License Usage
+// This library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   See the GNU General Public License at <<http://www.gnu.org/licenses/gpl.html>>
-//   for more details.
+// See the GNU General Public License at
+// <<http://www.gnu.org/licenses/gpl.html>>
+// for more details.
 //
-//   GNU Lesser General Public License Usage
-//   This library is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU Lesser General Public License as published by
-//   the Free Software Foundation; either version 2.1 of the License, or
-//   (at your option) any later version.
+// GNU Lesser General Public License Usage
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License
+// as published by the Free Software Foundation; either version 2.1 of
+// the License, or (at your option) any later version.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
-//   for more details.
+// See the GNU Lesser General Public License at
+// <<http://www.gnu.org/licenses/lgpl-2.1.html>>
+// for more details.
 //
-//####################################################################
+//##################################################################
+//
+// Modified by M.Bellout on 3/5/18.
+//
 
-
-#include "cvfBase.h"
-#include "cvfString.h"
-#include "cvfSystem.h"
-#include "cvfMath.h"
-
+// -----------------------------------------------------------------
+// STD
 #include <vector>
 #include <sstream>
 #include <iomanip>
@@ -48,9 +49,13 @@
 #include <limits>
 #include <iosfwd>
 
+// RESINSIGHT: FWK/VIZFWK/LIBCORE\LIBGEOMETRY ----------------------
+#include "cvfBase.h"
+#include "cvfString.h"
+#include "cvfSystem.h"
+#include "cvfMath.h"
+
 namespace cvf {
-
-
 
 //====================================================================
 ///
@@ -73,113 +78,85 @@ namespace cvf {
 const size_t String::npos = static_cast<size_t>(-1);
 
 //--------------------------------------------------------------------
-/// Constructor
-//--------------------------------------------------------------------
-String::String()
-{
+// Constructor
+String::String() {
 }
 
 
 //--------------------------------------------------------------------
-/// Create a string from the given std::string
-//--------------------------------------------------------------------
-String::String(const std::string& str)
-{
+// Create a string from the given std::string
+String::String(const std::string& str) {
   m_string.resize(str.size(), L' ');
   std::copy(str.begin(), str.end(), m_string.begin());
 }
 
 
 //--------------------------------------------------------------------
-/// Create a string from the given std::wstring
-//--------------------------------------------------------------------
-String::String(const std::wstring& str)
-{
+// Create a string from the given std::wstring
+String::String(const std::wstring& str) {
   m_string = str;
 }
 
 
 //--------------------------------------------------------------------
-/// Create a string from the given String
-//--------------------------------------------------------------------
-String::String(const String& str)
-{
+// Create a string from the given String
+String::String(const String& str) {
   m_string = str.m_string;
 }
 
 
 //--------------------------------------------------------------------
-/// Create a string from the given char* string
-//--------------------------------------------------------------------
-String::String(const char* str)
-{
-  if (str != NULL)
-  {
+// Create a string from the given char* string
+String::String(const char* str) {
+  if (str != NULL) {
     // Raw conversion, no UTF8
     m_string = std::wstring(str, str + strlen(str));
   }
 }
 
-
 //--------------------------------------------------------------------
-/// Create a string from the given wchar_t* string
-//--------------------------------------------------------------------
-String::String(const wchar_t* str)
-{
-  if (str != NULL)
-  {
+// Create a string from the given wchar_t* string
+String::String(const wchar_t* str) {
+  if (str != NULL) {
     m_string = str;
   }
 }
 
 //--------------------------------------------------------------------
-/// Create a string from the given char
-//--------------------------------------------------------------------
-String::String(char c)
-{
+// Create a string from the given char
+String::String(char c) {
   std::wstringstream sstr;
   sstr << c;
   m_string = sstr.str();
 }
 
 //--------------------------------------------------------------------
-/// Create a string from the given integer (using default formatting)
-//--------------------------------------------------------------------
-String::String(int number)
-{
+// Create a string from given integer (using default formatting)
+String::String(int number) {
   std::wstringstream sstr;
   sstr << number;
   m_string = sstr.str();
 }
 
-
 //--------------------------------------------------------------------
-/// Create a string from the given 64 bit integer (using default formatting)
-//--------------------------------------------------------------------
-String::String(int64 number)
-{
+// Create a string from given 64 bit integer (using default formatting)
+String::String(int64 number) {
   std::wstringstream sstr;
   sstr << number;
   m_string = sstr.str();
 }
 
-
 //--------------------------------------------------------------------
-/// Create a string from the given unsigned integer (using default formatting)
-//--------------------------------------------------------------------
-String::String(uint number)
-{
+// Create a string from given unsigned integer (using default formatting)
+String::String(uint number) {
   std::wstringstream sstr;
   sstr << number;
   m_string = sstr.str();
 }
-
 
 //--------------------------------------------------------------------
 /// Create a string from the given float (using default formatting)
-//--------------------------------------------------------------------
-String::String(float number)
-{
+String::String(float number) {
   std::wstringstream sstr;
   sstr << number;
   m_string = sstr.str();
@@ -189,8 +166,7 @@ String::String(float number)
 //--------------------------------------------------------------------
 /// Create a string from the given double (using default formatting)
 //--------------------------------------------------------------------
-String::String(double number)
-{
+String::String(double number) {
   std::wstringstream sstr;
   sstr << number;
   m_string = sstr.str();

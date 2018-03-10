@@ -1,56 +1,63 @@
 //##################################################################
 //
-//   Custom Visualization Core library
-//   Copyright (C) Ceetron Solutions AS
+// Custom Visualization Core library
+// Copyright (C) Ceetron Solutions AS
 //
-//   This library may be used under the terms of either the GNU General Public License or
-//   the GNU Lesser General Public License as follows:
+// This library may be used under the terms of either the GNU General
+// Public License or the GNU Lesser General Public License as follows:
 //
-//   GNU General Public License Usage
-//   This library is free software: you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation, either version 3 of the License, or
-//   (at your option) any later version.
+// GNU General Public License Usage
+// This library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   See the GNU General Public License at <<http://www.gnu.org/licenses/gpl.html>>
-//   for more details.
+// See the GNU General Public License at
+// <<http://www.gnu.org/licenses/gpl.html>>
+// for more details.
 //
-//   GNU Lesser General Public License Usage
-//   This library is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU Lesser General Public License as published by
-//   the Free Software Foundation; either version 2.1 of the License, or
-//   (at your option) any later version.
+// GNU Lesser General Public License Usage
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License
+// as published by the Free Software Foundation; either version 2.1 of
+// the License, or (at your option) any later version.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
-//   for more details.
+// See the GNU Lesser General Public License at
+// <<http://www.gnu.org/licenses/lgpl-2.1.html>>
+// for more details.
 //
 //##################################################################
-
+//
+// Modified by M.Bellout on 3/5/18.
+//
 
 // -----------------------------------------------------------------
-#include "cvfBoundingBoxTree.h"
-#include "cvfLibCore.h"
-
-//#include "cvfBase.h"
-//#include "cvfObject.h"
-//#include "cvfBoundingBox.h"
+// STD
 #include <cmath>
 #include <iostream>
 
+// FIELDOPT --------------------------------------------------------
 #include <Utilities/time.hpp>
+
+// RESINSIGHT: FWK/VIZFWK/LIBCORE\LIBGEOMETRY ----------------------
+#include "cvfBoundingBoxTree.h"
+#include "cvfLibCore.h"
+
+// -----------------------------------------------------------------
+using std::vector;
 
 // -----------------------------------------------------------------
 namespace cvf {
 
-//====================================================================
+//==================================================================
 ///
 /// \class cvf::BoundingBoxTree
 /// \ingroup Geometry
@@ -65,8 +72,9 @@ namespace cvf {
 /// When intersecting, the ID's or the indexes of the intersected
 /// boundingboxes are returned, depending on whether explicit id's
 /// where supplied.
-//====================================================================
+//==================================================================
 
+//==================================================================
 enum NodeType {
   AB_UNDEFINED,
   AB_LEAF,
@@ -74,13 +82,12 @@ enum NodeType {
   AB_LEAF_GROUP
 };
 
-//====================================================================
-//
-//
-//
-//====================================================================
-class AABBTreeNode {
-
+// ╔═╗  ╔═╗  ╔╗   ╔╗   ╔╦╗  ╦═╗  ╔═╗  ╔═╗  ╔╗╔  ╔═╗  ╔╦╗  ╔═╗
+// ╠═╣  ╠═╣  ╠╩╗  ╠╩╗   ║   ╠╦╝  ║╣   ║╣   ║║║  ║ ║   ║║  ║╣
+// ╩ ╩  ╩ ╩  ╚═╝  ╚═╝   ╩   ╩╚═  ╚═╝  ╚═╝  ╝╚╝  ╚═╝  ═╩╝  ╚═╝
+//==================================================================
+class AABBTreeNode
+{
  public:
   AABBTreeNode();
   virtual ~AABBTreeNode() {}
@@ -97,15 +104,16 @@ class AABBTreeNode {
   cvf::BoundingBox m_boundingBox;
 };
 
-
-//=====================================================================
-/// Internal node in the AABB tree. It have at least two child nodes,
-/// but can have many more (grand-children etc.). Both the Left and
-/// right tree node pointes must exist (or else it should be a leaf
-/// node).
-//=====================================================================
-class AABBTreeNodeInternal : public AABBTreeNode {
-
+// ╔═╗  ╔═╗  ╔╗   ╔╗   ╔╦╗  ╔╗╔   ╦  ╔╗╔  ╔╦╗  ╔═╗  ╦═╗  ╔╗╔  ╔═╗  ╦
+// ╠═╣  ╠═╣  ╠╩╗  ╠╩╗   ║   ║║║   ║  ║║║   ║   ║╣   ╠╦╝  ║║║  ╠═╣  ║
+// ╩ ╩  ╩ ╩  ╚═╝  ╚═╝   ╩   ╝╚╝   ╩  ╝╚╝   ╩   ╚═╝  ╩╚═  ╝╚╝  ╩ ╩  ╩═╝
+//===================================================================
+// Internal node in the AABB tree. It have at least two child nodes,
+// but can have many more (grand-children etc.). Both the Left and
+// right tree node pointes must exist (or else it should be a leaf
+// node).
+class AABBTreeNodeInternal : public AABBTreeNode
+{
  public:
   AABBTreeNodeInternal();
   AABBTreeNodeInternal(AABBTreeNode* left,
@@ -126,12 +134,13 @@ class AABBTreeNodeInternal : public AABBTreeNode {
   AABBTreeNode* m_pRight;
 };
 
-
-//=====================================================================
-/// Standard leaf node in the AABB tree. The leaf node contains only
-/// an index, and the interpretation of this index is depending on the
-/// type of AABB tree using the node.
-//=====================================================================
+// ╔═╗  ╔═╗  ╔╗   ╔╗   ╔╦╗  ╔╗╔   ╦    ╔═╗  ╔═╗  ╔═╗
+// ╠═╣  ╠═╣  ╠╩╗  ╠╩╗   ║   ║║║   ║    ║╣   ╠═╣  ╠╣
+// ╩ ╩  ╩ ╩  ╚═╝  ╚═╝   ╩   ╝╚╝   ╩═╝  ╚═╝  ╩ ╩  ╚
+//===================================================================
+// Standard leaf node in the AABB tree. The leaf node contains only
+// an index, and the interpretation of this index is depending on the
+// type of AABB tree using the node.
 class AABBTreeNodeLeaf : public AABBTreeNode
 {
  public:
@@ -148,12 +157,13 @@ class AABBTreeNodeLeaf : public AABBTreeNode
 
 };
 
-
-//=====================================================================
-/// Group leaf node in the AABB tree. The leaf node contains an array
-/// with indices, and the interpretation of these are depending on the
-/// type of AABB tree using the node.
-//=====================================================================
+// ╔═╗  ╔═╗  ╔╗   ╔╗   ╔╦╗  ╔╗╔  ╦    ╔═╗  ╔═╗  ╦═╗  ╔═╗  ╦ ╦  ╔═╗
+// ╠═╣  ╠═╣  ╠╩╗  ╠╩╗   ║   ║║║  ║    ╠╣   ║ ╦  ╠╦╝  ║ ║  ║ ║  ╠═╝
+// ╩ ╩  ╩ ╩  ╚═╝  ╚═╝   ╩   ╝╚╝  ╩═╝  ╚    ╚═╝  ╩╚═  ╚═╝  ╚═╝  ╩
+//===================================================================
+// Group leaf node in the AABB tree. The leaf node contains an array
+// with indices, and the interpretation of these are depending on the
+// type of AABB tree using the node.
 class AABBTreeNodeLeafGroup : public AABBTreeNode
 {
  public:
@@ -171,27 +181,26 @@ class AABBTreeNodeLeafGroup : public AABBTreeNode
   std::vector<size_t> m_indices;
 };
 
-
-
-//=====================================================================
+// ╔═╗  ╔═╗  ╔╗   ╔╗   ╔╦╗  ╦═╗  ╔═╗  ╔═╗
+// ╠═╣  ╠═╣  ╠╩╗  ╠╩╗   ║   ╠╦╝  ║╣   ║╣
+// ╩ ╩  ╩ ╩  ╚═╝  ╚═╝   ╩   ╩╚═  ╚═╝  ╚═╝
+//===================================================================
+// An axis oriented bounding box tree. This is an abstract base class
+// for AABB trees used for searching and intersection testing.
 //
-/// An axis oriented bounding box tree. This is an abstract base class
-/// for AABB trees used for searching and intersection testing.
-///
-/// All classes deriving from this must implement the CreateLeaves()
-/// method. This method creates all the leaf nodes in the AABB tree
-/// and is called as a part of the BuildTree() process.
-///
-/// This base class handles the building of the tree with all the
-/// internal nodes. It also handles basic intersection and searching,
-/// but the IntersectLeafLeaf() and IntersectBoxLeaf() methods should
-/// be implemented in any tree classes used for intersection testing.
-///
-/// The Find() method only searches for matches in bounding boxes,
-/// and must be reimplemented in the decendant classes for accurate
-/// testing of leaf nodes when the leaf node properties are known.
-//=====================================================================
-class AABBTree : public cvf::Object
+// All classes deriving from this must implement the CreateLeaves()
+// method. This method creates all the leaf nodes in the AABB tree
+// and is called as a part of the BuildTree() process.
+//
+// This base class handles the building of the tree with all the
+// internal nodes. It also handles basic intersection and searching,
+// but the IntersectLeafLeaf() and IntersectBoxLeaf() methods should
+// be implemented in any tree classes used for intersection testing.
+//
+// The Find() method only searches for matches in bounding boxes,
+// and must be reimplemented in the decendant classes for accurate
+// testing of leaf nodes when the leaf node properties are known.
+class AABBTree // : public cvf::Object
 {
  public:
   AABBTree();
@@ -241,6 +250,10 @@ class AABBTree : public cvf::Object
   size_t m_iGroupLimit;
 };
 
+// ╔╗   ╔═╗  ╦ ╦  ╔╗╔  ╔╦╗  ╔╗   ╔╦╗  ╦═╗  ╔═╗  ╔═╗  ╦  ╔╦╗  ╔═╗  ╦
+// ╠╩╗  ║ ║  ║ ║  ║║║   ║║  ╠╩╗   ║   ╠╦╝  ║╣   ║╣   ║  ║║║  ╠═╝  ║
+// ╚═╝  ╚═╝  ╚═╝  ╝╚╝  ═╩╝  ╚═╝   ╩   ╩╚═  ╚═╝  ╚═╝  ╩  ╩ ╩  ╩    ╩═╝
+// =================================================================
 class BoundingBoxTreeImpl : public AABBTree
 {
   BoundingBoxTreeImpl() {}
@@ -261,12 +274,11 @@ class BoundingBoxTreeImpl : public AABBTree
 };
 }
 
-
-
+//------------------------------------------------------------------
 namespace cvf {
+//using cvf::ref;
 
-using cvf::ref;
-
+//------------------------------------------------------------------
 int largestComponent(const cvf::Vec3d v) {
   double maxLength = v.x();
   int idx = 0;
@@ -284,7 +296,7 @@ int largestComponent(const cvf::Vec3d v) {
   return idx;
 }
 
-
+//------------------------------------------------------------------
 double largestComponent(const cvf::Vec3d v,
                         cvf::uint* largestIndex) {
   double length = v.x();
@@ -305,41 +317,37 @@ double largestComponent(const cvf::Vec3d v,
   return length;
 }
 
-
-
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNode::AABBTreeNode() {
   m_type = AB_UNDEFINED;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 const cvf::BoundingBox& AABBTreeNode::boundingBox() const {
   return m_boundingBox;
 }
 
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 NodeType AABBTreeNode::type() const {
   return m_type;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTreeNode::setBoundingBox(const cvf::BoundingBox bb) {
   m_boundingBox = bb;
 }
 
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNodeInternal::AABBTreeNodeInternal(AABBTreeNode* left,
                                            AABBTreeNode* right) {
   m_type = AB_INTERNAL;
@@ -351,107 +359,107 @@ AABBTreeNodeInternal::AABBTreeNodeInternal(AABBTreeNode* left,
   m_pRight = right;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNodeInternal::AABBTreeNodeInternal() {
   m_type = AB_INTERNAL;
   m_pLeft = NULL;
   m_pRight = NULL;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 const AABBTreeNode* AABBTreeNodeInternal::left() const {
   return m_pLeft;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNode* AABBTreeNodeInternal::left() {
   return m_pLeft;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 const AABBTreeNode* AABBTreeNodeInternal::right() const {
   return m_pRight;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNode* AABBTreeNodeInternal::right() {
   return m_pRight;
 }
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTreeNodeInternal::setLeft(AABBTreeNode* left) {
   CVF_ASSERT(left);
   m_pLeft = left;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTreeNodeInternal::setRight(AABBTreeNode* right) {
   CVF_ASSERT(right);
   m_pRight = right;
 }
 
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNodeLeaf::AABBTreeNodeLeaf(size_t index) {
   m_type = AB_LEAF;
   m_index = index;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 size_t AABBTreeNodeLeaf::index() const {
   return m_index;
 }
 
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 size_t AABBTreeNodeLeafGroup::addIndex(size_t index) {
   m_indices.push_back(index);
   return m_indices.size() - 1;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 const std::vector<size_t>& AABBTreeNodeLeafGroup::indices() const {
   return m_indices;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNodeLeafGroup::AABBTreeNodeLeafGroup() {
   m_type = AB_LEAF_GROUP;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTreeNodeLeafGroup::sort() {
   std::sort(m_indices.begin(), m_indices.end());
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTree::AABBTree() {
   m_pRoot = NULL;
   m_iNumLeaves = 0;
@@ -462,23 +470,23 @@ AABBTree::AABBTree() {
 //    ResetStatistics();
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTree::~AABBTree() {
   freeThis();
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTree::free() {
   freeThis();
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 bool AABBTree::buildTree() {
 
   // Possibly delete the tree before building it
@@ -520,9 +528,9 @@ bool AABBTree::buildTree() {
   return bRes;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 bool AABBTree::buildTree(AABBTreeNodeInternal* pNode,
                          size_t iFromIdx, size_t iToIdx) {
 
@@ -534,11 +542,11 @@ bool AABBTree::buildTree(AABBTreeNodeInternal* pNode,
   size_t i = iFromIdx;
   size_t iMid = iToIdx;
 
-//=====================================================================
+//===================================================================
 //
 // Geometric split tree - best!
 //
-//=====================================================================
+//===================================================================
   // Order the leaves according to the position of the center
   // of each BB in comparison with longest axis of the BB
 
@@ -609,9 +617,9 @@ bool AABBTree::buildTree(AABBTreeNodeInternal* pNode,
   return true;
 
 }
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTree::freeThis() {
 
   // Delete all the internal nodes
@@ -637,9 +645,9 @@ void AABBTree::freeThis() {
 
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTree::deleteInternalNodes(AABBTreeNode* pNode) {
 
   CVF_ASSERT(pNode);
@@ -659,9 +667,9 @@ void AABBTree::deleteInternalNodes(AABBTreeNode* pNode) {
   delete(pNode);
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 AABBTreeNodeLeafGroup* AABBTree::createGroupNode(size_t iStartIdx,
                                                  size_t iEndIdx) {
 
@@ -698,9 +706,9 @@ AABBTreeNodeLeafGroup* AABBTree::createGroupNode(size_t iStartIdx,
 
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void AABBTree::leafBoundingBox(cvf::BoundingBox& bb,
                                size_t iStartIdx,
                                size_t iEndIdx) const {
@@ -717,9 +725,9 @@ void AABBTree::leafBoundingBox(cvf::BoundingBox& bb,
   }
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 size_t AABBTree::treeSize(const AABBTreeNode* pNode) const {
 
   CVF_ASSERT(pNode);
@@ -740,18 +748,18 @@ size_t AABBTree::treeSize(const AABBTreeNode* pNode) const {
       + treeSize(pInt->right());
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 size_t AABBTree::treeSize() const {
   if (m_pRoot) return treeSize(m_pRoot);
 
   return 0;
 }
 
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 ///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 size_t AABBTree::treeNodeSize(const AABBTreeNode* pNode) const {
 
   CVF_ASSERT(pNode);
@@ -778,9 +786,8 @@ size_t AABBTree::treeNodeSize(const AABBTreeNode* pNode) const {
 
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+
+//------------------------------------------------------------------
 size_t AABBTree::treeHeight(const AABBTreeNode* pNode, size_t iLevel,
                             size_t* piMin, size_t* piMax) const {
 
@@ -803,9 +810,7 @@ size_t AABBTree::treeHeight(const AABBTreeNode* pNode, size_t iLevel,
 
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 cvf::String AABBTree::treeInfo() const {
 
   cvf::String sInfo;
@@ -834,9 +839,7 @@ cvf::String AABBTree::treeInfo() const {
   return sInfo;
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 bool AABBTree::boundingBox(cvf::BoundingBox* pBox) const {
 
   CVF_ASSERT(pBox);
@@ -852,18 +855,14 @@ bool AABBTree::boundingBox(cvf::BoundingBox* pBox) const {
   return true;
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 size_t AABBTree::leavesCount() const {
   std::stringstream ss; ss << "Number of leaves = " << m_iNumLeaves;
   print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 1);
   return m_iNumLeaves;
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 bool AABBTree::intersect(const AABBTreeNode* pA,
                          const AABBTreeNode* pB) const {
 
@@ -871,10 +870,9 @@ bool AABBTree::intersect(const AABBTreeNode* pA,
   return pA->boundingBox().intersects(pB->boundingBox());
 }
 
-//--------------------------------------------------------------------
-/// Creates leafs for the supplied valid bounding
-/// boxes, keeping the original index
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
+// Creates leafs for the supplied valid bounding
+// boxes, keeping the original index
 bool BoundingBoxTreeImpl::createLeaves() {
 
   size_t i;
@@ -903,10 +901,9 @@ bool BoundingBoxTreeImpl::createLeaves() {
   return true;
 }
 
-//--------------------------------------------------------------------
-/// Find all indices to all bounding boxes intersecting
-/// the given bounding box and add them to indices
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
+// Find all indices to all bounding boxes intersecting
+// the given bounding box and add them to indices
 void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
                                             std::vector<size_t>& indices) const {
 
@@ -914,7 +911,7 @@ void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
   const QDateTime tstart = QDateTime::currentDateTime();
 //  clock_t tstart2 = set_tstart();
   std::string str = "Find all indices to all bounding boxes "
-      "intersecting the given bounding box and add them to indices -- 1.";
+      "intersecting the given bounding box and add them to indices (i). ";
   print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
 
   if (bb.isValid()) {
@@ -926,10 +923,7 @@ void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
 //  get_tend(tstart2);
 }
 
-
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
                                             const AABBTreeNode* node,
                                             std::vector<size_t>& cvIndices) const {
@@ -965,26 +959,21 @@ void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
   }
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 BoundingBoxTree::BoundingBoxTree() {
   m_implTree = new BoundingBoxTreeImpl;
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
 BoundingBoxTree::~BoundingBoxTree() {
   delete m_implTree;
 }
 
-//--------------------------------------------------------------------
-/// Build a tree representation of valid bounding boxes. Invalid
-/// bounding boxes are ignored. The supplied ID array is the ID's
-/// returned in the intersection method. If the ID array is omitted,
-/// the index of the bounding boxes are returned.
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
+// Build a tree representation of valid bounding boxes. Invalid
+// bounding boxes are ignored. The supplied ID array is the ID's
+// returned in the intersection method. If the ID array is omitted,
+// the index of the bounding boxes are returned.
 void BoundingBoxTree::buildTreeFromBoundingBoxes(
     const std::vector<cvf::BoundingBox>& boundingBoxes,
     const std::vector<size_t>* optionalBoundingBoxIds) {
@@ -1000,21 +989,20 @@ void BoundingBoxTree::buildTreeFromBoundingBoxes(
 
 }
 
-//--------------------------------------------------------------------
-/// Find all indices to all bounding boxes intersecting
-/// the given bounding box and add them to indices
-//--------------------------------------------------------------------
+//------------------------------------------------------------------
+// Find all indices to all bounding boxes intersecting
+// the given bounding box and add them to indices
 void BoundingBoxTree::findIntersections(const cvf::BoundingBox& bb,
                                         std::vector<size_t>* bbIdsOrIndices) const {
 
   // ---------------------------------------------------------------
   const QDateTime tstart = QDateTime::currentDateTime();
   std::string str; str = "Find all indices to all bounding boxes "
-      "intersecting the given bounding box and add them to indices -- 2.";
+      "intersecting the given bounding box and add them to indices (ii). ";
   print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
   print_dbg_msg_wic_ri(__func__, bb.debugString().toStdString(), 0.0, 0);
 
-  CVF_ASSERT(bbIdsOrIndices);
+   CVF_ASSERT(bbIdsOrIndices);
   m_implTree->findIntersections(bb, *bbIdsOrIndices);
 
   print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);

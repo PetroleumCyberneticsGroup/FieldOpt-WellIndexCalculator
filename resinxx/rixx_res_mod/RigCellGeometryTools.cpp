@@ -1,48 +1,54 @@
-//##################################################################
+////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) 2017     Statoil ASA
+// Copyright (C) 2017     Statoil ASA
 //
-//  ResInsight is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+// ResInsight is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
 //
-//  ResInsight is distributed in the hope that it will be useful, but WITHOUT ANY
-//  WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//  FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//  See the GNU General Public License at <http://www.gnu.org/licenses/gpl.html>
-//  for more details.
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html> for more details.
 //
-//##################################################################
+////////////////////////////////////////////////////////////////////
+//
+// Modified by M.Bellout on 3/5/18.
+//
 
-// -----------------------------------------------------------------
+// RESINSIGHT: FWK/APPFWK/COMMONCODE\VIZEXT\PROJDATAMOD ------------
+#include "../rixx_app_fwk/cvfStructGrid.h"
+#include "../rixx_app_fwk/cafHexGridIntersectionTools.h"
+
+// RESINSIGHT: APPLICATIONCODE/RESERVOIRDATAMODEL ------------------
 #include "RigCellGeometryTools.h"
 #include "cvfGeometryTools.h"
-#include "cvfStructGrid.h"
-#include "cafHexGridIntersectionTools.h"
-//#include "cvfBoundingBox.h"
 
-#ifdef USE_PROTOTYPE_FEATURE_FRACTURES
-#include "clipper/clipper.hpp"
-#endif // USE_PROTOTYPE_FEATURE_FRACTURES
+//#ifdef USE_PROTOTYPE_FEATURE_FRACTURES
+//#include "clipper/clipper.hpp"
+//#endif // USE_PROTOTYPE_FEATURE_FRACTURES
 
-// -----------------------------------------------------------------
-//#include <vector>
-
-// -----------------------------------------------------------------
-void RigCellGeometryTools::createPolygonFromLineSegments(
-    std::list<std::pair<cvf::Vec3d, cvf::Vec3d>> &intersectionLineSegments,
-    std::vector<std::vector<cvf::Vec3d>> &polygons) {
+// ╦═╗  ╦  ╔═╗  ╔═╗  ╔═╗  ╦    ╦    ╔═╗  ╔═╗  ╔═╗  ╔╦╗  ╔═╗  ╔╦╗  ╦═╗  ╦ ╦
+// ╠╦╝  ║  ║ ╦  ║    ║╣   ║    ║    ║ ╦  ║╣   ║ ║  ║║║  ║╣    ║   ╠╦╝  ╚╦╝
+// ╩╚═  ╩  ╚═╝  ╚═╝  ╚═╝  ╩═╝  ╩═╝  ╚═╝  ╚═╝  ╚═╝  ╩ ╩  ╚═╝   ╩   ╩╚═   ╩
+// =================================================================
+void
+RigCellGeometryTools::createPolygonFromLineSegments(
+    list<pair<cvf::Vec3d, cvf::Vec3d>> &intersectionLineSegments,
+    vector<vector<cvf::Vec3d>> &polygons) {
 
   bool startNewPolygon = true;
   while (!intersectionLineSegments.empty()) {
 
     if (startNewPolygon) {
 
-      std::vector<cvf::Vec3d> polygon;
+      vector<cvf::Vec3d> polygon;
+
       //Add first line segments to polygon and remove from list
-      std::pair<cvf::Vec3d, cvf::Vec3d >
+      pair<cvf::Vec3d, cvf::Vec3d >
           linesegment = intersectionLineSegments.front();
 
       polygon.push_back(linesegment.first);
@@ -52,40 +58,43 @@ void RigCellGeometryTools::createPolygonFromLineSegments(
       startNewPolygon = false;
     }
 
-    std::vector<cvf::Vec3d>& polygon = polygons.back();
+    vector<cvf::Vec3d>& polygon = polygons.back();
 
     //Search remaining list for next point...
-
     bool isFound = false;
     float tolerance = 0.0001f;
 
-    for (std::list<std::pair<cvf::Vec3d, cvf::Vec3d > >::iterator lIt = intersectionLineSegments.begin(); lIt != intersectionLineSegments.end(); lIt++)
-    {
+    for (list<pair<cvf::Vec3d, cvf::Vec3d > >::iterator
+             lIt = intersectionLineSegments.begin();
+         lIt != intersectionLineSegments.end(); lIt++) {
+
       cvf::Vec3d lineSegmentStart = lIt->first;
       cvf::Vec3d lineSegmentEnd = lIt->second;
       cvf::Vec3d polygonEnd = polygon.back();
 
-      double lineSegmentLength = (lineSegmentStart - lineSegmentEnd).lengthSquared();
-      if (lineSegmentLength < tolerance*tolerance)
-      {
+      double lineSegmentLength =
+          (lineSegmentStart - lineSegmentEnd).lengthSquared();
+
+      if (lineSegmentLength < tolerance*tolerance) {
         intersectionLineSegments.erase(lIt);
         isFound = true;
         break;
       }
 
+      double lineSegmentStartDiff =
+          (lineSegmentStart - polygonEnd).lengthSquared();
 
-      double lineSegmentStartDiff = (lineSegmentStart - polygonEnd).lengthSquared();
-      if (lineSegmentStartDiff < tolerance*tolerance)
-      {
+      if (lineSegmentStartDiff < tolerance*tolerance) {
         polygon.push_back(lIt->second);
         intersectionLineSegments.erase(lIt);
         isFound = true;
         break;
       }
 
-      double lineSegmentEndDiff = (lineSegmentEnd - polygonEnd).lengthSquared();
-      if (lineSegmentEndDiff < tolerance*tolerance)
-      {
+      double lineSegmentEndDiff =
+          (lineSegmentEnd - polygonEnd).lengthSquared();
+
+      if (lineSegmentEndDiff < tolerance*tolerance) {
         polygon.push_back(lIt->first);
         intersectionLineSegments.erase(lIt);
         isFound = true;
@@ -93,12 +102,9 @@ void RigCellGeometryTools::createPolygonFromLineSegments(
       }
     }
 
-    if (isFound)
-    {
+    if (isFound) {
       continue;
-    }
-    else
-    {
+    } else {
       startNewPolygon = true;
     }
   }
@@ -106,7 +112,7 @@ void RigCellGeometryTools::createPolygonFromLineSegments(
 
 // -----------------------------------------------------------------
 void
-RigCellGeometryTools::findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hexCorners,
+RigCellGeometryTools::findCellLocalXYZ(const array<cvf::Vec3d, 8>& hexCorners,
                                        cvf::Vec3d& localXdirection,
                                        cvf::Vec3d& localYdirection,
                                        cvf::Vec3d& localZdirection) {
@@ -115,8 +121,7 @@ RigCellGeometryTools::findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hexCorne
   cvf::StructGridInterface::FaceEnum face;
 
   face = cvf::StructGridInterface::NEG_I;
-  cvf::StructGridInterface::cellFaceVertexIndices(face,
-                                                  faceVertexIndices);
+  cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
 
   cvf::Vec3d faceCenterNegI =
       cvf::GeometryTools::computeFaceCenter(hexCorners[faceVertexIndices[0]],
@@ -177,7 +182,7 @@ RigCellGeometryTools::findCellLocalXYZ(const std::array<cvf::Vec3d, 8>& hexCorne
 // -----------------------------------------------------------------
 double
 RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(
-    std::vector<cvf::Vec3d> polygonToCalcLengthOf) {
+    vector<cvf::Vec3d> polygonToCalcLengthOf) {
 
   //Find bounding box
   cvf::BoundingBox polygonBBox;
@@ -189,8 +194,8 @@ RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(
   int resolutionOfLengthCalc = 20;
   double widthOfPolygon = polygonBBox.extent().y() / resolutionOfLengthCalc;
 
-  std::vector<double> areasOfPolygonContributions;
-  std::vector<double> lengthOfPolygonContributions;
+  vector<double> areasOfPolygonContributions;
+  vector<double> lengthOfPolygonContributions;
 
   cvf::Vec3d directionOfLength(1, 0, 0);
 
@@ -202,24 +207,24 @@ RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(
     cvf::Vec3d pointOnLine2(bboxCorners[0].x(),
                             bboxCorners[0].y() + (i + 1)*widthOfPolygon, 0);
 
-    std::pair<cvf::Vec3d, cvf::Vec3d> line1 =
+    pair<cvf::Vec3d, cvf::Vec3d> line1 =
         getLineThroughBoundingBox(directionOfLength,
                                   polygonBBox,
                                   pointOnLine1);
 
-    std::pair<cvf::Vec3d, cvf::Vec3d> line2 =
+    pair<cvf::Vec3d, cvf::Vec3d> line2 =
         getLineThroughBoundingBox(directionOfLength,
                                   polygonBBox,
                                   pointOnLine2);
 
-    std::vector<cvf::Vec3d> polygon;
+    vector<cvf::Vec3d> polygon;
     polygon.push_back(line1.first);
     polygon.push_back(line1.second);
     polygon.push_back(line2.second);
     polygon.push_back(line2.first);
 
     //Use clipper to find overlap between bbpolygon and fracture
-    std::vector<std::vector<cvf::Vec3d> > clippedPolygons =
+    vector<vector<cvf::Vec3d> > clippedPolygons =
         intersectPolygons(polygonToCalcLengthOf, polygon);
 
     double area = 0;
@@ -227,7 +232,7 @@ RigCellGeometryTools::polygonLengthInLocalXdirWeightedByArea(
     cvf::Vec3d areaVector = cvf::Vec3d::ZERO;
 
     //Calculate length (max-min) and area
-    for (std::vector<cvf::Vec3d> clippedPolygon : clippedPolygons) {
+    for (vector<cvf::Vec3d> clippedPolygon : clippedPolygons) {
       areaVector = cvf::GeometryTools::polygonAreaNormal3D(clippedPolygon);
       area += areaVector.length();
       length += (getLengthOfPolygonAlongLine(line1, clippedPolygon)
@@ -266,7 +271,7 @@ cvf::Vec3d fromClipperPoint(const ClipperLib::IntPoint& clipPoint)
 {
     double zDValue;
 
-    if (clipPoint.Z == std::numeric_limits<int>::max())
+    if (clipPoint.Z == numeric_limits<int>::max())
     {
         zDValue = HUGE_VAL;
     }
@@ -280,11 +285,11 @@ cvf::Vec3d fromClipperPoint(const ClipperLib::IntPoint& clipPoint)
 #endif // USE_PROTOTYPE_FEATURE_FRACTURES
 
 // -----------------------------------------------------------------
-std::vector<std::vector<cvf::Vec3d> >
-RigCellGeometryTools::intersectPolygons(std::vector<cvf::Vec3d> polygon1,
-                                        std::vector<cvf::Vec3d> polygon2) {
+vector<vector<cvf::Vec3d> >
+RigCellGeometryTools::intersectPolygons(vector<cvf::Vec3d> polygon1,
+                                        vector<cvf::Vec3d> polygon2) {
 
-  std::vector<std::vector<cvf::Vec3d> > clippedPolygons;
+  vector<vector<cvf::Vec3d> > clippedPolygons;
 
 #ifdef USE_PROTOTYPE_FEATURE_FRACTURES
   // Convert to int for clipper library and store as clipper "path"
@@ -307,10 +312,10 @@ RigCellGeometryTools::intersectPolygons(std::vector<cvf::Vec3d> polygon1,
     ClipperLib::Paths solution;
     clpr.Execute(ClipperLib::ctIntersection, solution, ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
 
-    // Convert back to std::vector<std::vector<cvf::Vec3d> >
+    // Convert back to vector<vector<cvf::Vec3d> >
     for (ClipperLib::Path pathInSol : solution)
     {
-        std::vector<cvf::Vec3d> clippedPolygon;
+        vector<cvf::Vec3d> clippedPolygon;
         for (ClipperLib::IntPoint IntPosition : pathInSol)
         {
             clippedPolygon.push_back(fromClipperPoint(IntPosition));
@@ -334,7 +339,7 @@ void fillInterpolatedSubjectZ(ClipperLib::IntPoint& e1bot,
     ClipperLib::IntPoint ePLbot;
     ClipperLib::IntPoint ePLtop;
 
-    if (e1top.Z == std::numeric_limits<int>::max())
+    if (e1top.Z == numeric_limits<int>::max())
     {
         ePLtop = e2top;
         ePLbot = e2bot;

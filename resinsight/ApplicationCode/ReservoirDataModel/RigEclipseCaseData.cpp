@@ -80,16 +80,13 @@ const RigMainGrid* RigEclipseCaseData::mainGrid() const {
 // -----------------------------------------------------------------
 ///
 // -----------------------------------------------------------------
-void RigEclipseCaseData::setMainGrid(RigMainGrid* mainGrid)
-{
+void RigEclipseCaseData::setMainGrid(RigMainGrid* mainGrid) {
   m_mainGrid = mainGrid;
 
   m_matrixModelResults->setMainGrid(m_mainGrid.p());
   m_fractureModelResults->setMainGrid(m_mainGrid.p());
 }
 
-// -----------------------------------------------------------------
-///
 // -----------------------------------------------------------------
 void RigEclipseCaseData::allGrids(std::vector<RigGridBase*>* grids) {
 
@@ -106,8 +103,6 @@ void RigEclipseCaseData::allGrids(std::vector<RigGridBase*>* grids) {
 }
 
 // -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
 void RigEclipseCaseData::allGrids(std::vector<const RigGridBase*>* grids) const {
   CVF_ASSERT(grids);
 
@@ -122,8 +117,7 @@ void RigEclipseCaseData::allGrids(std::vector<const RigGridBase*>* grids) const 
 }
 
 // -----------------------------------------------------------------
-/// Get grid by index. The main grid has index 0, so the first lgr has index 1
-// -----------------------------------------------------------------
+// Get grid by index. Main grid has index 0, so first lgr has idx 1.
 const RigGridBase* RigEclipseCaseData::grid(size_t index) const {
 
   CVF_ASSERT(m_mainGrid.notNull());
@@ -524,8 +518,7 @@ void RigEclipseCaseData::computeActiveCellBoundingBoxes() {
 RigActiveCellInfo* RigEclipseCaseData::activeCellInfo(
     RiaDefines::PorosityModelType porosityModel)
 {
-  if (porosityModel == RiaDefines::MATRIX_MODEL)
-  {
+  if (porosityModel == RiaDefines::MATRIX_MODEL) {
     return m_activeCellInfo.p();
   }
 
@@ -538,8 +531,7 @@ RigActiveCellInfo* RigEclipseCaseData::activeCellInfo(
 const RigActiveCellInfo* RigEclipseCaseData::activeCellInfo(
     RiaDefines::PorosityModelType porosityModel) const
 {
-  if (porosityModel == RiaDefines::MATRIX_MODEL)
-  {
+  if (porosityModel == RiaDefines::MATRIX_MODEL) {
     return m_activeCellInfo.p();
   }
 

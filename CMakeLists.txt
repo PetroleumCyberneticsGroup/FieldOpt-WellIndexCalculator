@@ -11,6 +11,10 @@ set(WIC_LIB_TARGET wellindexcalculator)
 set(WIC_LIB_TARGET_ADG wellindexcalculator-adgprs-dbg)
 
 # ResInsight ===========================================================
+
+set(CVF_ENABLE_ASSERTS 1)
+set(CVF_ENABLE_TIGHT_ASSERTS 1)
+
 #if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 #  add_definitions(-DCVF_LINUX)
 #  message(STATUS "CMAKE_SYSTEM_NAME => ${CMAKE_SYSTEM_NAME}")
@@ -128,7 +132,9 @@ else() # LINUX --------------------------------------------------------
 #        wicalc_rinx.cpp
         //
         wicalc_rixx.cpp
+        resinxx/rixx_grid/riextractor.cpp
         resinxx/rixx_grid/rifaultncc.cpp
+        resinxx/rixx_grid/ricasedata.cpp
         resinxx/rixx_grid/rigrid.cpp
         resinxx/rixx_grid/ricell.cpp
         //
@@ -136,14 +142,19 @@ else() # LINUX --------------------------------------------------------
         resinxx/geometry_tools.cpp
         //
         resinxx/rixx_app_fwk/cvfStructGrid.cpp
+        resinxx/rixx_app_fwk/cvfCellRange.cpp
         resinxx/rixx_app_fwk/cafHexGridIntersectionTools.cpp
         //
         resinxx/rixx_core_geom/cvfAssert.cpp
+        resinxx/rixx_core_geom/cvfAtomicCounter.cpp
         resinxx/rixx_core_geom/cvfBoundingBox.cpp
+        resinxx/rixx_core_geom/cvfBoundingBoxTree.cpp
         resinxx/rixx_core_geom/cvfCharArray.cpp
         resinxx/rixx_core_geom/cvfMath.cpp
         resinxx/rixx_core_geom/cvfPlane.cpp
+        resinxx/rixx_core_geom/cvfObject.cpp
         resinxx/rixx_core_geom/cvfRay.cpp
+        resinxx/rixx_core_geom/cvfString.cpp
         resinxx/rixx_core_geom/cvfSystem.cpp
         resinxx/rixx_core_geom/cvfVector2.cpp
         resinxx/rixx_core_geom/cvfVector3.cpp
