@@ -33,17 +33,24 @@
 #ifndef WIC_MAIN_H
 #define WIC_MAIN_H
 
-#include "intersected_cell.h"
-#include <boost/program_options.hpp>
-#include <boost/format.hpp>
-#include <boost/algorithm/string/join.hpp>
+// -----------------------------------------------------------------
+// STD
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
-
 #include <map>
 
+// -----------------------------------------------------------------
+// Boost
+#include <boost/program_options.hpp>
+#include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 
+// -----------------------------------------------------------------
+// FieldOpt:WIC
+#include "intersected_cell.h"
+
+// -----------------------------------------------------------------
 // OV
 #if _WIN32
 #include <sys/stat.h>
@@ -56,12 +63,15 @@
 #include <boost/filesystem/operations.hpp>
 #endif
 
+// -----------------------------------------------------------------
+
 namespace po = boost::program_options;
 using namespace Reservoir::WellIndexCalculation;
 using namespace std;
 
 const double minimum_well_index = 1e-9;
 
+// -----------------------------------------------------------------
 void printCsv(map<string, vector<IntersectedCell>> &well_indices) {
   cout << "i,\tj,\tk1,\tk2,\twi" << endl;
 
@@ -103,6 +113,7 @@ void printCsv(map<string, vector<IntersectedCell>> &well_indices) {
   }
 }
 
+// -----------------------------------------------------------------
 void printCompdat(map<string, vector<IntersectedCell>> &well_indices) {
   string head = "COMPDAT\n";
   string foot = "\n/";
@@ -151,8 +162,9 @@ void printCompdat(map<string, vector<IntersectedCell>> &well_indices) {
   cout << full << endl;
 }
 
-void printDebug( map<string, vector<IntersectedCell>> &well_indices)
-{
+// -----------------------------------------------------------------
+void printDebug(map<string, vector<IntersectedCell>> &well_indices) {
+
   ofstream debugfile;
   debugfile.open ("debug_info.dat");
 
@@ -199,8 +211,9 @@ void printDebug( map<string, vector<IntersectedCell>> &well_indices)
   debugfile.close();
 }
 
-po::variables_map createVariablesMap(int argc, const char **argv)
-{
+// -----------------------------------------------------------------
+po::variables_map createVariablesMap(int argc, const char **argv) {
+
   // This function parses the runtime arguments and creates
   // a boost::program_options::variable_map from them.
   // It also displays help if the --help flag is passed.

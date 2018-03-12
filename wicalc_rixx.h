@@ -23,12 +23,12 @@ using std::vector;
 class wicalc_rixx {
  public:
   wicalc_rixx(Settings::Model::Well well_settings,
-  Grid::ECLGrid *grid);
+              Grid::Grid *grid);
   ~wicalc_rixx();
 
   Settings::Model::Well well_settings_;
   vector<double> intersections_;
-  Grid::ECLGrid* grid_;
+  Grid::Grid* grid_;
   RIGrid* RIGrid_;
   RICaseData* RICaseData_;
   RIReaderECL* RIReaderECL_;
