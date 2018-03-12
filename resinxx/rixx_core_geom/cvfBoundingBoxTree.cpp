@@ -494,28 +494,28 @@ bool AABBTree::buildTree() {
 
   // First, create all the leaves
   if (!createLeaves()) {
-    print_dbg_msg_wic_ri(__func__,
-                         "Creating all the leaves. "
-                             "Check: !createLeaves()", 0.0, 0);
+    // print_dbg_msg_wic_ri(__func__,
+    //                     "Creating all the leaves. "
+    //                         "Check: !createLeaves()", 0.0, 0);
     return false;
   }
 
   if (m_iNumLeaves == 0) {
-    print_dbg_msg_wic_ri(__func__,
-                         "Check: m_iNumLeaves == 0", 0.0, 0);
+    //print_dbg_msg_wic_ri(__func__,
+      //                   "Check: m_iNumLeaves == 0", 0.0, 0);
     return true;
   }
 
   // Then find the bounding box of all items in the tree
-  print_dbg_msg_wic_ri(__func__,
-                       "Find bbox of all items in tree.", 0.0, 0);
+  // print_dbg_msg_wic_ri(__func__,
+     //                   "Find bbox of all items in tree.", 0.0, 0);
   cvf::BoundingBox box;
   leafBoundingBox(box, 0, m_iNumLeaves - 1);
 
   // Create the root
   if (m_iNumLeaves == 1) {
-    print_dbg_msg_wic_ri(__func__,
-                         "Create the root Check: m_iNumLeaves == 1", 0.0, 0);
+    // print_dbg_msg_wic_ri(__func__,
+       //                  "Create the root Check: m_iNumLeaves == 1", 0.0, 0);
     m_pRoot = m_ppLeaves[0];
     return true;
   }
@@ -814,11 +814,10 @@ size_t AABBTree::treeHeight(const AABBTreeNode* pNode, size_t iLevel,
 cvf::String AABBTree::treeInfo() const {
 
   cvf::String sInfo;
-
-  /*
   sInfo =  cvf::String("Tree size: %1 \n").arg(static_cast<int>(treeSize()));
   sInfo += cvf::String("Num leaves: %1 \n").arg(static_cast<int>(leavesCount()));
 
+  /*
   size_t iMin = cvf::UNDEFINED_UINT;
   size_t iMax = 0;
   size_t iSumHeight = treeHeight(m_pRoot, 1, &iMin, &iMax);
@@ -845,11 +844,11 @@ bool AABBTree::boundingBox(cvf::BoundingBox* pBox) const {
   CVF_ASSERT(pBox);
 
   if (!m_pRoot) {
-    print_dbg_msg_wic_ri(__func__, "Check: !m_pRoot.", 0.0, 0);
+    // print_dbg_msg_wic_ri(__func__, "Check: !m_pRoot.", 0.0, 0);
     return false;
   }
 
-  print_dbg_msg_wic_ri(__func__, "m_pRoot->boundingBox().", 0.0, 0);
+  // print_dbg_msg_wic_ri(__func__, "m_pRoot->boundingBox().", 0.0, 0);
   *pBox = m_pRoot->boundingBox();
 
   return true;
@@ -857,8 +856,8 @@ bool AABBTree::boundingBox(cvf::BoundingBox* pBox) const {
 
 //------------------------------------------------------------------
 size_t AABBTree::leavesCount() const {
-  std::stringstream ss; ss << "Number of leaves = " << m_iNumLeaves;
-  print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 1);
+  stringstream ss; ss << "Number of leaves = " << m_iNumLeaves;
+  // print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 1);
   return m_iNumLeaves;
 }
 
@@ -866,7 +865,7 @@ size_t AABBTree::leavesCount() const {
 bool AABBTree::intersect(const AABBTreeNode* pA,
                          const AABBTreeNode* pB) const {
 
-  print_dbg_msg_wic_ri(__func__, "intersect", 0.0, 0);
+  // print_dbg_msg_wic_ri(__func__, "intersect", 0.0, 0);
   return pA->boundingBox().intersects(pB->boundingBox());
 }
 
@@ -878,10 +877,10 @@ bool BoundingBoxTreeImpl::createLeaves() {
   size_t i;
 
   // ---------------------------------------------------------------
-  std::stringstream ss; ss << "Creates leafs for supplied valid "
+  stringstream ss; ss << "Creates leafs for supplied valid "
       "bboxes (keeping original index), m_boundingBoxes->size()="
       << m_boundingBoxes->size();
-  print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 0);
+  // print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 0);
 
   for (i = 0; i < m_boundingBoxes->size(); i++) {
 
@@ -909,18 +908,16 @@ void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
 
   // ---------------------------------------------------------------
   const QDateTime tstart = QDateTime::currentDateTime();
-//  clock_t tstart2 = set_tstart();
-  std::string str = "Find all indices to all bounding boxes "
+  string str = "Find all indices to all bounding boxes "
       "intersecting the given bounding box and add them to indices (i). ";
-  print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
+  // print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
 
   if (bb.isValid()) {
     print_dbg_msg_wic_ri(__func__, "Target bbox is valid.", 0.0, 0);
     findIntersections(bb, m_pRoot, indices);
   }
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
-//  get_tend(tstart2);
+  // print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 }
 
 //------------------------------------------------------------------
@@ -931,12 +928,12 @@ void BoundingBoxTreeImpl::findIntersections(const cvf::BoundingBox& bb,
   CVF_TIGHT_ASSERT(bb.isValid());
 
   // ---------------------------------------------------------------
-  std::stringstream ss;
+  stringstream ss;
   ss << node->boundingBox().debugString().toStdString();
   ss << std::setw(10) << std::setprecision(3) << std::fixed
      << " -- n=" << cvIndices.size();
-//  if ( cvIndices.size() < 3 )
-//    print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 0);
+  // if ( cvIndices.size() < 3 )
+  //   print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 0);
 
   if (node && bb.intersects(node->boundingBox())) {
 
@@ -997,15 +994,15 @@ void BoundingBoxTree::findIntersections(const cvf::BoundingBox& bb,
 
   // ---------------------------------------------------------------
   const QDateTime tstart = QDateTime::currentDateTime();
-  std::string str; str = "Find all indices to all bounding boxes "
+  string str; str = "Find all indices to all bounding boxes "
       "intersecting the given bounding box and add them to indices (ii). ";
-  print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
-  print_dbg_msg_wic_ri(__func__, bb.debugString().toStdString(), 0.0, 0);
+  // print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
+  // print_dbg_msg_wic_ri(__func__, bb.debugString().toStdString(), 0.0, 0);
 
    CVF_ASSERT(bbIdsOrIndices);
   m_implTree->findIntersections(bb, *bbIdsOrIndices);
 
-  print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
+  // print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 }
 
 } // namespace cvf

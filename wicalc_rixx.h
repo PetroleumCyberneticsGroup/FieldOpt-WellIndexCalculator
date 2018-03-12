@@ -23,12 +23,12 @@ using std::vector;
 class wicalc_rixx {
  public:
   wicalc_rixx(Settings::Model::Well well_settings,
-  Grid::Grid *grid);
+  Grid::ECLGrid *grid);
   ~wicalc_rixx();
 
   Settings::Model::Well well_settings_;
   vector<double> intersections_;
-  Grid::Grid* grid_;
+  Grid::ECLGrid* grid_;
   RIGrid* RIGrid_;
   RICaseData* RICaseData_;
   RIReaderECL* RIReaderECL_;
@@ -53,6 +53,7 @@ class wicalc_rixx {
   size_t grid_count_;
   size_t cell_count_;
   size_t gcellarray_sz_;
+  int cl_; // cl: current dbg.msg.level
 
 };
 

@@ -838,8 +838,8 @@ void RIGrid::findIntersectingCells(
 
   // ---------------------------------------------------------------
   QDateTime tstart = QDateTime::currentDateTime();
-  std::string str = "Find intersecting cells.";
-  print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
+  string str = "Find intersecting cells.";
+  // print_dbg_msg_wic_ri(__func__, str, 0.0, 1);
 
   CVF_ASSERT(m_cellSearchTree.notNull());
   m_cellSearchTree->findIntersections(inputBB, cellIndices);
@@ -855,10 +855,10 @@ void RIGrid::buildCellSearchTree() {
 
     // ---------------------------------------------------------------
     const QDateTime tstart = QDateTime::currentDateTime();
-    std::stringstream ss;
+    stringstream ss;
     ss << "Building search tree. m_cells.size() = " << m_cells.size()
        << " -- m_nodes.size() = " << m_nodes.size() << " ";
-    print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 1);
+    // print_dbg_msg_wic_ri(__func__, ss.str(), 0.0, 1);
 
     size_t cellCount = m_cells.size();
 
@@ -886,7 +886,7 @@ void RIGrid::buildCellSearchTree() {
     m_cellSearchTree = new cvf::BoundingBoxTree;
     m_cellSearchTree->buildTreeFromBoundingBoxes(cellBoundingBoxes, NULL);
 
-    print_dbg_msg_wic_ri(__func__, ss.str(), time_since_msecs(tstart), 2);
+    // print_dbg_msg_wic_ri(__func__, ss.str(), time_since_msecs(tstart), 2);
 
   }
 }

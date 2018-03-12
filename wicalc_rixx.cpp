@@ -24,9 +24,10 @@ wicalc_rixx::~wicalc_rixx() {}
 
 // -----------------------------------------------------------------
 wicalc_rixx::wicalc_rixx(Settings::Model::Well well_settings,
-                         Grid::Grid *grid) {
+                         Grid::ECLGrid *grid) {
 
   well_settings_ = well_settings;
+  cl_ = well_settings_.verb_vector_[3]; // current dbg.msg.level
   grid_ = grid;
 
   RIReaderECL_ = new RIReaderECL();
@@ -49,13 +50,13 @@ wicalc_rixx::wicalc_rixx(Settings::Model::Well well_settings,
   // Dbg
   QDateTime tstart = QDateTime::currentDateTime();
   std::stringstream str; str << "Find cell from coords.";
-  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0);
+  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, true, cl_, 2);
 
   str.str(""); str << "grid_->gridCount(): " << grid_count_
                    << " -- grid_->cellCount(): " << cell_count_
                    << " -- grid_->globalCellArray().size(): "
                    << gcellarray_sz_;
-  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0);
+  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, true, cl_, 2);
 
 }
 
@@ -145,6 +146,7 @@ wicalc_rixx::collectIntersectedCells(vector<IntersectedCell> &isc_cells,
                                            false, icell);
 
     // -------------------------------------------------------------
+    // Deleted un susbsequent versions
     // Store calculated values in RI completion object (for
     // completeness sake, not necessary for our transfer)
     // completion.setTransAndWPImultBackgroundDataFromPerforation(transmissibility,

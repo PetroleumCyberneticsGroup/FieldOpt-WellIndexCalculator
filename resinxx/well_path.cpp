@@ -35,7 +35,7 @@ WellPath::findRawHexCellIntersections(const RIGrid* grid,
        << grid->nodes().size() << " coords.size() = " << coords.size();
 
   CVF_ASSERT(grid->nodes().size() > 0);
-  print_dbg_msg_wic_ri(__func__, str0.str(), 0.0, 1);
+  // print_dbg_msg_wic_ri(__func__, str0.str(), 0.0, 1);
 
   for (size_t i = 0; i < coords.size() - 1; ++i) {
 
@@ -104,8 +104,7 @@ WellPath::findRawHexCellIntersections(const RIGrid* grid,
   str1.str("");
   str1 << "# of interections found = " << intersections.size();
   print_dbg_msg_wic_ri(__func__, str1.str(), 0.0, 0);
-
-  print_dbg_msg_wic_ri(__func__, str0.str(), time_since_msecs(tstart), 2);
+  // print_dbg_msg_wic_ri(__func__, str0.str(), time_since_msecs(tstart), 2);
 
   return intersections;
 }
@@ -200,10 +199,6 @@ WellPath::calculateTransmissibility(RICaseData* eclipseCase,
   dx = icell.dxdydz()[0];
   dy = icell.dxdydz()[1];
   dz = icell.dxdydz()[2];
-
-//  dx = eclipseCase->mainGrid()->cell(cellIndex).dxdydz()(0);
-//  dy = eclipseCase->mainGrid()->cell(cellIndex).dxdydz()(1);
-//  dz = eclipseCase->mainGrid()->cell(cellIndex).dxdydz()(2);
 
   permx = icell.permx()[0];
   permy = icell.permy()[0];
@@ -329,16 +324,12 @@ WellPath::calculateDirectionInCell(RICaseData* eclipseCase,
   dy = icell.dxdydz()[1];
   dz = icell.dxdydz()[2];
 
-//  double dx = eclipseCase->mainGrid()->cell(cell.globCellIndex).dxdydz()(0);
-//  double dy = eclipseCase->mainGrid()->cell(cell.globCellIndex).dxdydz()(1);
-//  double dz = eclipseCase->mainGrid()->cell(cell.globCellIndex).dxdydz()(2);
-
   // DBG : dx, dy, dz values ---------------------------------------
   std::stringstream str;
   str << setw(3) << "dx=" << setw(7) << setprecision(3) << fixed << dx << " ";
   str << setw(3) << "dy=" << setw(7) << setprecision(3) << fixed << dy << " ";
   str << setw(3) << "dz=" << setw(7) << setprecision(3) << fixed << dz << "\n";
-  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, false);
+  // print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, false);
 
   // ---------------------------------------------------------------
   double xLengthFraction = fabs(cell.intersectionLengthsInCellCS.x() / dx);
