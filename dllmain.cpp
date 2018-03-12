@@ -161,7 +161,8 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
     // New WIC
     wicalc_rixx.ComputeWellBlocks(well_indices, wells);
 
-    //printCompdat(well_indices);
+    // printCompdat(well_indices);
+    // Remember to remove blocks with very low WI to ev. reduce sim problems?
     vector<IntersectedCell>& well_blocks = well_indices.at("DEFWELL");
     *nblks = well_blocks.size();
 
