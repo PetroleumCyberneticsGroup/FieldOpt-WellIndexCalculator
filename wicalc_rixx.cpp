@@ -15,12 +15,17 @@ using std::fill;
 using std::vector;
 using std::stringstream;
 
+#include <memory>
+
 // -----------------------------------------------------------------
 namespace Reservoir {
 namespace WellIndexCalculation {
 
 // -----------------------------------------------------------------
-wicalc_rixx::~wicalc_rixx() {}
+wicalc_rixx::~wicalc_rixx() {
+  //delete RIReaderECL_;
+  //delete RICaseData_;
+}
 
 // -----------------------------------------------------------------
 wicalc_rixx::wicalc_rixx(Settings::Model::Well well_settings,
@@ -196,6 +201,7 @@ wicalc_rixx::ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indice
 
   stringstream str;
 
+
   // Perform well block search for each well
   for (int iWell = 0; iWell < wells.size(); ++iWell) {
 
@@ -242,7 +248,6 @@ wicalc_rixx::ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indice
                               wells[iWell],
                               *wellPath,
                               rank);
-
     }
 
     // Assign intersected cells to well

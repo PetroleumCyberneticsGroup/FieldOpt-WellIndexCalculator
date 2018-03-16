@@ -116,6 +116,7 @@ class WellPath : public cvf::Object
 {
  public:
   WellPath();
+  ~WellPath(){};
 
   // ---------------------------------------------------------------
   vector <cvf::Vec3d> m_wellPathPoints;

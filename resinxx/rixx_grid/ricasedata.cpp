@@ -47,7 +47,11 @@ RICaseData::RICaseData(string file_path) {
 }
 
 // -----------------------------------------------------------------
-RICaseData::~RICaseData() {}
+RICaseData::~RICaseData() {
+  delete m_mainGrid;
+  delete m_activeCellInfo;
+  delete m_fractureActiveCellInfo;
+}
 
 // -----------------------------------------------------------------
 RIGrid* RICaseData::mainGrid() {
@@ -474,10 +478,10 @@ RIReaderECL::RIReaderECL() {
   m_fileName.clear();
   m_filesWithSameBaseName.clear();
 
-  m_eclipseCase = NULL;
+  m_eclipseCase = nullptr;
 
-  m_ecl_init_file = NULL;
-  m_dynamicResultsAccess = NULL;
+  m_ecl_init_file = nullptr;
+  m_dynamicResultsAccess = nullptr;
 }
 
 // -----------------------------------------------------------------
@@ -485,7 +489,7 @@ RIReaderECL::~RIReaderECL() {
   if (m_ecl_init_file) {
     ecl_file_close(m_ecl_init_file);
   }
-  m_ecl_init_file = NULL;
+  m_ecl_init_file = nullptr;
 
   if (m_dynamicResultsAccess.notNull()) {
     m_dynamicResultsAccess->close();
@@ -552,7 +556,6 @@ bool RIReaderECL::transferGeometry(const ecl_grid_type* mainEclGrid,
     localGrid->setIndexToStartOfCells(totalCellCount);
     localGrid->setGridName(lgrName);
     localGrid->setGridPointDimensions(gridPointDim);
-
     totalCellCount += ecl_grid_get_global_size(localEclGrid);
   }
 
