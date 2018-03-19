@@ -47,7 +47,11 @@ RICaseData::RICaseData(string file_path) {
 }
 
 // -----------------------------------------------------------------
-RICaseData::~RICaseData() {}
+RICaseData::~RICaseData() {
+  delete m_mainGrid;
+  delete m_activeCellInfo;
+  delete m_fractureActiveCellInfo;
+}
 
 // -----------------------------------------------------------------
 RIGrid* RICaseData::mainGrid() {
