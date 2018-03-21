@@ -119,7 +119,7 @@ wicalc_rixx::collectIntersectedCells(vector<IntersectedCell> &isc_cells,
     // Check if cell is active, if not, skip
     bool cellIsActive = activeCellInfo_->isActive(cell.globCellIndex);
     if (!cellIsActive) {
-      cout << "Cell is not active" << endl;
+      // cout << "Cell is not active" << endl;
       continue;
     }
 
