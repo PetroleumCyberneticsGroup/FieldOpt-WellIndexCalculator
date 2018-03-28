@@ -172,7 +172,7 @@ void WellIndexCalculator::collect_intersected_cells(vector<IntersectedCell> &isc
     {   	
         // Move into the next cell, add it to the list and set the entry point
         step = (exit_pt - start_pt).norm() / (end_pt - start_pt).norm();
-        Reservoir::Grid::Cell new_cell;
+        Reservoir::Grid::Cell new_cell = prev_cell;
         do {
             step += epsilon;
             entry_pt = start_pt + step * (end_pt - start_pt);
