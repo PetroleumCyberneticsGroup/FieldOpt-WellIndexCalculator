@@ -43,6 +43,8 @@ RICaseData::RICaseData(string file_path) {
 //  m_fractureModelResults->setActiveCellInfo(m_fractureActiveCellInfo.p());
 
 //  m_unitsType = RiaEclipseUnitTools::UNITS_METRIC;
+  PorosityModelTypeMATRIX_ = PorosityModelType::MATRIX_MODEL;
+  PorosityModelTypeFRAC_ = PorosityModelType::FRACTURE_MODEL;
 
 }
 
@@ -164,8 +166,8 @@ void RICaseData::computeActiveCellBoundingBoxes() {
 }
 
 // -----------------------------------------------------------------
-RIActiveCellInfo* RICaseData::activeCellInfo(
-    PorosityModelType porosityModel) {
+RIActiveCellInfo*
+RICaseData::activeCellInfo(PorosityModelType porosityModel) {
 
   if (porosityModel == MATRIX_MODEL) {
     return m_activeCellInfo;
@@ -626,7 +628,9 @@ bool RIReaderECL::open(const QString& fileName,
   CVF_ASSERT(eclipseCase);
 
   // ---------------------------------------------------------------
-  cout << "Reading Grid" << endl;
+  cout << FLGREEN
+       << "[wic-rixx]Reading Grid------- (ricasedata.cpp)"
+       << AEND << endl;
   QStringList fileSet;
   if (!RIECLFileTools::findSiblingFilesWithSameBaseName(fileName, &fileSet)) {
     return false;
@@ -635,7 +639,10 @@ bool RIReaderECL::open(const QString& fileName,
   m_filesWithSameBaseName = fileSet;
 
   // ---------------------------------------------------------------
-  cout << "Reading geometry" << endl;
+  cout << FLGREEN
+       << "[wic-rixx]Reading geometry--- (ricasedata.cpp)"
+       << AEND << endl;
+      ;
   // Todo: Needs to check existence of file before calling ert, else it will abort
   ecl_grid_type * mainEclGrid = ecl_grid_alloc(fileName.toLatin1().data());
   if (!transferGeometry(mainEclGrid, eclipseCase)) return false;
@@ -675,7 +682,9 @@ bool RIReaderECL::open(const QString& fileName,
   // readWellCells(mainEclGrid, true);
 
   // ---------------------------------------------------------------
-  cout << "Releasing reader memory" << endl;
+  cout << FLGREEN
+       << "[wic-rixx]Releasing memory--- (ricasedata.cpp)"
+       << AEND << endl;
   ecl_grid_free( mainEclGrid );
 
   return true;

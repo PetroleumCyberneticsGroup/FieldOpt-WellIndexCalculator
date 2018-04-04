@@ -41,11 +41,10 @@ RIGridBase::RIGridBase(RIGrid* mainGrid):
     m_indexToStartOfCells(0) {
 
   if (mainGrid == NULL) {
-
     m_gridIndex = 0;
     m_gridId    = 0;
-  } else {
 
+  } else {
     m_gridIndex = cvf::UNDEFINED_SIZE_T;
     m_gridId = cvf::UNDEFINED_INT;
   }
@@ -53,7 +52,6 @@ RIGridBase::RIGridBase(RIGrid* mainGrid):
 
 // -----------------------------------------------------------------
 RIGridBase::~RIGridBase(void) {
-
 }
 
 // -----------------------------------------------------------------

@@ -51,6 +51,7 @@
 using std::vector;
 using std::set;
 
+// -----------------------------------------------------------------
 enum PorosityModelType {
   MATRIX_MODEL,
   FRACTURE_MODEL
@@ -158,6 +159,12 @@ class RICaseData : public cvf::Object
 
   // std::map<std::tuple<QString, bool, bool>,
   // cvf::Collection<RigWellPath>> m_simWellBranchCache;
+
+ public:
+  PorosityModelType PorosityModelTypeMATRIX_;
+  PorosityModelType PorosityModelTypeFRAC_;
+
+
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -309,18 +316,22 @@ typedef struct well_conn_struct well_conn_type;
 class RIReaderECL : public RIReaderInterface
 {
  public:
+  // -------------------------------------------------------
   RIReaderECL();
   virtual ~RIReaderECL();
 
+  // -------------------------------------------------------
   bool open(const QString& fileName, RICaseData* eclipseCase);
 
 //  void setHdf5FileName(const QString& fileName);
   void setFileDataAccess(RIECLRestartDataAccess* restartDataAccess);
 
+  // -------------------------------------------------------
   virtual bool openAndReadActiveCellData(const QString& fileName,
                                          const std::vector<QDateTime>& mainCaseTimeSteps,
                                          RICaseData* eclipseCase);
 
+  // -------------------------------------------------------
   bool staticResult(const QString& result,
                     PorosityModelType MATRIX_MODEL,
                     vector<double>* values);
@@ -336,6 +347,7 @@ class RIReaderECL : public RIReaderInterface
 
 //  std::vector<QDateTime> allTimeSteps() const;
 
+// -------------------------------------------------------
   static bool transferGeometry(const ecl_grid_type* mainEclGrid,
                                RICaseData* eclipseCase);
 
@@ -345,12 +357,14 @@ class RIReaderECL : public RIReaderInterface
 //  virtual std::set<RiaDefines::PhaseType> availablePhases() const override;
 
  private:
+  // -------------------------------------------------------
   bool readActiveCellInfo();
 
 //  void buildMetaData();
 //  void readWellCells(const ecl_grid_type* mainEclGrid,
 //                     bool importCompleteMswData);
 
+  // -------------------------------------------------------
   std::string ertGridName( size_t gridNr );
 
 //  RigWellResultPoint createWellResultPoint(const RigGridBase* grid,
@@ -361,13 +375,16 @@ class RIReaderECL : public RIReaderInterface
 //  void importFaults(const QStringList& fileSet,
 //                    cvf::Collection<RIFault>* faults);
 
+  // -------------------------------------------------------
   void openInitFile();
 
+  // -------------------------------------------------------
   void extractResultValuesBasedOnPorosityModel(
       PorosityModelType ModelType,
       vector<double>* values,
       const vector<double>& fileValues);
 
+  // -------------------------------------------------------
 //  void transferStaticNNCData(const ecl_grid_type* mainEclGrid,
 //                             ecl_file_type* init_file,
 //                             RIGrid* mainGrid);
@@ -375,6 +392,7 @@ class RIReaderECL : public RIReaderInterface
   void transferDynamicNNCData(const ecl_grid_type* mainEclGrid,
                               RIGrid* mainGrid);
 
+  // -------------------------------------------------------
   void ensureDynamicResultAccessIsPresent();
 
 //  QStringList validKeywordsForPorosityModel(const QStringList& keywords,
@@ -390,6 +408,7 @@ class RIReaderECL : public RIReaderInterface
 //                                                const QDateTime& sourSimDateTime);
 
  private:
+  // -------------------------------------------------------
   // Name of file used to start accessing Eclipse output files
   QString m_fileName;
 

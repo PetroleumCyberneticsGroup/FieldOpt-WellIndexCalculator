@@ -29,25 +29,44 @@ wicalc_rixx::~wicalc_rixx() {
 
 // -----------------------------------------------------------------
 wicalc_rixx::wicalc_rixx(Settings::Model::Well well_settings,
+                         Grid::Grid *grid,
+                         RICaseData *RICaseData,
+                         RIReaderECL *RIReaderECL,
+                         RIGrid *RIGrid) {
+
+  RICaseData_ = RICaseData;
+  RIReaderECL_ = RIReaderECL;
+  RIGrid_ = RIGrid;
+  wicalc_rixx(well_settings, grid);
+
+}
+
+// -----------------------------------------------------------------
+wicalc_rixx::wicalc_rixx(Settings::Model::Well well_settings,
                          Grid::Grid *grid) {
 
+  // ---------------------------------------------------------------
   well_settings_ = well_settings;
   cl_ = well_settings_.verb_vector_[3]; // current dbg.msg.level
   grid_ = grid;
 
+  // ---------------------------------------------------------------
   RIReaderECL_ = new RIReaderECL();
   RICaseData_ = new RICaseData(grid_->GetFilePath());
   RIReaderECL_->open(grid_->GetFilePathQString(), RICaseData_);
+
   RICaseData_->computeActiveCellBoundingBoxes();
   RICaseData_->mainGrid()->computeCachedData();
 
   RIGrid_ = RICaseData_->mainGrid();
 
+  // ---------------------------------------------------------------
   grid_count_ = RICaseData_->mainGrid()->gridCount();
   cell_count_ = RICaseData_->mainGrid()->cellCount();
   gcellarray_sz_ = RICaseData_->mainGrid()->globalCellArray().size();
 
 
+  // ---------------------------------------------------------------
   intersections_.resize(gcellarray_sz_);
   fill(intersections_.begin(), intersections_.end(), HUGE_VAL);
 

@@ -19,13 +19,22 @@ using std::endl;
 using std::string;
 using std::vector;
 
-//====================================================================
+//==================================================================
 class wicalc_rixx {
  public:
+  // ---------------------------------------------------------------
   wicalc_rixx(Settings::Model::Well well_settings,
               Grid::Grid *grid);
+
+  wicalc_rixx(Settings::Model::Well well_settings,
+              Grid::Grid *grid,
+              RICaseData* RICaseData_,
+              RIReaderECL* RIReaderECL_,
+              RIGrid* RIGrid_);
+
   ~wicalc_rixx();
 
+  // ---------------------------------------------------------------
   Settings::Model::Well well_settings_;
   vector<double> intersections_;
   Grid::Grid* grid_;
@@ -33,23 +42,28 @@ class wicalc_rixx {
   RICaseData* RICaseData_;
   RIReaderECL* RIReaderECL_;
 
+  // ---------------------------------------------------------------
   WellPath *wellPath_;
   const RIActiveCellInfo* activeCellInfo_;
 
+  // ---------------------------------------------------------------
   void collectIntersectedCells(vector<IntersectedCell> &isc_cells,
                                vector<WellPathCellIntersectionInfo> isc_info,
                                WellDefinition well,
                                WellPath& wellPath,
                                int rank=0);
 
+  // ---------------------------------------------------------------
   void calculateWellPathIntersections(const WellPath& wellPath,
                                       const RIGrid *grid,
                                       vector<double> &isc_values);
 
+  // ---------------------------------------------------------------
   void ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices,
                          vector<WellDefinition> &wells, int rank = 0);
 
  protected:
+  // ---------------------------------------------------------------
   size_t grid_count_;
   size_t cell_count_;
   size_t gcellarray_sz_;
