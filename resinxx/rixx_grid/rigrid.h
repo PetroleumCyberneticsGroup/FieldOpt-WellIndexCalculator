@@ -62,112 +62,143 @@ using std::vector;
 class RIGridBase : public cvf::StructGridInterface
 {
  public:
+  // ---------------------------------------------------------------
   explicit RIGridBase(RIGrid* mainGrid);
   virtual ~RIGridBase(void);
 
+  // ---------------------------------------------------------------
   void setGridPointDimensions(const cvf::Vec3st& gridDimensions)
   { m_gridPointDimensions = gridDimensions;}
 
+  // ---------------------------------------------------------------
   cvf::Vec3st gridPointDimensions()
   { return m_gridPointDimensions; }
 
+  // ---------------------------------------------------------------
   size_t cellCount() const
   { return cellCountI() * cellCountJ() * cellCountK(); }
 
+  // ---------------------------------------------------------------
   RICell& cell(size_t gridLocalCellIndex);
 
+  // ---------------------------------------------------------------
   const RICell& cell(size_t gridLocalCellIndex) const;
 
   size_t reservoirCellIndex(size_t gridLocalCellIndex) const;
 
+  // ---------------------------------------------------------------
   void setIndexToStartOfCells(size_t indexToStartOfCells)
   { m_indexToStartOfCells = indexToStartOfCells; }
 
+  // ---------------------------------------------------------------
   void setGridIndex(size_t index) { m_gridIndex = index; }
 
   size_t gridIndex() const { return m_gridIndex; }
 
+  // ---------------------------------------------------------------
   void setGridId(int id) { m_gridId = id; }
 
   int gridId() const { return m_gridId; }
 
+  // ---------------------------------------------------------------
   double characteristicIJCellSize() const;
 
   string gridName() const;
   void setGridName(const string& gridName);
 
+  // ---------------------------------------------------------------
   bool isMainGrid() const;
 
   RIGrid* mainGrid() const { return m_mainGrid; }
 
+  // ---------------------------------------------------------------
   cvf::BoundingBox boundingBox();
 
  protected:
+  // ---------------------------------------------------------------
   friend class RIGrid; //::initAllSubGridsParentGridPointer();
   void initSubGridParentPointer();
   void initSubCellsMainGridCellIndex();
 
   // Interface implementation
  public:
+  // ---------------------------------------------------------------
   virtual size_t gridPointCountI() const;
   virtual size_t gridPointCountJ() const;
   virtual size_t gridPointCountK() const;
 
+  // ---------------------------------------------------------------
   virtual cvf::Vec3d minCoordinate() const;
   virtual cvf::Vec3d maxCoordinate() const;
   virtual cvf::Vec3d displayModelOffset() const;
 
+  // ---------------------------------------------------------------
   virtual size_t cellIndexFromIJK(
       size_t i, size_t j, size_t k ) const;
 
+  // ---------------------------------------------------------------
   virtual bool ijkFromCellIndex(
       size_t cellIndex,
       size_t* i, size_t* j, size_t* k ) const;
 
+  // ---------------------------------------------------------------
   virtual bool cellIJKFromCoordinate(
       const cvf::Vec3d& coord,
       size_t* i, size_t* j, size_t* k ) const;
 
+  // ---------------------------------------------------------------
   virtual void cellCornerVertices(
       size_t cellIndex,
       cvf::Vec3d vertices[8] ) const;
 
+  // ---------------------------------------------------------------
   virtual cvf::Vec3d cellCentroid(size_t cellIndex ) const;
 
+  // ---------------------------------------------------------------
   virtual void cellMinMaxCordinates(
       size_t cellIndex,
       cvf::Vec3d* minCoordinate,
       cvf::Vec3d* maxCoordinate ) const;
 
+  // ---------------------------------------------------------------
   virtual size_t gridPointIndexFromIJK(
       size_t i, size_t j, size_t k ) const;
 
+  // ---------------------------------------------------------------
   virtual cvf::Vec3d gridPointCoordinate(
       size_t i, size_t j, size_t k ) const;
 
+  // ---------------------------------------------------------------
   virtual bool isCellValid(
       size_t i, size_t j, size_t k ) const;
 
+  // ---------------------------------------------------------------
   virtual bool cellIJKNeighbor(
       size_t i, size_t j, size_t k,
       FaceType face, size_t* neighborCellIndex ) const;
 
  private:
+  // ---------------------------------------------------------------
   std::string m_gridName;
 
+  // ---------------------------------------------------------------
   cvf::Vec3st m_gridPointDimensions;
 
+  // ---------------------------------------------------------------
   ///< Index into the global cell array stored in
   ///< main-grid where this grids cells starts.
   size_t m_indexToStartOfCells;
 
+  // ---------------------------------------------------------------
   ///< The LGR index of this grid. Starts with 1.
   ///< Main grid has index 0.
   size_t m_gridIndex;
 
+  // ---------------------------------------------------------------
   ///< The LGR id of this grid. Main grid has id 0.
   int m_gridId;
 
+  // ---------------------------------------------------------------
   RIGrid* m_mainGrid;
 
   cvf::BoundingBox m_boundingBox;
@@ -222,18 +253,19 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
 //  reservoirCellIndexByGridAndGridLocalCellIndex(size_t gridIdx,
 //                                                size_t gridLocalCellIdx) const;
 
-  // GRID ------------------------------------------------------------
+  // GRID ----------------------------------------------------------
   void addLocalGrid(RILocalGrid* localGrid);
 
   size_t gridCount() const { return m_localGrids.size() + 1; }
 
   RIGridBase* gridByIndex(size_t localGridIndex);
 
+  // ---------------------------------------------------------------
   const RIGridBase* gridByIndex(size_t localGridIndex) const;
 
   RIGridBase* gridById(int localGridId);
 
-  // NNC -------------------------------------------------------------
+  // NNC -----------------------------------------------------------
   RINNCData* nncData();
   void setFaults(const cvf::Collection<RIFault>& faults);
 
@@ -249,11 +281,11 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
 
   bool isFaceNormalsOutwards() const;
 
-  // -----------------------------------------------------------------
+  // ---------------------------------------------------------------
   void computeCachedData();
   void initAllSubGridsParentGridPointer();
 
-  // OVERRIDES -------------------------------------------------------
+  // OVERRIDES -----------------------------------------------------
   virtual cvf::Vec3d displayModelOffset() const;
 
   void setDisplayModelOffset(cvf::Vec3d offset);
@@ -265,40 +297,47 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
 
   cvf::BoundingBox boundingBox() const;
 
-  // RIADEFINES ------------------------------------------------------
+  // RIADEFINES ----------------------------------------------------
   QString undefinedGridFaultName()
   { return "Undefined Grid Faults"; };
 
   QString undefinedGridFaultWithInactiveName()
   { return "Undefined Grid Faults With Inactive"; };
 
-  // VARIABLES -------------------------------------------------------
+  // VARIABLES -----------------------------------------------------
  private:
   void initAllSubCellsMainGridCellIndex();
   void buildCellSearchTree();
   bool hasFaultWithName(const QString& name) const;
 
+  // ---------------------------------------------------------------
   // Global vertex table
   vector<cvf::Vec3d> m_nodes;
 
+  // ---------------------------------------------------------------
   // Global array of all cells in
   // reservoir (incl. the ones in LGR's)
   vector<RICell> m_cells;
 
+  // ---------------------------------------------------------------
   ///< List of all the LGR's in this reservoir
   cvf::Collection<RILocalGrid> m_localGrids;
 
+  // ---------------------------------------------------------------
   // Mapping from LGR Id to index.
   vector<size_t> m_gridIdToIndexMapping;
 
   cvf::Collection<RIFault> m_faults;
 
+  // ---------------------------------------------------------------
   RINNCData* m_nncData;
   // cvf::ref<RINNCData> m_nncData;
 
+  // ---------------------------------------------------------------
   RIFaultsPrCellAccumulator* m_faultsPrCellAcc;
   // cvf::ref<RIFaultsPrCellAccumulator> m_faultsPrCellAcc;
 
+  // ---------------------------------------------------------------
   cvf::Vec3d m_displayModelOffset;
   cvf::ref<cvf::BoundingBoxTree> m_cellSearchTree;
   mutable cvf::BoundingBox m_boundingBox;
@@ -337,20 +376,24 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
 class RIActiveCellInfo // : public cvf::Object
 {
  public:
+  // ---------------------------------------------------------------
   RIActiveCellInfo();
 
+  // ---------------------------------------------------------------
   void setReservoirCellCount(size_t reservoirCellCount);
   size_t reservoirCellCount() const;
   size_t reservoirActiveCellCount() const;
   size_t reservoirCellResultCount() const;
   bool isCoarseningActive() const;
 
+  // ---------------------------------------------------------------
   bool isActive(size_t reservoirCellIndex) const;
   size_t cellResultIndex(size_t reservoirCellIndex) const;
 
   void setCellResultIndex(size_t reservoirCellIndex,
                           size_t globalResultCellIndex);
 
+  // ---------------------------------------------------------------
   void setGridCount(size_t gridCount);
 
   void setGridActiveCellCounts(size_t gridIndex,
@@ -359,6 +402,7 @@ class RIActiveCellInfo // : public cvf::Object
   void gridActiveCellCounts(size_t gridIndex,
                             size_t& activeCellCount) const;
 
+  // ---------------------------------------------------------------
   void computeDerivedData();
 
   void setIJKBoundingBox(const cvf::Vec3st& min,
@@ -367,12 +411,16 @@ class RIActiveCellInfo // : public cvf::Object
   void IJKBoundingBox(cvf::Vec3st& min,
                       cvf::Vec3st& max) const;
 
+  // ---------------------------------------------------------------
   cvf::BoundingBox geometryBoundingBox() const;
+
   void setGeometryBoundingBox(cvf::BoundingBox bb);
 
+  // ---------------------------------------------------------------
   void clear();
 
  private:
+  // ---------------------------------------------------------------
   class GridActiveCellCounts
   {
    public:
