@@ -40,7 +40,7 @@ RIGridBase::RIGridBase(RIGrid* mainGrid):
     m_mainGrid(mainGrid),
     m_indexToStartOfCells(0) {
 
-  if (mainGrid == NULL) {
+  if (mainGrid == nullptr) {
     m_gridIndex = 0;
     m_gridId    = 0;
 
@@ -52,6 +52,7 @@ RIGridBase::RIGridBase(RIGrid* mainGrid):
 
 // -----------------------------------------------------------------
 RIGridBase::~RIGridBase(void) {
+  cout << "[wic-rixx]deleting vars.----- RIGridBase" << endl;
 }
 
 // -----------------------------------------------------------------
@@ -346,6 +347,41 @@ cvf::BoundingBox RIGridBase::boundingBox() {
   return m_boundingBox;
 }
 
+// -----------------------------------------------------------------
+size_t RIGridBase::addCoarseningBox(size_t i1, size_t i2, size_t j1,
+                                    size_t j2, size_t k1, size_t k2) {
+  caf::SizeTArray6 box;
+  box[0] = i1;
+  box[1] = i2;
+  box[2] = j1;
+  box[3] = j2;
+  box[4] = k1;
+  box[5] = k2;
+
+  m_coarseningBoxInfo.push_back(box);
+
+  size_t coarseningBoxIndex = m_coarseningBoxInfo.size() - 1;
+
+  for (size_t k = k1; k <= k2; k++) {
+
+    for (size_t j = j1; j <= j2; j++) {
+
+      for (size_t i = i1; i <= i2; i++) {
+
+        size_t cellIdx = this->cellIndexFromIJK(i, j, k);
+
+        RICell& c = this->cell(cellIdx);
+        CVF_ASSERT(c.coarseningBoxIndex() == cvf::UNDEFINED_SIZE_T);
+
+        c.setCoarseningBoxIndex(coarseningBoxIndex);
+      }
+    }
+  }
+
+  return coarseningBoxIndex;
+}
+
+
 ////////////////////////////////////////////////////////////////////
 //
 // Copyright (C) 2011-     Statoil ASA
@@ -388,6 +424,8 @@ RIGrid::RIGrid(string file_path)
 
 // -----------------------------------------------------------------
 RIGrid::~RIGrid(void) {
+
+  cout << "[wic-rixx]deleting vars.----- RIGrid" << endl;
 
   // Should be reverted to smart pointers
   // delete m_nncData;
@@ -814,7 +852,7 @@ RIGrid::findFaultFromCellIndexAndCellFace(
 {
   CVF_ASSERT(m_faultsPrCellAcc.notNull());
 
-  if (face == cvf::StructGridInterface::NO_FACE) return NULL;
+  if (face == cvf::StructGridInterface::NO_FACE) return nullptr;
 
   int faultIdx = m_faultsPrCellAcc->faultIdx(reservoirCellIndex, face);
   if (faultIdx !=  RIFaultsPrCellAccumulator::NO_FAULT )
@@ -842,7 +880,7 @@ RIGrid::findFaultFromCellIndexAndCellFace(
     }
   }
 #endif
-  return NULL;
+  return nullptr;
 }
 
 // -----------------------------------------------------------------
@@ -898,10 +936,9 @@ void RIGrid::buildCellSearchTree() {
     }
 
     m_cellSearchTree = new cvf::BoundingBoxTree;
-    m_cellSearchTree->buildTreeFromBoundingBoxes(cellBoundingBoxes, NULL);
+    m_cellSearchTree->buildTreeFromBoundingBoxes(cellBoundingBoxes, nullptr);
 
     // print_dbg_msg_wic_ri(__func__, ss.str(), time_since_msecs(tstart), 2);
-
   }
 }
 
@@ -1132,5 +1169,6 @@ RILocalGrid::RILocalGrid(RIGrid* mainGrid):
 }
 
 RILocalGrid::~RILocalGrid() {
+  cout << "[wic-rixx]deleting vars.----- RILocalGrid" << endl;
 }
 

@@ -33,14 +33,14 @@ RICaseData::RICaseData(string file_path) {
   m_mainGrid = new RIGrid(file_path);
 //  m_ownerCase = ownerCase;
 
-//  m_matrixModelResults = new RigCaseCellResultsData(this);
-//  m_fractureModelResults = new RigCaseCellResultsData(this);
+  // m_matrixModelResults = new RICaseCellResultsData(this);
+  // m_fractureModelResults = new RigCaseCellResultsData(this);
 
   m_activeCellInfo = new RIActiveCellInfo;
   m_fractureActiveCellInfo = new RIActiveCellInfo;
 
-//  m_matrixModelResults->setActiveCellInfo(m_activeCellInfo.p());
-//  m_fractureModelResults->setActiveCellInfo(m_fractureActiveCellInfo.p());
+  // m_matrixModelResults->setActiveCellInfo(m_activeCellInfo.p());
+  // m_fractureModelResults->setActiveCellInfo(m_fractureActiveCellInfo.p());
 
 //  m_unitsType = RiaEclipseUnitTools::UNITS_METRIC;
   PorosityModelTypeMATRIX_ = PorosityModelType::MATRIX_MODEL;
@@ -50,6 +50,7 @@ RICaseData::RICaseData(string file_path) {
 
 // -----------------------------------------------------------------
 RICaseData::~RICaseData() {
+  cout << "[wic-rixx]deleting vars.----- RICaseData()" << endl;
   delete m_mainGrid;
   delete m_activeCellInfo;
   delete m_fractureActiveCellInfo;
@@ -68,14 +69,13 @@ const RIGrid* RICaseData::mainGrid() const {
 // -----------------------------------------------------------------
 void RICaseData::setMainGrid(RIGrid* mainGrid) {
   m_mainGrid = mainGrid;
-//  m_matrixModelResults->setMainGrid(m_mainGrid);
-//  m_fractureModelResults->setMainGrid(m_mainGrid);
+  // m_matrixModelResults->setMainGrid(m_mainGrid);
+  // m_fractureModelResults->setMainGrid(m_mainGrid);
 }
 
 // -----------------------------------------------------------------
 // Get grid by index. Main grid has index 0, so first lgr has idx 1.
 RIGridBase* RICaseData::grid(size_t index) {
-
   CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
@@ -83,14 +83,12 @@ RIGridBase* RICaseData::grid(size_t index) {
 // -----------------------------------------------------------------
 // Get grid by index. Main grid has index 0, so first lgr has idx 1.
 const RIGridBase* RICaseData::grid(size_t index) const {
-
   CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
 
 // -----------------------------------------------------------------
 size_t RICaseData::gridCount() const {
-
   CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridCount();
 }
@@ -133,9 +131,16 @@ void RICaseData::computeActiveCellIJKBBox() {
 //      && m_activeCellInfo != 0
 //      && m_fractureActiveCellInfo != 0) {
 
+  // -------------------------------------------------------------
+  cout << FLGREEN
+       << "[wic-rixx]compActCellIJKBBox- (ricasedata.cpp)"
+       << AEND << endl;
+
+  // -------------------------------------------------------------
   CellRangeBB matrixModelActiveBB;
   CellRangeBB fractureModelActiveBB;
 
+  // -------------------------------------------------------------
   size_t idx;
   for (idx = 0; idx < m_mainGrid->cellCount(); idx++) {
 
@@ -177,8 +182,8 @@ RICaseData::activeCellInfo(PorosityModelType porosityModel) {
 }
 
 // -----------------------------------------------------------------
-const RIActiveCellInfo* RICaseData::activeCellInfo(
-    PorosityModelType porosityModel) const {
+const RIActiveCellInfo*
+RICaseData::activeCellInfo(PorosityModelType porosityModel) const {
 
   if (porosityModel == MATRIX_MODEL) {
     return m_activeCellInfo;
@@ -211,17 +216,25 @@ void RICaseData::computeActiveCellsGeometryBoundingBox()
 //  }
 
   if (m_mainGrid != 0) {
+    // -------------------------------------------------------------
+    cout << FLGREEN
+         << "[wic-rixx]compActCellsGeoBBox (ricasedata.cpp)"
+         << AEND << endl;
+
     cvf::BoundingBox bb;
     m_activeCellInfo->setGeometryBoundingBox(bb);
     m_fractureActiveCellInfo->setGeometryBoundingBox(bb);
+    // cout << bb.debugString().toStdString() << endl;
     return;
   }
 
+  // ---------------------------------------------------------------
   RIActiveCellInfo* activeInfos[2];
   activeInfos[0] = m_fractureActiveCellInfo;
   // Last, to make this bb.min become display offset
   activeInfos[1] = m_activeCellInfo;
 
+  // ---------------------------------------------------------------
   cvf::BoundingBox bb;
   for (int acIdx = 0; acIdx < 2; ++acIdx)
   {
@@ -375,7 +388,7 @@ typedef struct well_conn_struct well_conn_type;
 //  vertex indices
 //
 
-static const size_t cellMappingECLRi[8] = { 0, 1, 3, 2, 4, 5, 7, 6 };
+static const size_t cellMappingECLRi[ 8 ] = { 0, 1, 3, 2, 4, 5, 7, 6 };
 
 // -----------------------------------------------------------------
 // Static functions
@@ -391,22 +404,29 @@ bool transferGridCellData(RIGrid* mainGrid,
 
   CVF_ASSERT(activeCellInfo && fractureActiveCellInfo);
 
-  int cellCount = ecl_grid_get_global_size(localEclGrid);
+  // ---------------------------------------------------------------
+  int cellCount = ecl_grid_get_global_size( localEclGrid );
   size_t cellStartIndex = mainGrid->globalCellArray().size();
   size_t nodeStartIndex = mainGrid->nodes().size();
 
+  // ---------------------------------------------------------------
   RICell defaultCell;
-  defaultCell.setHostGrid(localGrid);
+  defaultCell.setHostGrid( localGrid );
   mainGrid->globalCellArray().resize(cellStartIndex + cellCount, defaultCell);
 
+  // ---------------------------------------------------------------
   mainGrid->nodes().resize(nodeStartIndex + cellCount*8, cvf::Vec3d(0,0,0));
 
-  int progTicks = 100;
-  double cellsPrProgressTick = cellCount/(float)progTicks;
-//  caf::ProgressInfo progInfo(progTicks, "");
+  // ---------------------------------------------------------------
+  // int progTicks = 100;
+  // double cellsPrProgressTick = cellCount/(float)progTicks;
+  // caf::ProgressInfo progInfo(progTicks, "");
+
+  // ---------------------------------------------------------------
   size_t computedCellCount = 0;
   // Loop over cells and fill them with data
 
+  // ---------------------------------------------------------------
 #pragma omp parallel for
   for (int gridLocalCellIndex = 0; gridLocalCellIndex < cellCount; ++gridLocalCellIndex) {
 
@@ -505,19 +525,28 @@ bool RIReaderECL::transferGeometry(const ecl_grid_type* mainEclGrid,
                                    RICaseData* eclipseCase) {
   CVF_ASSERT(eclipseCase);
 
+  // ---------------------------------------------------------------
+  cout << FLGREEN
+       << "[wic-rixx]Reading geometry--- (ricasedata.cpp)"
+       << AEND << endl;
+
+  // ---------------------------------------------------------------
   if (!mainEclGrid) {
     // Some error
     return false;
   }
 
+  // ---------------------------------------------------------------
   RIActiveCellInfo* activeCellInfo =
       eclipseCase->activeCellInfo(MATRIX_MODEL);
 
+  // ---------------------------------------------------------------
   RIActiveCellInfo* fractureActiveCellInfo =
       eclipseCase->activeCellInfo(FRACTURE_MODEL);
 
   CVF_ASSERT(activeCellInfo && fractureActiveCellInfo);
 
+  // ---------------------------------------------------------------
   RIGrid* mainGrid = eclipseCase->mainGrid();
   CVF_ASSERT(mainGrid);
 
@@ -540,30 +569,36 @@ bool RIReaderECL::transferGeometry(const ecl_grid_type* mainEclGrid,
   int numLGRs = ecl_grid_get_num_lgr(mainEclGrid);
   int lgrIdx;
 
+  // ---------------------------------------------------------------
   for (lgrIdx = 0; lgrIdx < numLGRs; ++lgrIdx) {
     ecl_grid_type* localEclGrid = ecl_grid_iget_lgr(mainEclGrid, lgrIdx);
 
     string lgrName = ecl_grid_get_name(localEclGrid);
     int lgrId = ecl_grid_get_lgr_nr(localEclGrid);
 
+    // -------------------------------------------------------------
     cvf::Vec3st  gridPointDim(0,0,0);
     gridPointDim.x() = ecl_grid_get_nx(localEclGrid) + 1;
     gridPointDim.y() = ecl_grid_get_ny(localEclGrid) + 1;
     gridPointDim.z() = ecl_grid_get_nz(localEclGrid) + 1;
 
+    // -------------------------------------------------------------
     RILocalGrid* localGrid = new RILocalGrid(mainGrid);
     localGrid->setGridId(lgrId);
     mainGrid->addLocalGrid(localGrid);
 
+    // -------------------------------------------------------------
     localGrid->setIndexToStartOfCells(totalCellCount);
     localGrid->setGridName(lgrName);
     localGrid->setGridPointDimensions(gridPointDim);
     totalCellCount += ecl_grid_get_global_size(localEclGrid);
   }
 
+  // ---------------------------------------------------------------
   activeCellInfo->setReservoirCellCount(totalCellCount);
   fractureActiveCellInfo->setReservoirCellCount(totalCellCount);
 
+  // ---------------------------------------------------------------
   // Reserve room for the cells and nodes and fill them with data
   mainGrid->globalCellArray().reserve(totalCellCount);
   mainGrid->nodes().reserve(8*totalCellCount);
@@ -572,42 +607,56 @@ bool RIReaderECL::transferGeometry(const ecl_grid_type* mainEclGrid,
 //  progInfo.setProgressDescription("Main Grid");
 //  progInfo.setNextProgressIncrement(3);
 
+  // ---------------------------------------------------------------
   transferGridCellData(mainGrid, activeCellInfo,
                        fractureActiveCellInfo,
                        mainGrid, mainEclGrid, 0, 0);
 
 //  progInfo.setProgress(3);
 
+  // ---------------------------------------------------------------
   size_t globalMatrixActiveSize = ecl_grid_get_nactive(mainEclGrid);
   size_t globalFractureActiveSize = ecl_grid_get_nactive_fracture(mainEclGrid);
 
+  // ---------------------------------------------------------------
   activeCellInfo->setGridCount(1 + numLGRs);
   fractureActiveCellInfo->setGridCount(1 + numLGRs);
 
+  // ---------------------------------------------------------------
   activeCellInfo->setGridActiveCellCounts(0, globalMatrixActiveSize);
   fractureActiveCellInfo->setGridActiveCellCounts(0, globalFractureActiveSize);
 
-//  transferCoarseningInfo(mainEclGrid, mainGrid);
+  transferCoarseningInfo(mainEclGrid, mainGrid);
 
-
+  // ---------------------------------------------------------------
   for (lgrIdx = 0; lgrIdx < numLGRs; ++lgrIdx) {
 //    progInfo.setProgressDescription("LGR number " + QString::number(lgrIdx+1));
 
+    // ---------------------------------------------------------------
     ecl_grid_type* localEclGrid = ecl_grid_iget_lgr(mainEclGrid, lgrIdx);
     RILocalGrid* localGrid = static_cast<RILocalGrid*>(mainGrid->gridByIndex(lgrIdx+1));
 
-    transferGridCellData(mainGrid, activeCellInfo, fractureActiveCellInfo, localGrid, localEclGrid, globalMatrixActiveSize, globalFractureActiveSize);
+    transferGridCellData(mainGrid,
+                         activeCellInfo,
+                         fractureActiveCellInfo,
+                         localGrid,
+                         localEclGrid,
+                         globalMatrixActiveSize,
+                         globalFractureActiveSize);
 
+    // ---------------------------------------------------------------
     int matrixActiveCellCount = ecl_grid_get_nactive(localEclGrid);
     globalMatrixActiveSize += matrixActiveCellCount;
 
+    // ---------------------------------------------------------------
     int fractureActiveCellCount = ecl_grid_get_nactive_fracture(localEclGrid);
     globalFractureActiveSize += fractureActiveCellCount;
 
+    // ---------------------------------------------------------------
     activeCellInfo->setGridActiveCellCounts(lgrIdx + 1, matrixActiveCellCount);
     fractureActiveCellInfo->setGridActiveCellCounts(lgrIdx + 1, fractureActiveCellCount);
 
-//    transferCoarseningInfo(localEclGrid, localGrid);
+    transferCoarseningInfo(localEclGrid, localGrid);
 
 //    progInfo.setProgress(3 + lgrIdx);
   }
@@ -632,17 +681,16 @@ bool RIReaderECL::open(const QString& fileName,
        << "[wic-rixx]Reading Grid------- (ricasedata.cpp)"
        << AEND << endl;
   QStringList fileSet;
-  if (!RIECLFileTools::findSiblingFilesWithSameBaseName(fileName, &fileSet)) {
+
+  // ---------------------------------------------------------------
+  if (!RIECLFileTools::findSiblingFilesWithSameBaseName(fileName,
+                                                        &fileSet)) {
     return false;
   }
   m_fileName = fileName;
   m_filesWithSameBaseName = fileSet;
 
   // ---------------------------------------------------------------
-  cout << FLGREEN
-       << "[wic-rixx]Reading geometry--- (ricasedata.cpp)"
-       << AEND << endl;
-      ;
   // Todo: Needs to check existence of file before calling ert, else it will abort
   ecl_grid_type * mainEclGrid = ecl_grid_alloc(fileName.toLatin1().data());
   if (!transferGeometry(mainEclGrid, eclipseCase)) return false;
@@ -652,8 +700,8 @@ bool RIReaderECL::open(const QString& fileName,
   // cvf::Collection<RIFault> faults;
   // importFaults(fileSet, &faults);
 
-  // RIGrid* mainGrid = eclipseCase->mainGrid();
-  // mainGrid->setFaults(faults);
+   RIGrid* mainGrid = eclipseCase->mainGrid();
+//   mainGrid->setFaults(faults);
   m_eclipseCase = eclipseCase;
 
   // ---------------------------------------------------------------
@@ -1092,12 +1140,41 @@ void RIReaderECL::openInitFile() {
     return;
   }
 
+  // ---------------------------------------------------------------
   QString initFileName =
       RIECLFileTools::firstFileNameOfType(m_filesWithSameBaseName,
                                           ECL_INIT_FILE);
 
+  // ---------------------------------------------------------------
   if (initFileName.size() > 0) {
-    m_ecl_init_file = ecl_file_open(initFileName.toLatin1().data(), ECL_FILE_CLOSE_STREAM);
+    m_ecl_init_file = ecl_file_open(initFileName.toLatin1().data(),
+                                    ECL_FILE_CLOSE_STREAM);
+  }
+}
+
+// -----------------------------------------------------------------
+void RIReaderECL::transferCoarseningInfo(const ecl_grid_type* eclGrid,
+                                                    RIGridBase* grid) {
+
+  // ---------------------------------------------------------------
+  int coarseGroupCount = ecl_grid_get_num_coarse_groups(eclGrid);
+
+  // ---------------------------------------------------------------
+  for (int i = 0; i < coarseGroupCount; i++) {
+
+    // -------------------------------------------------------------
+    ecl_coarse_cell_type* coarse_cell = ecl_grid_iget_coarse_group(eclGrid, i);
+    CVF_ASSERT(coarse_cell);
+
+    // -------------------------------------------------------------
+    size_t i1 = static_cast<size_t>(ecl_coarse_cell_get_i1(coarse_cell));
+    size_t i2 = static_cast<size_t>(ecl_coarse_cell_get_i2(coarse_cell));
+    size_t j1 = static_cast<size_t>(ecl_coarse_cell_get_j1(coarse_cell));
+    size_t j2 = static_cast<size_t>(ecl_coarse_cell_get_j2(coarse_cell));
+    size_t k1 = static_cast<size_t>(ecl_coarse_cell_get_k1(coarse_cell));
+    size_t k2 = static_cast<size_t>(ecl_coarse_cell_get_k2(coarse_cell));
+
+    grid->addCoarseningBox(i1, i2, j1, j2, k1, k2);
   }
 }
 

@@ -157,7 +157,7 @@ class WellPath : public cvf::Object
                                    bool* foundCell);
 
   // ---------------------------------------------------------------
-  double calculateTransmissibility(RICaseData* eclipseCase,
+  double calculateTransmissibility(// RICaseData* eclipseCase,
                                    const cvf::Vec3d& internalCellLengths,
                                    double skinFactor,
                                    double wellRadius,
@@ -181,7 +181,7 @@ class WellPath : public cvf::Object
                                            double skinFactor,
                                            double cDarcyForRelevantUnit);
 
-  CellDir calculateDirectionInCell(RICaseData* eclipseCase,
+  CellDir calculateDirectionInCell(// RICaseData* eclipseCase,
                                    WellPathCellIntersectionInfo cellInfo,
                                    IntersectedCell &icell);
 

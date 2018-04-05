@@ -24,26 +24,28 @@ class wicalc_rixx {
  public:
   // ---------------------------------------------------------------
   wicalc_rixx(Settings::Model::Well well_settings,
-              Grid::Grid *grid);
-
-  wicalc_rixx(Settings::Model::Well well_settings,
               Grid::Grid *grid,
-              RICaseData* RICaseData_,
-              RIReaderECL* RIReaderECL_,
-              RIGrid* RIGrid_);
+              RICaseData *ricasedata = nullptr);
 
+  // ---------------------------------------------------------------
   ~wicalc_rixx();
 
   // ---------------------------------------------------------------
   Settings::Model::Well well_settings_;
   vector<double> intersections_;
   Grid::Grid* grid_;
-  RIGrid* RIGrid_;
-  RICaseData* RICaseData_;
-  RIReaderECL* RIReaderECL_;
+
+  // -------------------------------------------------------
+  RICaseData* ricasedata_;
+
+  // Experimental
+  // cvf::ref<RICaseData> ricasedatac_;
+  // cvf::ref<RICaseData> ricasedatap_;
+  RIReaderECL* rireaderecl_;
+  // RIGrid* rigrid_;
 
   // ---------------------------------------------------------------
-  WellPath *wellPath_;
+  // WellPath *wellPath_;
   const RIActiveCellInfo* activeCellInfo_;
 
   // ---------------------------------------------------------------
@@ -55,18 +57,18 @@ class wicalc_rixx {
 
   // ---------------------------------------------------------------
   void calculateWellPathIntersections(const WellPath& wellPath,
-                                      const RIGrid *grid,
                                       vector<double> &isc_values);
 
   // ---------------------------------------------------------------
   void ComputeWellBlocks(map<string, vector<IntersectedCell>> &well_indices,
-                         vector<WellDefinition> &wells, int rank = 0);
+                         vector<WellDefinition> &wells,
+                         int rank = 0);
 
  protected:
   // ---------------------------------------------------------------
-  size_t grid_count_;
-  size_t cell_count_;
-  size_t gcellarray_sz_;
+  // size_t grid_count_;
+  // size_t cell_count_;
+  // size_t gcellarray_sz_;
   int cl_; // cl: current dbg.msg.level
 
 };

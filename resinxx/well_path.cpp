@@ -102,7 +102,7 @@ WellPath::findRawHexCellIntersections(const RIGrid* grid,
   }
 
   str1.str("");
-  str1 << "# of interections found = " << intersections.size();
+  str1 << "# of intersections found = " << intersections.size();
   print_dbg_msg_wic_ri(__func__, str1.str(), 0.0, 0);
   // print_dbg_msg_wic_ri(__func__, str0.str(), time_since_msecs(tstart), 2);
 
@@ -183,8 +183,7 @@ size_t WellPath::findCellFromCoords(const RIGrid* grid,
 
 // -----------------------------------------------------------------
 double
-WellPath::calculateTransmissibility(RICaseData* eclipseCase,
-                                    const cvf::Vec3d& internalCellLengths,
+WellPath::calculateTransmissibility(const cvf::Vec3d& internalCellLengths,
                                     double skinFactor,
                                     double wellRadius,
                                     size_t cellIndex,
@@ -251,7 +250,6 @@ WellPath::calculateTransmissibility(RICaseData* eclipseCase,
       pow(transx, 2.0) + pow(transy, 2.0) + pow(transz, 2.0));
 
   return wcf;
-
 }
 
 // -----------------------------------------------------------------
@@ -314,8 +312,7 @@ double WellPath::peacemanRadius(double permeabilityNormalDirection1,
 
 // -----------------------------------------------------------------
 CellDir
-WellPath::calculateDirectionInCell(RICaseData* eclipseCase,
-                                   WellPathCellIntersectionInfo cell,
+WellPath::calculateDirectionInCell(WellPathCellIntersectionInfo cell,
                                    IntersectedCell &icell) {
 
   // -------------------------------------------------------------

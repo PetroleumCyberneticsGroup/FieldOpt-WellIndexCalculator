@@ -47,6 +47,8 @@
 // -----------------------------------------------------------------
 #include "rigrid.h"
 
+#include "../rixx_core_geom/cvfObjectx.h"
+
 // -----------------------------------------------------------------
 using std::vector;
 using std::set;
@@ -64,29 +66,42 @@ enum PorosityModelType {
 class RICaseData : public cvf::Object
 {
  public:
+  // ---------------------------------------------------------------
   explicit RICaseData(string file_path);
-  ~RICaseData();
 
+  // destructor is called no matter what after function
+  // wicalc_rixx::ComputeWellBlocks, this cannot be overriden
+  // by deleting the destructor ~RICaseData() = delete; since
+  // it is inherited by cvf::Object!!!
+  // ~RICaseData() = delete;
+  ~RICaseData();
+  // The alternative is to NOT have RICaseData inherit from
+  // cvf::Object, but then class RIExtractor complains because
+  // it demands that the RICaseData passed to it has cvf::Object
+  // members...
+
+  // ---------------------------------------------------------------
   // Set RIGrid
   RIGrid* mainGrid();
   const RIGrid* mainGrid() const;
   void setMainGrid(RIGrid* mainGrid);
 
-//  void allGrids(std::vector<RIGridBase*>* grids); // To be removed
-//  void allGrids(std::vector<const RIGridBase*>* grids) const;// To be removed
+  // ---------------------------------------------------------------
+  // void allGrids(std::vector<RIGridBase*>* grids); // To be removed
+  // void allGrids(std::vector<const RIGridBase*>* grids) const;// To be removed
 
+  // ---------------------------------------------------------------
   const RIGridBase* grid(size_t index) const;
   RIGridBase* grid(size_t index);
   size_t gridCount() const;
 
-//  RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel);
-//  const RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel) const;
+  // RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel);
+  // const RigCaseCellResultsData* results(RiaDefines::PorosityModelType porosityModel) const;
 
-//    const std::vector<double>* resultValues(RiaDefines::PorosityModelType porosityModel,
-//                                            RiaDefines::ResultCatType type,
-//                                            const QString& resultName,
-//                                            size_t timeStepIndex);
-
+  //  const std::vector<double>* resultValues(RiaDefines::PorosityModelType porosityModel,
+  //                                          RiaDefines::ResultCatType type,
+  //                                          const QString& resultName,
+  //                                          size_t timeStepIndex);
 
 
   RIActiveCellInfo* activeCellInfo(PorosityModelType MATRIX_MODEL);
@@ -351,8 +366,8 @@ class RIReaderECL : public RIReaderInterface
   static bool transferGeometry(const ecl_grid_type* mainEclGrid,
                                RICaseData* eclipseCase);
 
-//  static void transferCoarseningInfo(const ecl_grid_type* eclGrid,
-//                                     RigGridBase* grid);
+  static void transferCoarseningInfo(const ecl_grid_type* eclGrid,
+                                     RIGridBase* grid);
 
 //  virtual std::set<RiaDefines::PhaseType> availablePhases() const override;
 

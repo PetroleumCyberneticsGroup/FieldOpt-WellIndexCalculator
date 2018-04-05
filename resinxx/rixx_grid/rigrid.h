@@ -114,6 +114,9 @@ class RIGridBase : public cvf::StructGridInterface
   // ---------------------------------------------------------------
   cvf::BoundingBox boundingBox();
 
+  // ---------------------------------------------------------------
+  size_t addCoarseningBox(size_t i1, size_t i2, size_t j1, size_t j2, size_t k1, size_t k2);
+
  protected:
   // ---------------------------------------------------------------
   friend class RIGrid; //::initAllSubGridsParentGridPointer();
@@ -203,6 +206,9 @@ class RIGridBase : public cvf::StructGridInterface
 
   cvf::BoundingBox m_boundingBox;
 
+  // ---------------------------------------------------------------
+  std::vector<caf::SizeTArray6> m_coarseningBoxInfo;
+
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -257,6 +263,8 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
   void addLocalGrid(RILocalGrid* localGrid);
 
   size_t gridCount() const { return m_localGrids.size() + 1; }
+
+  size_t gridCount() { return m_localGrids.size() + 1; }
 
   RIGridBase* gridByIndex(size_t localGridIndex);
 
