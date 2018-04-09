@@ -88,11 +88,6 @@ endif()
 if (BUILD_TESTING)
 
     # Unit tests
-    find_package(GTest REQUIRED)
-
-    include_directories(${GTEST_INCLUDE_DIRS}
-            ${EIGEN3_INCLUDE_DIR} tests)
-
     add_executable(test_wellindexcalculator
             tests/test_intersected_cells.cpp
             tests/test_single_cell_wellindex.cpp
@@ -100,7 +95,8 @@ if (BUILD_TESTING)
 
     target_link_libraries(test_wellindexcalculator
             fieldopt::wellindexcalculator
-            ${GTEST_BOTH_LIBRARIES}
+            ${gtest}
+            ${gtest_main}
             ${CMAKE_THREAD_LIBS_INIT})
 
     add_test(NAME test_wellindexcalculator
