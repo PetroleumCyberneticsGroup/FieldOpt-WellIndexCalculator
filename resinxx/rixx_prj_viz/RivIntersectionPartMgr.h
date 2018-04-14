@@ -47,7 +47,10 @@ class DrawableGeo;
 class RigFemPart;
 class RigFemResultAddress;
 class RigGeoMechCaseData;
-class RigMainGrid;
+
+//class RigMainGrid;
+class RIGrid;
+
 class RigResultAccessor;
 class Rim3dView;
 class RimCellEdgeColors;
@@ -81,20 +84,20 @@ class RivIntersectionPartMgr : public cvf::Object
   //                      const RivTernaryScalarMapper* ternaryColorMapper);
 
   // -------------------------------------------------------------
-  void
-  appendNativeCrossSectionFacesToModel(cvf::ModelBasicList* model,
-                                       cvf::Transform* scaleTransform);
+  // void
+  // appendNativeCrossSectionFacesToModel(cvf::ModelBasicList* model,
+  //                                     cvf::Transform* scaleTransform);
 
   // -------------------------------------------------------------
-  void
-  appendMeshLinePartsToModel(cvf::ModelBasicList* model,
-                             cvf::Transform* scaleTransform);
+  // void
+  // appendMeshLinePartsToModel(cvf::ModelBasicList* model,
+  //                           cvf::Transform* scaleTransform);
 
   // -------------------------------------------------------------
-  void
-  appendPolylinePartsToModel(Rim3dView& view,
-                             cvf::ModelBasicList* model,
-                             cvf::Transform* scaleTransform);
+  // void
+  // appendPolylinePartsToModel(Rim3dView& view,
+  //                            cvf::ModelBasicList* model,
+  //                           cvf::Transform* scaleTransform);
 
   // -------------------------------------------------------------
   const RimIntersection* intersection() const;

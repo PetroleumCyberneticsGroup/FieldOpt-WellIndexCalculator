@@ -34,8 +34,12 @@
 #include <vector>
 
 // ---------------------------------------------------------------
-class RigMainGrid;
-class RigActiveCellInfo;
+// class RigMainGrid;
+class RIGrid;
+
+//class RigActiveCellInfo;
+class RICellInfo;
+
 class RigResultAccessor;
 class RimIntersection;
 class RivIntersectionHexGridInterface;
@@ -51,12 +55,13 @@ class DrawableGeo;
 class RivIntersectionGeometryGenerator : public cvf::Object {
  public:
   // -------------------------------------------------------------
-  RivIntersectionGeometryGenerator(RimIntersection* crossSection,
-                                   std::vector<std::vector<cvf::Vec3d> > &polylines,
-                                   const cvf::Vec3d& extrusionDirection,
-                                   const RivIntersectionHexGridInterface* grid,
-                                   bool isFlattened,
-                                     const cvf::Vec3d& flattenedPolylineStartPoint);
+  RivIntersectionGeometryGenerator(
+      RimIntersection* crossSection,
+      std::vector<std::vector<cvf::Vec3d> > &polylines,
+      const cvf::Vec3d& extrusionDirection,
+      const RivIntersectionHexGridInterface* grid,
+      bool isFlattened,
+      const cvf::Vec3d& flattenedPolylineStartPoint);
 
   // -------------------------------------------------------------
   ~RivIntersectionGeometryGenerator();
@@ -68,55 +73,78 @@ class RivIntersectionGeometryGenerator : public cvf::Object {
   // Generate geometry
   cvf::ref<cvf::DrawableGeo> generateSurface();
   cvf::ref<cvf::DrawableGeo> createMeshDrawable();
-    cvf::ref<cvf::DrawableGeo>  createFaultMeshDrawable();
+  cvf::ref<cvf::DrawableGeo>  createFaultMeshDrawable();
 
+  // -------------------------------------------------------------
   cvf::ref<cvf::DrawableGeo> createLineAlongPolylineDrawable();
-    cvf::ref<cvf::DrawableGeo>  createLineAlongExtrusionLineDrawable(const std::vector<cvf::Vec3d>& extrusionLine);
-  cvf::ref<cvf::DrawableGeo> createPointsFromPolylineDrawable();
-    cvf::ref<cvf::DrawableGeo>  createPointsFromExtrusionLineDrawable(const std::vector<cvf::Vec3d>& extrusionLine);
+  cvf::ref<cvf::DrawableGeo>  createLineAlongExtrusionLineDrawable(
+      const std::vector<cvf::Vec3d>& extrusionLine);
 
-    const std::vector<std::vector<cvf::Vec3d> >&     flattenedOrOffsettedPolyLines() { return m_flattenedOrOffsettedPolyLines; }
+  // -------------------------------------------------------------
+  cvf::ref<cvf::DrawableGeo> createPointsFromPolylineDrawable();
+  cvf::ref<cvf::DrawableGeo>  createPointsFromExtrusionLineDrawable(
+      const std::vector<cvf::Vec3d>& extrusionLine);
+
+  // -------------------------------------------------------------
+  const std::vector<std::vector<cvf::Vec3d> >&
+  flattenedOrOffsettedPolyLines()
+  { return m_flattenedOrOffsettedPolyLines; }
 
   // -------------------------------------------------------------
   // Mapping between cells and geometry
   const std::vector<size_t>& triangleToCellIndex() const;
-    const std::vector<RivIntersectionVertexWeights>& triangleVxToCellCornerInterpolationWeights() const;
+
+  // -------------------------------------------------------------
+  const std::vector<RivIntersectionVertexWeights>&
+  triangleVxToCellCornerInterpolationWeights() const;
+
   const cvf::Vec3fArray* triangleVxes() const;
 
   // -------------------------------------------------------------
   RimIntersection* crossSection() const;
 
-    cvf::Mat4d                  unflattenTransformMatrix(const cvf::Vec3d& intersectionPointFlat);
+  cvf::Mat4d unflattenTransformMatrix(
+      const cvf::Vec3d& intersectionPointFlat);
 
  private:
 
-    cvf::ref<cvf::DrawableGeo> createLineAlongPolylineDrawable(const std::vector<std::vector<cvf::Vec3d> >& polyLines);
-    cvf::ref<cvf::DrawableGeo> createPointsFromPolylineDrawable(const std::vector<std::vector<cvf::Vec3d> >& polyLines);
+  // -------------------------------------------------------------
+  cvf::ref<cvf::DrawableGeo>
+  createLineAlongPolylineDrawable(
+      const std::vector<std::vector<cvf::Vec3d> >& polyLines);
 
+  cvf::ref<cvf::DrawableGeo>
+  createPointsFromPolylineDrawable(
+      const std::vector<std::vector<cvf::Vec3d> >& polyLines);
+
+  // -------------------------------------------------------------
   void calculateArrays();
   void calculateSegementTransformPrLinePoint();
   void calculateFlattenedOrOffsetedPolyline();
 
-    //static size_t               indexToNextValidPoint(const std::vector<cvf::Vec3d>& polyLine,
-    //                                                  const cvf::Vec3d extrDir,
-    //                                                  size_t idxToStartOfLineSegment);
+  // static size_t indexToNextValidPoint(const std::vector<cvf::Vec3d>& polyLine,
+  //                                     const cvf::Vec3d extrDir,
+  //                                    size_t idxToStartOfLineSegment);
 
   // -------------------------------------------------------------
   RimIntersection* m_crossSection;
   cvf::cref<RivIntersectionHexGridInterface> m_hexGrid;
   const std::vector<std::vector<cvf::Vec3d> > m_polyLines;
 
+  // -------------------------------------------------------------
   cvf::Vec3d m_extrusionDirection;
 
   // -------------------------------------------------------------
   bool m_isFlattened;
-    cvf::Vec3d                                  m_flattenedPolylineStartPoint;
+  cvf::Vec3d m_flattenedPolylineStartPoint;
 
   // -------------------------------------------------------------
   // Output arrays
   cvf::ref<cvf::Vec3fArray> m_triangleVxes;
   cvf::ref<cvf::Vec3fArray> m_cellBorderLineVxes;
-    cvf::ref<cvf::Vec3fArray>                   m_faultCellBorderLineVxes;
+  cvf::ref<cvf::Vec3fArray> m_faultCellBorderLineVxes;
+
+  // -------------------------------------------------------------
   std::vector<size_t> m_triangleToCellIdxMap;
   std::vector<RivIntersectionVertexWeights> m_triVxToCellCornerWeights;
   std::vector<std::vector<cvf::Vec3d> > m_flattenedOrOffsettedPolyLines;

@@ -34,8 +34,10 @@
 
 // ---------------------------------------------------------------
 class RimWellPath;
+
 // class RivIntersectionPartMgr;
 #include "RivIntersectionPartMgr.h"
+
 class RimSimWellInView;
 class RimSimWellInViewCollection;
 class Rim2dIntersectionView;
@@ -94,6 +96,7 @@ class RimIntersection // : public caf::PdmObject
   std::vector< std::vector <cvf::Vec3d> > polyLines(
       cvf::Vec3d * flattenedPolylineStartPoint = nullptr) const;
 
+  // -------------------------------------------------------------
   void appendPointToPolyLine(const cvf::Vec3d& point);
 
   // -------------------------------------------------------------
@@ -128,11 +131,11 @@ class RimIntersection // : public caf::PdmObject
   // -------------------------------------------------------------
   // virtual void fieldChangedByUi(const caf::PdmFieldHandle* changedField,
   //                               const QVariant& oldValue,
-  //                              const QVariant& newValue);
+  //                               const QVariant& newValue);
 
   // -------------------------------------------------------------
   // virtual void defineUiOrdering(QString uiConfigName,
-  //                              caf::PdmUiOrdering& uiOrdering);
+  //                               caf::PdmUiOrdering& uiOrdering);
 
   // -------------------------------------------------------------
   // virtual void defineEditorAttribute(const caf::PdmFieldHandle* field,
@@ -142,7 +145,7 @@ class RimIntersection // : public caf::PdmObject
   // -------------------------------------------------------------
   // virtual QList<caf::PdmOptionItemInfo>
   // calculateValueOptions(const caf::PdmFieldHandle* fieldNeedingOptions,
-  //                      bool * useOptionsOnly);
+  //                       bool * useOptionsOnly);
 
  private:
   // -------------------------------------------------------------
@@ -174,6 +177,7 @@ class RimIntersection // : public caf::PdmObject
   // void updateSimulationWellCenterline() const;
   // void updateWellExtentDefaultValue();
 
+  // -------------------------------------------------------------
   void addExtents(std::vector<cvf::Vec3d> &polyLine) const;
   void updateName();
   void rebuildGeometryAndScheduleCreateDisplayModel();

@@ -778,9 +778,9 @@ RivIntersectionPartMgr::createPolyLineParts(bool useBufferObjects) {
   m_highlightPointsForPolyline = nullptr;
 
   // ---------------------------------------------------------------
-  if (m_rimCrossSection->type == RimIntersection::CS_POLYLINE
+  // if (m_rimCrossSection->type == RimIntersection::CS_POLYLINE
     // || m_rimCrossSection->type == RimIntersection::CS_AZIMUTHLINE
-      ) {
+      // ) {
 
     {
       cvf::ref<cvf::DrawableGeo> polylineGeo =
@@ -873,27 +873,27 @@ RivIntersectionPartMgr::createPolyLineParts(bool useBufferObjects) {
 //      // -------------------------------------------------------------
 //      m_highlightPointsForPolyline = part;
 //    }
-  }
+//  }
 }
 
 // ===============================================================
-void RivIntersectionPartMgr::createExtrusionDirParts(bool useBufferObjects) {
-
-  // -------------------------------------------------------------
-  m_highlightLineAlongExtrusionDir = nullptr;
-  m_highlightPointsForExtrusionDir = nullptr;
-
-  // -------------------------------------------------------------
-  if (m_rimCrossSection->direction() == RimIntersection::CS_TWO_POINTS) {
-
-    {
-      // ---------------------------------------------------------
-      cvf::ref<cvf::DrawableGeo> polylineGeo =
-          m_crossSectionGenerator->createLineAlongExtrusionLineDrawable(
-              m_rimCrossSection->polyLinesForExtrusionDirection());
-
-      // ---------------------------------------------------------
-      if (polylineGeo.notNull()) {
+//void RivIntersectionPartMgr::createExtrusionDirParts(bool useBufferObjects) {
+//
+//  // -------------------------------------------------------------
+//  m_highlightLineAlongExtrusionDir = nullptr;
+//  m_highlightPointsForExtrusionDir = nullptr;
+//
+//  // -------------------------------------------------------------
+//  if (m_rimCrossSection->direction() == RimIntersection::CS_TWO_POINTS) {
+//
+//    {
+//      // ---------------------------------------------------------
+//      cvf::ref<cvf::DrawableGeo> polylineGeo =
+//          m_crossSectionGenerator->createLineAlongExtrusionLineDrawable(
+//              m_rimCrossSection->polyLinesForExtrusionDirection());
+//
+//      // ---------------------------------------------------------
+//      if (polylineGeo.notNull()) {
 
 //        // -------------------------------------------------------
 //        if (useBufferObjects) {
@@ -928,16 +928,16 @@ void RivIntersectionPartMgr::createExtrusionDirParts(bool useBufferObjects) {
 //
 //        // -------------------------------------------------------
 //        m_highlightLineAlongExtrusionDir = part;
-      }
-    }
-
-    // -------------------------------------------------------------
-    cvf::ref<cvf::DrawableGeo> polylinePointsGeo =
-        m_crossSectionGenerator->createPointsFromExtrusionLineDrawable(
-            m_rimCrossSection->polyLinesForExtrusionDirection());
-
-    // -------------------------------------------------------------
-    if (polylinePointsGeo.notNull()) {
+//      }
+//    }
+//
+//    // -------------------------------------------------------------
+//    cvf::ref<cvf::DrawableGeo> polylinePointsGeo =
+//        m_crossSectionGenerator->createPointsFromExtrusionLineDrawable(
+//            m_rimCrossSection->polyLinesForExtrusionDirection());
+//
+//    // -------------------------------------------------------------
+//    if (polylinePointsGeo.notNull()) {
 
 //      // -----------------------------------------------------------
 //      if (useBufferObjects) {
@@ -983,9 +983,9 @@ void RivIntersectionPartMgr::createExtrusionDirParts(bool useBufferObjects) {
 //
 //      // -----------------------------------------------------------
 //      m_highlightPointsForExtrusionDir = part;
-    }
-  }
-}
+//    }
+//  }
+//}
 
 // ===============================================================
 //cvf::ref<cvf::Part> createStdSurfacePart(cvf::DrawableGeo* geometry,
@@ -1130,7 +1130,8 @@ void RivIntersectionPartMgr::createExtrusionDirParts(bool useBufferObjects) {
 
 // ===============================================================
 const RimIntersection* RivIntersectionPartMgr::intersection() const {
-  return m_rimCrossSection.p();
+  // return m_rimCrossSection.p();
+  return m_rimCrossSection;
 }
 
 // ===============================================================

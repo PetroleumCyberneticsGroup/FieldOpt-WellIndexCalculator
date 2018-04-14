@@ -84,9 +84,12 @@
 #include "rixx_grid/ricell.h"
 #include "rixx_grid/riextractor.h"
 
+// -----------------------------------------------------------------
 namespace cvf {
 class HexIntersectionInfo;
 }
+
+// -----------------------------------------------------------------
 class WellPathCellIntersectionInfo;
 
 // -----------------------------------------------------------------
@@ -126,17 +129,26 @@ class WellPath : public cvf::Object
   vector <cvf::Vec3d> m_wellPathPoints;
   vector<double> m_measuredDepths;
 
-//  void                        setDatumElevation(double value);
-//  bool                        hasDatumElevation() const;
-//  double                      datumElevation() const;
-//  cvf::Vec3d                  interpolatedPointAlongWellPath(double measuredDepth) const;
-//  double                      wellPathAzimuthAngle(const cvf::Vec3d& position) const;
-//  void                        twoClosestPoints(const cvf::Vec3d& position, cvf::Vec3d* p1, cvf::Vec3d* p2) const;
+  // ---------------------------------------------------------------
+  // void setDatumElevation(double value);
+  // bool hasDatumElevation() const;
+  // double datumElevation() const;
 
-//  std::pair<std::vector<cvf::Vec3d>, std::vector<double> >
-//  clippedPointSubset(double startMD, double endMD) const;
+  // ---------------------------------------------------------------
+  // cvf::Vec3d interpolatedPointAlongWellPath(double measuredDepth) const;
+  // double wellPathAzimuthAngle(const cvf::Vec3d& position) const;
 
-//  std::vector<cvf::Vec3d>     wellPathPointsIncludingInterpolatedIntersectionPoint(double intersectionMeasuredDepth) const;
+  // ---------------------------------------------------------------
+  // void twoClosestPoints(const cvf::Vec3d& position,
+  //                      cvf::Vec3d* p1,
+  //                      cvf::Vec3d* p2) const;
+
+  // std::pair<std::vector<cvf::Vec3d>, std::vector<double> >
+  // clippedPointSubset(double startMD, double endMD) const;
+
+   // std::vector<cvf::Vec3d>
+   // wellPathPointsIncludingInterpolatedIntersectionPoint(
+   //    double intersectionMeasuredDepth) const;
 
   // ---------------------------------------------------------------
   static vector<cvf::HexIntersectionInfo>
