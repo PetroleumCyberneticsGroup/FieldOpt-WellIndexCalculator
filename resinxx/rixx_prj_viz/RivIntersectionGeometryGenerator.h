@@ -24,8 +24,8 @@
 // #include "cafPdmPointer.h"
 
 // ---------------------------------------------------------------
-#include "../rixx_core_geom/cvfArray.h"
 #include "../rixx_core_geom/cvfBase.h"
+#include "../rixx_core_geom/cvfArray.h"
 #include "../rixx_core_geom/cvfBoundingBox.h"
 #include "../rixx_core_geom/cvfObject.h"
 #include "../rixx_core_geom/cvfVector3.h"

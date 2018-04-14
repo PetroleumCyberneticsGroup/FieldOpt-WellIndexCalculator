@@ -30,10 +30,10 @@
 #include "../rixx_app_fwk/cvfStructGrid.h"
 
 // ---------------------------------------------------------------
-class RigActiveCellInfo;
+class RIActiveCellInfo;
 class RigFemPart;
-class RigMainGrid;
-class RigFault;
+class RIGrid;
+class RIFault;
 
 
 // ---------------------------------------------------------------
@@ -62,7 +62,7 @@ class RivIntersectionHexGridInterface : public cvf::Object
                                  size_t cornerIndices[8]) const = 0;
 
   // -------------------------------------------------------------
-  virtual const RigFault*
+  virtual const RIFault*
   findFaultFromCellIndexAndCellFace(
       size_t reservoirCellIndex,
       cvf::StructGridInterface::FaceType face) const = 0;
@@ -74,8 +74,8 @@ class RivEclipseIntersectionGrid : public RivIntersectionHexGridInterface
  public:
 
   // -------------------------------------------------------------
-  RivEclipseIntersectionGrid(const RigMainGrid * mainGrid,
-                             const RigActiveCellInfo* activeCellInfo,
+  RivEclipseIntersectionGrid(const RIGrid * mainGrid,
+                             const RIActiveCellInfo* activeCellInfo,
                              bool showInactiveCells);
 
   // -------------------------------------------------------------
@@ -98,15 +98,15 @@ class RivEclipseIntersectionGrid : public RivIntersectionHexGridInterface
                                  size_t cornerIndices[8]) const;
 
   // -------------------------------------------------------------
-  virtual const RigFault*
+  virtual const RIFault*
   findFaultFromCellIndexAndCellFace(
       size_t reservoirCellIndex,
       cvf::StructGridInterface::FaceType face) const override;
 
  private:
   // -------------------------------------------------------------
-  cvf::cref<RigMainGrid>       m_mainGrid;
-  cvf::cref<RigActiveCellInfo> m_activeCellInfo;
+  cvf::cref<RIGrid> m_mainGrid;
+  cvf::cref<RIActiveCellInfo> m_activeCellInfo;
   bool m_showInactiveCells;
 };
 
@@ -137,14 +137,14 @@ class RivFemIntersectionGrid : public RivIntersectionHexGridInterface
                                  size_t cornerIndices[8]) const;
 
   // -------------------------------------------------------------
-  virtual const RigFault*
+  virtual const RIFault*
   findFaultFromCellIndexAndCellFace(
       size_t reservoirCellIndex,
       cvf::StructGridInterface::FaceType face) const override;
 
  private:
   // -------------------------------------------------------------
-  cvf::cref<RigFemPart>      m_femPart;
+  cvf::cref<RigFemPart> m_femPart;
 };
 
 

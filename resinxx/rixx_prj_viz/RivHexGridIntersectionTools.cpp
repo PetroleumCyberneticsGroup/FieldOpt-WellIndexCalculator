@@ -61,7 +61,7 @@ bool RivEclipseIntersectionGrid::useCell(size_t cellIndex) const {
   print_ri_hck(__func__, __FILE__);
 
   // -------------------------------------------------------------
-  const RigCell& cell = m_mainGrid->globalCellArray()[cellIndex];
+  const RICell& cell = m_mainGrid->globalCellArray()[cellIndex];
 
   // -------------------------------------------------------------
   if (m_showInactiveCells)
@@ -89,7 +89,7 @@ void RivEclipseIntersectionGrid::cellCornerIndices(size_t cellIndex,
 }
 
 // ---------------------------------------------------------------
-const RigFault*
+const RIFault*
 RivEclipseIntersectionGrid::findFaultFromCellIndexAndCellFace(
     size_t reservoirCellIndex,
     cvf::StructGridInterface::FaceType face) const {

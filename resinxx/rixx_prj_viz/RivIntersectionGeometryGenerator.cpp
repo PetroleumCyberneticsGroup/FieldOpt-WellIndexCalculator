@@ -152,7 +152,7 @@ void RivIntersectionGeometryGenerator::calculateFlattenedOrOffsetedPolyline()
     }
   }
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
 }
 
 // ===============================================================
@@ -528,7 +528,7 @@ RivIntersectionGeometryGenerator::createFaultMeshDrawable() {
 // ===============================================================
 cvf::ref<cvf::DrawableGeo>
 RivIntersectionGeometryGenerator::createLineAlongPolylineDrawable() {
-  RIHack::print_ri_hck(__func__, __FILE__,
+  print_ri_hck(__func__, __FILE__,
                        "RETURN: createLineAlongPolylineDrawable"
                            "(m_flattenedOrOffsettedPolyLines)");
   return createLineAlongPolylineDrawable(m_flattenedOrOffsettedPolyLines);
@@ -552,7 +552,7 @@ RivIntersectionGeometryGenerator::createLineAlongExtrusionLineDrawable(
   }
 
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__,
+  print_ri_hck(__func__, __FILE__,
                        "RETURN: createLineAlongPolylineDrawable("
                            "vector<vector<cvf::Vec3d>>({ displayCoords })");
   return createLineAlongPolylineDrawable(
@@ -605,7 +605,7 @@ RivIntersectionGeometryGenerator::createLineAlongPolylineDrawable(
   polylineGeo->addPrimitiveSet(prim.p());
 
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__, "RETURN polylineGeo");
+  print_ri_hck(__func__, __FILE__, "RETURN polylineGeo");
 
   // -------------------------------------------------------------
   return polylineGeo;
@@ -615,7 +615,7 @@ RivIntersectionGeometryGenerator::createLineAlongPolylineDrawable(
 cvf::ref<cvf::DrawableGeo>
 RivIntersectionGeometryGenerator::createPointsFromPolylineDrawable() {
   // -------------------------------------------------------------
-  // RETURN FUNCTION => RIHack::print_ri_hck(__func__, __FILE__);
+  // RETURN FUNCTION => print_ri_hck(__func__, __FILE__);
   return createPointsFromPolylineDrawable(
       m_flattenedOrOffsettedPolyLines);
 }
@@ -679,7 +679,7 @@ RivIntersectionGeometryGenerator::createPointsFromPolylineDrawable(
   geo->addPrimitiveSet(primSet.p());
 
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return geo;
 }
 
@@ -689,7 +689,7 @@ RivIntersectionGeometryGenerator::triangleToCellIndex() const {
 
   CVF_ASSERT(m_triangleVxes->size());
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return m_triangleToCellIdxMap;
 }
 
@@ -699,7 +699,7 @@ RivIntersectionGeometryGenerator::triangleVxToCellCornerInterpolationWeights() c
 
   CVF_ASSERT(m_triangleVxes->size());
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return m_triVxToCellCornerWeights;
 }
 
@@ -708,7 +708,7 @@ const cvf::Vec3fArray*
 RivIntersectionGeometryGenerator::triangleVxes() const {
   CVF_ASSERT(m_triangleVxes->size());
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return m_triangleVxes.p();
 }
 
@@ -716,7 +716,7 @@ RivIntersectionGeometryGenerator::triangleVxes() const {
 RimIntersection*
 RivIntersectionGeometryGenerator::crossSection() const {
   // -----------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return m_crossSection;
 }
 
@@ -765,6 +765,6 @@ RivIntersectionGeometryGenerator::isAnyGeometryPresent() const {
   }
 
   // -------------------------------------------------------------
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
 }
 
