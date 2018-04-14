@@ -20,30 +20,31 @@
 #include "RivHexGridIntersectionTools.h"
 
 // ---------------------------------------------------------------
-#include "RIActiveCellInfo.h"
-#include "RigFemPart.h"
-#include "RigMainGrid.h"
+//#include "RIActiveCellInfo.h"
+#include "../rixx_grid/rigrid.h"
+//#include "RigFemPart.h"
+//#include "RigMainGrid.h"
 
 // ===============================================================
 RivEclipseIntersectionGrid::
-RivEclipseIntersectionGrid(const RigMainGrid * mainGrid,
-                           const RigActiveCellInfo* activeCellInfo,
+RivEclipseIntersectionGrid(const RIGrid * mainGrid,
+                           const RIActiveCellInfo* activeCellInfo,
                            bool showInactiveCells)
     : m_mainGrid(mainGrid),
       m_activeCellInfo(activeCellInfo),
       m_showInactiveCells(showInactiveCells) {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
 }
 
 // ---------------------------------------------------------------
 cvf::Vec3d RivEclipseIntersectionGrid::displayOffset() const {
-  // RIHack::print_ri_hck(__func__, __FILE__);
+  // print_ri_hck(__func__, __FILE__);
   return m_mainGrid->displayModelOffset();
 }
 
 // ---------------------------------------------------------------
 cvf::BoundingBox RivEclipseIntersectionGrid::boundingBox() const {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return m_mainGrid->boundingBox();
 }
 
@@ -51,13 +52,13 @@ cvf::BoundingBox RivEclipseIntersectionGrid::boundingBox() const {
 void RivEclipseIntersectionGrid::
 findIntersectingCells(const cvf::BoundingBox& intersectingBB,
                       std::vector<size_t>* intersectedCells) const {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   m_mainGrid->findIntersectingCells(intersectingBB, intersectedCells);
 }
 
 // ---------------------------------------------------------------
 bool RivEclipseIntersectionGrid::useCell(size_t cellIndex) const {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
 
   // -------------------------------------------------------------
   const RigCell& cell = m_mainGrid->globalCellArray()[cellIndex];
@@ -72,7 +73,7 @@ bool RivEclipseIntersectionGrid::useCell(size_t cellIndex) const {
 // ---------------------------------------------------------------
 void RivEclipseIntersectionGrid::cellCornerVertices(size_t cellIndex,
                                                     cvf::Vec3d cellCorners[8]) const {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   m_mainGrid->cellCornerVertices(cellIndex, cellCorners);
 }
 
@@ -84,7 +85,7 @@ void RivEclipseIntersectionGrid::cellCornerIndices(size_t cellIndex,
       cornerIndicesSource = m_mainGrid->globalCellArray()[cellIndex].cornerIndices();
 
   memcpy(cornerIndices, cornerIndicesSource.data(), 8);
-  // RIHack::print_ri_hck(__func__, __FILE__);
+  // print_ri_hck(__func__, __FILE__);
 }
 
 // ---------------------------------------------------------------
@@ -92,7 +93,7 @@ const RigFault*
 RivEclipseIntersectionGrid::findFaultFromCellIndexAndCellFace(
     size_t reservoirCellIndex,
     cvf::StructGridInterface::FaceType face) const {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return m_mainGrid->findFaultFromCellIndexAndCellFace(reservoirCellIndex, face);
 }
 
@@ -108,7 +109,7 @@ cvf::Vec3d RivFemIntersectionGrid::displayOffset() const {
 
 // ---------------------------------------------------------------
 cvf::BoundingBox RivFemIntersectionGrid::boundingBox() const {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   return m_femPart->boundingBox();
 }
 
@@ -116,7 +117,7 @@ cvf::BoundingBox RivFemIntersectionGrid::boundingBox() const {
 void RivFemIntersectionGrid::
 findIntersectingCells(const cvf::BoundingBox& intersectingBB,
                       std::vector<size_t>* intersectedCells) const {
-  RIHack::print_ri_hck(__func__, __FILE__);
+  print_ri_hck(__func__, __FILE__);
   m_femPart->findIntersectingCells(intersectingBB, intersectedCells);
 }
 
@@ -129,7 +130,7 @@ bool RivFemIntersectionGrid::useCell(size_t cellIndex) const {
   // -------------------------------------------------------------
   if (!(elmType == HEX8 || elmType == HEX8P)) return false;
 
-  // RIHack::print_ri_hck(__func__, __FILE__);
+  // print_ri_hck(__func__, __FILE__);
   return true;
 }
 
@@ -157,7 +158,7 @@ RivFemIntersectionGrid::cellCornerVertices(size_t cellIndex,
   cellCorners[7] = cvf::Vec3d(nodeCoords[cornerIndices[7]]);
 
   // -------------------------------------------------------------
-  // RIHack::print_ri_hck(__func__, __FILE__);
+  // print_ri_hck(__func__, __FILE__);
 }
 
 // ---------------------------------------------------------------
@@ -184,7 +185,7 @@ void RivFemIntersectionGrid::cellCornerIndices(size_t cellIndex,
 }
 
 // ---------------------------------------------------------------
-const RigFault* RivFemIntersectionGrid::
+const RIFault* RivFemIntersectionGrid::
 findFaultFromCellIndexAndCellFace(size_t reservoirCellIndex,
                                   cvf::StructGridInterface::FaceType face) const {
   return nullptr;

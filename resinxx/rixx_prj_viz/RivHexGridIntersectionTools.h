@@ -20,14 +20,14 @@
 #pragma once
 
 // ---------------------------------------------------------------
-#include "cvfBase.h"
-#include "cvfObject.h"
-#include "cvfVector3.h"
-#include "cvfBoundingBox.h"
+#include "../rixx_core_geom/cvfBase.h"
+#include "../rixx_core_geom/cvfObject.h"
+#include "../rixx_core_geom/cvfVector3.h"
+#include "../rixx_core_geom/cvfBoundingBox.h"
 
 // ---------------------------------------------------------------
 #include <vector>
-#include "cvfStructGrid.h"
+#include "../rixx_app_fwk/cvfStructGrid.h"
 
 // ---------------------------------------------------------------
 class RigActiveCellInfo;

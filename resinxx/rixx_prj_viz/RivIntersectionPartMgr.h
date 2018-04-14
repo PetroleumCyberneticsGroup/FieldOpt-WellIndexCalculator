@@ -55,9 +55,11 @@ class RimEclipseCellColors;
 class RimIntersection;
 class RivTernaryScalarMapper;
 
+// ---------------------------------------------------------------
 // class RivIntersectionGeometryGenerator;
 #include "RivIntersectionGeometryGenerator.h"
 
+// ---------------------------------------------------------------
 class RivIntersectionHexGridInterface;
 class RivIntersectionVertexWeights;
 class RivPipeGeometryGenerator;
