@@ -5,7 +5,7 @@ set(RESINXX_GRID      ${RESINXX}/rixx_grid)
 set(RESINXX_APP_FWK   ${RESINXX}/rixx_app_fwk)
 set(RESINXX_CORE_GEOM ${RESINXX}/rixx_core_geom)
 set(RESINXX_RES_MOD   ${RESINXX}/rixx_res_mod)
-set(RESINXX_PRJ_MOD   ${RESINXX}/rixx_prj_mod)
+set(RESINXX_PRJ_VIZ   ${RESINXX}/rixx_prj_viz)
 
 # MAIN RESINXX FILES ===================================================
 set(RIXX_CPP_FILES
@@ -54,9 +54,9 @@ ${RESINXX_RES_MOD}/RigCellGeometryTools.cpp
 )
 
 # PRJ MOD FILES ========================================================
-set(RIXX_PRJ_MOD_CPP_FILES
-${RESINXX_PRJ_MOD}/RimIntersection.cpp
-${RESINXX_PRJ_MOD}/RimIntersection.h
+set(RIXX_PRJ_VIZ_CPP_FILES
+${RESINXX_PRJ_VIZ}/RimIntersection.cpp
+${RESINXX_PRJ_VIZ}/RivIntersectionPartMgr.cpp
 )
 
 message(".............................................................")
@@ -70,7 +70,7 @@ message("RIXX_CORE_GEOM_CPP_FILES: ${RIXX_CORE_GEOM_CPP_FILES}")
 message(".............................................................")
 message("RIXX_RES_MOD_CPP_FILES: ${RIXX_RES_MOD_CPP_FILES}")
 message(".............................................................")
-message("RIXX_PRJ_MOD_CPP_FILES: ${RIXX_PRJ_MOD_CPP_FILES}")
+message("RIXX_PRJ_VIZ_CPP_FILES: ${RIXX_PRJ_VIZ_CPP_FILES}")
 
 # ALL ==================================================================
 set(RIXX_ALL_CPP_FILES

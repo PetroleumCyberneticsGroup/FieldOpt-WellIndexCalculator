@@ -74,6 +74,9 @@
 //#include "rixx_res_mod/cvfGeometryTools.h"
 #include "rixx_res_mod/RigCellGeometryTools.h"
 
+// RESINSIGHT: APPLICATIONCODE/PROJECTDATAMO/MODVIZ ----------------
+#include "rixx_prj_viz/RimIntersection.h"
+
 // FieldOpt::RESINXX -----------------------------------------------
 #include "geometry_tools.h"
 #include "rixx_grid/ricasedata.h"

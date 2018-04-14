@@ -21,20 +21,21 @@
 #pragma once
 
 // ---------------------------------------------------------------
-#include "cafAppEnum.h"
+#include "../rixx_app_fwk/cafAppEnum.h"
 //#include "cafPdmField.h"
 //#include "cafPdmFieldCvfVec3d.h"
 //#include "cafPdmObject.h"
 //#include "cafPdmPtrField.h"
 
 // ---------------------------------------------------------------
-#include "cvfBase.h"
-#include "cvfObject.h"
-#include "cvfVector3.h"
+#include "../rixx_core_geom/cvfBase.h"
+#include "../rixx_core_geom/cvfObject.h"
+#include "../rixx_core_geom/cvfVector3.h"
 
 // ---------------------------------------------------------------
 class RimWellPath;
-class RivIntersectionPartMgr;
+// class RivIntersectionPartMgr;
+#include "RivIntersectionPartMgr.h"
 class RimSimWellInView;
 class RimSimWellInViewCollection;
 class Rim2dIntersectionView;

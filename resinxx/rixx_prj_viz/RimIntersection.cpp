@@ -21,34 +21,36 @@
 #include "RimIntersection.h"
 
 // ---------------------------------------------------------------
-#include "RiaApplication.h"
+// #include "RiaApplication.h"
 
 // ---------------------------------------------------------------
-#include "RigEclipseCaseData.h"
-#include "RigWellPath.h"
+// #include "RigEclipseCaseData.h"
+#include "ricasedata.h"
+// #include "RigWellPath.h"
+#include "../well_path.h"
 
 // ---------------------------------------------------------------
-#include "RimCase.h"
-#include "RimEclipseCase.h"
-#include "RimEclipseView.h"
-#include "RimOilField.h"
-#include "RimProject.h"
-#include "RimSimWellInView.h"
-#include "RimSimWellInViewCollection.h"
-#include "RimTools.h"
-#include "Rim3dView.h"
-#include "RimWellPath.h"
+//#include "RimCase.h"
+//#include "RimEclipseCase.h"
+//#include "RimEclipseView.h"
+//#include "RimOilField.h"
+//#include "RimProject.h"
+//#include "RimSimWellInView.h"
+//#include "RimSimWellInViewCollection.h"
+//#include "RimTools.h"
+//#include "Rim3dView.h"
+//#include "RimWellPath.h"
 
 // ---------------------------------------------------------------
 #include "RiuViewer.h"
 #include "RivIntersectionPartMgr.h"
 
 // ---------------------------------------------------------------
-#include "cafCmdFeature.h"
-#include "cafCmdFeatureManager.h"
-#include "cafPdmUiDoubleSliderEditor.h"
-#include "cafPdmUiListEditor.h"
-#include "cafPdmUiPushButtonEditor.h"
+//#include "cafCmdFeature.h"
+//#include "cafCmdFeatureManager.h"
+//#include "cafPdmUiDoubleSliderEditor.h"
+//#include "cafPdmUiListEditor.h"
+//#include "cafPdmUiPushButtonEditor.h"
 
 // ---------------------------------------------------------------
 #include "cvfBoundingBox.h"
@@ -822,7 +824,7 @@ RimIntersection::appendPointToExtrusionDirection(const cvf::Vec3d& point) {
 //    m_customExtrusionPoints.v().clear();
 //  }
 
-  if (m_customExtrusionPoints().size() > 1){
+  if (m_customExtrusionPoints.size() > 1){
     m_customExtrusionPoints.clear();
   }
 
