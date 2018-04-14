@@ -1145,13 +1145,14 @@ cvf::ref<RivIntersectionHexGridInterface>
 RivIntersectionPartMgr::createHexGridInterface() {
 
   // -------------------------------------------------------------
-  RimEclipseView* eclipseView;
-  m_rimCrossSection->firstAncestorOrThisOfType(eclipseView);
+  // RimEclipseView* eclipseView;
+  // m_rimCrossSection->firstAncestorOrThisOfType(eclipseView);
 
   // -------------------------------------------------------------
   if (eclipseView) {
     // RigMainGrid* grid = eclipseView->mainGrid();
     RIGrid* grid;
+    RICaseData* casedata;
     return new RivEclipseIntersectionGrid(grid,
                                           eclipseView->currentActiveCellInfo(),
                                           m_rimCrossSection->showInactiveCells());
