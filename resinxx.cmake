@@ -60,7 +60,13 @@ ${RESINXX_PRJ_VIZ}/RivIntersectionPartMgr.cpp
 ${RESINXX_PRJ_VIZ}/RivHexGridIntersectionTools.cpp
 ${RESINXX_PRJ_VIZ}/RivIntersectionGeometryGenerator.cpp
 ${RESINXX_PRJ_VIZ}/RivIntersectionSourceInfo.cpp
+${RESINXX_PRJ_VIZ}/RigFemPart.cpp
+${RESINXX_PRJ_VIZ}/RigFemPartGrid.cpp
+${RESINXX_PRJ_VIZ}/RigFemTypes.cpp
+${RESINXX_PRJ_VIZ}/cvfDrawableGeo.cpp
+${RESINXX_PRJ_VIZ}/cvfDrawable.cpp
 )
+
 
 message(".............................................................")
 message("RIXX_CPP_FILES: ${RIXX_CPP_FILES}")

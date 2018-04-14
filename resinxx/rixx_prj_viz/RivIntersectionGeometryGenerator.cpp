@@ -292,55 +292,60 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
                                &hexPlaneCutTriangleVxes,
                                &cellFaceForEachTriangleEdge);
 
-        if (m_crossSection->type == RimIntersection::CS_AZIMUTHLINE) {
-
-          bool hasAnyPointsOnSurface = false;
-
-          for (caf::HexGridIntersectionTools::ClipVx vertex : hexPlaneCutTriangleVxes) {
-
-            // ---------------------------------------------------
-            cvf::Vec3d temp = vertex.vx - p1;
-            double dot = temp.dot(m_extrusionDirection);
-            double lengthCheck = 0;
-
-            // ---------------------------------------------------
-            if (dot < 0) {
-              lengthCheck = maxSectionHeightUp;
-
-            } else {
-              lengthCheck = maxSectionHeightDown;
-            }
-
-            // ---------------------------------------------------
-            double distance =
-                cvf::Math::sqrt(
-                    cvf::GeometryTools::linePointSquareDist(p1,
-                                                            p2,
-                                                            vertex.vx));
-
-            // ---------------------------------------------------
-            if (distance < lengthCheck) {
-              hasAnyPointsOnSurface = true;
-              break;
-            }
-          }
-
-          // -----------------------------------------------------
-          if (!hasAnyPointsOnSurface) {
-            continue;
-          }
-        }
+        // -------------------------------------------------------
+//        if (m_crossSection->type == RimIntersection::CS_AZIMUTHLINE) {
+//
+//          // -----------------------------------------------------
+//          bool hasAnyPointsOnSurface = false;
+//
+//          // -----------------------------------------------------
+//          for (caf::HexGridIntersectionTools::ClipVx
+//                vertex : hexPlaneCutTriangleVxes) {
+//
+//            // ---------------------------------------------------
+//            cvf::Vec3d temp = vertex.vx - p1;
+//            double dot = temp.dot(m_extrusionDirection);
+//            double lengthCheck = 0;
+//
+//            // ---------------------------------------------------
+//            if (dot < 0) {
+//              lengthCheck = maxSectionHeightUp;
+//
+//            } else {
+//              lengthCheck = maxSectionHeightDown;
+//            }
+//
+//            // ---------------------------------------------------
+//            double distance =
+//                cvf::Math::sqrt(
+//                    cvf::GeometryTools::linePointSquareDist(p1,
+//                                                            p2,
+//                                                            vertex.vx));
+//
+//            // ---------------------------------------------------
+//            if (distance < lengthCheck) {
+//              hasAnyPointsOnSurface = true;
+//              break;
+//            }
+//          }
+//
+//          // -----------------------------------------------------
+//          if (!hasAnyPointsOnSurface) {
+//            continue;
+//          }
+//        }
 
         // -------------------------------------------------------
         std::vector<caf::HexGridIntersectionTools::ClipVx> clippedTriangleVxes;
         std::vector<int> cellFaceForEachClippedTriangleEdge;
 
-        caf::HexGridIntersectionTools::clipTrianglesBetweenTwoParallelPlanes(hexPlaneCutTriangleVxes,
-                                                                             cellFaceForEachTriangleEdge,
-                                                                             p1Plane,
-                                                                             p2Plane,
-                                                                             &clippedTriangleVxes,
-                                                                             &cellFaceForEachClippedTriangleEdge);
+        caf::HexGridIntersectionTools::
+        clipTrianglesBetweenTwoParallelPlanes(hexPlaneCutTriangleVxes,
+                                              cellFaceForEachTriangleEdge,
+                                              p1Plane,
+                                              p2Plane,
+                                              &clippedTriangleVxes,
+                                              &cellFaceForEachClippedTriangleEdge);
 
         // -------------------------------------------------------
         size_t clippedTriangleCount = clippedTriangleVxes.size()/3;
@@ -369,43 +374,64 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
           // -----------------------------------------------------
           // Accumulate mesh lines
 #define isFace( faceEnum ) (0 <= faceEnum && faceEnum <= 5 )
+
           using FaceType = cvf::StructGridInterface::FaceType;
 
-          if ( isFace(cellFaceForEachClippedTriangleEdge[triVxIdx]) )
-          {
-            if ( m_hexGrid->findFaultFromCellIndexAndCellFace(globalCellIdx, (FaceType)cellFaceForEachClippedTriangleEdge[triVxIdx]) )
-            {
+          // -----------------------------------------------------
+          if ( isFace(cellFaceForEachClippedTriangleEdge[triVxIdx]) ) {
+
+            // ---------------------------------------------------
+            if ( m_hexGrid->findFaultFromCellIndexAndCellFace(
+                globalCellIdx,
+                (FaceType)cellFaceForEachClippedTriangleEdge[triVxIdx]) ) {
+
+              // -------------------------------------------------
               faultCellBorderLineVxes.emplace_back(p0);
               faultCellBorderLineVxes.emplace_back(p1);
-            }
-            else
-            {
+
+            } else {
+
+              // -------------------------------------------------
               cellBorderLineVxes.emplace_back(p0);
               cellBorderLineVxes.emplace_back(p1);
             }
           }
-          if ( isFace(cellFaceForEachClippedTriangleEdge[triVxIdx+1]) )
-          {
-            if ( m_hexGrid->findFaultFromCellIndexAndCellFace(globalCellIdx, (FaceType)cellFaceForEachClippedTriangleEdge[triVxIdx+1]) )
-            {
+
+          // -----------------------------------------------------
+          if ( isFace(cellFaceForEachClippedTriangleEdge[triVxIdx+1]) ) {
+
+            // ---------------------------------------------------
+            if ( m_hexGrid->findFaultFromCellIndexAndCellFace(
+                globalCellIdx,
+                (FaceType)cellFaceForEachClippedTriangleEdge[triVxIdx+1]) ) {
+
+              // -------------------------------------------------
               faultCellBorderLineVxes.emplace_back(p1);
               faultCellBorderLineVxes.emplace_back(p2);
-            }
-            else
-            {
+
+            } else {
+
+              // -------------------------------------------------
               cellBorderLineVxes.emplace_back(p1);
               cellBorderLineVxes.emplace_back(p2);
             }
           }
-          if ( isFace(cellFaceForEachClippedTriangleEdge[triVxIdx+2]) )
-          {
-            if ( m_hexGrid->findFaultFromCellIndexAndCellFace(globalCellIdx, (FaceType)cellFaceForEachClippedTriangleEdge[triVxIdx+2]) )
-            {
+
+          // -----------------------------------------------------
+          if ( isFace(cellFaceForEachClippedTriangleEdge[triVxIdx+2]) ) {
+
+            // ---------------------------------------------------
+            if ( m_hexGrid->findFaultFromCellIndexAndCellFace(
+                globalCellIdx,
+                (FaceType)cellFaceForEachClippedTriangleEdge[triVxIdx+2]) ) {
+
+              // -------------------------------------------------
               faultCellBorderLineVxes.emplace_back(p2);
               faultCellBorderLineVxes.emplace_back(p0);
-            }
-            else
-            {
+
+            } else {
+
+              // -------------------------------------------------
               cellBorderLineVxes.emplace_back(p2);
               cellBorderLineVxes.emplace_back(p0);
             }
@@ -413,7 +439,6 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
 
           // -----------------------------------------------------
           // Mapping to cell index
-
           m_triangleToCellIdxMap.push_back(globalCellIdx);
 
           // -----------------------------------------------------

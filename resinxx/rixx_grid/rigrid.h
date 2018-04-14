@@ -381,7 +381,7 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
 // ╠╦╝  ║  ╠═╣  ║     ║   ║  ╚╗╔╝  ║╣   ║    ║╣   ║    ║    ║  ║║║  ╠╣   ║ ║
 // ╩╚═  ╩  ╩ ╩  ╚═╝   ╩   ╩   ╚╝   ╚═╝  ╚═╝  ╚═╝  ╩═╝  ╩═╝  ╩  ╝╚╝  ╚    ╚═╝
 // =================================================================
-class RIActiveCellInfo // : public cvf::Object
+class RIActiveCellInfo : public cvf::Object
 {
  public:
   // ---------------------------------------------------------------

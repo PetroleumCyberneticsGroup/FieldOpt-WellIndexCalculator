@@ -22,8 +22,8 @@
 // ---------------------------------------------------------------
 //#include "RIActiveCellInfo.h"
 #include "../rixx_grid/rigrid.h"
-//#include "RigFemPart.h"
-//#include "RigMainGrid.h"
+#include "RigFemPart.h"
+// #include "RigMainGrid.h"
 
 // ===============================================================
 RivEclipseIntersectionGrid::
