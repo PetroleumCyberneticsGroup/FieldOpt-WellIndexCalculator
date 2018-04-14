@@ -57,6 +57,9 @@ ${RESINXX_RES_MOD}/RigCellGeometryTools.cpp
 set(RIXX_PRJ_VIZ_CPP_FILES
 ${RESINXX_PRJ_VIZ}/RimIntersection.cpp
 ${RESINXX_PRJ_VIZ}/RivIntersectionPartMgr.cpp
+${RESINXX_PRJ_VIZ}/RivHexGridIntersectionTools.cpp
+${RESINXX_PRJ_VIZ}/RivIntersectionGeometryGenerator.cpp
+${RESINXX_PRJ_VIZ}/RivIntersectionSourceInfo.cpp
 )
 
 message(".............................................................")
@@ -79,5 +82,5 @@ ${RIXX_GRID_CPP_FILES}
 ${RIXX_APP_FWK_CPP_FILES}
 ${RIXX_CORE_GEOM_CPP_FILES}
 ${RIXX_RES_MOD_CPP_FILES}
-${RIXX_PRJ_MOD_CPP_FILES}
+${RIXX_PRJ_VIZ_CPP_FILES}
 )

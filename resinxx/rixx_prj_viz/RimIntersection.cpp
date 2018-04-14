@@ -42,7 +42,7 @@
 //#include "RimWellPath.h"
 
 // ---------------------------------------------------------------
-#include "RiuViewer.h"
+//#include "RiuViewer.h"
 #include "RivIntersectionPartMgr.h"
 
 // ---------------------------------------------------------------
@@ -56,7 +56,7 @@
 #include "cvfBoundingBox.h"
 #include "cvfGeometryTools.h"
 #include "cvfPlane.h"
-#include "Rim2dIntersectionView.h"
+// #include "Rim2dIntersectionView.h"
 
 // ---------------------------------------------------------------
 namespace caf {

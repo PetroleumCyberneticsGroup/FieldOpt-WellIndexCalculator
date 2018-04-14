@@ -54,7 +54,10 @@ class RimCellEdgeColors;
 class RimEclipseCellColors;
 class RimIntersection;
 class RivTernaryScalarMapper;
-class RivIntersectionGeometryGenerator;
+
+// class RivIntersectionGeometryGenerator;
+#include "RivIntersectionGeometryGenerator.h"
+
 class RivIntersectionHexGridInterface;
 class RivIntersectionVertexWeights;
 class RivPipeGeometryGenerator;
@@ -68,11 +71,12 @@ class RivIntersectionPartMgr : public cvf::Object
                                   bool isFlattened = false);
 
   // -------------------------------------------------------------
-  void applySingleColorEffect();
-  void
-  updateCellResultColor(size_t timeStepIndex,
-                        const cvf::ScalarMapper* scalarColorMapper,
-                        const RivTernaryScalarMapper* ternaryColorMapper);
+  // void applySingleColorEffect();
+
+  // void
+  // updateCellResultColor(size_t timeStepIndex,
+  //                       const cvf::ScalarMapper* scalarColorMapper,
+  //                      const RivTernaryScalarMapper* ternaryColorMapper);
 
   // -------------------------------------------------------------
   void
@@ -99,45 +103,45 @@ class RivIntersectionPartMgr : public cvf::Object
 
  public:
   // -------------------------------------------------------------
-  static void
-  calculateEclipseTextureCoordinates(
-      cvf::Vec2fArray* textureCoords,
-      const std::vector<size_t>& triangleToCellIdxMap,
-      const RigResultAccessor* resultAccessor,
-      const cvf::ScalarMapper* mapper);
+  // static void
+  // calculateEclipseTextureCoordinates(
+  //    cvf::Vec2fArray* textureCoords,
+  //    const std::vector<size_t>& triangleToCellIdxMap,
+  //    const RigResultAccessor* resultAccessor,
+  //    const cvf::ScalarMapper* mapper);
 
   // -------------------------------------------------------------
-  static void calculateNodeOrElementNodeBasedGeoMechTextureCoords(
-      cvf::Vec2fArray* textureCoords,
-      const std::vector<RivIntersectionVertexWeights> &vertexWeights,
-      const std::vector<float> &resultValues,
-      bool isElementNodalResult,
-      const RigFemPart* femPart,
-      const cvf::ScalarMapper* mapper);
+  // static void calculateNodeOrElementNodeBasedGeoMechTextureCoords(
+  //    cvf::Vec2fArray* textureCoords,
+  //    const std::vector<RivIntersectionVertexWeights> &vertexWeights,
+  //    const std::vector<float> &resultValues,
+  //    bool isElementNodalResult,
+  //    const RigFemPart* femPart,
+  //    const cvf::ScalarMapper* mapper);
 
   // -------------------------------------------------------------
-  static void calculateElementBasedGeoMechTextureCoords(
-      cvf::Vec2fArray* textureCoords,
-      const std::vector<float> &resultValues,
-      const std::vector<size_t>& triangleToCellIdx,
-      const cvf::ScalarMapper* mapper);
+  // static void calculateElementBasedGeoMechTextureCoords(
+  //    cvf::Vec2fArray* textureCoords,
+  //    const std::vector<float> &resultValues,
+  //    const std::vector<size_t>& triangleToCellIdx,
+  //    const cvf::ScalarMapper* mapper);
 
   // -------------------------------------------------------------
-  static void calculateGeoMechTensorXfTextureCoords(
-      cvf::Vec2fArray* textureCoords,
-      const cvf::Vec3fArray* triangelVertices,
-      const std::vector<RivIntersectionVertexWeights> &vertexWeights,
-      RigGeoMechCaseData* caseData,
-      const RigFemResultAddress& resVarAddress,
-      int   timeStepIdx,
-      const cvf::ScalarMapper* mapper);
+  // static void calculateGeoMechTensorXfTextureCoords(
+  //    cvf::Vec2fArray* textureCoords,
+  //    const cvf::Vec3fArray* triangelVertices,
+  //    const std::vector<RivIntersectionVertexWeights> &vertexWeights,
+  //    RigGeoMechCaseData* caseData,
+  //    const RigFemResultAddress& resVarAddress,
+  //    int   timeStepIdx,
+  //    const cvf::ScalarMapper* mapper);
 
   // -------------------------------------------------------------
-  static void calculatePlaneAngleTextureCoords(
-      cvf::Vec2fArray* textureCoords,
-      const cvf::Vec3fArray* triangelVertices,
-      const RigFemResultAddress& resVarAddress,
-      const cvf::ScalarMapper* mapper);
+  // static void calculatePlaneAngleTextureCoords(
+  //    cvf::Vec2fArray* textureCoords,
+  //    const cvf::Vec3fArray* triangelVertices,
+  //    const RigFemResultAddress& resVarAddress,
+  //    const cvf::ScalarMapper* mapper);
 
  private:
   // -------------------------------------------------------------
