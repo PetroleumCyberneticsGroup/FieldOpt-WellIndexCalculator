@@ -93,36 +93,47 @@ RivIntersectionGeometryGenerator::~RivIntersectionGeometryGenerator() {
 }
 
 // ===============================================================
-void RivIntersectionGeometryGenerator::calculateSegementTransformPrLinePoint() {
+void RivIntersectionGeometryGenerator::
+calculateSegementTransformPrLinePoint() {
 
   if ( m_isFlattened ) {
 
+    // -----------------------------------------------------------
     if ( !(m_polyLines.size() && m_polyLines.back().size()) ) { return; }
 
     cvf::Vec3d startOffset = m_flattenedPolylineStartPoint;
 
     for ( size_t pLineIdx = 0; pLineIdx < m_polyLines.size(); ++pLineIdx ) {
 
+      // ---------------------------------------------------------
       const std::vector<cvf::Vec3d>& polyLine = m_polyLines[pLineIdx];
       startOffset.z() = polyLine[0].z();
-      m_segementTransformPrLinePoint.emplace_back(RivSectionFlattner::calculateFlatteningCSsForPolyline(polyLine,
-                                                                                                        m_extrusionDirection,
-                                                                                                        startOffset,
-                                                                                                        &startOffset));
+
+      // ---------------------------------------------------------
+      m_segementTransformPrLinePoint.
+          emplace_back(RivSectionFlattner::
+                       calculateFlatteningCSsForPolyline(polyLine,
+                                                         m_extrusionDirection,
+                                                         startOffset,
+                                                         &startOffset));
     }
-  }
-  else
-  {
+
+  } else {
+
+    // -----------------------------------------------------------
     m_segementTransformPrLinePoint.clear();
 
     cvf::Mat4d invSectionCS = cvf::Mat4d::fromTranslation(-m_hexGrid->displayOffset());
 
-    for ( const auto & polyLine : m_polyLines )
-    {
+    for ( const auto & polyLine : m_polyLines ) {
+
+      // ---------------------------------------------------------
       m_segementTransformPrLinePoint.emplace_back();
-      std::vector<cvf::Mat4d>& segmentTransforms = m_segementTransformPrLinePoint.back();
-      for ( size_t lIdx = 0; lIdx < polyLine.size(); ++lIdx )
-      {
+      std::vector<cvf::Mat4d>& segmentTransforms =
+          m_segementTransformPrLinePoint.back();
+
+      // ---------------------------------------------------------
+      for ( size_t lIdx = 0; lIdx < polyLine.size(); ++lIdx ) {
         segmentTransforms.push_back(invSectionCS);
       }
     }
@@ -130,8 +141,8 @@ void RivIntersectionGeometryGenerator::calculateSegementTransformPrLinePoint() {
 }
 
 // ===============================================================
-void RivIntersectionGeometryGenerator::calculateFlattenedOrOffsetedPolyline()
-{
+void RivIntersectionGeometryGenerator::calculateFlattenedOrOffsetedPolyline() {
+
   CVF_ASSERT(m_segementTransformPrLinePoint.size() == m_polyLines.size());
 
   // -------------------------------------------------------------
@@ -500,231 +511,238 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
   m_triangleVxes->assign(triangleVertices);
   m_cellBorderLineVxes->assign(cellBorderLineVxes);
   m_faultCellBorderLineVxes->assign(faultCellBorderLineVxes);
+
+  // -------------------------------------------------------------
+  print_ri_hck(__func__, __FILE__, "");
 }
 
 
 // ===============================================================
 // Generate surface drawable geo from the specified region
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::generateSurface() {
-
-  // -------------------------------------------------------------
-  calculateArrays();
-
-  // -------------------------------------------------------------
-  CVF_ASSERT(m_triangleVxes.notNull());
-  if (m_triangleVxes->size() == 0) return nullptr;
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
-  geo->setFromTriangleVertexArray(m_triangleVxes.p());
-
-  return geo;
-}
-
-
-// ===============================================================
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createMeshDrawable() {
-
-  // -------------------------------------------------------------
-  if (!(m_cellBorderLineVxes.notNull()
-      && m_cellBorderLineVxes->size() != 0)) return nullptr;
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
-  geo->setVertexArray(m_cellBorderLineVxes.p());
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::PrimitiveSetDirect>
-      prim = new cvf::PrimitiveSetDirect(cvf::PT_LINES);
-
-  prim->setIndexCount(m_cellBorderLineVxes->size());
-
-  // -------------------------------------------------------------
-  geo->addPrimitiveSet(prim.p());
-  return geo;
-}
-
-// ===============================================================
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createFaultMeshDrawable() {
-
-  if (!(m_faultCellBorderLineVxes.notNull()
-      && m_faultCellBorderLineVxes->size() != 0)) return nullptr;
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
-  geo->setVertexArray(m_faultCellBorderLineVxes.p());
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::PrimitiveSetDirect> prim =
-      new cvf::PrimitiveSetDirect(cvf::PT_LINES);
-  prim->setIndexCount(m_faultCellBorderLineVxes->size());
-
-  // -------------------------------------------------------------
-  geo->addPrimitiveSet(prim.p());
-  return geo;
-}
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::generateSurface() {
+//
+//  // -------------------------------------------------------------
+//  calculateArrays();
+//
+//  // -------------------------------------------------------------
+//  CVF_ASSERT(m_triangleVxes.notNull());
+//  if (m_triangleVxes->size() == 0) return nullptr;
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
+//  geo->setFromTriangleVertexArray(m_triangleVxes.p());
+//
+//  return geo;
+//}
 
 
 // ===============================================================
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createLineAlongPolylineDrawable() {
-  print_ri_hck(__func__, __FILE__,
-                       "RETURN: createLineAlongPolylineDrawable"
-                           "(m_flattenedOrOffsettedPolyLines)");
-  return createLineAlongPolylineDrawable(m_flattenedOrOffsettedPolyLines);
-}
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createMeshDrawable() {
+//
+//  // -------------------------------------------------------------
+//  if (!(m_cellBorderLineVxes.notNull()
+//      && m_cellBorderLineVxes->size() != 0)) return nullptr;
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
+//  geo->setVertexArray(m_cellBorderLineVxes.p());
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::PrimitiveSetDirect>
+//      prim = new cvf::PrimitiveSetDirect(cvf::PT_LINES);
+//
+//  prim->setIndexCount(m_cellBorderLineVxes->size());
+//
+//  // -------------------------------------------------------------
+//  geo->addPrimitiveSet(prim.p());
+//  return geo;
+//}
+
+// ===============================================================
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createFaultMeshDrawable() {
+//
+//  if (!(m_faultCellBorderLineVxes.notNull()
+//      && m_faultCellBorderLineVxes->size() != 0)) return nullptr;
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
+//  geo->setVertexArray(m_faultCellBorderLineVxes.p());
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::PrimitiveSetDirect> prim =
+//      new cvf::PrimitiveSetDirect(cvf::PT_LINES);
+//  prim->setIndexCount(m_faultCellBorderLineVxes->size());
+//
+//  // -------------------------------------------------------------
+//  geo->addPrimitiveSet(prim.p());
+//  return geo;
+//}
 
 
 // ===============================================================
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createLineAlongExtrusionLineDrawable(
-    const std::vector<cvf::Vec3d>& extrusionLine) {
-
-  // -------------------------------------------------------------
-  cvf::ref<caf::DisplayCoordTransform> transform =
-      displayCoordTransform(crossSection());
-
-  std::vector<cvf::Vec3d> displayCoords;
-
-  // -------------------------------------------------------------
-  for (const auto& pt : extrusionLine) {
-    displayCoords.push_back(transform->translateToDisplayCoord(pt));
-  }
-
-  // -------------------------------------------------------------
-  print_ri_hck(__func__, __FILE__,
-                       "RETURN: createLineAlongPolylineDrawable("
-                           "vector<vector<cvf::Vec3d>>({ displayCoords })");
-  return createLineAlongPolylineDrawable(
-      std::vector<std::vector<cvf::Vec3d>>({ displayCoords }));
-}
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createLineAlongPolylineDrawable() {
+//  print_ri_hck(__func__, __FILE__,
+//                       "RETURN: createLineAlongPolylineDrawable"
+//                           "(m_flattenedOrOffsettedPolyLines)");
+//  return createLineAlongPolylineDrawable(m_flattenedOrOffsettedPolyLines);
+//}
 
 
 // ===============================================================
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createLineAlongPolylineDrawable(
-    const std::vector<std::vector<cvf::Vec3d> >& polyLines) {
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createLineAlongExtrusionLineDrawable(
+//    const std::vector<cvf::Vec3d>& extrusionLine) {
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<caf::DisplayCoordTransform> transform =
+//      displayCoordTransform(crossSection());
+//
+//  std::vector<cvf::Vec3d> displayCoords;
+//
+//  // -------------------------------------------------------------
+//  for (const auto& pt : extrusionLine) {
+//    displayCoords.push_back(transform->translateToDisplayCoord(pt));
+//  }
+//
+//  // -------------------------------------------------------------
+//  print_ri_hck(__func__, __FILE__,
+//                       "RETURN: createLineAlongPolylineDrawable("
+//                           "vector<vector<cvf::Vec3d>>({ displayCoords })");
+//  return createLineAlongPolylineDrawable(
+//      std::vector<std::vector<cvf::Vec3d>>({ displayCoords }));
+//}
 
-  // -------------------------------------------------------------
-  std::vector<cvf::uint> lineIndices;
-  std::vector<cvf::Vec3f> vertices;
 
-  for (size_t pLineIdx = 0; pLineIdx < polyLines.size(); ++pLineIdx)
-  {
-    const std::vector<cvf::Vec3d>& polyLine = polyLines[pLineIdx];
-    if (polyLine.size() < 2) continue;
-
-    // -----------------------------------------------------------
-    for (size_t i = 0; i < polyLine.size(); ++i) {
-
-      // ---------------------------------------------------------
-      vertices.push_back(cvf::Vec3f(polyLine[i]));
-      if (i < polyLine.size() - 1) {
-        lineIndices.push_back(static_cast<cvf::uint>(i));
-        lineIndices.push_back(static_cast<cvf::uint>(i + 1));
-      }
-    }
-  }
-
-  // -----------------------------------------------------------
-  if (vertices.size() == 0) return nullptr;
-
-  // -----------------------------------------------------------
-  cvf::ref<cvf::Vec3fArray> vx = new cvf::Vec3fArray;
-  vx->assign(vertices);
-  cvf::ref<cvf::UIntArray> idxes = new cvf::UIntArray;
-  idxes->assign(lineIndices);
-
-  cvf::ref<cvf::PrimitiveSetIndexedUInt>
-      prim = new cvf::PrimitiveSetIndexedUInt(cvf::PT_LINES);
-  prim->setIndices(idxes.p());
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo> polylineGeo = new cvf::DrawableGeo;
-  polylineGeo->setVertexArray(vx.p());
-  polylineGeo->addPrimitiveSet(prim.p());
-
-  // -------------------------------------------------------------
-  print_ri_hck(__func__, __FILE__, "RETURN polylineGeo");
-
-  // -------------------------------------------------------------
-  return polylineGeo;
-}
+// ===============================================================
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createLineAlongPolylineDrawable(
+//    const std::vector<std::vector<cvf::Vec3d> >& polyLines) {
+//
+//  // -------------------------------------------------------------
+//  std::vector<cvf::uint> lineIndices;
+//  std::vector<cvf::Vec3f> vertices;
+//
+//  for (size_t pLineIdx = 0; pLineIdx < polyLines.size(); ++pLineIdx) {
+//
+//    // -----------------------------------------------------------
+//    const std::vector<cvf::Vec3d>& polyLine = polyLines[pLineIdx];
+//    if (polyLine.size() < 2) continue;
+//
+//    // -----------------------------------------------------------
+//    for (size_t i = 0; i < polyLine.size(); ++i) {
+//
+//      // ---------------------------------------------------------
+//      vertices.push_back(cvf::Vec3f(polyLine[i]));
+//      if (i < polyLine.size() - 1) {
+//        lineIndices.push_back(static_cast<cvf::uint>(i));
+//        lineIndices.push_back(static_cast<cvf::uint>(i + 1));
+//      }
+//    }
+//  }
+//
+//  // -------------------------------------------------------------
+//  if (vertices.size() == 0) return nullptr;
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::Vec3fArray> vx = new cvf::Vec3fArray;
+//  vx->assign(vertices);
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::UIntArray> idxes = new cvf::UIntArray;
+//  idxes->assign(lineIndices);
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::PrimitiveSetIndexedUInt>
+//      prim = new cvf::PrimitiveSetIndexedUInt(cvf::PT_LINES);
+//  prim->setIndices(idxes.p());
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::DrawableGeo> polylineGeo = new cvf::DrawableGeo;
+//  polylineGeo->setVertexArray(vx.p());
+//  polylineGeo->addPrimitiveSet(prim.p());
+//
+//  // -------------------------------------------------------------
+//  print_ri_hck(__func__, __FILE__, "RETURN polylineGeo");
+//
+//  // -------------------------------------------------------------
+//  return polylineGeo;
+//}
 
 // ---------------------------------------------------------------
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createPointsFromPolylineDrawable() {
-  // -------------------------------------------------------------
-  // RETURN FUNCTION => print_ri_hck(__func__, __FILE__);
-  return createPointsFromPolylineDrawable(
-      m_flattenedOrOffsettedPolyLines);
-}
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createPointsFromPolylineDrawable() {
+//  // -------------------------------------------------------------
+//  // RETURN FUNCTION => print_ri_hck(__func__, __FILE__);
+//  return createPointsFromPolylineDrawable(
+//      m_flattenedOrOffsettedPolyLines);
+//}
 
 // ---------------------------------------------------------------
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createPointsFromExtrusionLineDrawable(
-    const std::vector<cvf::Vec3d>& extrusionLine) {
-
-  // -------------------------------------------------------------
-  cvf::ref<caf::DisplayCoordTransform>
-      transform = displayCoordTransform(crossSection());
-
-  // -------------------------------------------------------------
-  std::vector<cvf::Vec3d> displayCoords;
-
-  // -------------------------------------------------------------
-  for (const auto& pt : extrusionLine) {
-    displayCoords.push_back(transform->translateToDisplayCoord(pt));
-  }
-
-  // -------------------------------------------------------------
-  return createPointsFromPolylineDrawable(
-      std::vector<std::vector<cvf::Vec3d>>({displayCoords}));
-}
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createPointsFromExtrusionLineDrawable(
+//    const std::vector<cvf::Vec3d>& extrusionLine) {
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<caf::DisplayCoordTransform>
+//      transform = displayCoordTransform(crossSection());
+//
+//  // -------------------------------------------------------------
+//  std::vector<cvf::Vec3d> displayCoords;
+//
+//  // -------------------------------------------------------------
+//  for (const auto& pt : extrusionLine) {
+//    displayCoords.push_back(transform->translateToDisplayCoord(pt));
+//  }
+//
+//  // -------------------------------------------------------------
+//  return createPointsFromPolylineDrawable(
+//      std::vector<std::vector<cvf::Vec3d>>({displayCoords}));
+//}
 
 // ===============================================================
-cvf::ref<cvf::DrawableGeo>
-RivIntersectionGeometryGenerator::createPointsFromPolylineDrawable(
-    const std::vector<std::vector<cvf::Vec3d> >& polyLines) {
-
-  std::vector<cvf::Vec3f> vertices;
-
-  // -------------------------------------------------------------
-  for (size_t pLineIdx = 0; pLineIdx < polyLines.size(); ++pLineIdx) {
-
-    const std::vector<cvf::Vec3d>& polyLine = polyLines[pLineIdx];
-
-    // -----------------------------------------------------------
-    for (size_t i = 0; i < polyLine.size(); ++i) {
-      vertices.push_back(cvf::Vec3f(polyLine[i]));
-    }
-  }
-
-  // -------------------------------------------------------------
-  if (vertices.size() == 0) return nullptr;
-
-  cvf::ref<cvf::PrimitiveSetDirect>
-      primSet = new cvf::PrimitiveSetDirect(cvf::PT_POINTS);
-
-  primSet->setStartIndex(0);
-  primSet->setIndexCount(vertices.size());
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
-
-  // -------------------------------------------------------------
-  cvf::ref<cvf::Vec3fArray> vx = new cvf::Vec3fArray(vertices);
-
-  geo->setVertexArray(vx.p());
-  geo->addPrimitiveSet(primSet.p());
-
-  // -------------------------------------------------------------
-  print_ri_hck(__func__, __FILE__);
-  return geo;
-}
+//cvf::ref<cvf::DrawableGeo>
+//RivIntersectionGeometryGenerator::createPointsFromPolylineDrawable(
+//    const std::vector<std::vector<cvf::Vec3d> >& polyLines) {
+//
+//  std::vector<cvf::Vec3f> vertices;
+//
+//  // -------------------------------------------------------------
+//  for (size_t pLineIdx = 0; pLineIdx < polyLines.size(); ++pLineIdx) {
+//
+//    const std::vector<cvf::Vec3d>& polyLine = polyLines[pLineIdx];
+//
+//    // -----------------------------------------------------------
+//    for (size_t i = 0; i < polyLine.size(); ++i) {
+//      vertices.push_back(cvf::Vec3f(polyLine[i]));
+//    }
+//  }
+//
+//  // -------------------------------------------------------------
+//  if (vertices.size() == 0) return nullptr;
+//
+//  cvf::ref<cvf::PrimitiveSetDirect>
+//      primSet = new cvf::PrimitiveSetDirect(cvf::PT_POINTS);
+//
+//  primSet->setStartIndex(0);
+//  primSet->setIndexCount(vertices.size());
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
+//
+//  // -------------------------------------------------------------
+//  cvf::ref<cvf::Vec3fArray> vx = new cvf::Vec3fArray(vertices);
+//
+//  geo->setVertexArray(vx.p());
+//  geo->addPrimitiveSet(primSet.p());
+//
+//  // -------------------------------------------------------------
+//  print_ri_hck(__func__, __FILE__);
+//  return geo;
+//}
 
 // ===============================================================
 const std::vector<size_t>&
@@ -738,7 +756,8 @@ RivIntersectionGeometryGenerator::triangleToCellIndex() const {
 
 // ===============================================================
 const std::vector<RivIntersectionVertexWeights>&
-RivIntersectionGeometryGenerator::triangleVxToCellCornerInterpolationWeights() const {
+RivIntersectionGeometryGenerator::
+triangleVxToCellCornerInterpolationWeights() const {
 
   CVF_ASSERT(m_triangleVxes->size());
   // -------------------------------------------------------------
@@ -768,6 +787,7 @@ cvf::Mat4d
 RivIntersectionGeometryGenerator::
 unflattenTransformMatrix(const cvf::Vec3d& intersectionPointFlat) {
 
+  // -------------------------------------------------------------
   cvf::Mat4d flattenMx =  cvf::Mat4d::IDENTITY;
 
   for ( size_t pLineIdx = 0;
@@ -793,6 +813,7 @@ unflattenTransformMatrix(const cvf::Vec3d& intersectionPointFlat) {
     }
   }
 
+  // -------------------------------------------------------------
   return flattenMx.getInverted();
 }
 
@@ -801,13 +822,15 @@ bool
 RivIntersectionGeometryGenerator::isAnyGeometryPresent() const {
 
   // -------------------------------------------------------------
+  print_ri_hck(__func__, __FILE__);
+
+  // -------------------------------------------------------------
   if (m_triangleVxes->size() == 0) {
     return false;
+
   } else {
     return true;
   }
 
-  // -------------------------------------------------------------
-  print_ri_hck(__func__, __FILE__);
 }
 

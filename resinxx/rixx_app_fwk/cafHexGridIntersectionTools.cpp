@@ -505,11 +505,15 @@ void HexGridIntersectionTools::clipTrianglesBetweenTwoParallelPlanes(const std::
   }
 }
 
-//--------------------------------------------------------------------
-/// Will return the intersection point. If the plane is outside the line, it returns the closest line endpoint
-//--------------------------------------------------------------------
-cvf::Vec3d HexGridIntersectionTools::planeLineIntersectionForMC(const cvf::Plane& plane, const cvf::Vec3d& p1, const cvf::Vec3d& p2, double* normalizedDistFromP1)
-{
+// ===============================================================
+// Will return the intersection point. If the plane is outside
+// the line, it returns the closest line endpoint
+cvf::Vec3d HexGridIntersectionTools::
+planeLineIntersectionForMC(const cvf::Plane& plane,
+                           const cvf::Vec3d& p1,
+                           const cvf::Vec3d& p2,
+                           double* normalizedDistFromP1) {
+
   // From http://local.wasp.uwa.edu.au/~pbourke/geometry/planeline/
   //
   // P1 (x1,y1,z1) and P2 (x2,y2,z2)
@@ -553,15 +557,13 @@ cvf::Vec3d HexGridIntersectionTools::planeLineIntersectionForMC(const cvf::Plane
   }
 }
 
-//--------------------------------------------------------------------
-///
-//--------------------------------------------------------------------
-int HexGridIntersectionTools::planeHexIntersectionMC(const cvf::Plane& plane,
-                                                     const cvf::Vec3d cell[8],
-                                                     const size_t hexCornersIds[8],
-                                                     std::vector<ClipVx>* triangleVxes,
-                                                     std::vector<bool>* isTriEdgeCellContour)
-{
+// ===============================================================
+int HexGridIntersectionTools::
+planeHexIntersectionMC(const cvf::Plane& plane,
+                       const cvf::Vec3d cell[8],
+                       const size_t hexCornersIds[8],
+                       std::vector<ClipVx>* triangleVxes,
+                       std::vector<bool>* isTriEdgeCellContour) {
 
   // Based on description and implementation from Paul Bourke:
   //   http://local.wasp.uwa.edu.au/~pbourke/geometry/polygonise/
