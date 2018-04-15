@@ -1,48 +1,53 @@
-//##################################################################################################
+//##################################################################
 //
-//   Custom Visualization Core library
-//   Copyright (C) 2011-2013 Ceetron AS
+// Custom Visualization Core library
+// Copyright (C) 2011-2013 Ceetron AS
 //
-//   This library may be used under the terms of either the GNU General Public License or
-//   the GNU Lesser General Public License as follows:
+// This library may be used under the terms of either the
+// GNU General Public License or the GNU Lesser General
+// Public License as follows:
 //
-//   GNU General Public License Usage
-//   This library is free software: you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation, either version 3 of the License, or
-//   (at your option) any later version.
+// GNU General Public License Usage
+// This library is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of
+// the License, or (at your option) any later version.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   See the GNU General Public License at <<http://www.gnu.org/licenses/gpl.html>>
-//   for more details.
+// See the GNU General Public License at
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
 //
-//   GNU Lesser General Public License Usage
-//   This library is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU Lesser General Public License as published by
-//   the Free Software Foundation; either version 2.1 of the License, or
-//   (at your option) any later version.
+// GNU Lesser General Public License Usage
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later
+// version.
 //
-//   This library is distributed in the hope that it will be useful, but WITHOUT ANY
-//   WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//   FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-//   See the GNU Lesser General Public License at <<http://www.gnu.org/licenses/lgpl-2.1.html>>
-//   for more details.
+// See the GNU Lesser General Public License at
+// <http://www.gnu.org/licenses/lgpl-2.1.html>
+// for more details.
 //
-//##################################################################################################
+//##################################################################
 
 
 #include "cvfBase.h"
 #include "cvfVertexBundle.h"
-#include "cvfBufferObjectManaged.h"
-#include "cvfOpenGLContext.h"
-#include "cvfOpenGL.h"
-#include "cvfOpenGLResourceManager.h"
-#include "cvfShaderProgram.h"
-#include "cvfOpenGLCapabilities.h"
+
+//#include "cvfBufferObjectManaged.h"
+//#include "cvfOpenGLContext.h"
+//#include "cvfOpenGL.h"
+//#include "cvfOpenGLResourceManager.h"
+//#include "cvfShaderProgram.h"
+//#include "cvfOpenGLCapabilities.h"
 
 namespace cvf {
 
@@ -53,12 +58,12 @@ namespace cvf {
 /// \class cvf::VertexBundle
 /// \ingroup Render
 ///
-/// 
+///
 ///
 //==================================================================================================
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 VertexBundle::VertexBundle()
 :   m_vertexCount(0),
@@ -71,7 +76,7 @@ VertexBundle::VertexBundle()
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 VertexBundle::~VertexBundle()
 {
@@ -99,7 +104,7 @@ ref<VertexBundle> VertexBundle::shallowCopy() const
     newVB->setNormalArray(const_cast<Vec3fArray*>(normalArray()));
     newVB->setTextureCoordArray(const_cast<Vec2fArray*>(textureCoordArray()));
     newVB->setColorArray(const_cast<Color3ubArray*>(colorArray()));
-    
+
     // For the generic vertex attributes we just hand over the vertex attribute pointers
     size_t numGenericAttributes = m_genericAttributes.size();
     for (size_t i = 0; i < numGenericAttributes; i++)
@@ -114,7 +119,7 @@ ref<VertexBundle> VertexBundle::shallowCopy() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 size_t VertexBundle::vertexCount() const
 {
@@ -123,7 +128,7 @@ size_t VertexBundle::vertexCount() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 const Vec3fArray* VertexBundle::vertexArray() const
 {
@@ -139,7 +144,7 @@ const Vec3fArray* VertexBundle::vertexArray() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::setVertexArray(Vec3fArray* vertexArray)
 {
@@ -156,7 +161,7 @@ void VertexBundle::setVertexArray(Vec3fArray* vertexArray)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 const Vec3fArray* VertexBundle::normalArray() const
 {
@@ -172,7 +177,7 @@ const Vec3fArray* VertexBundle::normalArray() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::setNormalArray(Vec3fArray* normalArray)
 {
@@ -189,7 +194,7 @@ void VertexBundle::setNormalArray(Vec3fArray* normalArray)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 const Vec2fArray* VertexBundle::textureCoordArray() const
 {
@@ -205,7 +210,7 @@ const Vec2fArray* VertexBundle::textureCoordArray() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::setTextureCoordArray(Vec2fArray* textureCoordArray)
 {
@@ -222,7 +227,7 @@ void VertexBundle::setTextureCoordArray(Vec2fArray* textureCoordArray)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 const Color3ubArray* VertexBundle::colorArray() const
 {
@@ -238,7 +243,7 @@ const Color3ubArray* VertexBundle::colorArray() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::setColorArray(Color3ubArray* colorArray)
 {
@@ -255,7 +260,7 @@ void VertexBundle::setColorArray(Color3ubArray* colorArray)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 size_t VertexBundle::genericAttributeCount() const
 {
@@ -264,7 +269,7 @@ size_t VertexBundle::genericAttributeCount() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 VertexAttribute* VertexBundle::genericAttribute(size_t index)
 {
@@ -274,7 +279,7 @@ VertexAttribute* VertexBundle::genericAttribute(size_t index)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 const VertexAttribute* VertexBundle::genericAttribute(size_t index) const
 {
@@ -284,9 +289,9 @@ const VertexAttribute* VertexBundle::genericAttribute(size_t index) const
 
 
 //--------------------------------------------------------------------------------------------------
-/// Set or add a generic vertex attribute 
-/// 
-/// If a vertex attribute with the same name as the incoming attribute is already present, the 
+/// Set or add a generic vertex attribute
+///
+/// If a vertex attribute with the same name as the incoming attribute is already present, the
 /// existing attribute will be replaced.
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::setGenericAttribute(VertexAttribute* vertexAttribute)
@@ -318,7 +323,7 @@ void VertexBundle::setGenericAttribute(VertexAttribute* vertexAttribute)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::removeGenericAttribute(const VertexAttribute* vertexAttribute)
 {
@@ -362,7 +367,7 @@ void VertexBundle::clear()
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::createUploadBufferObjectsGPU(OpenGLContext* oglContext)
 {
@@ -419,7 +424,7 @@ void VertexBundle::createUploadBufferObjectsGPU(OpenGLContext* oglContext)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::releaseBufferObjectsGPU()
 {
@@ -438,12 +443,12 @@ void VertexBundle::releaseBufferObjectsGPU()
 
 //--------------------------------------------------------------------------------------------------
 /// Set up vertex attrib pointers and enable the arrays for all vertex attributes in the bundle
-/// 
+///
 /// This function will set up all vertex data in the bundle using OpenGL's generic vertex attributes
 /// so that it is ready to use with our shaders.
-/// If buffer objects have been created and uploaded for the bundle, they will be used. Otherwise 
+/// If buffer objects have been created and uploaded for the bundle, they will be used. Otherwise
 /// the vertex attrib pointers will be set up from client memory.
-/// 
+///
 /// \warning Remember to call finishUseBundle() when finsihed drawing with this bundle.
 /// \warning Requires at least OpenGL2 capability. Will assert if this condition is not met.
 //--------------------------------------------------------------------------------------------------
@@ -568,7 +573,7 @@ void VertexBundle::useBundle(OpenGLContext* oglContext, VertexBundleUsage* bundl
 
 //--------------------------------------------------------------------------------------------------
 /// Setup vertex data using using conventional vertex arrays.
-/// 
+///
 /// Will set up vertex data using the conventional (fixed function) vertex arrays such as
 /// glVertexArray(), glNormalArray(), etc. Note that only the fixed fixed attributes will be set
 /// up (vertices, normals, texture coordinates and colors). Generic attributes will not be set up.
@@ -602,7 +607,7 @@ void VertexBundle::useBundleFixedFunction(OpenGLContext* oglContext, VertexBundl
 
         glEnableClientState(GL_VERTEX_ARRAY);
     }
-    
+
     if (m_attribNormals.notNull())
     {
         if (m_boNormals.notNull() && m_boNormals->isUploaded())
@@ -653,7 +658,7 @@ void VertexBundle::useBundleFixedFunction(OpenGLContext* oglContext, VertexBundl
             CVF_TIGHT_ASSERT(ptrOrOffset);
             glColorPointer(3, GL_UNSIGNED_BYTE, 0, ptrOrOffset);
         }
-        
+
         glEnableClientState(GL_COLOR_ARRAY);
     }
 
@@ -664,7 +669,7 @@ void VertexBundle::useBundleFixedFunction(OpenGLContext* oglContext, VertexBundl
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundle::finishUseBundle(OpenGLContext* oglContext, VertexBundleUsage* bundleUsage) const
 {
@@ -674,9 +679,9 @@ void VertexBundle::finishUseBundle(OpenGLContext* oglContext, VertexBundleUsage*
     {
 #ifdef CVF_OPENGL_ES
         CVF_FAIL_MSG("Not supported on OpenGL ES");
-#else       
+#else
         CVF_TIGHT_ASSERT(oglContext->capabilities()->supportsFixedFunction());
-        
+
         if (m_vertexCount > 0)  glDisableClientState(GL_VERTEX_ARRAY);
         if (m_hasNormals)       glDisableClientState(GL_NORMAL_ARRAY);
         if (m_hasTexCoords)     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -709,12 +714,12 @@ void VertexBundle::finishUseBundle(OpenGLContext* oglContext, VertexBundleUsage*
 /// \class cvf::VertexBundleUsage
 /// \ingroup Render
 ///
-/// 
+///
 ///
 //==================================================================================================
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 VertexBundleUsage::VertexBundleUsage()
 :   m_fixedFunction(false)
@@ -723,7 +728,7 @@ VertexBundleUsage::VertexBundleUsage()
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundleUsage::setFixedFunction(bool fixedFunction)
 {
@@ -732,7 +737,7 @@ void VertexBundleUsage::setFixedFunction(bool fixedFunction)
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 bool VertexBundleUsage::fixedFunction() const
 {
@@ -741,7 +746,7 @@ bool VertexBundleUsage::fixedFunction() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 size_t VertexBundleUsage::usedGenAttribCount() const
 {
@@ -750,7 +755,7 @@ size_t VertexBundleUsage::usedGenAttribCount() const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 int VertexBundleUsage::usedGenAttrib(size_t i) const
 {
@@ -759,7 +764,7 @@ int VertexBundleUsage::usedGenAttrib(size_t i) const
 
 
 //--------------------------------------------------------------------------------------------------
-/// 
+///
 //--------------------------------------------------------------------------------------------------
 void VertexBundleUsage::registerUsedGenAttrib(int attribLocationIndex)
 {

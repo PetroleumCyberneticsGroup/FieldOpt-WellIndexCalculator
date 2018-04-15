@@ -184,8 +184,9 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
     // -----------------------------------------------------------
     size_t lineCount = polyLine.size();
     size_t lIdx = 0;
-    while ( lIdx < lineCount - 1)
-    {
+    while ( lIdx < lineCount - 1) {
+
+      // ---------------------------------------------------------
       size_t idxToNextP =
           RivSectionFlattner::indexToNextValidPoint(
               polyLine, m_extrusionDirection, lIdx);
@@ -208,32 +209,32 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
       double maxSectionHeightUp = 0;
       double maxSectionHeightDown = 0;
 
-      // ---------------------------------------------------------
-      if (m_crossSection->type == RimIntersection::CS_AZIMUTHLINE) {
-
-        // -------------------------------------------------------
-        maxSectionHeightUp = m_crossSection->lengthUp();
-        maxSectionHeightDown = m_crossSection->lengthDown();
-
-        // -------------------------------------------------------
-        if (maxSectionHeightUp + maxSectionHeightDown == 0) {
-          return;
-        }
-
-        // -------------------------------------------------------
-        cvf::Vec3d maxHeightVecDown = m_extrusionDirection*maxSectionHeightUp;
-        cvf::Vec3d maxHeightVecUp = m_extrusionDirection*maxSectionHeightDown;
-
-        // -------------------------------------------------------
-        sectionBBox.add(p1 + maxHeightVecUp);
-        sectionBBox.add(p1 - maxHeightVecDown);
-        sectionBBox.add(p2 + maxHeightVecUp);
-        sectionBBox.add(p2 - maxHeightVecDown);
-
-        // -------------------------------------------------------
-        maxHeightVec = maxHeightVecUp + maxHeightVecDown;
-
-      } else {
+//      // ---------------------------------------------------------
+//      if (m_crossSection->type == RimIntersection::CS_AZIMUTHLINE) {
+//
+//        // -------------------------------------------------------
+//        maxSectionHeightUp = m_crossSection->lengthUp();
+//        maxSectionHeightDown = m_crossSection->lengthDown();
+//
+//        // -------------------------------------------------------
+//        if (maxSectionHeightUp + maxSectionHeightDown == 0) {
+//          return;
+//        }
+//
+//        // -------------------------------------------------------
+//        cvf::Vec3d maxHeightVecDown = m_extrusionDirection*maxSectionHeightUp;
+//        cvf::Vec3d maxHeightVecUp = m_extrusionDirection*maxSectionHeightDown;
+//
+//        // -------------------------------------------------------
+//        sectionBBox.add(p1 + maxHeightVecUp);
+//        sectionBBox.add(p1 - maxHeightVecDown);
+//        sectionBBox.add(p2 + maxHeightVecUp);
+//        sectionBBox.add(p2 - maxHeightVecDown);
+//
+//        // -------------------------------------------------------
+//        maxHeightVec = maxHeightVecUp + maxHeightVecDown;
+//
+//      } else {
 
         // -------------------------------------------------------
         maxHeightVec = m_extrusionDirection*gridBBox.radius();
@@ -242,27 +243,41 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
         sectionBBox.add(p1 - maxHeightVec);
         sectionBBox.add(p2 + maxHeightVec);
         sectionBBox.add(p2 - maxHeightVec);
-      }
+//      }
 
       // ---------------------------------------------------------
       std::vector<size_t> columnCellCandidates;
-      m_hexGrid->findIntersectingCells(sectionBBox, &columnCellCandidates);
+      m_hexGrid->findIntersectingCells(sectionBBox,
+                                       &columnCellCandidates);
 
       // ---------------------------------------------------------
       cvf::Plane plane;
-      plane.setFromPoints(p1, p2, p2 + maxHeightVec);
+      plane.setFromPoints(p1,
+                          p2,
+                          p2 + maxHeightVec);
 
       // ---------------------------------------------------------
       cvf::Plane p1Plane;
-      p1Plane.setFromPoints(p1, p1 + maxHeightVec, p1 + plane.normal());
-      cvf::Plane p2Plane;
-      p2Plane.setFromPoints(p2, p2 + maxHeightVec, p2 - plane.normal());
+      p1Plane.setFromPoints(p1,
+                            p1 + maxHeightVec,
+                            p1 + plane.normal());
 
       // ---------------------------------------------------------
-      std::vector<caf::HexGridIntersectionTools::ClipVx> hexPlaneCutTriangleVxes;
+      cvf::Plane p2Plane;
+      p2Plane.setFromPoints(p2,
+                            p2 + maxHeightVec,
+                            p2 - plane.normal());
+
+      // ---------------------------------------------------------
+      std::vector<caf::HexGridIntersectionTools::ClipVx>
+          hexPlaneCutTriangleVxes;
       hexPlaneCutTriangleVxes.reserve(5*3);
+
+      // ---------------------------------------------------------
       std::vector<int> cellFaceForEachTriangleEdge;
       cellFaceForEachTriangleEdge.reserve(5*3);
+
+      // ---------------------------------------------------------
       cvf::Vec3d cellCorners[8];
       size_t cornerIndices[8];
 
@@ -336,16 +351,18 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
 //        }
 
         // -------------------------------------------------------
-        std::vector<caf::HexGridIntersectionTools::ClipVx> clippedTriangleVxes;
+        std::vector<caf::HexGridIntersectionTools::ClipVx>
+            clippedTriangleVxes;
         std::vector<int> cellFaceForEachClippedTriangleEdge;
 
         caf::HexGridIntersectionTools::
-        clipTrianglesBetweenTwoParallelPlanes(hexPlaneCutTriangleVxes,
-                                              cellFaceForEachTriangleEdge,
-                                              p1Plane,
-                                              p2Plane,
-                                              &clippedTriangleVxes,
-                                              &cellFaceForEachClippedTriangleEdge);
+        clipTrianglesBetweenTwoParallelPlanes(
+            hexPlaneCutTriangleVxes,
+            cellFaceForEachTriangleEdge,
+            p1Plane,
+            p2Plane,
+            &clippedTriangleVxes,
+            &cellFaceForEachClippedTriangleEdge);
 
         // -------------------------------------------------------
         size_t clippedTriangleCount = clippedTriangleVxes.size()/3;
@@ -490,14 +507,15 @@ void RivIntersectionGeometryGenerator::calculateArrays() {
 // Generate surface drawable geo from the specified region
 cvf::ref<cvf::DrawableGeo>
 RivIntersectionGeometryGenerator::generateSurface() {
+
+  // -------------------------------------------------------------
   calculateArrays();
 
+  // -------------------------------------------------------------
   CVF_ASSERT(m_triangleVxes.notNull());
-
-  // -----------------------------------------------------------
   if (m_triangleVxes->size() == 0) return nullptr;
 
-  // -----------------------------------------------------------
+  // -------------------------------------------------------------
   cvf::ref<cvf::DrawableGeo> geo = new cvf::DrawableGeo;
   geo->setFromTriangleVertexArray(m_triangleVxes.p());
 

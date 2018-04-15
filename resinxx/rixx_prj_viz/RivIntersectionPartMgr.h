@@ -52,6 +52,7 @@ class RigGeoMechCaseData;
 class RIGrid;
 
 class RigResultAccessor;
+
 class Rim3dView;
 class RimCellEdgeColors;
 class RimEclipseCellColors;
@@ -59,8 +60,8 @@ class RimIntersection;
 class RivTernaryScalarMapper;
 
 // ---------------------------------------------------------------
-// class RivIntersectionGeometryGenerator;
-#include "RivIntersectionGeometryGenerator.h"
+class RivIntersectionGeometryGenerator;
+// #include "RivIntersectionGeometryGenerator.h"
 
 // ---------------------------------------------------------------
 class RivIntersectionHexGridInterface;
@@ -152,7 +153,7 @@ class RivIntersectionPartMgr : public cvf::Object
   // -------------------------------------------------------------
   void generatePartGeometry();
   void createPolyLineParts(bool useBufferObjects);
-  void createExtrusionDirParts(bool useBufferObjects);
+  // void createExtrusionDirParts(bool useBufferObjects);
 
   cvf::ref<RivIntersectionHexGridInterface> createHexGridInterface();
 
@@ -167,6 +168,7 @@ class RivIntersectionPartMgr : public cvf::Object
   cvf::ref<cvf::Part> m_crossSectionGridLines;
   cvf::ref<cvf::Part> m_crossSectionFaultGridLines;
 
+  // -------------------------------------------------------------
   cvf::ref<cvf::Vec2fArray> m_crossSectionFacesTextureCoords;
 
   cvf::ref<cvf::Part> m_highlightLineAlongPolyline;
@@ -182,9 +184,10 @@ class RivIntersectionPartMgr : public cvf::Object
     cvf::ref<cvf::Part> m_centerLinePart;
   };
 
+  // -------------------------------------------------------------
   std::list<RivPipeBranchData> m_wellBranches;
 
   // -------------------------------------------------------------
-  bool                        m_isFlattened;
+  bool m_isFlattened;
 };
 

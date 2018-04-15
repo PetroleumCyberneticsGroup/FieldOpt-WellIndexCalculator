@@ -55,26 +55,25 @@ ${RESINXX_RES_MOD}/RigCellGeometryTools.cpp
 
 # PRJ MOD FILES ========================================================
 set(RIXX_PRJ_VIZ_CPP_FILES
-${RESINXX_PRJ_VIZ}/RimIntersection.cpp
-${RESINXX_PRJ_VIZ}/RivIntersectionPartMgr.cpp
-${RESINXX_PRJ_VIZ}/RivHexGridIntersectionTools.cpp
-${RESINXX_PRJ_VIZ}/RivIntersectionGeometryGenerator.cpp
-${RESINXX_PRJ_VIZ}/RivIntersectionSourceInfo.cpp
+${RESINXX_PRJ_VIZ}/cvfDrawable.cpp
+${RESINXX_PRJ_VIZ}/cvfDrawableGeo.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSet.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUInt.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUIntScoped.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUShort.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUShortScoped.cpp
+#${RESINXX_PRJ_VIZ}/cvfVertexAttribute.cpp
+#${RESINXX_PRJ_VIZ}/cvfVertexBundle.cpp
+#${RESINXX_PRJ_VIZ}/cvfVertexWelder.cpp
 ${RESINXX_PRJ_VIZ}/RigFemPart.cpp
 ${RESINXX_PRJ_VIZ}/RigFemPartGrid.cpp
 ${RESINXX_PRJ_VIZ}/RigFemTypes.cpp
-${RESINXX_PRJ_VIZ}/cvfDrawableGeo.cpp
-${RESINXX_PRJ_VIZ}/cvfDrawable.cpp
-${RESINXX_PRJ_VIZ}/cvfPrimitiveSet.cpp
-${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUShort.cpp
-${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUInt.cpp
-${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUIntScoped.cpp
-${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUShortScoped.cpp
-${RESINXX_PRJ_VIZ}/cvfVertexBundle.cpp
-${RESINXX_PRJ_VIZ}/cvfVertexAttribute.cpp
-
+${RESINXX_PRJ_VIZ}/RimIntersection.cpp
+${RESINXX_PRJ_VIZ}/RivHexGridIntersectionTools.cpp
+${RESINXX_PRJ_VIZ}/RivIntersectionGeometryGenerator.cpp
+${RESINXX_PRJ_VIZ}/RivIntersectionPartMgr.cpp
+${RESINXX_PRJ_VIZ}/RivIntersectionSourceInfo.cpp
 )
-
 
 message(".............................................................")
 message("RIXX_CPP_FILES: ${RIXX_CPP_FILES}")

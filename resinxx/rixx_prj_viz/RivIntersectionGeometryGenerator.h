@@ -41,6 +41,7 @@ class RIGrid;
 class RICellInfo;
 
 class RigResultAccessor;
+
 class RimIntersection;
 class RivIntersectionHexGridInterface;
 class RivIntersectionVertexWeights;

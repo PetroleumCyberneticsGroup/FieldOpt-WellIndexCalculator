@@ -21,7 +21,7 @@
 // ---------------------------------------------------------------
 #include "RigFemPart.h"
 #include "RigFemPartGrid.h"
-#include "cvfBoundingBox.h"
+// #include "cvfBoundingBox.h"
 #include "cvfBoundingBoxTree.h"
 
 // ===============================================================

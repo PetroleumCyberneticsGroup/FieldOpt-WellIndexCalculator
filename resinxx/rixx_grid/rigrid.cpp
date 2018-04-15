@@ -611,7 +611,7 @@ RIGrid::calculateFaults(const RIActiveCellInfo* activeCellInfo) {
 
   // Spread fault idx'es on the cells from the faults
   for (size_t fIdx = 0 ; fIdx < m_faults.size(); ++fIdx) {
-    m_faults[fIdx]->accumulateFaultsPrCell(m_faultsPrCellAcc,
+    m_faults[fIdx]->accumulateFaultsPrCell(m_faultsPrCellAcc.p(),
                                            static_cast<int>(fIdx));
   }
 
@@ -848,8 +848,8 @@ bool RIGrid::isFaceNormalsOutwards() const {
 const RIFault*
 RIGrid::findFaultFromCellIndexAndCellFace(
     size_t reservoirCellIndex,
-    cvf::StructGridInterface::FaceType face) const
-{
+    cvf::StructGridInterface::FaceType face) const {
+
   CVF_ASSERT(m_faultsPrCellAcc.notNull());
 
   if (face == cvf::StructGridInterface::NO_FACE) return nullptr;
