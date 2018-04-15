@@ -74,9 +74,9 @@ class HexGridIntersectionTools
     cvf::Vec3d  vx;
 
     // ---------------------------------------------------------------
-    double normDistFromEdgeVx1;
-    size_t clippedEdgeVx1Id;
-    size_t clippedEdgeVx2Id;
+    double      normDistFromEdgeVx1;
+    size_t      clippedEdgeVx1Id;
+    size_t      clippedEdgeVx2Id;
 
     // ---------------------------------------------------------------
     // Pointing to real vertices, or indices to ClipVx's
@@ -110,11 +110,11 @@ class HexGridIntersectionTools
   // -----------------------------------------------------------------
   static void clipTrianglesBetweenTwoParallelPlanes(
       const std::vector<ClipVx>& triangleVxes,
-      const std::vector<bool>& isTriangleEdgeCellContour,
+      const std::vector<int>& cellFaceForEachTriangleEdge,
       const cvf::Plane& p1Plane,
       const cvf::Plane& p2Plane,
       std::vector<ClipVx>* clippedTriangleVxes,
-      std::vector<bool>* isClippedTriEdgeCellContour);
+      std::vector<int>* cellFaceForEachClippedTriangleEdge);
 
   // -----------------------------------------------------------------
   static cvf::Vec3d planeLineIntersectionForMC(
@@ -129,7 +129,7 @@ class HexGridIntersectionTools
       const cvf::Vec3d cell[8],
       const size_t hexCornersIds[8],
       std::vector<ClipVx>* triangleVxes,
-      std::vector<bool>* isTriEdgeCellContour);
+      std::vector<int>* cellFaceForEachTriangleEdge);
 
 };
 
