@@ -1150,14 +1150,23 @@ RivIntersectionPartMgr::createHexGridInterface() {
   // m_rimCrossSection->firstAncestorOrThisOfType(eclipseView);
 
   // -------------------------------------------------------------
-  if (eclipseView) {
+  // if (eclipseView) {
     // RigMainGrid* grid = eclipseView->mainGrid();
-    RIGrid* grid;
-    RICaseData* casedata;
-    return new RivEclipseIntersectionGrid(grid,
-                                          eclipseView->currentActiveCellInfo(),
-                                          m_rimCrossSection->showInactiveCells());
-  }
+
+  RIGrid* grid;
+  RICaseData* casedata;
+
+  RIActiveCellInfo* activeCellInfo =
+      casedata->activeCellInfo(MATRIX_MODEL);
+
+  return new RivEclipseIntersectionGrid(grid,
+                                        activeCellInfo,
+                                        true);
+
+//    return new RivEclipseIntersectionGrid(grid,
+//                                          eclipseView->currentActiveCellInfo(),
+//                                          m_rimCrossSection->showInactiveCells());
+  // }
 
 //  // -------------------------------------------------------------
 //  RimGeoMechView* geoView;

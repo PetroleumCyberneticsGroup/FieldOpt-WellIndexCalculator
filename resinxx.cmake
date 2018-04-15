@@ -65,6 +65,14 @@ ${RESINXX_PRJ_VIZ}/RigFemPartGrid.cpp
 ${RESINXX_PRJ_VIZ}/RigFemTypes.cpp
 ${RESINXX_PRJ_VIZ}/cvfDrawableGeo.cpp
 ${RESINXX_PRJ_VIZ}/cvfDrawable.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSet.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUShort.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUInt.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUIntScoped.cpp
+${RESINXX_PRJ_VIZ}/cvfPrimitiveSetIndexedUShortScoped.cpp
+${RESINXX_PRJ_VIZ}/cvfVertexBundle.cpp
+${RESINXX_PRJ_VIZ}/cvfVertexAttribute.cpp
+
 )
 
 
