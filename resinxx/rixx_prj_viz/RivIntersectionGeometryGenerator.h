@@ -72,19 +72,19 @@ class RivIntersectionGeometryGenerator : public cvf::Object {
 
   // -------------------------------------------------------------
   // Generate geometry
-  cvf::ref<cvf::DrawableGeo> generateSurface();
-  cvf::ref<cvf::DrawableGeo> createMeshDrawable();
-  cvf::ref<cvf::DrawableGeo>  createFaultMeshDrawable();
+  // cvf::ref<cvf::DrawableGeo> generateSurface();
+  // cvf::ref<cvf::DrawableGeo> createMeshDrawable();
+  // cvf::ref<cvf::DrawableGeo>  createFaultMeshDrawable();
 
   // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo> createLineAlongPolylineDrawable();
-  cvf::ref<cvf::DrawableGeo>  createLineAlongExtrusionLineDrawable(
-      const std::vector<cvf::Vec3d>& extrusionLine);
+  // cvf::ref<cvf::DrawableGeo> createLineAlongPolylineDrawable();
+  // cvf::ref<cvf::DrawableGeo>  createLineAlongExtrusionLineDrawable(
+  //    const std::vector<cvf::Vec3d>& extrusionLine);
 
   // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo> createPointsFromPolylineDrawable();
-  cvf::ref<cvf::DrawableGeo>  createPointsFromExtrusionLineDrawable(
-      const std::vector<cvf::Vec3d>& extrusionLine);
+  // cvf::ref<cvf::DrawableGeo> createPointsFromPolylineDrawable();
+  // cvf::ref<cvf::DrawableGeo>  createPointsFromExtrusionLineDrawable(
+  //    const std::vector<cvf::Vec3d>& extrusionLine);
 
   // -------------------------------------------------------------
   const std::vector<std::vector<cvf::Vec3d> >&
@@ -107,16 +107,16 @@ class RivIntersectionGeometryGenerator : public cvf::Object {
   cvf::Mat4d unflattenTransformMatrix(
       const cvf::Vec3d& intersectionPointFlat);
 
- private:
+ // private:
 
   // -------------------------------------------------------------
-  cvf::ref<cvf::DrawableGeo>
-  createLineAlongPolylineDrawable(
-      const std::vector<std::vector<cvf::Vec3d> >& polyLines);
+  // cvf::ref<cvf::DrawableGeo>
+  // createLineAlongPolylineDrawable(
+  //    const std::vector<std::vector<cvf::Vec3d> >& polyLines);
 
-  cvf::ref<cvf::DrawableGeo>
-  createPointsFromPolylineDrawable(
-      const std::vector<std::vector<cvf::Vec3d> >& polyLines);
+  // cvf::ref<cvf::DrawableGeo>
+  // createPointsFromPolylineDrawable(
+  //    const std::vector<std::vector<cvf::Vec3d> >& polyLines);
 
   // -------------------------------------------------------------
   void calculateArrays();

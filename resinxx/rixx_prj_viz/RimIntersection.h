@@ -21,6 +21,14 @@
 #pragma once
 
 // ---------------------------------------------------------------
+//FIELDOPT
+#include "Settings/model.h"
+
+// ---------------------------------------------------------------
+// RIXX
+#include "../rixx_grid/ricasedata.h"
+
+// ---------------------------------------------------------------
 #include "../rixx_app_fwk/cafAppEnum.h"
 //#include "cafPdmField.h"
 //#include "cafPdmFieldCvfVec3d.h"
@@ -56,21 +64,25 @@ class RimIntersection // : public caf::PdmObject
  public:
   // -------------------------------------------------------------
   enum CrossSectionEnum {
-    // CS_WELL_PATH,
-    // CS_SIMULATION_WELL,
+    CS_WELL_PATH,
+    CS_SIMULATION_WELL,
     CS_POLYLINE,
-    // CS_AZIMUTHLINE
+    CS_AZIMUTHLINE
   };
 
   // -------------------------------------------------------------
   enum CrossSectionDirEnum {
     CS_VERTICAL,
-    // CS_HORIZONTAL,
-    // CS_TWO_POINTS,
+    CS_HORIZONTAL,
+    CS_TWO_POINTS,
   };
 
  public:
   // -------------------------------------------------------------
+  RimIntersection(RIGrid* grid,
+                  RICaseData* caseData,
+                  Settings::Model* settings);
+
   RimIntersection();
   ~RimIntersection();
 
@@ -80,8 +92,10 @@ class RimIntersection // : public caf::PdmObject
 
   // -------------------------------------------------------------
   // caf::PdmField< caf::AppEnum< CrossSectionEnum > > type;
+  caf::AppEnum< CrossSectionDirEnum > direction;
   // caf::PdmField< caf::AppEnum< CrossSectionDirEnum > > direction;
   // caf::PdmField< bool > showInactiveCells;
+
 
   // -------------------------------------------------------------
   // caf::PdmPtrField<RimWellPath*> wellPath;
@@ -100,7 +114,7 @@ class RimIntersection // : public caf::PdmObject
   void appendPointToPolyLine(const cvf::Vec3d& point);
 
   // -------------------------------------------------------------
-  Rim2dIntersectionView* correspondingIntersectionView();
+  // Rim2dIntersectionView* correspondingIntersectionView();
   RivIntersectionPartMgr* intersectionPartMgr();
 
   // -------------------------------------------------------------
@@ -108,20 +122,22 @@ class RimIntersection // : public caf::PdmObject
   void appendPointToExtrusionDirection(const cvf::Vec3d& point);
 
   // -------------------------------------------------------------
-  void appendPointToAzimuthLine(const cvf::Vec3d& point);
+  // void appendPointToAzimuthLine(const cvf::Vec3d& point);
 
   // -------------------------------------------------------------
   cvf::Vec3d extrusionDirection() const;
-  double lengthUp() const;
-  double lengthDown() const;
-  void setLengthUp(double heightUp);
-  void setLengthDown(double heightDown);
-  double extentLength();
-  void recomputeSimulationWellBranchData();
-  bool hasDefiningPoints() const;
 
   // -------------------------------------------------------------
-  int branchIndex() const;
+  // double lengthUp() const;
+  // double lengthDown() const;
+  // void setLengthUp(double heightUp);
+  // void setLengthDown(double heightDown);
+  // double extentLength();
+  // void recomputeSimulationWellBranchData();
+  // bool hasDefiningPoints() const;
+
+  // -------------------------------------------------------------
+  // int branchIndex() const;
 
  protected:
   // -------------------------------------------------------------
@@ -147,11 +163,17 @@ class RimIntersection // : public caf::PdmObject
   // calculateValueOptions(const caf::PdmFieldHandle* fieldNeedingOptions,
   //                       bool * useOptionsOnly);
 
+ public:
+  RIGrid* grid_;
+  RICaseData* casedata_;
+  Settings::Model* settings_;
+
  private:
   // -------------------------------------------------------------
   // caf::PdmField<int> m_branchIndex;
   // caf::PdmField<double> m_extentLength;
   // caf::PdmField<double> m_azimuthAngle;
+   double m_dipAngle;
   // caf::PdmField<double> m_dipAngle;
   // caf::PdmField<double> m_lengthUp;
   // caf::PdmField<double> m_lengthDown;
@@ -161,6 +183,7 @@ class RimIntersection // : public caf::PdmObject
   // caf::PdmField< std::vector< cvf::Vec3d> > m_userPolyline;
   std::vector< cvf::Vec3d> m_customExtrusionPoints;
   // caf::PdmField< std::vector< cvf::Vec3d> > m_customExtrusionPoints;
+  std::vector< cvf::Vec3d> m_twoAzimuthPoints;
   // caf::PdmField< std::vector< cvf::Vec3d> > m_twoAzimuthPoints;
 
   // -------------------------------------------------------------
@@ -178,8 +201,8 @@ class RimIntersection // : public caf::PdmObject
   // void updateWellExtentDefaultValue();
 
   // -------------------------------------------------------------
-  void addExtents(std::vector<cvf::Vec3d> &polyLine) const;
-  void updateName();
+  // void addExtents(std::vector<cvf::Vec3d> &polyLine) const;
+  // void updateName();
   void rebuildGeometryAndScheduleCreateDisplayModel();
   // static double azimuthInRadians(cvf::Vec3d vec);
 

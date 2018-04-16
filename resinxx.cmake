@@ -27,6 +27,7 @@ set(RIXX_APP_FWK_CPP_FILES
 ${RESINXX_APP_FWK}/cvfStructGrid.cpp
 ${RESINXX_APP_FWK}/cvfCellRange.cpp
 ${RESINXX_APP_FWK}/cafHexGridIntersectionTools.cpp
+${RESINXX_APP_FWK}/RivSectionFlattner.cpp
 )
 
 # CORE GEOM FILES ======================================================

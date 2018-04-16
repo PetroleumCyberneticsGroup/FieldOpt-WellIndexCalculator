@@ -387,8 +387,8 @@ class RIReaderECL : public RIReaderInterface
 //                                           int ertBranchId, int ertSegmentId,
 //                                           const char* wellName);
 
-//  void importFaults(const QStringList& fileSet,
-//                    cvf::Collection<RIFault>* faults);
+  // void importFaults(const QStringList& fileSet,
+  //                  cvf::Collection<RIFault>* faults);
 
   // -------------------------------------------------------
   void openInitFile();

@@ -42,14 +42,19 @@ RINNCData::RINNCData() {
 // -----------------------------------------------------------------
 void RINNCData::processConnections(const RIGrid& mainGrid) {
 
+  // ---------------------------------------------------------------
   //cvf::Trace::show("NNC: Total number: " + cvf::String((int)m_connections.size()));
-  cout << "NNC: Total number: " << cvf::String((int)m_connections.size()).toStdString() << endl;
+  cout << "NNC: Total number: "
+       << cvf::String((int)m_connections.size()).toStdString() << endl;
 
+  // ---------------------------------------------------------------
   for (size_t cnIdx = 0; cnIdx < m_connections.size(); ++cnIdx) {
 
+    // -------------------------------------------------------------
     const RICell& c1 = mainGrid.globalCellArray()[m_connections[cnIdx].m_c1GlobIdx];
     const RICell& c2 = mainGrid.globalCellArray()[m_connections[cnIdx].m_c2GlobIdx];
 
+    // -------------------------------------------------------------
     bool foundAnyOverlap = false;
     std::vector<size_t> connectionPolygon;
     std::vector<cvf::Vec3d> connectionIntersections;

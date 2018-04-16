@@ -86,6 +86,22 @@ void caf::AppEnum< RimIntersection::CrossSectionDirEnum >::setUp() {
 // CAF_PDM_SOURCE_INIT(RimIntersection, "CrossSection");
 
 // ===============================================================
+RimIntersection::RimIntersection(RIGrid* grid,
+                                 RICaseData* casedata,
+                                 Settings::Model* settings) {
+  grid_ = grid;
+  casedata_ = casedata;
+  settings_ = settings;
+
+  m_crossSectionPartMgr = nullptr;
+
+  // -------------------------------------------------------
+  if (settings_->verb_vector()[5] > 1) // idx:5 -> mod (Model)
+    cout << "[mod]Init RimIntersection.--- " << endl;
+
+}
+
+// ===============================================================
 RimIntersection::RimIntersection() {
 
   // -------------------------------------------------------------
@@ -566,6 +582,8 @@ RivIntersectionPartMgr* RimIntersection::intersectionPartMgr() {
 
   if (m_crossSectionPartMgr.isNull()) {
     m_crossSectionPartMgr = new RivIntersectionPartMgr(this);
+  } else {
+    cout << "m_crossSectionPartMgr.isNull()!!" << endl;
   }
 
   return m_crossSectionPartMgr.p();
@@ -795,9 +813,11 @@ void RimIntersection::appendPointToPolyLine(const cvf::Vec3d& point) {
   m_userPolyline.push_back(point);
   // m_userPolyline.v().push_back(point);
 
+  print_ri_hck_vec(__func__, __FILE__, "", point);
+
   // m_userPolyline.uiCapability()->updateConnectedEditors();
 
-  rebuildGeometryAndScheduleCreateDisplayModel();
+  // rebuildGeometryAndScheduleCreateDisplayModel();
 }
 
 // ===============================================================
@@ -867,46 +887,53 @@ RimIntersection::appendPointToExtrusionDirection(const cvf::Vec3d& point) {
 //}
 
 // ===============================================================
-//cvf::Vec3d RimIntersection::extrusionDirection() const
-//{
-//  cvf::Vec3d dir = cvf::Vec3d::Z_AXIS;
-//
-//  if (direction() == RimIntersection::CS_HORIZONTAL)
-//  {
-//    std::vector< std::vector <cvf::Vec3d> > lines = this->polyLines();
-//    if (lines.size() > 0 && lines[0].size() > 1)
-//    {
-//      std::vector <cvf::Vec3d> firstLine = lines[0];
-//
-//      // Use first and last point of polyline to approximate
-//      // orientation of polyline
-//      // Then cross with Z axis to find extrusion direction
-//
-//      cvf::Vec3d polyLineDir = firstLine[firstLine.size() - 1] - firstLine[0];
-//      cvf::Vec3d up = cvf::Vec3d::Z_AXIS;
-//      dir = polyLineDir ^ up;
-//    }
-//  }
-//  else if (direction() == RimIntersection::CS_TWO_POINTS
-//      && m_customExtrusionPoints().size() > 1)
-//  {
-//    dir = m_customExtrusionPoints()
-//    [m_customExtrusionPoints().size() - 1] - m_customExtrusionPoints()[0];
-//  }
-//  else if (m_twoAzimuthPoints().size() == 2)
-//  {
-//    double dipInRad = cvf::Math::toRadians(m_dipAngle);
-//
-//    cvf::Vec3d azimutDirection = m_twoAzimuthPoints()[1] - m_twoAzimuthPoints()[0];
-//
-//    cvf::Mat3d rotMat = cvf::Mat3d::fromRotation(azimutDirection, dipInRad);
-//    cvf::Vec3d vecPerpToRotVecInHorizontalPlane = azimutDirection ^ cvf::Vec3d::Z_AXIS;
-//
-//    dir = vecPerpToRotVecInHorizontalPlane.getTransformedVector(rotMat);
-//  }
-//
-//  return dir;
-//}
+cvf::Vec3d RimIntersection::extrusionDirection() const {
+
+  cvf::Vec3d dir = cvf::Vec3d::Z_AXIS;
+
+  // -------------------------------------------------------------
+  if (direction == RimIntersection::CS_HORIZONTAL) {
+
+    std::vector< std::vector <cvf::Vec3d> > lines = this->polyLines();
+
+    // -----------------------------------------------------------
+    if (lines.size() > 0 && lines[0].size() > 1) {
+
+      std::vector <cvf::Vec3d> firstLine = lines[0];
+
+      // Use first and last point of polyline to approximate
+      // orientation of polyline
+      // Then cross with Z axis to find extrusion direction
+
+      cvf::Vec3d polyLineDir = firstLine[firstLine.size() - 1] - firstLine[0];
+      cvf::Vec3d up = cvf::Vec3d::Z_AXIS;
+      dir = polyLineDir ^ up;
+    }
+
+    // -----------------------------------------------------------
+  } else if (direction == RimIntersection::CS_TWO_POINTS
+      && m_customExtrusionPoints.size() > 1) {
+
+    dir = m_customExtrusionPoints
+    [m_customExtrusionPoints.size() - 1] - m_customExtrusionPoints[0];
+
+    // -----------------------------------------------------------
+  } else if (m_twoAzimuthPoints.size() == 2) {
+
+    double dipInRad = cvf::Math::toRadians(m_dipAngle);
+
+    cvf::Vec3d azimutDirection = m_twoAzimuthPoints[1] - m_twoAzimuthPoints[0];
+
+    // -----------------------------------------------------------
+    cvf::Mat3d rotMat = cvf::Mat3d::fromRotation(azimutDirection, dipInRad);
+    cvf::Vec3d vecPerpToRotVecInHorizontalPlane = azimutDirection ^ cvf::Vec3d::Z_AXIS;
+
+    // -----------------------------------------------------------
+    dir = vecPerpToRotVecInHorizontalPlane.getTransformedVector(rotMat);
+  }
+
+  return dir;
+}
 
 // ===============================================================
 //double RimIntersection::lengthUp() const {
