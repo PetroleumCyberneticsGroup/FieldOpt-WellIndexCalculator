@@ -76,20 +76,20 @@ void RICaseData::setMainGrid(RIGrid* mainGrid) {
 // -----------------------------------------------------------------
 // Get grid by index. Main grid has index 0, so first lgr has idx 1.
 RIGridBase* RICaseData::grid(size_t index) {
-  CVF_ASSERT(m_mainGrid.notNull());
+  // CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
 
 // -----------------------------------------------------------------
 // Get grid by index. Main grid has index 0, so first lgr has idx 1.
 const RIGridBase* RICaseData::grid(size_t index) const {
-  CVF_ASSERT(m_mainGrid.notNull());
+  // CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
 
 // -----------------------------------------------------------------
 size_t RICaseData::gridCount() const {
-  CVF_ASSERT(m_mainGrid.notNull());
+  // CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridCount();
 }
 
@@ -269,7 +269,6 @@ void RICaseData::computeActiveCellsGeometryBoundingBox()
     activeInfos[acIdx]->setGeometryBoundingBox(bb);
   }
 
-  activeInfos[1].
   m_mainGrid->setDisplayModelOffset(bb.min());
 }
 
