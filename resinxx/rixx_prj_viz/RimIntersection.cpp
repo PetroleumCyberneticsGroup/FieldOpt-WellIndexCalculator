@@ -813,7 +813,7 @@ void RimIntersection::appendPointToPolyLine(const cvf::Vec3d& point) {
   m_userPolyline.push_back(point);
   // m_userPolyline.v().push_back(point);
 
-  print_ri_hck_vec(__func__, __FILE__, "", point);
+  print_ri_hck_vec3d(__func__, __FILE__, "", point);
 
   // m_userPolyline.uiCapability()->updateConnectedEditors();
 

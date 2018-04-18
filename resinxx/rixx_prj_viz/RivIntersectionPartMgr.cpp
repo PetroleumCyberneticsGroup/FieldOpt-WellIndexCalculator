@@ -105,19 +105,19 @@ RivIntersectionPartMgr(RimIntersection* rimCrossSection,
       m_rimCrossSection->polyLines(&flattenedPolylineStartPoint);
 
   // -------------------------------------------------------------
-  print_ri_hck_vec(__func__, __FILE__,
-                   "flattenedPolylineStartPoint: ",
-                   flattenedPolylineStartPoint);
+  print_ri_hck_vec3d(__func__, __FILE__,
+                     "flattenedPolylineStartPoint: ",
+                     flattenedPolylineStartPoint);
 
   // -------------------------------------------------------------
   string dbg_str_ii, dbg_str_jj;
   for(size_t ii=0; ii < polyLines.size(); ++ii) {
     for (size_t jj = 0; jj < polyLines[ii].size(); ++jj) {
-      print_ri_hck_vec("", "",
-                       "ii:" + std::to_string(ii)
-                           + " jj:" + std::to_string(jj)
-                           + " ",
-                       polyLines[ii][jj]);
+      print_ri_hck_vec3d("", "",
+                         "ii:" + std::to_string(ii)
+                             + " jj:" + std::to_string(jj)
+                             + " ",
+                         polyLines[ii][jj]);
     }
   }
 
@@ -128,9 +128,9 @@ RivIntersectionPartMgr(RimIntersection* rimCrossSection,
     cvf::Vec3d direction = m_rimCrossSection->extrusionDirection();
 
     // -------------------------------------------------------------
-    print_ri_hck_vec(__func__, __FILE__,
-                     "extrusionDirection: ",
-                     direction);
+    print_ri_hck_vec3d(__func__, __FILE__,
+                       "extrusionDirection: ",
+                       direction);
 
     // -----------------------------------------------------------
     // cvf::ref<RivIntersectionHexGridInterface> hexGrid =
@@ -144,8 +144,8 @@ RivIntersectionPartMgr(RimIntersection* rimCrossSection,
                                        activeCellInfo,
                                        true);
     // -------------------------------------------------------------
-    print_ri_hck_vec(__func__, __FILE__,
-                     hexGrid.p()->boundingBox().debugString().toStdString());
+    print_ri_hck_vec3d(__func__, __FILE__,
+                       hexGrid.p()->boundingBox().debugString().toStdString());
 
     // -----------------------------------------------------------
     m_crossSectionGenerator =

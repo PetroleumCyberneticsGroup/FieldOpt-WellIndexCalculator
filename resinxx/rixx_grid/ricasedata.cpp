@@ -76,20 +76,20 @@ void RICaseData::setMainGrid(RIGrid* mainGrid) {
 // -----------------------------------------------------------------
 // Get grid by index. Main grid has index 0, so first lgr has idx 1.
 RIGridBase* RICaseData::grid(size_t index) {
-  // CVF_ASSERT(m_mainGrid.notNull());
+  //CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
 
 // -----------------------------------------------------------------
 // Get grid by index. Main grid has index 0, so first lgr has idx 1.
 const RIGridBase* RICaseData::grid(size_t index) const {
-  // CVF_ASSERT(m_mainGrid.notNull());
+  //CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
 
 // -----------------------------------------------------------------
 size_t RICaseData::gridCount() const {
-  // CVF_ASSERT(m_mainGrid.notNull());
+  //CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridCount();
 }
 
@@ -144,21 +144,26 @@ void RICaseData::computeActiveCellIJKBBox() {
   size_t idx;
   for (idx = 0; idx < m_mainGrid->cellCount(); idx++) {
 
+    // -----------------------------------------------------------
     size_t i, j, k;
     m_mainGrid->ijkFromCellIndex(idx, &i, &j, &k);
 
+    // -----------------------------------------------------------
     if (m_activeCellInfo->isActive(idx)) {
       matrixModelActiveBB.add(i, j, k);
     }
 
+    // -----------------------------------------------------------
     if (m_fractureActiveCellInfo->isActive(idx)) {
       fractureModelActiveBB.add(i, j, k);
     }
   }
 
+  // -------------------------------------------------------------
   m_activeCellInfo->setIJKBoundingBox(matrixModelActiveBB.m_min,
                                       matrixModelActiveBB.m_max);
 
+  // -------------------------------------------------------------
   m_fractureActiveCellInfo->setIJKBoundingBox(fractureModelActiveBB.m_min,
                                               fractureModelActiveBB.m_max);
 }
@@ -221,6 +226,7 @@ void RICaseData::computeActiveCellsGeometryBoundingBox()
          << "[wic-rixx]compActCellsGeoBBox (ricasedata.cpp)"
          << AEND << endl;
 
+    // -------------------------------------------------------------
     cvf::BoundingBox bb;
     m_activeCellInfo->setGeometryBoundingBox(bb);
     m_fractureActiveCellInfo->setGeometryBoundingBox(bb);
@@ -257,8 +263,6 @@ void RICaseData::computeActiveCellsGeometryBoundingBox()
 
           // -------------------------------------------------------
           size_t idx;
-
-          // -------------------------------------------------------
           for (idx = 0; idx < 8; idx++) {
             bb.add(m_mainGrid->nodes()[indices[idx]]);
           }
@@ -266,9 +270,11 @@ void RICaseData::computeActiveCellsGeometryBoundingBox()
       }
     }
 
+    // -------------------------------------------------------------
     activeInfos[acIdx]->setGeometryBoundingBox(bb);
   }
 
+  // ---------------------------------------------------------------
   m_mainGrid->setDisplayModelOffset(bb.min());
 }
 
@@ -558,6 +564,7 @@ bool RIReaderECL::transferGeometry(const ecl_grid_type* mainEclGrid,
   RIGrid* mainGrid = eclipseCase->mainGrid();
   CVF_ASSERT(mainGrid);
 
+  // ---------------------------------------------------------------
   {
     cvf::Vec3st  gridPointDim(0,0,0);
     gridPointDim.x() = ecl_grid_get_nx(mainEclGrid) + 1;
@@ -566,14 +573,17 @@ bool RIReaderECL::transferGeometry(const ecl_grid_type* mainEclGrid,
     mainGrid->setGridPointDimensions(gridPointDim);
   }
 
+  // ---------------------------------------------------------------
   // string mainGridName = ecl_grid_get_name(mainEclGrid);
   // ERT returns file path to grid file as name for main grid
   mainGrid->setGridName("Main grid");
 
+  // ---------------------------------------------------------------
   // Get and set grid and lgr metadata
   size_t totalCellCount =
       static_cast<size_t>(ecl_grid_get_global_size(mainEclGrid));
 
+  // ---------------------------------------------------------------
   int numLGRs = ecl_grid_get_num_lgr(mainEclGrid);
   int lgrIdx;
 
@@ -731,7 +741,7 @@ bool RIReaderECL::open(const QString& fileName,
 
   // ---------------------------------------------------------------
 //   cout << "Processing NNC data" << endl;
-//   eclipseCase->mainGrid()->nncData()->processConnections( *(eclipseCase->mainGrid()));
+   //eclipseCase->mainGrid()->nncData()->processConnections( *(eclipseCase->mainGrid()));
 
   // ---------------------------------------------------------------
   // cout << "Reading Well information" << endl;
