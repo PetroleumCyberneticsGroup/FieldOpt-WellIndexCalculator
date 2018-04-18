@@ -41,7 +41,7 @@
 
 //#include <memory>
 #include <cstring>
-//#include <cstdio>
+#include <cstdio>
 #include <cstdarg>
 
 namespace cvf {
