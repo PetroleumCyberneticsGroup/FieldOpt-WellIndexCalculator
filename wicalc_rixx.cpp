@@ -21,56 +21,63 @@ using std::stringstream;
 namespace Reservoir {
 namespace WellIndexCalculation {
 
-// -----------------------------------------------------------------
+// ===============================================================
 wicalc_rixx::~wicalc_rixx() {
   //delete RIReaderECL_;
   //delete RICaseData_;
 }
 
-// -----------------------------------------------------------------
+// ===============================================================
 wicalc_rixx::wicalc_rixx(Settings::Model::Well well_settings,
                          Grid::Grid *grid) {
 
+  // -------------------------------------------------------------
   well_settings_ = well_settings;
   cl_ = well_settings_.verb_vector_[3]; // current dbg.msg.level
   grid_ = grid;
 
-  RIReaderECL_ = new RIReaderECL();
-  RICaseData_ = new RICaseData(grid_->GetFilePath());
+  // -------------------------------------------------------------
+  RIReaderECL_ = new RIReaderECL(well_settings_.verb_vector());
+  RICaseData_ = new RICaseData(grid_->GetFilePath(),
+                               well_settings_.verb_vector());
+
+  // -------------------------------------------------------------
   RIReaderECL_->open(grid_->GetFilePathQString(), RICaseData_);
   RICaseData_->computeActiveCellBoundingBoxes();
   RICaseData_->mainGrid()->computeCachedData();
 
+  // -------------------------------------------------------------
   RIGrid_ = RICaseData_->mainGrid();
 
   grid_count_ = RICaseData_->mainGrid()->gridCount();
   cell_count_ = RICaseData_->mainGrid()->cellCount();
   gcellarray_sz_ = RICaseData_->mainGrid()->globalCellArray().size();
 
-
+  // -------------------------------------------------------------
   intersections_.resize(gcellarray_sz_);
   fill(intersections_.begin(), intersections_.end(), HUGE_VAL);
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------------
   // Dbg
   QDateTime tstart = QDateTime::currentDateTime();
   std::stringstream str; str << "Find cell from coords.";
-  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, true, cl_, 2);
+  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, true, cl_, 3);
 
+  // -------------------------------------------------------------
   str.str(""); str << "grid_->gridCount(): " << grid_count_
                    << " -- grid_->cellCount(): " << cell_count_
                    << " -- grid_->globalCellArray().size(): "
                    << gcellarray_sz_;
-  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, true, cl_, 2);
+  print_dbg_msg_wic_ri(__func__, str.str(), 0.0, 0, true, cl_, 3);
 
 }
 
-// -----------------------------------------------------------------
+// -------------------------------------------------------------
 enum CompletionType {
   WELL_PATH
 };
 
-// -----------------------------------------------------------------
+// ===============================================================
 void wicalc_rixx::calculateWellPathIntersections(const WellPath& wellPath,
                                                  const RIGrid *grid,
                                                  vector<double> &isc_values) {
@@ -98,7 +105,7 @@ void wicalc_rixx::calculateWellPathIntersections(const WellPath& wellPath,
   }
 }
 
-// -----------------------------------------------------------------
+// ===============================================================
 void
 wicalc_rixx::collectIntersectedCells(vector<IntersectedCell> &isc_cells,
                                      vector<WellPathCellIntersectionInfo> isc_info,

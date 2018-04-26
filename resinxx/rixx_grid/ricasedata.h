@@ -63,7 +63,7 @@ enum PorosityModelType {
 class RICaseData : public cvf::Object
 {
  public:
-  explicit RICaseData(string file_path);
+  explicit RICaseData(string file_path, vector<int> verb_vector);
   ~RICaseData();
 
   // Set RIGrid
@@ -128,6 +128,8 @@ class RICaseData : public cvf::Object
 //                                                           bool includeAllCellCenters,
 //                                                           bool useAutoDetectionOfBranches);
 
+  vector<int> verb_vector() const { return verb_vector_; }
+
  private:
   void computeActiveCellIJKBBox();
 //  void computeWellCellsPrGrid();
@@ -158,6 +160,10 @@ class RICaseData : public cvf::Object
 
   // std::map<std::tuple<QString, bool, bool>,
   // cvf::Collection<RigWellPath>> m_simWellBranchCache;
+
+  // -------------------------------------------------------
+  vector<int> verb_vector_ = vector<int>(11,0);
+
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -309,7 +315,7 @@ typedef struct well_conn_struct well_conn_type;
 class RIReaderECL : public RIReaderInterface
 {
  public:
-  RIReaderECL();
+  RIReaderECL(vector<int> verb_vector);
   virtual ~RIReaderECL();
 
   bool open(const QString& fileName, RICaseData* eclipseCase);
@@ -343,6 +349,8 @@ class RIReaderECL : public RIReaderInterface
 //                                     RigGridBase* grid);
 
 //  virtual std::set<RiaDefines::PhaseType> availablePhases() const override;
+
+  vector<int> verb_vector() const { return verb_vector_; }
 
  private:
   bool readActiveCellInfo();
@@ -405,6 +413,9 @@ class RIReaderECL : public RIReaderInterface
   mutable cvf::ref<RIECLRestartDataAccess> m_dynamicResultsAccess;
 
 //  std::unique_ptr<RIHdf5ReaderInterface> m_hdfReaderInterface;
+
+  vector<int> verb_vector_ = vector<int>(11,0);
+
 };
 
 ////////////////////////////////////////////////////////////////////
