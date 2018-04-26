@@ -294,9 +294,10 @@ class RIGrid : public RIGridBase, Reservoir::Grid::ECLGrid
   cvf::Collection<RIFault> m_faults;
 
   RINNCData* m_nncData;
-//  cvf::ref<RINNCData> m_nncData;
+  // cvf::ref<RINNCData> m_nncData;
+
   RIFaultsPrCellAccumulator* m_faultsPrCellAcc;
-//  cvf::ref<RIFaultsPrCellAccumulator> m_faultsPrCellAcc;
+  // cvf::ref<RIFaultsPrCellAccumulator> m_faultsPrCellAcc;
 
   cvf::Vec3d m_displayModelOffset;
   cvf::ref<cvf::BoundingBoxTree> m_cellSearchTree;

@@ -286,7 +286,7 @@ GeometryTools::IntersectionStatus inPlaneLineIntersect(
 #endif
   }
 
-  /* Are the line parallel */
+  /* Are the lines parallel */
   if (fabs(denom) < EPS) {
     *x = 0;
     *y = 0;
@@ -296,7 +296,7 @@ GeometryTools::IntersectionStatus inPlaneLineIntersect(
     return GeometryTools::NO_INTERSECTION;
   }
 
-  /* Is the intersection along the the segments */
+  /* Is the intersection along the segments */
   mua = numera / denom;
   mub = numerb / denom;
 

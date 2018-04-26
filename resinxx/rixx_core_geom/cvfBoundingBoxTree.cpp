@@ -628,7 +628,7 @@ void AABBTree::freeThis() {
     // If it is a leaf, it is deleted below
     deleteInternalNodes(m_pRoot);
 
-    m_pRoot = NULL;
+    m_pRoot = nullptr;
   }
 
   size_t i;

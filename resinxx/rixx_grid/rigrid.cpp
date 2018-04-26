@@ -52,7 +52,9 @@ RIGridBase::RIGridBase(RIGrid* mainGrid):
 }
 
 // -----------------------------------------------------------------
-RIGridBase::~RIGridBase(void) {}
+RIGridBase::~RIGridBase(void) {
+
+}
 
 // -----------------------------------------------------------------
 void RIGridBase::setGridName(const string& gridName) {
@@ -387,7 +389,20 @@ RIGrid::RIGrid(string file_path)
 
 
 // -----------------------------------------------------------------
-RIGrid::~RIGrid(void) {}
+RIGrid::~RIGrid(void) {
+
+  // Should be reverted to smart pointers
+  // delete m_nncData;
+
+  for(int i=0; i < m_faults.size(); ++i) {
+    delete m_faults.at(i); // ?
+  }
+
+  for(int i=0; i < m_localGrids.size(); ++i) {
+    delete m_localGrids.at(i);
+  }
+
+}
 
 // -----------------------------------------------------------------
 void RIGrid::addLocalGrid(RILocalGrid* localGrid) {
@@ -516,6 +531,7 @@ RIGridBase* RIGrid::gridById(int localGridId) {
 
 // -----------------------------------------------------------------
 RINNCData* RIGrid::nncData() {
+
 //  if (m_nncData.isNull()) {
   if (m_nncData == NULL) {
     m_nncData = new RINNCData;

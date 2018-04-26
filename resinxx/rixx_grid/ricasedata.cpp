@@ -27,8 +27,8 @@
 // ╦═╗  ╦  ╔═╗  ╔═╗  ╔═╗  ╔═╗  ╔╦╗  ╔═╗  ╔╦╗  ╔═╗
 // ╠╦╝  ║  ║    ╠═╣  ╚═╗  ║╣    ║║  ╠═╣   ║   ╠═╣
 // ╩╚═  ╩  ╚═╝  ╩ ╩  ╚═╝  ╚═╝  ═╩╝  ╩ ╩   ╩   ╩ ╩
-// =================================================================
-RICaseData::RICaseData(string file_path) {
+// ===============================================================
+RICaseData::RICaseData(string file_path, vector<int> verb_vector) {
 
   m_mainGrid = new RIGrid(file_path);
 //  m_ownerCase = ownerCase;
@@ -53,12 +53,12 @@ RICaseData::~RICaseData() {
   delete m_fractureActiveCellInfo;
 }
 
-// -----------------------------------------------------------------
+// ===============================================================
 RIGrid* RICaseData::mainGrid() {
   return m_mainGrid;
 }
 
-// -----------------------------------------------------------------
+// ===============================================================
 const RIGrid* RICaseData::mainGrid() const {
   return m_mainGrid;
 }
@@ -474,14 +474,15 @@ bool transferGridCellData(RIGrid* mainGrid,
 }
 
 // -----------------------------------------------------------------
-RIReaderECL::RIReaderECL() {
+RIReaderECL::RIReaderECL(vector<int> verb_vector) {
   m_fileName.clear();
   m_filesWithSameBaseName.clear();
 
-  m_eclipseCase = NULL;
+  m_eclipseCase = nullptr;
 
-  m_ecl_init_file = NULL;
-  m_dynamicResultsAccess = NULL;
+  m_ecl_init_file = nullptr;
+  m_dynamicResultsAccess = nullptr;
+  verb_vector_ = verb_vector;
 }
 
 // -----------------------------------------------------------------
@@ -489,7 +490,7 @@ RIReaderECL::~RIReaderECL() {
   if (m_ecl_init_file) {
     ecl_file_close(m_ecl_init_file);
   }
-  m_ecl_init_file = NULL;
+  m_ecl_init_file = nullptr;
 
   if (m_dynamicResultsAccess.notNull()) {
     m_dynamicResultsAccess->close();
@@ -556,7 +557,6 @@ bool RIReaderECL::transferGeometry(const ecl_grid_type* mainEclGrid,
     localGrid->setIndexToStartOfCells(totalCellCount);
     localGrid->setGridName(lgrName);
     localGrid->setGridPointDimensions(gridPointDim);
-
     totalCellCount += ecl_grid_get_global_size(localEclGrid);
   }
 
@@ -627,7 +627,8 @@ bool RIReaderECL::open(const QString& fileName,
   CVF_ASSERT(eclipseCase);
 
   // ---------------------------------------------------------------
-  cout << "Reading Grid" << endl;
+  if (verb_vector()[3] > 2) // idx:3 -> wic
+    cout << FLBLUE << "Reading Grid" << AEND << endl;
   QStringList fileSet;
   if (!RIECLFileTools::findSiblingFilesWithSameBaseName(fileName, &fileSet)) {
     return false;
@@ -636,7 +637,8 @@ bool RIReaderECL::open(const QString& fileName,
   m_filesWithSameBaseName = fileSet;
 
   // ---------------------------------------------------------------
-  cout << "Reading geometry" << endl;
+  if (verb_vector()[3] > 2) // idx:3 -> wic
+    cout << FLBLUE << "Reading geometry" << AEND << endl;
   // Todo: Needs to check existence of file before calling ert, else it will abort
   ecl_grid_type * mainEclGrid = ecl_grid_alloc(fileName.toLatin1().data());
   if (!transferGeometry(mainEclGrid, eclipseCase)) return false;
@@ -676,7 +678,8 @@ bool RIReaderECL::open(const QString& fileName,
   // readWellCells(mainEclGrid, true);
 
   // ---------------------------------------------------------------
-  cout << "Releasing reader memory" << endl;
+  if (verb_vector()[3] > 2) // idx:3 -> wic
+    cout << FLBLUE << "Releasing reader memory" << AEND << endl;
   ecl_grid_free( mainEclGrid );
 
   return true;
