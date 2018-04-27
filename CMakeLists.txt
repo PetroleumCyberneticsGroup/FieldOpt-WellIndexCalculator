@@ -59,6 +59,7 @@ include_directories(
 
 # wellindexcalculator lib ==============================================
 if (_WIN32)
+
   find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
 
   add_library(${WIC_LIB_TARGET} SHARED dllmain.cpp)
@@ -69,12 +70,14 @@ if (_WIN32)
       ${SHLWAPI_LIBRARY})
 
   if(BUILD_WIC_ADGPRS)
+
     find_library(SHLWAPI_LIBRARY NAMES Shlwapi)
 
     target_link_libraries(wicalc-adgprs
         fieldopt::wellindexcalculator
         ${Boost_LIBRARIES}
         ${SHLWAPI_LIBRARY})
+
   endif(BUILD_WIC_ADGPRS)
 
 else() # LINUX ---------------------------------------------------------
@@ -127,7 +130,7 @@ else() # LINUX ---------------------------------------------------------
         PUBLIC ${Boost_LIBRARIES}
         PUBLIC Qt5::Core
         #
-        PUBLIC ${RIERTLIB}
+        PUBLIC ${ERTLIB}
         PUBLIC ${ert_util}
         # PUBLIC ${ert_eclxx}
         # PUBLIC ${ert_utilxx}
@@ -155,7 +158,7 @@ else() # LINUX ---------------------------------------------------------
         PUBLIC ${Boost_LIBRARIES}
         PUBLIC Qt5::Core
         #
-        PUBLIC ${RIERTLIB}
+        PUBLIC ${ERTLIB}
         PUBLIC ${ert_util}
         )
 
@@ -172,7 +175,7 @@ else() # LINUX ---------------------------------------------------------
         PUBLIC ${Boost_LIBRARIES}
         PUBLIC Qt5::Core
         #
-        PUBLIC ${RIERTLIB}
+        PUBLIC ${ERTLIB}
         PUBLIC ${ert_util}
         # PUBLIC ${ert_eclxx}
         # PUBLIC ${ert_utilxx}
@@ -188,7 +191,7 @@ else() # LINUX ---------------------------------------------------------
 #        PUBLIC ${Boost_LIBRARIES}
 #        PUBLIC Qt5::Core
 #        #
-#        PUBLIC ${RIERTLIB}
+#        PUBLIC ${ERTLIB}
 #        PUBLIC ${ert_util}
 #        # PUBLIC ${ert_eclxx}
 #        # PUBLIC ${ert_utilxx}
