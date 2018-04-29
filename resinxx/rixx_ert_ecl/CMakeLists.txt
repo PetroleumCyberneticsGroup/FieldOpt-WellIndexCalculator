@@ -52,7 +52,7 @@ option( ERT_USE_OPENMP      "Use OpenMP"                                        
 option( RST_DOC             "Build RST documentation"                                 OFF)
 option( ERT_BUILD_CXX       "Build some CXX wrappers"                                 ON)
 option( USE_RPATH           "Don't strip RPATH from libraries and binaries"           OFF)
-option( INSTALL_ERT_LEGACY  "Add ert legacy wrappers"                                 OFF)
+option( INSTALL_ERT_LEGACY  "Add ert legacy wrappers"                                 ON)
 
 
 set(STATOIL_TESTDATA_ROOT "" CACHE PATH  "Root to Statoil internal testdata")
