@@ -21,14 +21,14 @@
 // Modified by M.Bellout on 3/5/18.
 //
 
-// -----------------------------------------------------------------
+// =========================================================
 // STD
 #include <string>
 
-// -----------------------------------------------------------------
+// =========================================================
 #include "rigrid.h"
 
-// -----------------------------------------------------------------
+// =========================================================
 using std::string;
 
 // ╦═╗  ╦  ╔═╗  ╦═╗  ╦  ╔╦╗  ╔╗   ╔═╗  ╔═╗  ╔═╗
@@ -50,22 +50,22 @@ RIGridBase::RIGridBase(RIGrid* mainGrid):
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 RIGridBase::~RIGridBase(void) {
   cout << "[wic-rixx]deleting vars.----- RIGridBase" << endl;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGridBase::setGridName(const string& gridName) {
   m_gridName = gridName;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 string RIGridBase::gridName() const {
   return m_gridName;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 RICell& RIGridBase::cell(size_t gridLocalCellIndex) {
 
   CVF_ASSERT(m_mainGrid);
@@ -76,7 +76,7 @@ RICell& RIGridBase::cell(size_t gridLocalCellIndex) {
       globalCellArray()[m_indexToStartOfCells + gridLocalCellIndex];
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 const RICell& RIGridBase::cell(size_t gridLocalCellIndex) const {
 
   CVF_ASSERT(m_mainGrid);
@@ -85,7 +85,7 @@ const RICell& RIGridBase::cell(size_t gridLocalCellIndex) const {
       globalCellArray()[m_indexToStartOfCells + gridLocalCellIndex];
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGridBase::initSubGridParentPointer() {
 
   RIGridBase* grid = this;
@@ -100,7 +100,7 @@ void RIGridBase::initSubGridParentPointer() {
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Find the cell index to the maingrid cell containing this cell,
 // and store it as m_mainGridCellIndex in each cell.
 void RIGridBase::initSubCellsMainGridCellIndex()
@@ -137,7 +137,7 @@ void RIGridBase::initSubCellsMainGridCellIndex()
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 /// For main grid, this will work with reservoirCellIndices
 /// retreiving the correct lgr cells as well. The cell() call
 /// retreives correct cell, because main grid has offset of 0,
@@ -157,7 +157,7 @@ void RIGridBase::cellCornerVertices(size_t cellIndex,
   vertices[7].set(m_mainGrid->nodes()[indices[7]]);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t
 RIGridBase::cellIndexFromIJK(size_t i, size_t j, size_t k) const {
 
@@ -175,14 +175,14 @@ RIGridBase::cellIndexFromIJK(size_t i, size_t j, size_t k) const {
   return ci;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void
 RIGridBase::cellMinMaxCordinates(size_t cellIndex,
                                  cvf::Vec3d* minCoordinate,
                                  cvf::Vec3d* maxCoordinate) const {
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool
 RIGridBase::ijkFromCellIndex(size_t cellIndex,
                              size_t* i, size_t* j, size_t* k) const {
@@ -206,60 +206,62 @@ RIGridBase::ijkFromCellIndex(size_t cellIndex,
   return true;
 }
 
-// -----------------------------------------------------------------
-size_t
-RIGridBase::gridPointIndexFromIJK(size_t i, size_t j, size_t k) const {
+// =========================================================
+size_t RIGridBase::gridPointIndexFromIJK(size_t i,
+                                         size_t j,
+                                         size_t k) const {
   return 0;
 }
 
-// -----------------------------------------------------------------
-bool
-RIGridBase::cellIJKFromCoordinate(const cvf::Vec3d& coord,
-                                  size_t* i, size_t* j, size_t* k) const {
+// =========================================================
+bool RIGridBase::cellIJKFromCoordinate(
+    const cvf::Vec3d& coord,
+    size_t* i, size_t* j, size_t* k) const {
   return false;
 }
 
-// -----------------------------------------------------------------
-cvf::Vec3d
-RIGridBase::gridPointCoordinate(size_t i, size_t j, size_t k) const {
+// =========================================================
+cvf::Vec3d RIGridBase::gridPointCoordinate(size_t i,
+                                           size_t j,
+                                           size_t k) const {
   cvf::Vec3d pos;
   return pos;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::Vec3d RIGridBase::minCoordinate() const {
   cvf::Vec3d v;
   return v;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RIGridBase::gridPointCountI() const {
   return m_gridPointDimensions.x();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RIGridBase::gridPointCountJ() const {
   return m_gridPointDimensions.y();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RIGridBase::gridPointCountK() const {
   return m_gridPointDimensions.z();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::Vec3d RIGridBase::cellCentroid(size_t cellIndex) const {
   cvf::Vec3d v;
   return v;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::Vec3d RIGridBase::maxCoordinate() const {
   cvf::Vec3d v;
   return v;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool RIGridBase::isCellValid(size_t i, size_t j, size_t k) const {
 
   if (i >= cellCountI() || j >= cellCountJ() || k >= cellCountK()) {
@@ -271,7 +273,7 @@ bool RIGridBase::isCellValid(size_t i, size_t j, size_t k) const {
   return !c.isInvalid();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool RIGridBase::cellIJKNeighbor(size_t i, size_t j, size_t k,
                                  FaceType face,
                                  size_t* neighborCellIndex) const {
@@ -290,12 +292,12 @@ bool RIGridBase::cellIJKNeighbor(size_t i, size_t j, size_t k,
   return true;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool RIGridBase::isMainGrid() const {
   return this == m_mainGrid;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Models with large absolute values for coordinate scalars will
 // often end up with z-fighting due to numerical limits in float
 // used by OpenGL to represent a position. displayModelOffset()
@@ -308,7 +310,7 @@ cvf::Vec3d RIGridBase::displayModelOffset() const {
   return m_mainGrid->displayModelOffset();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Returns the min size of the I and J characteristic cell sizes
 double RIGridBase::characteristicIJCellSize() const {
 
@@ -323,13 +325,13 @@ double RIGridBase::characteristicIJCellSize() const {
   return characteristicCellSize;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t
 RIGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const {
   return m_indexToStartOfCells + gridLocalCellIndex;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::BoundingBox RIGridBase::boundingBox() {
 
   if (!m_boundingBox.isValid()) {
@@ -347,7 +349,7 @@ cvf::BoundingBox RIGridBase::boundingBox() {
   return m_boundingBox;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RIGridBase::addCoarseningBox(size_t i1, size_t i2, size_t j1,
                                     size_t j2, size_t k1, size_t k2) {
   caf::SizeTArray6 box;
@@ -422,7 +424,7 @@ RIGrid::RIGrid(string file_path)
 }
 
 
-// -----------------------------------------------------------------
+// =========================================================
 RIGrid::~RIGrid(void) {
 
   // ---------------------------------------------------------------
@@ -442,7 +444,7 @@ RIGrid::~RIGrid(void) {
 
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::addLocalGrid(RILocalGrid* localGrid) {
 
   // ---------------------------------------------------------------
@@ -466,7 +468,7 @@ void RIGrid::addLocalGrid(RILocalGrid* localGrid) {
   m_gridIdToIndexMapping[localGrid->gridId()] = localGrid->gridIndex();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::initAllSubGridsParentGridPointer() {
 
   // ---------------------------------------------------------------
@@ -482,7 +484,7 @@ void RIGrid::initAllSubGridsParentGridPointer() {
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::initAllSubCellsMainGridCellIndex() {
 
   // ---------------------------------------------------------------
@@ -495,17 +497,17 @@ void RIGrid::initAllSubCellsMainGridCellIndex() {
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::Vec3d RIGrid::displayModelOffset() const {
   return m_displayModelOffset;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::setDisplayModelOffset(cvf::Vec3d offset) {
   m_displayModelOffset = offset;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Initialize pointers from grid to parent grid
 // Compute cell ranges for active and valid cells
 // Compute bounding box in world coordinates based
@@ -524,7 +526,7 @@ void RIGrid::computeCachedData() {
        << AEND << endl;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Returns the grid with index \a localGridIndex.
 // Main Grid itself has index 0. First LGR starts on 1
 RIGridBase* RIGrid::gridByIndex(size_t localGridIndex) {
@@ -534,7 +536,7 @@ RIGridBase* RIGrid::gridByIndex(size_t localGridIndex) {
   return m_localGrids[localGridIndex-1].p();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Returns the grid with index \a localGridIndex.
 // Main Grid itself has index 0. First LGR starts on 1
 const RIGridBase* RIGrid::gridByIndex(
@@ -545,7 +547,7 @@ const RIGridBase* RIGrid::gridByIndex(
   return m_localGrids[localGridIndex-1].p();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::setFlipAxis(bool flipXAxis, bool flipYAxis) {
 
   bool needFlipX = false;
@@ -575,14 +577,14 @@ void RIGrid::setFlipAxis(bool flipXAxis, bool flipYAxis) {
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 RIGridBase* RIGrid::gridById(int localGridId) {
   CVF_ASSERT (localGridId >= 0 &&
       static_cast<size_t>(localGridId) < m_gridIdToIndexMapping.size());
   return this->gridByIndex(m_gridIdToIndexMapping[localGridId]);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 RINNCData* RIGrid::nncData() {
 
 //  if (m_nncData.isNull()) {
@@ -593,7 +595,7 @@ RINNCData* RIGrid::nncData() {
   return m_nncData;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::setFaults(const cvf::Collection<RIFault>& faults) {
   m_faults = faults;
 
@@ -603,7 +605,7 @@ void RIGrid::setFaults(const cvf::Collection<RIFault>& faults) {
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool RIGrid::hasFaultWithName(const QString& name) const {
 
   for (auto fault : m_faults) {
@@ -614,7 +616,7 @@ bool RIGrid::hasFaultWithName(const QString& name) const {
   return false;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void
 RIGrid::calculateFaults(const RIActiveCellInfo* activeCellInfo) {
 
@@ -801,7 +803,7 @@ RIGrid::calculateFaults(const RIActiveCellInfo* activeCellInfo) {
   // distributeNNCsToFaults();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::distributeNNCsToFaults() {
 
   // ---------------------------------------------------------------
@@ -862,7 +864,7 @@ void RIGrid::distributeNNCsToFaults() {
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // The cell is normally inverted due to Depth becoming -Z at
 // import, but if (only) one of the flipX/Y is done, the cell
 // is back to normal
@@ -913,7 +915,7 @@ bool RIGrid::isFaceNormalsOutwards() const {
   return false;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 const RIFault*
 RIGrid::findFaultFromCellIndexAndCellFace(
     size_t reservoirCellIndex,
@@ -954,7 +956,7 @@ RIGrid::findFaultFromCellIndexAndCellFace(
   return nullptr;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::findIntersectingCells(
     const cvf::BoundingBox& inputBB,
     vector<size_t>* cellIndices) const {
@@ -972,7 +974,7 @@ void RIGrid::findIntersectingCells(
   print_dbg_msg_wic_ri(__func__, str, time_since_msecs(tstart), 2);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIGrid::buildCellSearchTree() {
 
   if (m_cellSearchTree.isNull()) {
@@ -1016,19 +1018,20 @@ void RIGrid::buildCellSearchTree() {
 
     // ---------------------------------------------------------------
     m_cellSearchTree = new cvf::BoundingBoxTree;
-    m_cellSearchTree->buildTreeFromBoundingBoxes(cellBoundingBoxes, nullptr);
+    m_cellSearchTree->buildTreeFromBoundingBoxes(cellBoundingBoxes,
+                                                 nullptr);
 
     // print_dbg_msg_wic_ri(__func__, ss.str(), time_since_msecs(tstart), 2);
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::BoundingBox RIGrid::boundingBox() const {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   if (m_boundingBox.isValid()) return m_boundingBox;
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   for (size_t i = 0; i < m_nodes.size(); ++i) {
     m_boundingBox.add(m_nodes[i]);
   }
@@ -1069,24 +1072,24 @@ RIActiveCellInfo::RIActiveCellInfo()
         m_activeCellPositionMin(cvf::Vec3d::ZERO),
         m_activeCellPositionMax(cvf::Vec3d::ZERO) {}
 
-// -----------------------------------------------------------------
+// =========================================================
 void
 RIActiveCellInfo::setReservoirCellCount(size_t reservoirCellCount){
   m_cellIndexToResultIndex.resize(reservoirCellCount,
                                   cvf::UNDEFINED_SIZE_T);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RIActiveCellInfo::reservoirCellCount() const {
   return m_cellIndexToResultIndex.size();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RIActiveCellInfo::reservoirCellResultCount() const {
   return m_reservoirCellResultCount;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool
 RIActiveCellInfo::isActive(size_t reservoirCellIndex) const {
 
@@ -1099,7 +1102,7 @@ RIActiveCellInfo::isActive(size_t reservoirCellIndex) const {
   return m_cellIndexToResultIndex[reservoirCellIndex] != cvf::UNDEFINED_SIZE_T;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t
 RIActiveCellInfo::cellResultIndex(size_t reservoirCellIndex) const {
 
@@ -1112,7 +1115,7 @@ RIActiveCellInfo::cellResultIndex(size_t reservoirCellIndex) const {
   return m_cellIndexToResultIndex[reservoirCellIndex];
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::setCellResultIndex(size_t reservoirCellIndex,
                                           size_t reservoirCellResultIndex) {
 
@@ -1125,12 +1128,12 @@ void RIActiveCellInfo::setCellResultIndex(size_t reservoirCellIndex,
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::setGridCount(size_t gridCount) {
   m_perGridActiveCellInfo.resize(gridCount);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::setGridActiveCellCounts(size_t gridIndex,
                                                size_t activeCellCount) {
 
@@ -1139,7 +1142,7 @@ void RIActiveCellInfo::setGridActiveCellCounts(size_t gridIndex,
   m_perGridActiveCellInfo[gridIndex].setActiveCellCount(activeCellCount);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::computeDerivedData() {
 
   m_reservoirActiveCellCount = 0;
@@ -1149,43 +1152,43 @@ void RIActiveCellInfo::computeDerivedData() {
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RIActiveCellInfo::reservoirActiveCellCount() const {
   return m_reservoirActiveCellCount;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::setIJKBoundingBox(const cvf::Vec3st& min,
                                          const cvf::Vec3st& max) {
   m_activeCellPositionMin = min;
   m_activeCellPositionMax = max;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::IJKBoundingBox(cvf::Vec3st& min,
                                       cvf::Vec3st& max) const {
   min = m_activeCellPositionMin;
   max = m_activeCellPositionMax;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void
 RIActiveCellInfo::gridActiveCellCounts(size_t gridIndex,
                                        size_t& activeCellCount) const {
   activeCellCount = m_perGridActiveCellInfo[gridIndex].activeCellCount();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::BoundingBox RIActiveCellInfo::geometryBoundingBox() const {
   return m_activeCellsBoundingBox;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::setGeometryBoundingBox(cvf::BoundingBox bb) {
   m_activeCellsBoundingBox = bb;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RIActiveCellInfo::clear() {
 
   m_perGridActiveCellInfo.clear();
@@ -1196,23 +1199,23 @@ void RIActiveCellInfo::clear() {
   m_activeCellsBoundingBox.reset();
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool RIActiveCellInfo::isCoarseningActive() const {
   return m_reservoirCellResultCount != m_reservoirActiveCellCount;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 RIActiveCellInfo::GridActiveCellCounts::GridActiveCellCounts()
     : m_activeCellCount(0) {
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t
 RIActiveCellInfo::GridActiveCellCounts::activeCellCount() const {
   return m_activeCellCount;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void
 RIActiveCellInfo::GridActiveCellCounts::setActiveCellCount(
     size_t activeCellCount) {

@@ -26,7 +26,7 @@
 // ╦═╗  ╦  ╔═╗  ╔═╗  ╦    ╦
 // ╠╦╝  ║  ║    ║╣   ║    ║
 // ╩╚═  ╩  ╚═╝  ╚═╝  ╩═╝  ╩═╝
-// =================================================================
+// =========================================================
 static size_t undefinedCornersArray[8] = {cvf::UNDEFINED_SIZE_T,
                                           cvf::UNDEFINED_SIZE_T,
                                           cvf::UNDEFINED_SIZE_T,
@@ -36,7 +36,7 @@ static size_t undefinedCornersArray[8] = {cvf::UNDEFINED_SIZE_T,
                                           cvf::UNDEFINED_SIZE_T,
                                           cvf::UNDEFINED_SIZE_T };
 
-// -----------------------------------------------------------------
+// =========================================================
 RICell::RICell() :
     m_parentCellIndex(cvf::UNDEFINED_SIZE_T),
     m_mainGridCellIndex(cvf::UNDEFINED_SIZE_T),
@@ -46,7 +46,7 @@ RICell::RICell() :
     m_gridLocalCellIndex(cvf::UNDEFINED_SIZE_T),
     m_coarseningBoxIndex(cvf::UNDEFINED_SIZE_T) {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   memcpy(m_cornerIndices.data(), undefinedCornersArray, 8*sizeof(size_t));
 
   m_cellFaceFaults[0] = false;
@@ -57,16 +57,16 @@ RICell::RICell() :
   m_cellFaceFaults[5] = false;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 RICell::~RICell() {
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::Vec3d RICell::center() const {
 
   cvf::Vec3d avg(cvf::Vec3d::ZERO);
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   size_t i;
   for (i = 0; i < 8; i++) {
     avg += m_hostGrid->mainGrid()->nodes()[m_cornerIndices[i]];
@@ -77,7 +77,7 @@ cvf::Vec3d RICell::center() const {
   return avg;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool isNear(const cvf::Vec3d& p1,
             const cvf::Vec3d& p2,
             double tolerance) {
@@ -92,39 +92,39 @@ bool isNear(const cvf::Vec3d& p1,
   }
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool RICell::isLongPyramidCell(double maxHeightFactor,
                                 double nodeNearTolerance ) const {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   cvf::ubyte faceVertexIndices[4];
   double squaredMaxHeightFactor = maxHeightFactor*maxHeightFactor;
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   const std::vector<cvf::Vec3d>& nodes = m_hostGrid->mainGrid()->nodes();
 
   int face;
   for ( face = 0; face < 6 ; ++face) {
 
-    // -------------------------------------------------------------
+    // ------------------------------------------------------------
     cvf::StructGridInterface::cellFaceVertexIndices(
         static_cast<cvf::StructGridInterface::FaceType>(face),
         faceVertexIndices);
 
     int zeroLengthEdgeCount = 0;
 
-    // -------------------------------------------------------------
+    // ------------------------------------------------------------
     const cvf::Vec3d& c0 =  nodes[m_cornerIndices[faceVertexIndices[0]]];
     const cvf::Vec3d& c1 =  nodes[m_cornerIndices[faceVertexIndices[1]]];
     const cvf::Vec3d& c2 =  nodes[m_cornerIndices[faceVertexIndices[2]]];
     const cvf::Vec3d& c3 =  nodes[m_cornerIndices[faceVertexIndices[3]]];
 
-    // -------------------------------------------------------------
+    // ------------------------------------------------------------
     if (isNear(c0, c1, nodeNearTolerance)) { ++zeroLengthEdgeCount; }
     if (isNear(c1, c2, nodeNearTolerance)) { ++zeroLengthEdgeCount; }
     if (isNear(c2, c3, nodeNearTolerance)) { ++zeroLengthEdgeCount; }
 
-    // -------------------------------------------------------------
+    // ------------------------------------------------------------
     if (zeroLengthEdgeCount == 3)
     {
       return true;
@@ -138,8 +138,8 @@ bool RICell::isLongPyramidCell(double maxHeightFactor,
       cvf::StructGridInterface::FaceType
           oppositeFace = cvf::StructGridInterface::POS_I;
 
-      switch (face)
-      {
+      switch (face) {
+        
         case cvf::StructGridInterface::POS_I:
           oppositeFace = cvf::StructGridInterface::NEG_I;
           break;
@@ -230,7 +230,7 @@ bool RICell::isLongPyramidCell(double maxHeightFactor,
   return false;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 bool RICell::isCollapsedCell(double nodeNearTolerance) const {
   const std::vector<cvf::Vec3d>& nodes = m_hostGrid->mainGrid()->nodes();
 
@@ -268,10 +268,10 @@ bool RICell::isCollapsedCell(double nodeNearTolerance) const {
   return false;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 cvf::Vec3d RICell::faceCenter(cvf::StructGridInterface::FaceType face) const {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   cvf::Vec3d avg(cvf::Vec3d::ZERO);
   cvf::ubyte faceVertexIndices[4];
   cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
@@ -288,7 +288,7 @@ cvf::Vec3d RICell::faceCenter(cvf::StructGridInterface::FaceType face) const {
   return avg;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Returns an area vector for the cell face. The direction is the
 // face normal, and the length is equal to the face area (projected
 // to the plane represented by the diagonal in case of warp). The
@@ -309,7 +309,7 @@ RICell::faceNormalWithAreaLenght(cvf::StructGridInterface::FaceType face) const 
           nodeCoords[m_cornerIndices[faceVertexIndices[1]]]);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 // Find the intersection between the cell and the ray. The point
 // closest to the ray origin is returned in \a intersectionPoint,
 // while the return value is the total number of intersections with
@@ -320,44 +320,44 @@ int RICell::firstIntersectionPoint(const cvf::Ray& ray,
 
   CVF_ASSERT(intersectionPoint != NULL);
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   cvf::ubyte faceVertexIndices[4];
   int face;
   const std::vector<cvf::Vec3d>& nodes = m_hostGrid->mainGrid()->nodes();
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   cvf::Vec3d firstIntersection(cvf::Vec3d::ZERO);
   double minLsq = HUGE_VAL;
   int intersectionCount = 0;
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   for (face = 0; face < 6 ; ++face) {
 
-    // -------------------------------------------------------------
+    // ------------------------------------------------------------
     cvf::StructGridInterface::cellFaceVertexIndices(
         static_cast<cvf::StructGridInterface::FaceType>(face),
         faceVertexIndices);
 
-    // -------------------------------------------------------------
+    // ------------------------------------------------------------
     cvf::Vec3d intersection;
     cvf::Vec3d faceCenter =
         this->faceCenter(static_cast<cvf::StructGridInterface::FaceType>(face));
 
-    // -------------------------------------------------------------
+    // ------------------------------------------------------------
     for (size_t i = 0; i < 4; ++i) {
 
-      // -----------------------------------------------------------
+      // ----------------------------------------------------------
       size_t next = i < 3 ? i+1 : 0;
       if ( ray.triangleIntersect( nodes[m_cornerIndices[faceVertexIndices[i]]],
                                   nodes[m_cornerIndices[faceVertexIndices[next]]],
                                   faceCenter,
                                   &intersection)) {
 
-        // ---------------------------------------------------------
+        // --------------------------------------------------------
         intersectionCount++;
         double lsq = (intersection - ray.origin() ).lengthSquared();
 
-        // ---------------------------------------------------------
+        // --------------------------------------------------------
         if (lsq < minLsq) {
           firstIntersection = intersection;
           minLsq = lsq;
@@ -366,7 +366,7 @@ int RICell::firstIntersectionPoint(const cvf::Ray& ray,
     }
   }
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   if (intersectionCount > 0) {
     *intersectionPoint = firstIntersection;
   }
@@ -374,7 +374,7 @@ int RICell::firstIntersectionPoint(const cvf::Ray& ray,
   return intersectionCount;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 void RICell::faceIndices(cvf::StructGridInterface::FaceType face,
                           caf::SizeTArray4* indices) const {
 

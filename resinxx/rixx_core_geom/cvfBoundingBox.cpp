@@ -1,98 +1,90 @@
-//##################################################################
-//
+//##########################################################
 // Custom Visualization Core library
 // Copyright (C) 2011-2013 Ceetron AS
 //
-// This library may be used under the terms of either the GNU General
-// Public License or the GNU Lesser General Public License as follows:
+// This library may be used under the terms of either
+// the GNU General Public License or the GNU Lesser
+// General Public License as follows:
 //
 // GNU General Public License Usage
-// This library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
+// This library is free software: you can redistribute
+// it and/or modify it under the terms of the GNU General
+// Public License as published by the Free Software
+// Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the
+// implied warranty of MERCHANTABILITY or FITNESS FOR A
+// PARTICULAR PURPOSE.
 //
 // See the GNU General Public License at
 // <<http://www.gnu.org/licenses/gpl.html>>
 // for more details.
 //
 // GNU Lesser General Public License Usage
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License
-// as published by the Free Software Foundation; either version 2.1 of
-// the License, or (at your option) any later version.
+// This library is free software; you can redistribute
+// it and/or modify it under the terms of the GNU Lesser
+// General Public License  as published by the Free
+// Software Foundation; either version 2.1 of the License,
+// or (at your option) any later version.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// This library is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even the
+// implied warranty of MERCHANTABILITY or FITNESS FOR A
+// PARTICULAR PURPOSE.
 //
 // See the GNU Lesser General Public License at
 // <<http://www.gnu.org/licenses/lgpl-2.1.html>>
 // for more details.
 //
-//##################################################################
+//##########################################################
 //
 // Modified by M.Bellout on 3/5/18.
 //
 
-// -----------------------------------------------------------------
+// ---------------------------------------------------------
 #include "cvfBase.h"
 #include "cvfBoundingBox.h"
 #include <limits>
 
-// -----------------------------------------------------------------
+// ---------------------------------------------------------
 namespace cvf {
 
-//==================================================================
-///
-/// \class cvf::BoundingBox
-/// \ingroup Geometry
-///
-/// The BoundingBox class implements an axis-aligned bounding box.
-///
-//==================================================================
+//==========================================================
+// \class cvf::BoundingBox
+// \ingroup Geometry
+//
+// The BoundingBox class implements
+// an axis-aligned bounding box.
+//==========================================================
 
-// -----------------------------------------------------------------
-///
-// -----------------------------------------------------------------
+
+//==========================================================
 BoundingBox::BoundingBox() {
   reset();
 }
 
-
-// -----------------------------------------------------------------
-///
-//------------------------------------------------------------------
-BoundingBox::BoundingBox(const Vec3d& min, const Vec3d& max)
+//==========================================================
+BoundingBox::BoundingBox(const Vec3d& min,
+                         const Vec3d& max)
     : m_min(min), m_max(max) {
 }
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-BoundingBox::BoundingBox(const Vec3f& min, const Vec3f& max)
+//==========================================================
+BoundingBox::BoundingBox(const Vec3f& min,
+                         const Vec3f& max)
     : m_min(min), m_max(max) {
 }
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
+//==========================================================
 BoundingBox::BoundingBox(const BoundingBox& other)
     :   m_min(other.m_min),
-        m_max(other.m_max)
-{
+        m_max(other.m_max) {
 }
 
-
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-BoundingBox& BoundingBox::operator=(const BoundingBox& rhs)
-{
+//==========================================================
+BoundingBox& BoundingBox::operator=(const BoundingBox& rhs) {
   m_min = rhs.m_min;
   m_max = rhs.m_max;
 
@@ -100,11 +92,10 @@ BoundingBox& BoundingBox::operator=(const BoundingBox& rhs)
 }
 
 
-//------------------------------------------------------------------
-/// Initialize bounding box
-//------------------------------------------------------------------
-void BoundingBox::reset()
-{
+//==========================================================
+// Initialize bounding box
+void BoundingBox::reset() {
+
   const double maxDouble = std::numeric_limits<double>::max();
 
   m_max.set(-maxDouble, -maxDouble, -maxDouble);
@@ -112,29 +103,23 @@ void BoundingBox::reset()
 }
 
 
-//------------------------------------------------------------------
-/// Returns false if no input has been given
-//------------------------------------------------------------------
-bool BoundingBox::isValid() const
-{
+//==========================================================
+// Returns false if no input has been given
+bool BoundingBox::isValid() const {
+
   if (m_min.x() <= m_max.x() &&
       m_min.y() <= m_max.y() &&
-      m_min.z() <= m_max.z())
-  {
+      m_min.z() <= m_max.z()) {
     return true;
-  }
-  else
-  {
+
+  } else {
     return false;
   }
 }
 
+//==========================================================
+void BoundingBox::add(const Vec3d& point) {
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-void BoundingBox::add(const Vec3d& point)
-{
   if (point.x() < m_min.x()) m_min.x() = point.x();
   if (point.y() < m_min.y()) m_min.y() = point.y();
   if (point.z() < m_min.z()) m_min.z() = point.z();
@@ -144,12 +129,9 @@ void BoundingBox::add(const Vec3d& point)
   if (point.z() > m_max.z()) m_max.z() = point.z();
 }
 
+//==========================================================
+void BoundingBox::add(const Vec3f& point) {
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-void BoundingBox::add(const Vec3f& point)
-{
   if (point.x() < m_min.x()) m_min.x() = point.x();
   if (point.y() < m_min.y()) m_min.y() = point.y();
   if (point.z() < m_min.z()) m_min.z() = point.z();
@@ -159,51 +141,36 @@ void BoundingBox::add(const Vec3f& point)
   if (point.z() > m_max.z()) m_max.z() = point.z();
 }
 
+//==========================================================
+void BoundingBox::add(const Vec3dArray& points) {
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-void BoundingBox::add(const Vec3dArray& points)
-{
   size_t i;
-  for (i = 0; i < points.size(); i++)
-  {
+  for (i = 0; i < points.size(); i++) {
     add(points[i]);
   }
 }
 
+//==========================================================
+void BoundingBox::add(const Vec3fArray& points) {
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-void BoundingBox::add(const Vec3fArray& points)
-{
   size_t i;
-  for (i = 0; i < points.size(); i++)
-  {
+  for (i = 0; i < points.size(); i++) {
     add(points[i]);
   }
 }
 
+//==========================================================
+void BoundingBox::add(const BoundingBox& bb) {
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-void BoundingBox::add(const BoundingBox& bb)
-{
-  if (bb.isValid())
-  {
+  if (bb.isValid()) {
     add(bb.min());
     add(bb.max());
   }
 }
 
-
-//------------------------------------------------------------------
-/// Computes center of the bounding box
-//------------------------------------------------------------------
-Vec3d BoundingBox::center() const
-{
+//==========================================================
+// Computes center of the bounding box
+Vec3d BoundingBox::center() const {
   CVF_TIGHT_ASSERT(isValid());
 
   return (m_min + m_max) / 2.0;
