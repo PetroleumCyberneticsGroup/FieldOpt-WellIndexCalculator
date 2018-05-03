@@ -88,11 +88,14 @@ void caf::AppEnum< RimIntersection::CrossSectionDirEnum >::setUp() {
 // ===============================================================
 RimIntersection::RimIntersection(RIGrid* grid,
                                  RICaseData* casedata,
-                                 Settings::Model* settings) {
+                                 Settings::Optimizer* settings) {
+
+  // -------------------------------------------------------
   grid_ = grid;
   casedata_ = casedata;
   settings_ = settings;
 
+  // -------------------------------------------------------
   m_crossSectionPartMgr = nullptr;
 
   // -------------------------------------------------------

@@ -113,43 +113,57 @@ class RICaseData : public cvf::Object
   // results(RiaDefines::PorosityModelType porosityModel) const;
 
   // -------------------------------------------------------
-  //  const std::vector<double>* resultValues(RiaDefines::PorosityModelType porosityModel,
-  //                                          RiaDefines::ResultCatType type,
-  //                                          const QString& resultName,
-  //                                          size_t timeStepIndex);
-
+  // const std::vector<double>*
+  // resultValues(RiaDefines::PorosityModelType porosityModel,
+  //              RiaDefines::ResultCatType type,
+  //              const QString& resultName,
+  //             size_t timeStepIndex);
 
   // -------------------------------------------------------
-  RIActiveCellInfo* activeCellInfo(PorosityModelType MATRIX_MODEL);
-  const RIActiveCellInfo* activeCellInfo(PorosityModelType MATRIX_MODEL) const;
+  RIActiveCellInfo*
+  activeCellInfo(PorosityModelType MATRIX_MODEL);
 
-   void setActiveCellInfo(PorosityModelType MATRIX_MODEL,
+  const RIActiveCellInfo*
+  activeCellInfo(PorosityModelType MATRIX_MODEL) const;
+
+  // -------------------------------------------------------
+  void setActiveCellInfo(PorosityModelType MATRIX_MODEL,
                          RIActiveCellInfo* activeCellInfo);
 
-//  void setActiveCellInfo(RIActiveCellInfo* activeCellInfo)
-//  { m_activeCellInfo = activeCellInfo;}
+  // -------------------------------------------------------
+  // void setActiveFormationNames(
+  //    RigFormationNames* activeFormationNames);
+  // RigFormationNames* activeFormationNames();
 
   // -------------------------------------------------------
-//    void setActiveFormationNames(RigFormationNames* activeFormationNames);
-//  RigFormationNames* activeFormationNames();
+  // void setSimWellData(
+  //    const cvf::Collection<RigSimWellData>& data);
 
-//  void setSimWellData(const cvf::Collection<RigSimWellData>& data);
+  // -------------------------------------------------------
+  // const
+  // cvf::Collection<RigSimWellData>& wellResults() const
+  // { return m_simWellData; }
 
-//  const cvf::Collection<RigSimWellData>& wellResults() const { return m_simWellData; }
+  // -------------------------------------------------------
+  // std::set<QString> findSortedWellNames() const;
 
-//  std::set<QString> findSortedWellNames() const;
+  // const
+  // RigSimWellData* findSimWellData(QString wellName) const;
 
-//  const RigSimWellData* findSimWellData(QString wellName) const;
+  // const cvf::UByteArray*
+  // wellCellsInGrid(size_t gridIndex);
 
-//  const cvf::UByteArray* wellCellsInGrid(size_t gridIndex);
+  // const cvf::UIntArray*
+  // gridCellToResultWellIndex(size_t gridIndex);
 
-//  const cvf::UIntArray* gridCellToResultWellIndex(size_t gridIndex);
+  // const RigCell&
+  // cellFromWellResultCell(
+  //    const RigWellResultPoint& wellResultCell) const;
 
-//  const RigCell& cellFromWellResultCell(const RigWellResultPoint& wellResultCell) const;
-
-//  bool findSharedSourceFace(cvf::StructGridInterface::FaceType& sharedSourceFace,
-//                           const RigWellResultPoint& sourceWellCellResult,
-//                           const RigWellResultPoint& otherWellCellResult) const;
+  // bool findSharedSourceFace(
+  //    cvf::StructGridInterface::FaceType& sharedSourceFace,
+  //    const RigWellResultPoint& sourceWellCellResult,
+  //    const RigWellResultPoint& otherWellCellResult) const;
 
   // -------------------------------------------------------
   void computeActiveCellBoundingBoxes();
@@ -165,17 +179,26 @@ class RICaseData : public cvf::Object
   // -------------------------------------------------------
   // std::vector<QString> simulationWellNames() const;
 
-  // bool hasSimulationWell(const QString& simWellName) const;
+  // bool
+  // hasSimulationWell(const QString& simWellName) const;
 
   // std::vector<const RigWellPath*>
   // simulationWellBranches(const QString& simWellName,
   //                       bool includeAllCellCenters,
   //                       bool useAutoDetectionOfBranches);
 
+  // -------------------------------------------------------
+  void set_verbosity_vector(const std::vector<int> verb_vector)
+  { verb_vector_ = verb_vector; }
+
+  std::vector<int> verb_vector() const
+  { return verb_vector_; }
+
  private:
-  void computeActiveCellIJKBBox();
-//  void computeWellCellsPrGrid();
+  // -------------------------------------------------------
   void computeActiveCellsGeometryBoundingBox();
+  void computeActiveCellIJKBBox();
+  // void computeWellCellsPrGrid();
 
  private:
   // -------------------------------------------------------
@@ -216,6 +239,9 @@ class RICaseData : public cvf::Object
   // -------------------------------------------------------
   // std::map<std::tuple<QString, bool, bool>,
   // cvf::Collection<RigWellPath>> m_simWellBranchCache;
+
+  // -------------------------------------------------------
+  std::vector<int> verb_vector_ = std::vector<int>(11,0);
 
  public:
   PorosityModelType PorosityModelTypeMATRIX_;

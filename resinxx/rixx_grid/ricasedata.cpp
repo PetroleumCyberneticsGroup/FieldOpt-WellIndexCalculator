@@ -48,14 +48,19 @@ RICaseData::RICaseData(string file_path) {
   m_fractureActiveCellInfo = new RIActiveCellInfo;
 
   // -------------------------------------------------------
-  setActiveCellInfo(PorosityModelTypeMATRIX_, m_activeCellInfo);
-  // m_matrixModelResults->setActiveCellInfo(m_activeCellInfo.p());
+  setActiveCellInfo(PorosityModelTypeFRAC_,
+                    m_activeCellInfo);
 
-  // m_matrixModelResults->setActiveCellInfo(m_activeCellInfo.p());
-  // m_fractureModelResults->setActiveCellInfo(m_fractureActiveCellInfo.p());
+  setActiveCellInfo(PorosityModelTypeMATRIX_,
+                    m_fractureActiveCellInfo );
+
+  // m_matrixModelResults->
+  //     setActiveCellInfo(m_activeCellInfo.p());
+  // m_fractureModelResults->
+  //     setActiveCellInfo(m_fractureActiveCellInfo.p());
 
   // -------------------------------------------------------
-//  m_unitsType = RiaEclipseUnitTools::UNITS_METRIC;
+  // m_unitsType = RiaEclipseUnitTools::UNITS_METRIC;
 
   // -------------------------------------------------------
   PorosityModelTypeMATRIX_ = PorosityModelType::MATRIX_MODEL;
@@ -149,9 +154,10 @@ class CellRangeBB
 //==========================================================
 void RICaseData::computeActiveCellIJKBBox() {
 
-//  if (m_mainGrid != 0
-//      && m_activeCellInfo != 0
-//      && m_fractureActiveCellInfo != 0) {
+  // -------------------------------------------------------
+  // if (m_mainGrid != 0
+  //    && m_activeCellInfo != 0
+  //    && m_fractureActiveCellInfo != 0) {
 
   // -------------------------------------------------------
   cout << FLGREEN
@@ -190,8 +196,9 @@ void RICaseData::computeActiveCellIJKBBox() {
   m_fractureActiveCellInfo->setIJKBoundingBox(
       fractureModelActiveBB.m_min,
       fractureModelActiveBB.m_max);
+
+  // } // if-statement
 }
-//}
 
 //==========================================================
 void RICaseData::computeActiveCellBoundingBoxes() {
@@ -201,12 +208,15 @@ void RICaseData::computeActiveCellBoundingBoxes() {
 
 //==========================================================
 RIActiveCellInfo*
-RICaseData::activeCellInfo(PorosityModelType porosityModel) {
+RICaseData::activeCellInfo(
+    PorosityModelType porosityModel) {
 
+  // -------------------------------------------------------
   if (porosityModel == MATRIX_MODEL) {
     return m_activeCellInfo;
   }
 
+  // -------------------------------------------------------
   return m_fractureActiveCellInfo;
 }
 
@@ -215,138 +225,164 @@ const RIActiveCellInfo*
 RICaseData::activeCellInfo(
     PorosityModelType porosityModel) const {
 
+  // -------------------------------------------------------
   if (porosityModel == MATRIX_MODEL) {
     return m_activeCellInfo;
   }
 
+  // -------------------------------------------------------
   return m_fractureActiveCellInfo;
 }
 
 // =========================================================
-void RICaseData::setActiveCellInfo(
+void
+RICaseData::setActiveCellInfo(
     PorosityModelType porosityModel,
     RIActiveCellInfo* activeCellInfo) {
 
-  if (porosityModel == MATRIX_MODEL)
-  {
+  // -------------------------------------------------------
+  if (porosityModel == MATRIX_MODEL) {
+
     m_activeCellInfo = activeCellInfo;
-//    m_matrixModelResults->setActiveCellInfo(m_activeCellInfo);
+    // m_matrixModelResults->
+    //    setActiveCellInfo(m_activeCellInfo);
 
   } else {
 
     m_fractureActiveCellInfo = activeCellInfo;
-//    m_fractureModelResults->setActiveCellInfo(m_fractureActiveCellInfo);
+    // m_fractureModelResults->
+    //    setActiveCellInfo(m_fractureActiveCellInfo);
   }
 }
 
 // =========================================================
 void RICaseData::computeActiveCellsGeometryBoundingBox() {
 
+  // -------------------------------------------------------
+  if (verb_vector()[3] > 3) // idx:3 -> wic
+    cout << fstr("[wic-rixx]compActCellsGeoBBox.",3)
+         << "[ricasedata.cpp]" << endl;
+
+  // -------------------------------------------------------
   // MB
-//  if (m_activeCellInfo != 0 || m_fractureActiveCellInfo != 0) {
-//    return;
-//  }
+  // if (m_activeCellInfo != 0
+  //    || m_fractureActiveCellInfo != 0) {
+  //  return;
+  // }
 
   // MB
-//  if (m_mainGrid != 0) {
-//    // -------------------------------------------------------------
-//    cout << FLGREEN
-//         << "[wic-rixx]compActCellsGeoBBox (ricasedata.cpp)"
-//         << AEND << endl;
-//
-//    // -------------------------------------------------------------
-//    cvf::BoundingBox bb;
-//    m_activeCellInfo->setGeometryBoundingBox(bb);
-//    m_fractureActiveCellInfo->setGeometryBoundingBox(bb);
-//    cout << FLGREEN<< bb.debugString().toStdString() << AEND << endl;
-//    return;
-//  }
+  // Importat: force computation and setting of geometry BB.
+  //
+  // if (m_mainGrid != 0) {
+  // -------------------------------------------------------
+  //  cvf::BoundingBox bb;
+  //  m_activeCellInfo->setGeometryBoundingBox(bb);
+  //  m_fractureActiveCellInfo->setGeometryBoundingBox(bb);
+  //  cout << FLGREEN<< bb.debugString().toStdString()
+  //       << AEND << endl;
+  //  return;
+  // }
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   RIActiveCellInfo* activeInfos[2];
   activeInfos[0] = m_fractureActiveCellInfo;
   // Last, to make this bb.min become display offset
   activeInfos[1] = m_activeCellInfo;
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   cvf::BoundingBox bb;
+  // Loop through active indices for matrix and fracture grid
   for (int acIdx = 0; acIdx < 2; ++acIdx) {
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     bb.reset();
     if (m_mainGrid->nodes().size() == 0) {
       bb.add(cvf::Vec3d::ZERO);
 
     } else {
 
-      // -----------------------------------------------------------
+      // ---------------------------------------------------
+      // Loop through all cells
       for (size_t i = 0; i < m_mainGrid->cellCount(); i++) {
 
-        // ---------------------------------------------------------
+        // -------------------------------------------------
+        // Loop only over cells that are active
         if (activeInfos[acIdx]->isActive(i)) {
 
-          // -------------------------------------------------------
+          // -----------------------------------------------
+          // Get current cell
           const RICell& c = m_mainGrid->globalCellArray()[i];
+
+          // -----------------------------------------------
+          // Get corner indices for current cell
           const caf::SizeTArray8& indices = c.cornerIndices();
 
-          // -------------------------------------------------------
+          // -----------------------------------------------
+          // All all the cells nodes to the bounding-box
           size_t idx;
           for (idx = 0; idx < 8; idx++) {
             bb.add(m_mainGrid->nodes()[indices[idx]]);
           }
         }
       }
-      // -------------------------------------------------------
-      cout << FLGREEN<< bb.debugString().toStdString() << AEND << endl;
+      // ---------------------------------------------------
+      if (verb_vector()[3] > 3) // idx:3 -> wic
+      cout << fstr("[wic-rixx]computeActiveCellsGeomBB.",3)
+           << bb.debugString().toStdString() << endl;
     }
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     activeInfos[acIdx]->setGeometryBoundingBox(bb);
   }
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   m_mainGrid->setDisplayModelOffset(bb.min());
 }
 
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Copyright (C) Statoil ASA
 // Copyright (C) Ceetron Solutions AS
 //
-// ResInsight is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
+// ResInsight is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General
+// Public License
+// as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any
+// later version.
 //
-// ResInsight is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even
+// the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE.
 //
 // See the GNU General Public License at
-// <http://www.gnu.org/licenses/gpl.html> for more details.
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
 //
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Modified by M.Bellout on 3/7/18.
 //
 
-// ╦═╗  ╦  ╦═╗  ╔═╗  ╔═╗  ╔╦╗  ╔═╗  ╦═╗  ╦  ╔╗╔  ╔╦╗  ╔═╗  ╦═╗  ╔═╗
-// ╠╦╝  ║  ╠╦╝  ║╣   ╠═╣   ║║  ║╣   ╠╦╝  ║  ║║║   ║   ║╣   ╠╦╝  ╠╣
-// ╩╚═  ╩  ╩╚═  ╚═╝  ╩ ╩  ═╩╝  ╚═╝  ╩╚═  ╩  ╝╚╝   ╩   ╚═╝  ╩╚═  ╚
-//==================================================================
+// =========================================================
+// ╦═╗  ╦  ╦═╗  ╔═╗  ╔═╗  ╔╦╗  ╦═╗  ╦  ╔╗╔  ╔╦╗  ╦═╗  ╔═╗
+// ╠╦╝  ║  ╠╦╝  ║╣   ╠═╣   ║║  ╠╦╝  ║  ║║║   ║   ╠╦╝  ╠╣
+// ╩╚═  ╩  ╩╚═  ╚═╝  ╩ ╩  ═╩╝  ╩╚═  ╩  ╝╚╝   ╩   ╩╚═  ╚
+// =========================================================
+
+// =========================================================
+// bool RIReaderInterface::isFaultImportEnabled() {
+//    return readerSettings()->importFaults;
+// }
 
 // -----------------------------------------------------------------
-//bool RIReaderInterface::isFaultImportEnabled() {
-////    return readerSettings()->importFaults;
-//}
+// bool RIReaderInterface::isImportOfCompleteMswDataEnabled() {
+//    return readerSettings()->importAdvancedMswData;
+// }
 
 // -----------------------------------------------------------------
-//bool RIReaderInterface::isImportOfCompleteMswDataEnabled() {
-////    return readerSettings()->importAdvancedMswData;
-//}
-
-// -----------------------------------------------------------------
-//bool RIReaderInterface::isNNCsEnabled() {
+// bool RIReaderInterface::isNNCsEnabled() {
 ////    return readerSettings()->importNNCs;
 //}
 
