@@ -1,45 +1,51 @@
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Copyright (C) 2011-     Statoil ASA
 // Copyright (C) 2013-     Ceetron Solutions AS
 // Copyright (C) 2011-2012 Ceetron AS
 //
-// ResInsight is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
+// ResInsight is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General
+// Public License
+// as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any
+// later version.
 //
-// ResInsight is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even
+// the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE.
 //
 // See the GNU General Public License at
-// <http://www.gnu.org/licenses/gpl.html> for more details.
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
 //
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Modified by M.Bellout on 3/5/18.
 //
 
-// =========================================================
+// ---------------------------------------------------------
 // STD
 #include <string>
 
-// =========================================================
+// ---------------------------------------------------------
 #include "rigrid.h"
 
-// =========================================================
+// ---------------------------------------------------------
 using std::string;
 
+//==========================================================
 // ╦═╗  ╦  ╔═╗  ╦═╗  ╦  ╔╦╗  ╔╗   ╔═╗  ╔═╗  ╔═╗
 // ╠╦╝  ║  ║ ╦  ╠╦╝  ║   ║║  ╠╩╗  ╠═╣  ╚═╗  ║╣
 // ╩╚═  ╩  ╚═╝  ╩╚═  ╩  ═╩╝  ╚═╝  ╩ ╩  ╚═╝  ╚═╝
-// =================================================================
+// =========================================================
 RIGridBase::RIGridBase(RIGrid* mainGrid):
     m_gridPointDimensions(0,0,0),
     m_mainGrid(mainGrid),
     m_indexToStartOfCells(0) {
 
+  // -------------------------------------------------------
   if (mainGrid == nullptr) {
     m_gridIndex = 0;
     m_gridId    = 0;
@@ -72,6 +78,7 @@ RICell& RIGridBase::cell(size_t gridLocalCellIndex) {
   CVF_ASSERT(m_indexToStartOfCells + gridLocalCellIndex
                  < m_mainGrid->globalCellArray().size());
 
+  // -------------------------------------------------------
   return m_mainGrid->
       globalCellArray()[m_indexToStartOfCells + gridLocalCellIndex];
 }
@@ -81,6 +88,7 @@ const RICell& RIGridBase::cell(size_t gridLocalCellIndex) const {
 
   CVF_ASSERT(m_mainGrid);
 
+  // -------------------------------------------------------
   return m_mainGrid->
       globalCellArray()[m_indexToStartOfCells + gridLocalCellIndex];
 }
@@ -90,6 +98,7 @@ void RIGridBase::initSubGridParentPointer() {
 
   RIGridBase* grid = this;
 
+  // -------------------------------------------------------
   size_t cellIdx;
   for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx) {
     RICell& cell = grid->cell(cellIdx);
@@ -101,35 +110,43 @@ void RIGridBase::initSubGridParentPointer() {
 }
 
 // =========================================================
-// Find the cell index to the maingrid cell containing this cell,
-// and store it as m_mainGridCellIndex in each cell.
-void RIGridBase::initSubCellsMainGridCellIndex()
-{
+// Find the cell index to the maingrid cell containing this
+// cell, and store it as m_mainGridCellIndex in each cell.
+void RIGridBase::initSubCellsMainGridCellIndex() {
+
   RIGridBase* grid = this;
 
+  // -------------------------------------------------------
   if (grid->isMainGrid()) {
 
     size_t cellIdx;
+    // -----------------------------------------------------
     for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx) {
       RICell& cell = grid->cell(cellIdx);
       cell.setMainGridCellIndex(cellIdx);
     }
-  }
-  else {
+
+  } else {
+
     size_t cellIdx;
+    // -----------------------------------------------------
     for (cellIdx = 0; cellIdx < grid->cellCount(); ++cellIdx) {
       RILocalGrid* localGrid = static_cast<RILocalGrid*>(grid);
       RIGridBase* parentGrid = localGrid->parentGrid();
 
+      // ---------------------------------------------------
       RICell& cell = localGrid->cell(cellIdx);
       size_t parentCellIndex = cell.parentCellIndex();
 
+      // ---------------------------------------------------
       while (!parentGrid->isMainGrid()) {
+
         const RICell& parentCell = parentGrid->cell(parentCellIndex);
         parentCellIndex = parentCell.parentCellIndex();
 
         localGrid = static_cast<RILocalGrid*>(parentGrid);
         parentGrid = localGrid->parentGrid();
+
       }
 
       cell.setMainGridCellIndex(parentCellIndex);
@@ -142,8 +159,9 @@ void RIGridBase::initSubCellsMainGridCellIndex()
 /// retreiving the correct lgr cells as well. The cell() call
 /// retreives correct cell, because main grid has offset of 0,
 /// and we access the global cell array in main grid.
-void RIGridBase::cellCornerVertices(size_t cellIndex,
-                                    cvf::Vec3d vertices[8]) const {
+void
+RIGridBase::cellCornerVertices(size_t cellIndex,
+                               cvf::Vec3d vertices[8]) const {
 
   const caf::SizeTArray8& indices = cell(cellIndex).cornerIndices();
 
@@ -159,7 +177,9 @@ void RIGridBase::cellCornerVertices(size_t cellIndex,
 
 // =========================================================
 size_t
-RIGridBase::cellIndexFromIJK(size_t i, size_t j, size_t k) const {
+RIGridBase::cellIndexFromIJK(size_t i,
+                             size_t j,
+                             size_t k) const {
 
   CVF_TIGHT_ASSERT(i != cvf::UNDEFINED_SIZE_T
                        && j != cvf::UNDEFINED_SIZE_T
@@ -185,22 +205,29 @@ RIGridBase::cellMinMaxCordinates(size_t cellIndex,
 // =========================================================
 bool
 RIGridBase::ijkFromCellIndex(size_t cellIndex,
-                             size_t* i, size_t* j, size_t* k) const {
+                             size_t* i,
+                             size_t* j,
+                             size_t* k) const {
 
+  // -------------------------------------------------------
   CVF_TIGHT_ASSERT(cellIndex < cellCount());
 
   size_t index = cellIndex;
 
+  // -------------------------------------------------------
   if (cellCountI() <= 0 || cellCountJ() <= 0) {
     return false;
   }
 
+  // -------------------------------------------------------
   *k = index/(cellCountI()*cellCountJ());
   index -= (*k)*(cellCountI()*cellCountJ());
 
+  // -------------------------------------------------------
   *j = index/cellCountI();
   index -= (*j)*cellCountI();
 
+  // -------------------------------------------------------
   *i = index;
 
   return true;
@@ -217,6 +244,7 @@ size_t RIGridBase::gridPointIndexFromIJK(size_t i,
 bool RIGridBase::cellIJKFromCoordinate(
     const cvf::Vec3d& coord,
     size_t* i, size_t* j, size_t* k) const {
+
   return false;
 }
 
@@ -262,29 +290,39 @@ cvf::Vec3d RIGridBase::maxCoordinate() const {
 }
 
 // =========================================================
-bool RIGridBase::isCellValid(size_t i, size_t j, size_t k) const {
+bool RIGridBase::isCellValid(size_t i,
+                             size_t j,
+                             size_t k) const {
 
-  if (i >= cellCountI() || j >= cellCountJ() || k >= cellCountK()) {
+  // -------------------------------------------------------
+  if (i >= cellCountI()
+      || j >= cellCountJ()
+      || k >= cellCountK()) {
     return false;
   }
 
+  // -------------------------------------------------------
   size_t idx = cellIndexFromIJK(i, j, k);
   const RICell& c = cell(idx);
   return !c.isInvalid();
 }
 
 // =========================================================
-bool RIGridBase::cellIJKNeighbor(size_t i, size_t j, size_t k,
-                                 FaceType face,
-                                 size_t* neighborCellIndex) const {
+bool
+RIGridBase::cellIJKNeighbor(size_t i, size_t j, size_t k,
+                            FaceType face,
+                            size_t* neighborCellIndex) const {
 
+  // -------------------------------------------------------
   size_t ni, nj, nk;
   neighborIJKAtCellFace(i, j, k, face, &ni, &nj, &nk);
 
+  // -------------------------------------------------------
   if (!isCellValid(ni, nj, nk)) {
     return false;
   }
 
+  // -------------------------------------------------------
   if (neighborCellIndex) {
     *neighborCellIndex = cellIndexFromIJK(ni, nj, nk);
   }
@@ -298,11 +336,12 @@ bool RIGridBase::isMainGrid() const {
 }
 
 // =========================================================
-// Models with large absolute values for coordinate scalars will
-// often end up with z-fighting due to numerical limits in float
-// used by OpenGL to represent a position. displayModelOffset()
-// is intended to be subtracted from domain model coordinate when
-// building geometry for visualization
+// Models with large absolute values for coordinate scalars
+// will often end up with z-fighting due to numerical limits
+// in float used by OpenGL to represent a position.
+// displayModelOffset() is intended to be subtracted
+// from domain model coordinate when building geometry
+// for visualization
 //
 //  Vec3d domainModelCoord
 //  Vec3d coordForVisualization
@@ -311,35 +350,48 @@ cvf::Vec3d RIGridBase::displayModelOffset() const {
 }
 
 // =========================================================
-// Returns the min size of the I and J characteristic cell sizes
+// Returns min size of the I and J characteristic cell sizes
 double RIGridBase::characteristicIJCellSize() const {
 
+  // -------------------------------------------------------
   double characteristicCellSize = HUGE_VAL;
 
+  // -------------------------------------------------------
   double cellSizeI, cellSizeJ, cellSizeK;
-  this->characteristicCellSizes(&cellSizeI, &cellSizeJ, &cellSizeK);
 
-  if (cellSizeI < characteristicCellSize) characteristicCellSize = cellSizeI;
-  if (cellSizeJ < characteristicCellSize) characteristicCellSize = cellSizeJ;
+  this->characteristicCellSizes(&cellSizeI,
+                                &cellSizeJ,
+                                &cellSizeK);
+
+  // -------------------------------------------------------
+  if (cellSizeI < characteristicCellSize)
+    characteristicCellSize = cellSizeI;
+
+  if (cellSizeJ < characteristicCellSize)
+    characteristicCellSize = cellSizeJ;
 
   return characteristicCellSize;
 }
 
 // =========================================================
 size_t
-RIGridBase::reservoirCellIndex(size_t gridLocalCellIndex) const {
+RIGridBase::reservoirCellIndex(
+    size_t gridLocalCellIndex) const {
   return m_indexToStartOfCells + gridLocalCellIndex;
 }
 
 // =========================================================
 cvf::BoundingBox RIGridBase::boundingBox() {
 
+  // -------------------------------------------------------
   if (!m_boundingBox.isValid()) {
     cvf::Vec3d cornerVerts[8];
 
+    // -----------------------------------------------------
     for (size_t i = 0; i < cellCount(); i++) {
       cellCornerVertices(i, cornerVerts);
 
+      // ---------------------------------------------------
       for (size_t j = 0; j < 8; j++) {
         m_boundingBox.add(cornerVerts[j]);
       }
@@ -350,8 +402,11 @@ cvf::BoundingBox RIGridBase::boundingBox() {
 }
 
 // =========================================================
-size_t RIGridBase::addCoarseningBox(size_t i1, size_t i2, size_t j1,
-                                    size_t j2, size_t k1, size_t k2) {
+size_t
+RIGridBase::addCoarseningBox(size_t i1, size_t i2, size_t j1,
+                             size_t j2, size_t k1, size_t k2) {
+
+  // -------------------------------------------------------
   caf::SizeTArray6 box;
   box[0] = i1;
   box[1] = i2;
@@ -360,10 +415,12 @@ size_t RIGridBase::addCoarseningBox(size_t i1, size_t i2, size_t j1,
   box[4] = k1;
   box[5] = k2;
 
+  // -------------------------------------------------------
   m_coarseningBoxInfo.push_back(box);
 
   size_t coarseningBoxIndex = m_coarseningBoxInfo.size() - 1;
 
+  // -------------------------------------------------------
   for (size_t k = k1; k <= k2; k++) {
 
     for (size_t j = j1; j <= j2; j++) {
@@ -384,25 +441,29 @@ size_t RIGridBase::addCoarseningBox(size_t i1, size_t i2, size_t j1,
 }
 
 
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Copyright (C) 2011-     Statoil ASA
 // Copyright (C) 2013-     Ceetron Solutions AS
 // Copyright (C) 2011-2012 Ceetron AS
 //
-// ResInsight is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
+// ResInsight is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General
+// Public License
+// as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any
+// later version.
 //
-// ResInsight is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even
+// the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE.
 //
 // See the GNU General Public License at
-// <http://www.gnu.org/licenses/gpl.html> for more details.
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
 //
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Modified by M.Bellout on 3/5/18.
 //
@@ -1039,33 +1100,38 @@ cvf::BoundingBox RIGrid::boundingBox() const {
   return m_boundingBox;
 }
 
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Copyright (C) 2011-     Statoil ASA
 // Copyright (C) 2013-     Ceetron Solutions AS
 // Copyright (C) 2011-2012 Ceetron AS
 //
-// ResInsight is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
+// ResInsight is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General
+// Public License
+// as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any
+// later version.
 //
-// ResInsight is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even
+// the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE.
 //
 // See the GNU General Public License at
-// <http://www.gnu.org/licenses/gpl.html> for more details.
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
 //
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Modified by M.Bellout on 3/5/18.
 //
 
-// ╦═╗  ╦  ╔═╗  ╔═╗  ╔╦╗  ╦  ╦  ╦  ╔═╗  ╔═╗  ╔═╗  ╦    ╦    ╦  ╔╗╔  ╔═╗  ╔═╗
-// ╠╦╝  ║  ╠═╣  ║     ║   ║  ╚╗╔╝  ║╣   ║    ║╣   ║    ║    ║  ║║║  ╠╣   ║ ║
-// ╩╚═  ╩  ╩ ╩  ╚═╝   ╩   ╩   ╚╝   ╚═╝  ╚═╝  ╚═╝  ╩═╝  ╩═╝  ╩  ╝╚╝  ╚    ╚═╝
-// =================================================================
+//==========================================================
+// ╦═╗  ╦  ╔═╗  ╔═╗  ╔╦╗  ╔═╗  ╔═╗  ╦    ╦    ╦  ╔╗╔  ╔═╗
+// ╠╦╝  ║  ╠═╣  ║     ║   ║    ║╣   ║    ║    ║  ║║║  ╠╣
+// ╩╚═  ╩  ╩ ╩  ╚═╝   ╩   ╚═╝  ╚═╝  ╩═╝  ╩═╝  ╩  ╝╚╝  ╚
+//==========================================================
 RIActiveCellInfo::RIActiveCellInfo()
     :   m_reservoirActiveCellCount(0),
         m_reservoirCellResultCount(0),
@@ -1074,7 +1140,10 @@ RIActiveCellInfo::RIActiveCellInfo()
 
 // =========================================================
 void
-RIActiveCellInfo::setReservoirCellCount(size_t reservoirCellCount){
+RIActiveCellInfo::
+setReservoirCellCount(size_t reservoirCellCount){
+
+  // -------------------------------------------------------
   m_cellIndexToResultIndex.resize(reservoirCellCount,
                                   cvf::UNDEFINED_SIZE_T);
 }
@@ -1093,36 +1162,53 @@ size_t RIActiveCellInfo::reservoirCellResultCount() const {
 bool
 RIActiveCellInfo::isActive(size_t reservoirCellIndex) const {
 
+  // -------------------------------------------------------
   if (m_cellIndexToResultIndex.size() == 0) {
     return true;
   }
 
-  CVF_TIGHT_ASSERT(reservoirCellIndex < m_cellIndexToResultIndex.size());
+  // -------------------------------------------------------
+  CVF_TIGHT_ASSERT(
+      reservoirCellIndex < m_cellIndexToResultIndex.size());
 
-  return m_cellIndexToResultIndex[reservoirCellIndex] != cvf::UNDEFINED_SIZE_T;
+  // -------------------------------------------------------
+  return m_cellIndexToResultIndex[reservoirCellIndex]
+      != cvf::UNDEFINED_SIZE_T;
 }
 
 // =========================================================
 size_t
-RIActiveCellInfo::cellResultIndex(size_t reservoirCellIndex) const {
+RIActiveCellInfo::
+cellResultIndex(size_t reservoirCellIndex) const {
 
+  // -------------------------------------------------------
   if (m_cellIndexToResultIndex.size() == 0) {
     return reservoirCellIndex;
   }
 
-  CVF_TIGHT_ASSERT(reservoirCellIndex < m_cellIndexToResultIndex.size());
+  // -------------------------------------------------------
+  CVF_TIGHT_ASSERT(reservoirCellIndex
+                       < m_cellIndexToResultIndex.size());
 
+  // -------------------------------------------------------
   return m_cellIndexToResultIndex[reservoirCellIndex];
 }
 
 // =========================================================
-void RIActiveCellInfo::setCellResultIndex(size_t reservoirCellIndex,
-                                          size_t reservoirCellResultIndex) {
+void
+RIActiveCellInfo::
+setCellResultIndex(size_t reservoirCellIndex,
+                   size_t reservoirCellResultIndex) {
 
-  CVF_TIGHT_ASSERT(reservoirCellResultIndex < m_cellIndexToResultIndex.size());
+  // -------------------------------------------------------
+  CVF_TIGHT_ASSERT(reservoirCellResultIndex
+                       < m_cellIndexToResultIndex.size());
 
-  m_cellIndexToResultIndex[reservoirCellIndex] = reservoirCellResultIndex;
+  // -------------------------------------------------------
+  m_cellIndexToResultIndex[reservoirCellIndex] =
+      reservoirCellResultIndex;
 
+  // -------------------------------------------------------
   if (reservoirCellResultIndex >= m_reservoirCellResultCount) {
     m_reservoirCellResultCount = reservoirCellResultIndex + 1;
   }
@@ -1134,12 +1220,17 @@ void RIActiveCellInfo::setGridCount(size_t gridCount) {
 }
 
 // =========================================================
-void RIActiveCellInfo::setGridActiveCellCounts(size_t gridIndex,
-                                               size_t activeCellCount) {
+void
+RIActiveCellInfo::
+setGridActiveCellCounts(size_t gridIndex,
+                        size_t activeCellCount) {
 
+  // -------------------------------------------------------
   CVF_ASSERT(gridIndex < m_perGridActiveCellInfo.size());
 
-  m_perGridActiveCellInfo[gridIndex].setActiveCellCount(activeCellCount);
+  // -------------------------------------------------------
+  m_perGridActiveCellInfo[gridIndex].
+      setActiveCellCount(activeCellCount);
 }
 
 // =========================================================
@@ -1147,8 +1238,10 @@ void RIActiveCellInfo::computeDerivedData() {
 
   m_reservoirActiveCellCount = 0;
 
+  // -------------------------------------------------------
   for (size_t i = 0; i < m_perGridActiveCellInfo.size(); i++) {
-    m_reservoirActiveCellCount += m_perGridActiveCellInfo[i].activeCellCount();
+    m_reservoirActiveCellCount +=
+        m_perGridActiveCellInfo[i].activeCellCount();
   }
 }
 
@@ -1158,8 +1251,9 @@ size_t RIActiveCellInfo::reservoirActiveCellCount() const {
 }
 
 // =========================================================
-void RIActiveCellInfo::setIJKBoundingBox(const cvf::Vec3st& min,
-                                         const cvf::Vec3st& max) {
+void
+RIActiveCellInfo::setIJKBoundingBox(const cvf::Vec3st& min,
+                                    const cvf::Vec3st& max) {
   m_activeCellPositionMin = min;
   m_activeCellPositionMax = max;
 }
@@ -1173,18 +1267,25 @@ void RIActiveCellInfo::IJKBoundingBox(cvf::Vec3st& min,
 
 // =========================================================
 void
-RIActiveCellInfo::gridActiveCellCounts(size_t gridIndex,
-                                       size_t& activeCellCount) const {
-  activeCellCount = m_perGridActiveCellInfo[gridIndex].activeCellCount();
+RIActiveCellInfo::
+gridActiveCellCounts(size_t gridIndex,
+                     size_t& activeCellCount) const {
+
+  // -------------------------------------------------------
+  activeCellCount =
+      m_perGridActiveCellInfo[gridIndex].activeCellCount();
 }
 
 // =========================================================
-cvf::BoundingBox RIActiveCellInfo::geometryBoundingBox() const {
+cvf::BoundingBox
+RIActiveCellInfo::geometryBoundingBox() const {
   return m_activeCellsBoundingBox;
 }
 
 // =========================================================
-void RIActiveCellInfo::setGeometryBoundingBox(cvf::BoundingBox bb) {
+void
+RIActiveCellInfo::
+setGeometryBoundingBox(cvf::BoundingBox bb) {
   m_activeCellsBoundingBox = bb;
 }
 

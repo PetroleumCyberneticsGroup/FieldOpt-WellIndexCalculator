@@ -1,54 +1,69 @@
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Copyright (C) 2011-     Statoil ASA
 // Copyright (C) 2013-     Ceetron Solutions AS
 // Copyright (C) 2011-2012 Ceetron AS
 //
-// ResInsight is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation, either version
-// 3 of the License, or (at your option) any later version.
+// ResInsight is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General
+// Public License
+// as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any
+// later version.
 //
-// ResInsight is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ResInsight is distributed in the hope that it will
+// be useful, but WITHOUT ANY WARRANTY; without even
+// the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE.
 //
 // See the GNU General Public License at
-// <http://www.gnu.org/licenses/gpl.html> for more details.
+// <http://www.gnu.org/licenses/gpl.html>
+// for more details.
 //
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 //
 // Modified by M.Bellout on 3/7/18.
 //
 
-// -----------------------------------------------------------------
+// ---------------------------------------------------------
 #include "ricasedata.h"
 
+// =========================================================
 // ╦═╗  ╦  ╔═╗  ╔═╗  ╔═╗  ╔═╗  ╔╦╗  ╔═╗  ╔╦╗  ╔═╗
 // ╠╦╝  ║  ║    ╠═╣  ╚═╗  ║╣    ║║  ╠═╣   ║   ╠═╣
 // ╩╚═  ╩  ╚═╝  ╩ ╩  ╚═╝  ╚═╝  ═╩╝  ╩ ╩   ╩   ╩ ╩
-// =================================================================
+//==========================================================
 RICaseData::RICaseData(string file_path) {
 
+  // -------------------------------------------------------
   m_mainGrid = new RIGrid(file_path);
-//  m_ownerCase = ownerCase;
+  // m_ownerCase = ownerCase;
 
+  // -------------------------------------------------------
   // m_matrixModelResults = new RICaseCellResultsData(this);
   // m_fractureModelResults = new RigCaseCellResultsData(this);
 
+  // -------------------------------------------------------
   m_activeCellInfo = new RIActiveCellInfo;
   m_fractureActiveCellInfo = new RIActiveCellInfo;
+
+  // -------------------------------------------------------
+  setActiveCellInfo(PorosityModelTypeMATRIX_, m_activeCellInfo);
+  // m_matrixModelResults->setActiveCellInfo(m_activeCellInfo.p());
 
   // m_matrixModelResults->setActiveCellInfo(m_activeCellInfo.p());
   // m_fractureModelResults->setActiveCellInfo(m_fractureActiveCellInfo.p());
 
+  // -------------------------------------------------------
 //  m_unitsType = RiaEclipseUnitTools::UNITS_METRIC;
+
+  // -------------------------------------------------------
   PorosityModelTypeMATRIX_ = PorosityModelType::MATRIX_MODEL;
   PorosityModelTypeFRAC_ = PorosityModelType::FRACTURE_MODEL;
 
 }
 
-// -----------------------------------------------------------------
+//==========================================================
 RICaseData::~RICaseData() {
   cout << "[wic-rixx]deleting vars.----- RICaseData()" << endl;
   delete m_mainGrid;
@@ -56,51 +71,56 @@ RICaseData::~RICaseData() {
   delete m_fractureActiveCellInfo;
 }
 
-// -----------------------------------------------------------------
+//==========================================================
 RIGrid* RICaseData::mainGrid() {
   return m_mainGrid;
 }
 
-// -----------------------------------------------------------------
+//==========================================================
 const RIGrid* RICaseData::mainGrid() const {
   return m_mainGrid;
 }
 
-// -----------------------------------------------------------------
+//==========================================================
 void RICaseData::setMainGrid(RIGrid* mainGrid) {
   m_mainGrid = mainGrid;
   // m_matrixModelResults->setMainGrid(m_mainGrid);
   // m_fractureModelResults->setMainGrid(m_mainGrid);
 }
 
-// -----------------------------------------------------------------
-// Get grid by index. Main grid has index 0, so first lgr has idx 1.
+//==========================================================
+// Get grid by index.
+// Main grid has index 0, so first lgr has idx 1.
 RIGridBase* RICaseData::grid(size_t index) {
   //CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
 
-// -----------------------------------------------------------------
-// Get grid by index. Main grid has index 0, so first lgr has idx 1.
+// =========================================================
+// Get grid by index.
+// Main grid has index 0, so first lgr has idx 1.
 const RIGridBase* RICaseData::grid(size_t index) const {
   //CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridByIndex(index);
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 size_t RICaseData::gridCount() const {
   //CVF_ASSERT(m_mainGrid.notNull());
   return m_mainGrid->gridCount();
 }
 
+// =========================================================
 // ╔═╗  ╔═╗  ╦    ╦    ╦═╗  ╔═╗  ╔╗╔  ╔═╗  ╔═╗  ╔╗   ╔╗
 // ║    ║╣   ║    ║    ╠╦╝  ╠═╣  ║║║  ║ ╦  ║╣   ╠╩╗  ╠╩╗
 // ╚═╝  ╚═╝  ╩═╝  ╩═╝  ╩╚═  ╩ ╩  ╝╚╝  ╚═╝  ╚═╝  ╚═╝  ╚═╝
-// =================================================================
-// Helper class used to find min/max range for valid and active cells
+// =========================================================
+// Helper class used to find min/max range for valid and
+// active cells
 class CellRangeBB
 {
  public:
+  // -------------------------------------------------------
   CellRangeBB()
       : m_min(cvf::UNDEFINED_SIZE_T,
               cvf::UNDEFINED_SIZE_T,
@@ -108,6 +128,7 @@ class CellRangeBB
         m_max(cvf::Vec3st::ZERO) {
   }
 
+  // -------------------------------------------------------
   void add(size_t i, size_t j, size_t k) {
 
     if (i < m_min.x()) m_min.x() = i;
@@ -120,62 +141,65 @@ class CellRangeBB
   }
 
  public:
+  // -------------------------------------------------------
   cvf::Vec3st m_min;
   cvf::Vec3st m_max;
 };
 
-// -----------------------------------------------------------------
+//==========================================================
 void RICaseData::computeActiveCellIJKBBox() {
 
 //  if (m_mainGrid != 0
 //      && m_activeCellInfo != 0
 //      && m_fractureActiveCellInfo != 0) {
 
-  // -------------------------------------------------------------
+  // -------------------------------------------------------
   cout << FLGREEN
        << "[wic-rixx]compActCellIJKBBox- (ricasedata.cpp)"
        << AEND << endl;
 
-  // -------------------------------------------------------------
+  // -------------------------------------------------------
   CellRangeBB matrixModelActiveBB;
   CellRangeBB fractureModelActiveBB;
 
-  // -------------------------------------------------------------
+  // -------------------------------------------------------
   size_t idx;
   for (idx = 0; idx < m_mainGrid->cellCount(); idx++) {
 
-    // -----------------------------------------------------------
+    // -----------------------------------------------------
     size_t i, j, k;
     m_mainGrid->ijkFromCellIndex(idx, &i, &j, &k);
 
-    // -----------------------------------------------------------
+    // -----------------------------------------------------
     if (m_activeCellInfo->isActive(idx)) {
       matrixModelActiveBB.add(i, j, k);
     }
 
-    // -----------------------------------------------------------
+    // -----------------------------------------------------
     if (m_fractureActiveCellInfo->isActive(idx)) {
       fractureModelActiveBB.add(i, j, k);
     }
   }
 
-  // -------------------------------------------------------------
-  m_activeCellInfo->setIJKBoundingBox(matrixModelActiveBB.m_min,
-                                      matrixModelActiveBB.m_max);
+  // -------------------------------------------------------
+  m_activeCellInfo->setIJKBoundingBox(
+      matrixModelActiveBB.m_min,
+      matrixModelActiveBB.m_max);
 
-  // -------------------------------------------------------------
-  m_fractureActiveCellInfo->setIJKBoundingBox(fractureModelActiveBB.m_min,
-                                              fractureModelActiveBB.m_max);
+  // -------------------------------------------------------
+  m_fractureActiveCellInfo->setIJKBoundingBox(
+      fractureModelActiveBB.m_min,
+      fractureModelActiveBB.m_max);
 }
 //}
 
-// -----------------------------------------------------------------
+//==========================================================
 void RICaseData::computeActiveCellBoundingBoxes() {
   computeActiveCellIJKBBox();
   computeActiveCellsGeometryBoundingBox();
 }
 
-// -----------------------------------------------------------------
+//==========================================================
 RIActiveCellInfo*
 RICaseData::activeCellInfo(PorosityModelType porosityModel) {
 
@@ -186,9 +210,10 @@ RICaseData::activeCellInfo(PorosityModelType porosityModel) {
   return m_fractureActiveCellInfo;
 }
 
-// -----------------------------------------------------------------
+// =========================================================
 const RIActiveCellInfo*
-RICaseData::activeCellInfo(PorosityModelType porosityModel) const {
+RICaseData::activeCellInfo(
+    PorosityModelType porosityModel) const {
 
   if (porosityModel == MATRIX_MODEL) {
     return m_activeCellInfo;
@@ -197,42 +222,45 @@ RICaseData::activeCellInfo(PorosityModelType porosityModel) const {
   return m_fractureActiveCellInfo;
 }
 
-// -----------------------------------------------------------------
-void RICaseData::setActiveCellInfo(PorosityModelType porosityModel,
-                                   RIActiveCellInfo* activeCellInfo)
-{
+// =========================================================
+void RICaseData::setActiveCellInfo(
+    PorosityModelType porosityModel,
+    RIActiveCellInfo* activeCellInfo) {
+
   if (porosityModel == MATRIX_MODEL)
   {
     m_activeCellInfo = activeCellInfo;
 //    m_matrixModelResults->setActiveCellInfo(m_activeCellInfo);
-  }
-  else
-  {
+
+  } else {
+
     m_fractureActiveCellInfo = activeCellInfo;
 //    m_fractureModelResults->setActiveCellInfo(m_fractureActiveCellInfo);
   }
 }
 
-// -----------------------------------------------------------------
-void RICaseData::computeActiveCellsGeometryBoundingBox()
-{
+// =========================================================
+void RICaseData::computeActiveCellsGeometryBoundingBox() {
+
+  // MB
 //  if (m_activeCellInfo != 0 || m_fractureActiveCellInfo != 0) {
 //    return;
 //  }
 
-  if (m_mainGrid != 0) {
-    // -------------------------------------------------------------
-    cout << FLGREEN
-         << "[wic-rixx]compActCellsGeoBBox (ricasedata.cpp)"
-         << AEND << endl;
-
-    // -------------------------------------------------------------
-    cvf::BoundingBox bb;
-    m_activeCellInfo->setGeometryBoundingBox(bb);
-    m_fractureActiveCellInfo->setGeometryBoundingBox(bb);
-    // cout << bb.debugString().toStdString() << endl;
-    return;
-  }
+  // MB
+//  if (m_mainGrid != 0) {
+//    // -------------------------------------------------------------
+//    cout << FLGREEN
+//         << "[wic-rixx]compActCellsGeoBBox (ricasedata.cpp)"
+//         << AEND << endl;
+//
+//    // -------------------------------------------------------------
+//    cvf::BoundingBox bb;
+//    m_activeCellInfo->setGeometryBoundingBox(bb);
+//    m_fractureActiveCellInfo->setGeometryBoundingBox(bb);
+//    cout << FLGREEN<< bb.debugString().toStdString() << AEND << endl;
+//    return;
+//  }
 
   // ---------------------------------------------------------------
   RIActiveCellInfo* activeInfos[2];
@@ -268,6 +296,8 @@ void RICaseData::computeActiveCellsGeometryBoundingBox()
           }
         }
       }
+      // -------------------------------------------------------
+      cout << FLGREEN<< bb.debugString().toStdString() << AEND << endl;
     }
 
     // -------------------------------------------------------------
