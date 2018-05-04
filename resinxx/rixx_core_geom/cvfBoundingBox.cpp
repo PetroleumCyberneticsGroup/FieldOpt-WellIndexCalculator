@@ -177,55 +177,41 @@ Vec3d BoundingBox::center() const {
 }
 
 
-//------------------------------------------------------------------
-/// Computes the total size of the bounding box
-//------------------------------------------------------------------
-Vec3d BoundingBox::extent() const
-{
+// =========================================================
+// Computes the total size of the bounding box
+Vec3d BoundingBox::extent() const {
   CVF_TIGHT_ASSERT(isValid());
-
   return (m_max - m_min);
 }
 
 
-//------------------------------------------------------------------
-/// Compute radius as half the length of the box's diagonal
-//------------------------------------------------------------------
-double BoundingBox::radius() const
-{
+// =========================================================
+// Compute radius as half the length of the box's diagonal
+double BoundingBox::radius() const {
   CVF_TIGHT_ASSERT(isValid());
-
   return extent().length() / 2.0;
 }
 
-
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-const Vec3d& BoundingBox::min() const
-{
+// =========================================================
+const Vec3d& BoundingBox::min() const {
   CVF_TIGHT_ASSERT(isValid());
 
   return m_min;
 }
 
-
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
-const Vec3d& BoundingBox::max() const
-{
+// =========================================================
+const Vec3d& BoundingBox::max() const {
   CVF_TIGHT_ASSERT(isValid());
-
   return m_max;
 }
 
 
-//------------------------------------------------------------------
-/// Check if the bounding box contains the specified point
-///
-/// Note that a point on the box's surface is classified as being contained
-//------------------------------------------------------------------
+// =========================================================
+// Check if the bounding box contains the specified point
+//
+// Note that a point on the box's surface is classified as
+// being contained
+// =========================================================
 bool BoundingBox::contains(const Vec3d& point) const {
 
   CVF_TIGHT_ASSERT(isValid());
@@ -241,39 +227,52 @@ bool BoundingBox::contains(const Vec3d& point) const {
 }
 
 
-//------------------------------------------------------------------
-///
-//------------------------------------------------------------------
+// =========================================================
 bool BoundingBox::intersects(const BoundingBox& box) const {
 
+  // -------------------------------------------------------
   CVF_TIGHT_ASSERT(isValid());
   CVF_TIGHT_ASSERT(box.isValid());
 
-  if (m_max.x() < box.m_min.x() || m_min.x() > box.m_max.x())  return false;
-  if (m_max.y() < box.m_min.y() || m_min.y() > box.m_max.y())  return false;
-  if (m_max.z() < box.m_min.z() || m_min.z() > box.m_max.z())  return false;
+  // -------------------------------------------------------
+  if (m_max.x() < box.m_min.x()
+      || m_min.x() > box.m_max.x()) {
+    return false;
+  }
+
+  // -------------------------------------------------------
+  if (m_max.y() < box.m_min.y()
+      || m_min.y() > box.m_max.y()) {
+    return false;
+  }
+
+  // -------------------------------------------------------
+  if (m_max.z() < box.m_min.z()
+      || m_min.z() > box.m_max.z()) {
+    return false;
+  }
 
   return true;
 }
 
 
-//------------------------------------------------------------------
-/// Get corner points of box
-///
-/// \param	corners  Array of Vec3d. Must be allocated 8 vectors
-/// long.
-///
-/// <PRE>
-///        7---------6
-///       /|        /|     |z
-///      / |       / |     | / y
-///     4---------5  |     |/
-///     |  3------|--2     *---x
-///     | /       | /
-///     |/        |/
-///     0---------1    </PRE>
-///
-//------------------------------------------------------------------
+// =========================================================
+// Get corner points of box
+//
+// \param	corners  Array of Vec3d. Must be allocated 8 vectors
+// long.
+//
+// <PRE>
+//        7---------6
+//       /|        /|     |z
+//      / |       / |     | / y
+//     4---------5  |     |/
+//     |  3------|--2     *---x
+//     | /       | /
+//     |/        |/
+//     0---------1    </PRE>
+//
+// =========================================================
 void BoundingBox::cornerVertices(Vec3d corners[8]) const {
 
   corners[0].set(m_min.x(), m_min.y(), m_min.z());
@@ -287,13 +286,13 @@ void BoundingBox::cornerVertices(Vec3d corners[8]) const {
 }
 
 
-//------------------------------------------------------------------
-/// Expands the bounding box by the given amount in all three
-/// directions
-///
-/// If a bounding box is expanded by 2, the bounding box's size
-/// will increase by 2 in each direction
-/// \sa extent()
+// =========================================================
+// Expands the bounding box by the given amount in all three
+// directions
+//
+// If a bounding box is expanded by 2, the bounding box's size
+// will increase by 2 in each direction
+// \sa extent()
 void BoundingBox::expand(double amount) {
 
   double half = amount/2;
@@ -305,8 +304,7 @@ void BoundingBox::expand(double amount) {
   m_max.z() += half;
 }
 
-
-//------------------------------------------------------------------
+// =========================================================
 // Transform the min and max coordinate with the given
 // transformation matrix
 void BoundingBox::transform(const Mat4d& matrix) {
@@ -355,10 +353,11 @@ void BoundingBox::transform(const Mat4d& matrix) {
 }
 
 
-//------------------------------------------------------------------
+// =========================================================
 // Returns this BoundingBox transformed with the given
 // transformation matrix
-const BoundingBox BoundingBox::getTransformed(const Mat4d& matrix) const {
+const BoundingBox
+BoundingBox::getTransformed(const Mat4d& matrix) const {
 
   BoundingBox box(*this);
   box.transform(matrix);
@@ -366,7 +365,7 @@ const BoundingBox BoundingBox::getTransformed(const Mat4d& matrix) const {
 }
 
 
-//------------------------------------------------------------------
+// =========================================================
 String BoundingBox::debugString() const {
 
   String str = "BoundingBox:";

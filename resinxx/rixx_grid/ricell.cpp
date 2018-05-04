@@ -31,14 +31,15 @@
 // ╠╦╝  ║  ║    ║╣   ║    ║
 // ╩╚═  ╩  ╚═╝  ╚═╝  ╩═╝  ╩═╝
 // =========================================================
-static size_t undefinedCornersArray[8] = {cvf::UNDEFINED_SIZE_T,
-                                          cvf::UNDEFINED_SIZE_T,
-                                          cvf::UNDEFINED_SIZE_T,
-                                          cvf::UNDEFINED_SIZE_T,
-                                          cvf::UNDEFINED_SIZE_T,
-                                          cvf::UNDEFINED_SIZE_T,
-                                          cvf::UNDEFINED_SIZE_T,
-                                          cvf::UNDEFINED_SIZE_T };
+static
+size_t undefinedCornersArray[8] = {cvf::UNDEFINED_SIZE_T,
+                                   cvf::UNDEFINED_SIZE_T,
+                                   cvf::UNDEFINED_SIZE_T,
+                                   cvf::UNDEFINED_SIZE_T,
+                                   cvf::UNDEFINED_SIZE_T,
+                                   cvf::UNDEFINED_SIZE_T,
+                                   cvf::UNDEFINED_SIZE_T,
+                                   cvf::UNDEFINED_SIZE_T };
 
 // =========================================================
 RICell::RICell() :
@@ -51,8 +52,11 @@ RICell::RICell() :
     m_coarseningBoxIndex(cvf::UNDEFINED_SIZE_T) {
 
   // -------------------------------------------------------
-  memcpy(m_cornerIndices.data(), undefinedCornersArray, 8*sizeof(size_t));
+  memcpy(m_cornerIndices.data(),
+         undefinedCornersArray,
+         8*sizeof(size_t));
 
+  // -------------------------------------------------------
   m_cellFaceFaults[0] = false;
   m_cellFaceFaults[1] = false;
   m_cellFaceFaults[2] = false;
@@ -273,14 +277,21 @@ bool RICell::isCollapsedCell(double nodeNearTolerance) const {
 }
 
 // =========================================================
-cvf::Vec3d RICell::faceCenter(cvf::StructGridInterface::FaceType face) const {
+cvf::Vec3d
+RICell::faceCenter(cvf::StructGridInterface::FaceType face) const {
 
   // -------------------------------------------------------
   cvf::Vec3d avg(cvf::Vec3d::ZERO);
   cvf::ubyte faceVertexIndices[4];
-  cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
 
-  const std::vector<cvf::Vec3d>& nodeCoords = m_hostGrid->mainGrid()->nodes();
+  // -------------------------------------------------------
+  cvf::StructGridInterface::
+  cellFaceVertexIndices(face,
+                        faceVertexIndices);
+
+  // -------------------------------------------------------
+  const std::vector<cvf::Vec3d>&
+      nodeCoords = m_hostGrid->mainGrid()->nodes();
 
   size_t i;
   for (i = 0; i < 4; i++) {
@@ -300,7 +311,8 @@ cvf::Vec3d RICell::faceCenter(cvf::StructGridInterface::FaceType face) const {
 // projection onto the corresponding plane.
 // See http://geomalgorithms.com/a01-_area.html
 cvf::Vec3d
-RICell::faceNormalWithAreaLenght(cvf::StructGridInterface::FaceType face) const {
+RICell::faceNormalWithAreaLenght(
+    cvf::StructGridInterface::FaceType face) const {
 
   cvf::ubyte faceVertexIndices[4];
   cvf::StructGridInterface::cellFaceVertexIndices(face, faceVertexIndices);
