@@ -486,19 +486,19 @@ RIGrid::RIGrid(string file_path)
 
 
 // =========================================================
-RIGrid::~RIGrid(void) {
+RIGrid::~RIGrid() {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   cout << "[wic-rixx]deleting vars.----- RIGrid" << endl;
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   // Should be reverted to smart pointers
   // delete m_nncData;
   for(int i=0; i < m_faults.size(); ++i) {
     delete m_faults.at(i); // ?
   }
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   for(int i=0; i < m_localGrids.size(); ++i) {
     delete m_localGrids.at(i);
   }
@@ -508,37 +508,37 @@ RIGrid::~RIGrid(void) {
 // =========================================================
 void RIGrid::addLocalGrid(RILocalGrid* localGrid) {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   // The grid ID must be set.
   CVF_ASSERT(localGrid && localGrid->gridId() != cvf::UNDEFINED_INT);
   // We cant handle negative ID's if they exist.
   CVF_ASSERT(localGrid->gridId() >= 0);
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   // Maingrid itself has grid index 0
   m_localGrids.push_back(localGrid);
   localGrid->setGridIndex(m_localGrids.size());
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   if (m_gridIdToIndexMapping.size() <= static_cast<size_t>(localGrid->gridId())) {
     m_gridIdToIndexMapping.resize(localGrid->gridId() + 1,
                                   cvf::UNDEFINED_SIZE_T);
   }
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   m_gridIdToIndexMapping[localGrid->gridId()] = localGrid->gridIndex();
 }
 
 // =========================================================
 void RIGrid::initAllSubGridsParentGridPointer() {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   if (m_localGrids.size()
       && m_localGrids[0]->parentGrid() == nullptr ) {
     initSubGridParentPointer();
     size_t i;
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     for ( i = 0; i < m_localGrids.size(); ++i ) {
       m_localGrids[i]->initSubGridParentPointer();
     }
@@ -548,11 +548,11 @@ void RIGrid::initAllSubGridsParentGridPointer() {
 // =========================================================
 void RIGrid::initAllSubCellsMainGridCellIndex() {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   initSubCellsMainGridCellIndex();
   size_t i;
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   for (i = 0; i < m_localGrids.size(); ++i) {
     m_localGrids[i]->initSubCellsMainGridCellIndex();
   }
@@ -575,13 +575,13 @@ void RIGrid::setDisplayModelOffset(cvf::Vec3d offset) {
 // on node coordinates
 void RIGrid::computeCachedData() {
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   initAllSubGridsParentGridPointer();
   initAllSubCellsMainGridCellIndex();
 
   buildCellSearchTree();
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   cout << FLGREEN
        << "[wic-rixx]computeCachedData-- (ricasedata.cpp)"
        << AEND << endl;
