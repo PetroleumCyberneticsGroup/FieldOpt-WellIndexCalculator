@@ -167,10 +167,12 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
     *nblks = well_blocks.size();
 
     // -------------------------------------------------------------
-    printf("%s", "Well block checks: ");
+    printf("%s", "Well block check 1: ");
     if ( (i == NULL) || (j == NULL) || (k == NULL) || (wi == NULL) )
       throw runtime_error("ComputeWellIndices: I, J, K, WI not allocated");
 
+    // -------------------------------------------------------------
+    printf("%s", "Well block check 2: ");
     try {
 
       for (size_t iblk = 0; iblk < *nblks; iblk++) {
@@ -180,6 +182,7 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
         k[iblk] = well_blocks[iblk].ijk_index().k() + 1;
         wi[iblk] = well_blocks[iblk].cell_well_index_matrix();
       }
+
     }
     catch (...) {
       throw runtime_error("ComputeWellIndices: problem with copying I, J, K, WI");
@@ -187,13 +190,14 @@ WELLINDEXCALCULATOR_API int computeWellIndices(const char* basepth,
 
     // -------------------------------------------------------------
     std::stringstream str;
-    str << "\x1b[33m" << "# of blocks: " << well_blocks.size() << ". \x1b[0m";
+    str << "\x1b[33m" << "# of blocks: ";
+    str << well_blocks.size() << ". \x1b[0m";
     printf("%s\n", str.str().c_str());
     //delete grid;
   }
   catch (std::runtime_error& e) {
 
-    fprintf(stdout, "%s", e.what());
+    fprintf(stdout, "Failure: %s", e.what());
     fflush(stdout);
     return EXIT_FAILURE;
   }
