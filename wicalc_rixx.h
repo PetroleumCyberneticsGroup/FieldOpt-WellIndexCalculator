@@ -1,36 +1,59 @@
-//
-// Created by bellout on 3/2/18.
-//
+/***********************************************************
+ Copyright (C) 2017
+ Mathias C. Bellout <mathias.bellout@ntnu.no>
 
+ Created by bellout on 5/6/18.
+
+ This file is part of the FieldOpt project.
+
+ FieldOpt is free software: you can redistribute it
+ and/or modify it under the terms of the GNU General
+ Public License as published by the Free Software
+ Foundation, either version 3 of the License, or (at
+ your option) any later version.
+
+ FieldOpt is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the
+ implied warranty of MERCHANTABILITY or FITNESS FOR
+ A PARTICULAR PURPOSE.  See the GNU General Public
+ License for more details.
+
+ You should have received a copy of the GNU
+ General Public License along with FieldOpt.
+ If not, see <http://www.gnu.org/licenses/>.
+***********************************************************/
+
+// ---------------------------------------------------------
 #ifndef FIELDOPT_WICALC_RIXX_H
 #define FIELDOPT_WICALC_RIXX_H
 
-// -----------------------------------------------------------------
+// ---------------------------------------------------------
 // FieldOpt::RESINXX
 #include "resinxx/well_path.h"
 
-// -----------------------------------------------------------------
+// ---------------------------------------------------------
 namespace Reservoir {
 namespace WellIndexCalculation {
 
-// -----------------------------------------------------------------
+// ---------------------------------------------------------
 using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
 
-//==================================================================
-class wicalc_rixx {
+//==========================================================
+class wicalc_rixx
+{
  public:
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   wicalc_rixx(Settings::Model::Well well_settings,
               Grid::Grid *grid,
               RICaseData *ricasedata = nullptr);
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   ~wicalc_rixx();
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   Settings::Model::Well well_settings_;
   vector<double> intersections_;
   Grid::Grid* grid_;

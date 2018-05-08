@@ -68,12 +68,25 @@ RICaseData::RICaseData(string file_path) {
 
 }
 
-//==========================================================
+// =========================================================
 RICaseData::~RICaseData() {
+
   cout << "[wic-rixx]deleting vars.----- RICaseData()" << endl;
+
+  // -------------------------------------------------------
+#ifdef FIELDOPT_BUILD
+
+  cout << "FIELDOPT_BUILD" << endl;
   delete m_mainGrid;
   delete m_activeCellInfo;
   delete m_fractureActiveCellInfo;
+
+#elif ADGPRS_LIB_BUILD
+
+  cout << "ADGPRS_LIB_BUILD" << endl;
+
+#endif
+
 }
 
 //==========================================================
@@ -327,8 +340,8 @@ void RICaseData::computeActiveCellsGeometryBoundingBox() {
       }
       // ---------------------------------------------------
       if (verb_vector()[3] > 3) // idx:3 -> wic
-      cout << fstr("[wic-rixx]computeActiveCellsGeomBB.",3)
-           << bb.debugString().toStdString() << endl;
+        cout << fstr("[wic-rixx]computeActiveCellsGeomBB.",3)
+             << bb.debugString().toStdString() << endl;
     }
 
     // -----------------------------------------------------
@@ -784,7 +797,7 @@ bool RIReaderECL::open(const QString& fileName,
   // cvf::Collection<RIFault> faults;
   // importFaults(fileSet, &faults);
 
-   RIGrid* mainGrid = eclipseCase->mainGrid();
+  RIGrid* mainGrid = eclipseCase->mainGrid();
 //   mainGrid->setFaults(faults);
   m_eclipseCase = eclipseCase;
 
@@ -807,7 +820,7 @@ bool RIReaderECL::open(const QString& fileName,
 
   // ---------------------------------------------------------------
 //   cout << "Processing NNC data" << endl;
-   //eclipseCase->mainGrid()->nncData()->processConnections( *(eclipseCase->mainGrid()));
+  //eclipseCase->mainGrid()->nncData()->processConnections( *(eclipseCase->mainGrid()));
 
   // ---------------------------------------------------------------
   // cout << "Reading Well information" << endl;
@@ -1238,7 +1251,7 @@ void RIReaderECL::openInitFile() {
 
 // -----------------------------------------------------------------
 void RIReaderECL::transferCoarseningInfo(const ecl_grid_type* eclGrid,
-                                                    RIGridBase* grid) {
+                                         RIGridBase* grid) {
 
   // ---------------------------------------------------------------
   int coarseGroupCount = ecl_grid_get_num_coarse_groups(eclGrid);

@@ -41,6 +41,7 @@
 #include "Reservoir/grid/eclgrid.h"
 #include "intersected_cell.h"
 #include "wicalc_rixx.h"
+#include "Utilities/colors.hpp"
 
 // ---------------------------------------------------------
 using std::runtime_error;
@@ -104,9 +105,10 @@ __attribute__((destructor))
  * It is called when dylib is being unloaded.
  *
  */
-static void Finalizer()
-{
-  printf("DllFinalizer: Loaded WIClib\n");
+static void Finalizer() {
+  printf("%s%s%s\n", FRED,
+         "DllFinalizer: Loaded WIClib", AEND);
+  // printf("DllFinalizer: Loaded WIClib\n");
 }
 
 //CP_END_EXTERN_C
@@ -132,7 +134,9 @@ computeWellIndices(const char* basepth,
 
     // -----------------------------------------------------
     string gridpth = string(basepth) + ".EGRID";
-    printf("Loading grid: %s\n", gridpth.c_str());
+    printf("\n%s\nLoading grid: %s%s%s\n",
+           std::string(120, '-').c_str(), FRED,
+           gridpth.c_str(), AEND);
 
     // -----------------------------------------------------
     if ( !exists(gridpth.c_str()) ) {
@@ -147,7 +151,8 @@ computeWellIndices(const char* basepth,
     }
 
     // -----------------------------------------------------
-    printf("Initializing Grid object.\n");
+    printf("%s%s%s\n", FRED,
+           "Initializing Grid object.", AEND);
     Reservoir::Grid::ECLGrid gridnew(gridpth);
 
     // NOTE: Make this work so we don't have to
@@ -167,32 +172,49 @@ computeWellIndices(const char* basepth,
     // -----------------------------------------------------
     // New WIC
     Settings::Model::Well well_settings_;
+
     well_settings_.name = "DEFWELL";
     well_settings_.wellbore_radius = *wellbore_radius;
     well_settings_.verb_vector_ = std::vector<int>(11,0);
+
     Reservoir::WellIndexCalculation::wicalc_rixx wicalc_rixx =
         Reservoir::WellIndexCalculation::wicalc_rixx(well_settings_,
                                                      &gridnew);
 
     // -----------------------------------------------------
-    printf("Setting up well.\n");
+    printf("%s%s%s\n", FRED, "Setting up well.", AEND);
+
     vector<WellDefinition> wells;
     wells.push_back(WellDefinition());
-    wells.at(0).wellname = well_settings_.name.toStdString();
-    wells.at(0).radii.push_back(well_settings_.wellbore_radius);
+
+    wells.at(0).wellname =
+        well_settings_.name.toStdString();
+
+    wells.at(0).radii.push_back(
+        well_settings_.wellbore_radius);
+
     wells.at(0).skins.push_back(0.0);
 
+    // -----------------------------------------------------
     auto heelV3d = Eigen::Vector3d(heel);
     auto toeV3d = Eigen::Vector3d(toe);
+
+    // -----------------------------------------------------
     wells.at(0).heels.push_back(heelV3d);
     wells.at(0).toes.push_back(toeV3d);
 
-    wells.at(0).well_length.push_back(sqrt((toeV3d - heelV3d).norm()));
+    wells.at(0).well_length.push_back(
+        sqrt((toeV3d - heelV3d).norm()));
+
     wells.at(0).heel_md.push_back(heelV3d(2));
-    wells.at(0).toe_md.push_back(wells.at(0).heel_md.back() + wells.at(0).well_length.back());
+
+    wells.at(0).toe_md.push_back(
+        wells.at(0).heel_md.back() +
+            wells.at(0).well_length.back());
 
     // -----------------------------------------------------
-    printf("Computing well blocks.\n");
+    printf("%s%s%s\n", FRED, "Computing well blocks.", AEND);
+
     map<string, vector<IntersectedCell>> well_indices;
     // Old WIC
     // wic.ComputeWellBlocks(well_indices, wells);
@@ -200,19 +222,26 @@ computeWellIndices(const char* basepth,
     wicalc_rixx.ComputeWellBlocks(well_indices, wells);
 
     // -----------------------------------------------------
+    printf("%s%s%s\n", FRED, "Assigning well blocks.", AEND);
     // printCompdat(well_indices);
+
     // Remember to remove blocks with very
     // low WIs to ev. reduce sim problems?
-    vector<IntersectedCell>& well_blocks = well_indices.at("DEFWELL");
-    *nblks = well_blocks.size();
+
+    // vector<IntersectedCell>& well_blocks =
+    //    well_indices.at("DEFWELL");
+
+    auto well_blocks =
+        well_indices[well_settings_.name.toStdString()];
+    *nblks = (int)well_blocks.size();
+
 
     // -----------------------------------------------------
-    printf("%s", "Well block check 1: ");
-    if ( (i == NULL) || (j == NULL) || (k == NULL) || (wi == NULL) )
-      throw runtime_error("ComputeWellIndices: I, J, K, WI not allocated");
+    if ( (i == NULL) || (j == NULL)
+        || (k == NULL) || (wi == NULL) )
+      throw runtime_error(
+          "ComputeWellIndices: I, J, K, WI not allocated");
 
-    // -----------------------------------------------------
-    printf("%s", "Well block check 2: ");
     try {
 
       for (size_t iblk = 0; iblk < *nblks; iblk++) {
@@ -224,42 +253,48 @@ computeWellIndices(const char* basepth,
       }
 
     } catch (...) {
-      throw runtime_error("ComputeWellIndices: "
-                              "problem with copying I, J, K, WI");
+      throw runtime_error(
+          "ComputeWellIndices: "
+              "problem with copying I, J, K, WI");
     }
 
     // -----------------------------------------------------
-    std::stringstream str;
-    str << "\x1b[33m" << "# of blocks: ";
-    str << well_blocks.size() << ". \x1b[0m";
-    printf("%s\n", str.str().c_str());
+    printf("*nblks = well_blocks.size() = %s%2.0f%s\n",
+           FRED, (double)*nblks, AEND);
+
     //delete grid;
 
+    // -----------------------------------------------------
   } catch (std::runtime_error& e) {
 
+    // -----------------------------------------------------
     fprintf(stdout, "Failure: %s", e.what());
     fflush(stdout);
     return EXIT_FAILURE;
   }
 
+  // -------------------------------------------------------
   return EXIT_SUCCESS;
 }
 
 // =========================================================
-WELLINDEXCALCULATOR_API int getBlockCenters(const char* basepth,
-                                            const int* heel,
-                                            const int* toe,
-                                            double* heelxyz,
-                                            double* toexyz) {
+WELLINDEXCALCULATOR_API
+int getBlockCenters(const char* basepth,
+                    const int* heel,
+                    const int* toe,
+                    double* heelxyz,
+                    double* toexyz) {
 
+  // -------------------------------------------------------
   try {
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     string gridpth = string(basepth) + ".EGRID";
     if ( !exists(gridpth.c_str()) )
-      throw runtime_error("getBlockCenters: file .GRID does not exist");
+      throw runtime_error(
+          "getBlockCenters: file .GRID does not exist");
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     // Initialize the Grid and WellIndexCalculator objects
     Reservoir::Grid::ECLGrid gridnew(gridpth);
     /*if (grid == NULL)
@@ -268,82 +303,103 @@ WELLINDEXCALCULATOR_API int getBlockCenters(const char* basepth,
       cout << "Making new grid\n";
     }*/
 
-    // -------------------------------------------------------------
-    if ( (heel == NULL) || (toe == NULL) || (heelxyz == NULL) || (toexyz == NULL) )
-      throw runtime_error("getBlockCenters: input and output not allocated");
+    // -----------------------------------------------------
+    if ( (heel == NULL) || (toe == NULL)
+        || (heelxyz == NULL) || (toexyz == NULL) )
+      throw runtime_error(
+          "getBlockCenters: input and output not allocated");
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     try {
 
+      // ---------------------------------------------------
       /*Reservoir::Grid::Cell current_cell =
-        ((Reservoir::Grid::Grid*)grid)->GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);*/
+        ((Reservoir::Grid::Grid*)grid)->
+        GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);*/
 
+      // ---------------------------------------------------
       Reservoir::Grid::Cell current_cell;
+
       current_cell =
           gridnew.GetCell(heel[0] - 1, heel[1] - 1, heel[2] - 1);
+
       heelxyz[0] = current_cell.center()[0];
       heelxyz[1] = current_cell.center()[1];
       heelxyz[2] = current_cell.center()[2];
 
-      //current_cell = ((Reservoir::Grid::Grid*)grid)->GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
+      //current_cell = ((Reservoir::Grid::Grid*)grid)->
+      // GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
+
       current_cell =
           gridnew.GetCell(toe[0] - 1, toe[1] - 1, toe[2] - 1);
+
       toexyz[0] = current_cell.center()[0];
       toexyz[1] = current_cell.center()[1];
       toexyz[2] = current_cell.center()[2];
+
+    } catch (...) {
+      throw runtime_error(
+          "getBlockCenters: error in computing X,Y,Z");
     }
-    catch (...) {
-      throw runtime_error("getBlockCenters: error in computing X,Y,Z");
-    }
-  }
-  catch (runtime_error& e)
-  {
+
+    // -----------------------------------------------------
+  } catch (runtime_error& e) {
+
+    // -----------------------------------------------------
     printf("%s", e.what());
     return EXIT_FAILURE;
   }
 
+  // -------------------------------------------------------
   return EXIT_SUCCESS;
 }
 
-// -----------------------------------------------------------------
-WELLINDEXCALCULATOR_API int getBoundaryVertices(const char* filepth,
-                                                int* npnts,
-                                                double* xes,
-                                                double* yes,
-                                                double* zes) {
+// =========================================================
+WELLINDEXCALCULATOR_API
+int getBoundaryVertices(const char* filepth,
+                        int* npnts,
+                        double* xes,
+                        double* yes,
+                        double* zes) {
 
+  // -------------------------------------------------------
   try {
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     string bndrypth = string(filepth);
     if ( !exists(bndrypth.c_str()) )
       throw runtime_error("getBoundaryVertices: file does not exist\n");
 
-    // -------------------------------------------------------------
+    // -----------------------------------------------------
     try {
 
+      // ---------------------------------------------------
       ifstream fbndry(bndrypth, ios::in);
       *npnts = 0;
-      while ( fbndry >> xes[*npnts] )
-      {
+
+      while ( fbndry >> xes[*npnts] ) {
         fbndry >> yes[*npnts] >> zes[*npnts];
         *npnts = *npnts + 1;
       }
-    }
-    catch (...) {
-      throw runtime_error("getBoundaryVertices: error in reading file\n");
+
+    } catch (...) {
+      throw runtime_error(
+          "getBoundaryVertices: error in reading file\n");
     }
 
   }
-  // ---------------------------------------------------------------
+
+    // -----------------------------------------------------
   catch (std::runtime_error& e) {
     printf("%s", e.what());
     return EXIT_FAILURE;
   }
 
-  // ---------------------------------------------------------------
+  // -------------------------------------------------------
   return EXIT_SUCCESS;
 }
+
+
 
 // This is the constructor of a class that has been exported.
 // see WellIndexCalculator.h for the class definition

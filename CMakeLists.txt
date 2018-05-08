@@ -84,6 +84,9 @@ else() # LINUX ---------------------------------------------------------
   message(".............................................................")
   if (NOT BUILD_WIC_ADGPRS)
 
+    # controls ricasedata delete
+    add_definitions(-DFIELDOPT_BUILD)
+
     add_library(${WIC_LIB_TARGET}
         intersected_cell.cpp
         wellindexcalculator.cpp
@@ -100,6 +103,9 @@ else() # LINUX ---------------------------------------------------------
     message(STATUS "Set WIC_LIB_TARGET: ${WIC_LIB_TARGET}")
 
   elseif(BUILD_WIC_ADGPRS)
+
+    # controls ricasedata delete
+    add_definitions(-DADGPRS_LIB_BUILD)
 
     add_library(${WIC_LIB_TARGET_ADG} SHARED
         dllmain.cpp
