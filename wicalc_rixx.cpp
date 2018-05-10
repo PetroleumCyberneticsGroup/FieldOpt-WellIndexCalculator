@@ -150,6 +150,7 @@ wicalc_rixx::collectIntersectedCells(vector<IntersectedCell> &isc_cells,
 
     // Check if cell is active, if not, skip
     bool cellIsActive = activeCellInfo_->isActive(cell.globCellIndex);
+    //bool cellIsActiveF = fractureActiveCellInfo_->isActive(cell.globCellIndex);
     if (!cellIsActive) {
       // cout << "Cell is not active" << endl;
       continue;
@@ -283,6 +284,7 @@ wicalc_rixx::ComputeWellBlocks(
 
   // -----------------------------------------------------------
   activeCellInfo_ = ricasedata_->activeCellInfo(MATRIX_MODEL);
+  //fractureActiveCellInfo_ = ricasedata_->activeCellInfo(FRACTURE_MODEL);
   // cout << "[mod]wicalc_rixx-07.--------- activeCellInfo_" << endl;
 
   // -----------------------------------------------------------

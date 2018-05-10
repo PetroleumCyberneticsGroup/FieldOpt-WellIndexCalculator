@@ -52,7 +52,7 @@ RICaseData::RICaseData(string file_path) {
                     m_activeCellInfo);
 
   setActiveCellInfo(PorosityModelTypeMATRIX_,
-                    m_fractureActiveCellInfo );
+                    m_fractureActiveCellInfo);
 
   // m_matrixModelResults->
   //     setActiveCellInfo(m_activeCellInfo.p());
@@ -71,21 +71,72 @@ RICaseData::RICaseData(string file_path) {
 // =========================================================
 RICaseData::~RICaseData() {
 
-  cout << "[wic-rixx]deleting vars.----- RICaseData()" << endl;
-
   // -------------------------------------------------------
 #ifdef FIELDOPT_BUILD
 
-  cout << "FIELDOPT_BUILD" << endl;
-  delete m_mainGrid;
-  delete m_activeCellInfo;
-  delete m_fractureActiveCellInfo;
+  // -------------------------------------------------------
+  if (m_mainGrid != NULL) {
+
+    // -----------------------------------------------------
+    printf("%s%s%s\n", FRED, "m_mainGrid != nullptr ", AEND);
+    delete m_mainGrid; // This call the destructor of RIGrid
+    printf("%s%s%s\n", FRED, "TRUE (~RICaseData)", AEND);
+
+  } else {
+
+    // -----------------------------------------------------
+    printf("%s%s%s\n", FRED,
+           "m_mainGrid != nullptr FALSE (~RICaseData)", AEND);
+
+  }
+
+  // -------------------------------------------------------
+  if (m_activeCellInfo != NULL) {
+
+    // -----------------------------------------------------
+    printf("%s%s%s", FRED, "m_activeCellInfo != nullptr ", AEND);
+    delete m_activeCellInfo;
+    printf("%s%s%s\n", FRED, "TRUE (~RICaseData)", AEND);
+
+  } else {
+
+    // -----------------------------------------------------
+    printf("%s%s%s\n", FRED,
+           "m_activeCellInfo != nullptr FALSE (~RICaseData)", AEND);
+
+  }
+
+  // -------------------------------------------------------
+  if (m_fractureActiveCellInfo != NULL) {
+
+    // -----------------------------------------------------
+    // printf("%s%s%s", FRED, "m_fractureActiveCellInfo != nullptr ", AEND);
+
+    // delete m_fractureActiveCellInfo; // <-- crash with seg.fault or
+    // corrupted memory after about one GPS iteration --> why?
+
+    // m_fractureActiveCellInfo->release(); // <- assertion failed
+    // printf("%s%s%s\n", FRED, "TRUE (~RICaseData)", AEND);
+
+  } else {
+
+    // -----------------------------------------------------
+    printf("%s%s%s\n", FRED,
+           "m_fractureActiveCellInfo != nullptr FALSE (~RICaseData)", AEND);
+
+  }
+
+  // -------------------------------------------------------
+  printf("%s%s%s\n", FRED, "FIELDOPT_BUILD (~RICaseData)", AEND);
 
 #elif ADGPRS_LIB_BUILD
 
-  cout << "ADGPRS_LIB_BUILD" << endl;
+  printf("%s%s%s\n", FRED, "ADGPRS_BUILD (~RICaseData)", AEND);
 
 #endif
+
+  // -------------------------------------------------------
+  cout << "[wic-rixx]deleting vars.----- RICaseData" << endl;
 
 }
 

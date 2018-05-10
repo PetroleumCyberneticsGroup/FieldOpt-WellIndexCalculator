@@ -70,6 +70,7 @@ class wicalc_rixx
   // ---------------------------------------------------------------
   // WellPath *wellPath_;
   const RIActiveCellInfo* activeCellInfo_;
+  //const RIActiveCellInfo* fractureActiveCellInfo_;
 
   // ---------------------------------------------------------------
   void collectIntersectedCells(vector<IntersectedCell> &isc_cells,

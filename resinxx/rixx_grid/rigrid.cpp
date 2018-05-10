@@ -58,7 +58,7 @@ RIGridBase::RIGridBase(RIGrid* mainGrid):
 
 // =========================================================
 RIGridBase::~RIGridBase(void) {
-  cout << "[wic-rixx]deleting vars.----- RIGridBase" << endl;
+  // cout << "[wic-rixx]deleting vars.----- RIGridBase" << endl;
 }
 
 // =========================================================
@@ -489,19 +489,55 @@ RIGrid::RIGrid(string file_path)
 RIGrid::~RIGrid() {
 
   // -------------------------------------------------------
-  cout << "[wic-rixx]deleting vars.----- RIGrid" << endl;
+//#ifdef FIELDOPT_BUILD
 
   // -------------------------------------------------------
   // Should be reverted to smart pointers
   // delete m_nncData;
+
   for(int i=0; i < m_faults.size(); ++i) {
-    delete m_faults.at(i); // ?
+
+    if (m_faults.at(i) != NULL) {
+
+      printf("%s%s%s", FRED, "!m_faults.at(i) != nullptr ", AEND);
+      delete m_faults.at(i); // ?
+      printf("%s%s%s\n", FRED, "TRUE (~RIGrid)", AEND);
+
+    } else {
+
+      printf("%s%s%s\n", FRED, "!m_faults.at(i) != nullptr FALSE (~RIGrid)", AEND);
+
+    }
+
   }
 
   // -------------------------------------------------------
   for(int i=0; i < m_localGrids.size(); ++i) {
-    delete m_localGrids.at(i);
+
+    if (m_localGrids.at(i) != NULL) {
+
+      printf("%s%s%s", FRED, "!m_localGrids.at(i) != nullptr ", AEND);
+      delete m_localGrids.at(i);
+      printf("%s%s%s\n", FRED, "TRUE (~RIGrid)", AEND);
+
+    } else {
+
+      printf("%s%s%s\n", FRED, "!m_localGrids.at(i) != nullptr FALSE (~RIGrid)", AEND);
+
+    }
+
   }
+
+  printf("%s%s%s\n", FRED, "FIELDOPT_BUILD (~RIGrid)", AEND);
+
+//#elif ADGPRS_LIB_BUILD
+//
+//  printf("%s%s%s\n", FRED, "ADGPRS_BUILD (~RIGrid)", AEND);
+//
+//#endif
+
+  // -------------------------------------------------------
+  cout << "[wic-rixx]deleting vars.----- RIGrid" << endl;
 
 }
 

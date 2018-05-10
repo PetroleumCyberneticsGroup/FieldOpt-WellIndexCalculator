@@ -46,10 +46,9 @@
 // ---------------------------------------------------------
 using std::runtime_error;
 
-
 // =========================================================
-inline bool exists(const char* name)
-{
+inline bool exists(const char* name) {
+
   struct stat buffer;
   return (stat (name, &buffer) == 0);
 }
@@ -93,22 +92,20 @@ __attribute__((constructor))
 /**
  * initializer of the dylib.
  */
-static void Initializer(int argc, char** argv, char** envp)
-{
+static void Initializer(int argc, char** argv, char** envp) {
   grid = NULL;
-  printf("DllInitializer: Loading WIClib\n");
+  printf("DllInitializer: %s%s%s\n",
+         FRED, "Loaded WIClib", AEND);
 }
 
 // =========================================================
 __attribute__((destructor))
 /**
  * It is called when dylib is being unloaded.
- *
  */
 static void Finalizer() {
-  printf("%s%s%s\n", FRED,
-         "DllFinalizer: Loaded WIClib", AEND);
-  // printf("DllFinalizer: Loaded WIClib\n");
+  printf("DllFinalizer: %s%s%s\n",
+         FRED, "Loaded WIClib", AEND);
 }
 
 //CP_END_EXTERN_C
@@ -368,7 +365,8 @@ int getBoundaryVertices(const char* filepth,
     // -----------------------------------------------------
     string bndrypth = string(filepth);
     if ( !exists(bndrypth.c_str()) )
-      throw runtime_error("getBoundaryVertices: file does not exist\n");
+      throw runtime_error(
+          "getBoundaryVertices: file does not exist\n");
 
     // -----------------------------------------------------
     try {

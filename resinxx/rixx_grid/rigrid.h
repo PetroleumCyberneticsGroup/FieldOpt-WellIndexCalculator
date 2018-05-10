@@ -386,6 +386,7 @@ class RIActiveCellInfo : public cvf::Object
  public:
   // ---------------------------------------------------------------
   RIActiveCellInfo();
+  // ~RIActiveCellInfo(){}; // MB
 
   // ---------------------------------------------------------------
   void setReservoirCellCount(size_t reservoirCellCount);
