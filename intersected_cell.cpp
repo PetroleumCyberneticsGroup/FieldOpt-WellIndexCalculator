@@ -45,15 +45,18 @@ Vector3d IntersectedCell::zvec() const {
 }
 
 double IntersectedCell::dx() const {
-  return xvec().norm();
+//  return xvec().norm();
+  return dx_;
 }
 
 double IntersectedCell::dy() const {
-  return yvec().norm();
+//  return yvec().norm();
+  return dy_;
 }
 
 double IntersectedCell::dz() const {
-  return zvec().norm();
+//  return zvec().norm();
+  return dz_;
 }
 
 Vector3d IntersectedCell::get_segment_entry_point(int segment_index) const {

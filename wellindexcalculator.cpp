@@ -637,6 +637,11 @@ void WellIndexCalculator::compute_well_index(vector<IntersectedCell> &cells,
   IntersectedCell &icell = cells.at(cell_index);
   int num_grids = icell.permx().size();
 
+//  icell.global_index()
+  icell.set_dx(icell.dxdydz()[0]);
+  icell.set_dy(icell.dxdydz()[1]);
+  icell.set_dz(icell.dxdydz()[2]);
+
   if (grid_->IndexIsInsideGrid( icell.global_index() )) {
 
     for (int iSegment = 0; iSegment < icell.num_segments(); iSegment++) {

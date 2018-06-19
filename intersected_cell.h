@@ -63,13 +63,9 @@ class IntersectedCell : public Grid::Cell {
   double dz() const;
 
   // Custom adding of cell size dx/dy/dz
-//  void set_dx(double dx) { dx_ = dx; };
-//  void set_dy(double dy) { dy_ = dy; };
-//  void set_dz(double dz) { dz_ = dz; };
-//
-//  double get_dx() { return dx_; };
-//  double get_dy() { return dy_; };
-//  double get_dz() { return dz_; };
+  void set_dx(double dx) { dx_ = dx; };
+  void set_dy(double dy) { dy_ = dy; };
+  void set_dz(double dz) { dz_ = dz; };
 
   void add_new_segment(Vector3d entry_point, Vector3d exit_point,
                        double segment_radius, double segment_skin);
