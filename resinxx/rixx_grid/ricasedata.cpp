@@ -825,15 +825,16 @@ bool RIReaderECL::open(const QString& fileName,
   CVF_ASSERT(eclipseCase);
 
   // ---------------------------------------------------------------
-  cout << FLGREEN
-       << "[wic-rixx]Reading Grid------- (ricasedata.cpp)"
-       << AEND << endl;
+  cout << FLGREEN << "[wic-rixx]Reading Grid------- (ricasedata.cpp)" << AEND;
   QStringList fileSet;
 
   // ---------------------------------------------------------------
-  if (!RIECLFileTools::findSiblingFilesWithSameBaseName(fileName,
-                                                        &fileSet)) {
+  if (!RIECLFileTools::
+  findSiblingFilesWithSameBaseName(fileName, &fileSet)) {
+    cout << FLGREEN << "findSiblingFilesWithSameBaseName FAILED!" << AEND << endl;
     return false;
+  } else {
+    cout << FLGREEN << " - " << fileName.toStdString() << AEND;
   }
   m_fileName = fileName;
   m_filesWithSameBaseName = fileSet;
@@ -841,7 +842,13 @@ bool RIReaderECL::open(const QString& fileName,
   // ---------------------------------------------------------------
   // Todo: Needs to check existence of file before calling ert, else it will abort
   ecl_grid_type * mainEclGrid = ecl_grid_alloc(fileName.toLatin1().data());
-  if (!transferGeometry(mainEclGrid, eclipseCase)) return false;
+  cout << FLGREEN << " - mem alloc " << AEND << endl;
+
+  // ---------------------------------------------------------------
+  if (!transferGeometry(mainEclGrid, eclipseCase)) {
+    cout << FLGREEN << "transferGeometry FAILED!" << AEND << endl;
+    return false;
+  }
 
   // ---------------------------------------------------------------
   // cout << "Reading faults" << endl;
