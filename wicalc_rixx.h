@@ -59,12 +59,16 @@ class wicalc_rixx
   Grid::Grid* grid_;
 
   // -------------------------------------------------------
-  RICaseData* ricasedata_;
+  // OV
+  cvf::ref<RICaseData> ricasedata_;
+  // RICaseData* ricasedata_; // old
+
+  // RIReaderECL rireaderecl_;
+  // RIReaderECL* rireaderecl_; // old
 
   // Experimental
   // cvf::ref<RICaseData> ricasedatac_;
   // cvf::ref<RICaseData> ricasedatap_;
-  RIReaderECL* rireaderecl_;
   // RIGrid* rigrid_;
 
   // ---------------------------------------------------------------

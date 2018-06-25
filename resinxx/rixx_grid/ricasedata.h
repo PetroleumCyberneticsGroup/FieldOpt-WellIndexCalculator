@@ -115,9 +115,9 @@ class RICaseData : public cvf::Object
   // -------------------------------------------------------
   // const std::vector<double>*
   // resultValues(RiaDefines::PorosityModelType porosityModel,
-  //              RiaDefines::ResultCatType type,
-  //              const QString& resultName,
-  //             size_t timeStepIndex);
+//                                            RiaDefines::ResultCatType type,
+//                                            const QString& resultName,
+//                                            size_t timeStepIndex);
 
   // -------------------------------------------------------
   RIActiveCellInfo*
@@ -133,7 +133,7 @@ class RICaseData : public cvf::Object
   // -------------------------------------------------------
   // void setActiveFormationNames(
   //    RigFormationNames* activeFormationNames);
-  // RigFormationNames* activeFormationNames();
+//  RigFormationNames* activeFormationNames();
 
   // -------------------------------------------------------
   // void setSimWellData(
@@ -145,7 +145,7 @@ class RICaseData : public cvf::Object
   // { return m_simWellData; }
 
   // -------------------------------------------------------
-  // std::set<QString> findSortedWellNames() const;
+//  std::set<QString> findSortedWellNames() const;
 
   // const
   // RigSimWellData* findSimWellData(QString wellName) const;
@@ -162,8 +162,8 @@ class RICaseData : public cvf::Object
 
   // bool findSharedSourceFace(
   //    cvf::StructGridInterface::FaceType& sharedSourceFace,
-  //    const RigWellResultPoint& sourceWellCellResult,
-  //    const RigWellResultPoint& otherWellCellResult) const;
+//                           const RigWellResultPoint& sourceWellCellResult,
+//                           const RigWellResultPoint& otherWellCellResult) const;
 
   // -------------------------------------------------------
   void computeActiveCellBoundingBoxes();
@@ -177,15 +177,15 @@ class RICaseData : public cvf::Object
   // { m_unitsType = unitsType; }
 
   // -------------------------------------------------------
-  // std::vector<QString> simulationWellNames() const;
+//  std::vector<QString> simulationWellNames() const;
 
   // bool
   // hasSimulationWell(const QString& simWellName) const;
 
   // std::vector<const RigWellPath*>
   // simulationWellBranches(const QString& simWellName,
-  //                       bool includeAllCellCenters,
-  //                       bool useAutoDetectionOfBranches);
+//                                                           bool includeAllCellCenters,
+//                                                           bool useAutoDetectionOfBranches);
 
   // -------------------------------------------------------
   void set_verbosity_vector(const std::vector<int> verb_vector)
@@ -198,33 +198,32 @@ class RICaseData : public cvf::Object
   // -------------------------------------------------------
   void computeActiveCellsGeometryBoundingBox();
   void computeActiveCellIJKBBox();
-  // void computeWellCellsPrGrid();
+//  void computeWellCellsPrGrid();
 
  private:
-  // -------------------------------------------------------
-  RIGrid* m_mainGrid;
-  // RimEclipseCase* m_ownerCase;
+  cvf::ref<RIGrid> m_mainGrid;
+//  RimEclipseCase* m_ownerCase;
 
   // -------------------------------------------------------
   RIActiveCellInfo* m_activeCellInfo;
   RIActiveCellInfo* m_fractureActiveCellInfo;
 
   // -------------------------------------------------------
-  // RICaseCellResultsData m_matrixModelResults;
-  // RICaseCellResultsData m_fractureModelResults;
+//  RICaseCellResultsData m_matrixModelResults;
+//  RICaseCellResultsData m_fractureModelResults;
 
   // -------------------------------------------------------
-  // cvf::ref<RigFormationNames> m_activeFormationNamesData;
+//  cvf::ref<RigFormationNames> m_activeFormationNamesData;
 
   // -------------------------------------------------------
   // A WellResults object for each well in the reservoir
-  // cvf::Collection<RigSimWellData> m_simWellData;
+//  cvf::Collection<RigSimWellData> m_simWellData;
 
   // -------------------------------------------------------
   // A bool array pr grid with one bool pr cell
   // telling whether the cell is a well cell or not
 
-  // cvf::Collection<cvf::UByteArray> m_wellCellsInGrid;
+//  cvf::Collection<cvf::UByteArray> m_wellCellsInGrid;
 
   // -------------------------------------------------------
   // Array pr grid with index to well pr cell telling
@@ -292,7 +291,7 @@ class RIReaderInterface : public cvf::Object
   virtual ~RIReaderInterface() { }
 
   // -------------------------------------------------------
-  // const QString faultIncludeFileAbsolutePathPrefix();
+//  const QString faultIncludeFileAbsolutePathPrefix();
 
   // -------------------------------------------------------
   virtual bool open(const QString& fileName,
@@ -304,10 +303,10 @@ class RIReaderInterface : public cvf::Object
                             std::vector<double>* values) = 0;
 
   // -------------------------------------------------------
-  // virtual bool dynamicResult(const QString& result,
-  //                           PorosityModelType MATRIX,
-  //                           size_t stepIndex,
-  //                           std::vector<double>* values) = 0;
+//  virtual bool dynamicResult(const QString& result,
+//                             PorosityModelType MATRIX,
+//                             size_t stepIndex,
+//                             std::vector<double>* values) = 0;
 
   // -------------------------------------------------------
   void setFilenamesWithFaults(const vector<QString>& filenames)
@@ -331,11 +330,11 @@ class RIReaderInterface : public cvf::Object
   //    size_t timeStepIndex) const;
 
   // -------------------------------------------------------
-  //size_t timeStepIndexOnFile(size_t timeStepIndex) const;
+//  size_t timeStepIndexOnFile(size_t timeStepIndex) const;
 
  private:
   // -------------------------------------------------------
-  // const RIFaultReaderSettings* readerSettings() const;
+//  const RIFaultReaderSettings*    readerSettings() const;
 
  private:
   std::vector<QString> m_filenamesWithFaults;
@@ -377,7 +376,7 @@ class RIECLRestartDataAccess : public cvf::Object
   // -------------------------------------------------------
   virtual void timeSteps(
       std::vector<QDateTime>* timeSteps,
-      std::vector<double>* daysSinceSimulationStart) = 0;
+                         std::vector<double>* daysSinceSimulationStart) = 0;
 
   // -------------------------------------------------------
   virtual std::vector<int>  reportNumbers() = 0;
@@ -385,7 +384,7 @@ class RIECLRestartDataAccess : public cvf::Object
   // -------------------------------------------------------
   virtual void resultNames(
       QStringList* resultNames,
-      std::vector<size_t>* resultDataItemCounts) = 0;
+                           std::vector<size_t>* resultDataItemCounts) = 0;
 
   // -------------------------------------------------------
   virtual bool results(const QString& resultName,
@@ -396,14 +395,14 @@ class RIECLRestartDataAccess : public cvf::Object
   // -------------------------------------------------------
   virtual bool dynamicNNCResults(
       const ecl_grid_type* grid,
-      size_t timeStep,
-      std::vector<double>* waterFlux,
-      std::vector<double>* oilFlux,
-      std::vector<double>* gasFlux) = 0;
+                                 size_t timeStep,
+                                 std::vector<double>* waterFlux,
+                                 std::vector<double>* oilFlux,
+                                 std::vector<double>* gasFlux) = 0;
 
   // -------------------------------------------------------
-  // virtual void readWellData(well_info_type * well_info,
-  //                           bool importCompleteMswData) = 0;
+//  virtual void readWellData(well_info_type * well_info,
+//                            bool importCompleteMswData) = 0;
 
   // -------------------------------------------------------
   virtual int readUnitsType() = 0;
@@ -511,8 +510,8 @@ class RIReaderECL : public RIReaderInterface
 //                                           int ertBranchId, int ertSegmentId,
 //                                           const char* wellName);
 
-  // void importFaults(const QStringList& fileSet,
-  //                  cvf::Collection<RIFault>* faults);
+//  void importFaults(const QStringList& fileSet,
+//                    cvf::Collection<RIFault>* faults);
 
   // -------------------------------------------------------
   void openInitFile();
@@ -602,24 +601,24 @@ class RIECLFileTools {
   // -------------------------------------------------------
   static QString
   firstFileNameOfType(const QStringList& fileSet,
-                      ecl_file_enum fileType);
+                                     ecl_file_enum fileType);
 
   // -------------------------------------------------------
   static QStringList
   filterFileNamesOfType(const QStringList& fileSet,
-                        ecl_file_enum fileType);
+                                           ecl_file_enum fileType);
 
   // -------------------------------------------------------
   static bool
   findSiblingFilesWithSameBaseName(const QString& fileName,
-                                   QStringList* fileSet);
+                                               QStringList* fileSet);
 
   // -------------------------------------------------------
   static bool
   keywordData(ecl_file_type* ecl_file,
-              const QString& keyword,
-              size_t fileKeywordOccurrence,
-              std::vector<double>* values);
+                          const QString& keyword,
+                          size_t fileKeywordOccurrence,
+                          std::vector<double>* values);
 
   // -------------------------------------------------------
   static bool keywordData(ecl_file_type* ecl_file,
@@ -670,8 +669,8 @@ class RIKeywordLocation {
  public:
   // -------------------------------------------------------
   RIKeywordLocation(const std::string& keyword,
-                    size_t itemCount,
-                    int indexWithinReportStep)
+                     size_t itemCount,
+                     int indexWithinReportStep)
       : m_keyword(keyword),
         m_itemCount(itemCount),
         m_indexWithinReportStep(indexWithinReportStep) {}

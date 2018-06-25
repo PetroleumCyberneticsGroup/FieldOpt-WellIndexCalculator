@@ -65,9 +65,10 @@ wicalc_rixx::wicalc_rixx(::Settings::Model::Well well_settings,
 
   // ---------------------------------------------------------------
   // std::cout << "[mod]wicalc_rixx-01.--------- " << std::endl;
-  rireaderecl_ = new RIReaderECL();
+
+  RIReaderECL rireaderecl_;
   ricasedata_ = new RICaseData(grid_->GetFilePath());
-  rireaderecl_->open(grid_->GetFilePathQString(), ricasedata_);
+  rireaderecl_.open(grid_->GetFilePathQString(), ricasedata_.p());
 
   ricasedata_->computeActiveCellBoundingBoxes();
   ricasedata_->mainGrid()->computeCachedData();
@@ -279,7 +280,7 @@ wicalc_rixx::ComputeWellBlocks(
   // -----------------------------------------------------------
   // Use intersection data to find intersected cell data
   // cvf::ref<RIExtractor> extractor = new RIECLExtractor(ricasedata, *wellPath);
-  extractor = new RIECLExtractor(ricasedata_, *wellPath);
+  extractor = new RIECLExtractor(ricasedata_.p(), *wellPath);
   // cout << "[mod]wicalc_rixx-06.--------- cvf::ref<RIExtractor> extractor" << endl;
 
   // -----------------------------------------------------------

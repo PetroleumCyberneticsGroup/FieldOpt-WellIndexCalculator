@@ -37,11 +37,11 @@ RICaseData::RICaseData(string file_path) {
 
   // -------------------------------------------------------
   m_mainGrid = new RIGrid(file_path);
-  // m_ownerCase = ownerCase;
+//  m_ownerCase = ownerCase;
 
   // -------------------------------------------------------
   // m_matrixModelResults = new RICaseCellResultsData(this);
-  // m_fractureModelResults = new RigCaseCellResultsData(this);
+//  m_fractureModelResults = new RigCaseCellResultsData(this);
 
   // -------------------------------------------------------
   m_activeCellInfo = new RIActiveCellInfo;
@@ -60,7 +60,7 @@ RICaseData::RICaseData(string file_path) {
   //     setActiveCellInfo(m_fractureActiveCellInfo.p());
 
   // -------------------------------------------------------
-  // m_unitsType = RiaEclipseUnitTools::UNITS_METRIC;
+//  m_unitsType = RiaEclipseUnitTools::UNITS_METRIC;
 
   // -------------------------------------------------------
   PorosityModelTypeMATRIX_ = PorosityModelType::MATRIX_MODEL;
@@ -75,11 +75,12 @@ RICaseData::~RICaseData() {
 #ifdef FIELDOPT_BUILD
 
   // -------------------------------------------------------
-  if (m_mainGrid != NULL) {
+  /*
+  if (m_mainGrid.notNull()) {
 
     // -----------------------------------------------------
-    printf("%s%s%s\n", FRED, "m_mainGrid != nullptr ", AEND);
-    delete m_mainGrid; // This call the destructor of RIGrid
+    printf("%s%s%s", FRED, "m_mainGrid != nullptr ", AEND);
+    delete m_mainGrid.p(); // This call the destructor of RIGrid
     printf("%s%s%s\n", FRED, "TRUE (~RICaseData)", AEND);
 
   } else {
@@ -89,6 +90,7 @@ RICaseData::~RICaseData() {
            "m_mainGrid != nullptr FALSE (~RICaseData)", AEND);
 
   }
+  */
 
   // -------------------------------------------------------
   if (m_activeCellInfo != NULL) {
@@ -142,19 +144,19 @@ RICaseData::~RICaseData() {
 
 //==========================================================
 RIGrid* RICaseData::mainGrid() {
-  return m_mainGrid;
+  return m_mainGrid.p();
 }
 
 //==========================================================
 const RIGrid* RICaseData::mainGrid() const {
-  return m_mainGrid;
+  return m_mainGrid.p();
 }
 
 //==========================================================
 void RICaseData::setMainGrid(RIGrid* mainGrid) {
   m_mainGrid = mainGrid;
-  // m_matrixModelResults->setMainGrid(m_mainGrid);
-  // m_fractureModelResults->setMainGrid(m_mainGrid);
+//  m_matrixModelResults->setMainGrid(m_mainGrid);
+//  m_fractureModelResults->setMainGrid(m_mainGrid);
 }
 
 //==========================================================
@@ -219,9 +221,9 @@ class CellRangeBB
 void RICaseData::computeActiveCellIJKBBox() {
 
   // -------------------------------------------------------
-  // if (m_mainGrid != 0
-  //    && m_activeCellInfo != 0
-  //    && m_fractureActiveCellInfo != 0) {
+//  if (m_mainGrid != 0
+//      && m_activeCellInfo != 0
+//      && m_fractureActiveCellInfo != 0) {
 
   // -------------------------------------------------------
   cout << FLGREEN
@@ -331,8 +333,8 @@ void RICaseData::computeActiveCellsGeometryBoundingBox() {
   // MB
   // if (m_activeCellInfo != 0
   //    || m_fractureActiveCellInfo != 0) {
-  //  return;
-  // }
+//    return;
+//  }
 
   // MB
   // Importat: force computation and setting of geometry BB.
@@ -436,17 +438,17 @@ void RICaseData::computeActiveCellsGeometryBoundingBox() {
 // =========================================================
 
 // =========================================================
-// bool RIReaderInterface::isFaultImportEnabled() {
+//bool RIReaderInterface::isFaultImportEnabled() {
 //    return readerSettings()->importFaults;
-// }
+//}
 
 // -----------------------------------------------------------------
-// bool RIReaderInterface::isImportOfCompleteMswDataEnabled() {
+//bool RIReaderInterface::isImportOfCompleteMswDataEnabled() {
 //    return readerSettings()->importAdvancedMswData;
-// }
+//}
 
 // -----------------------------------------------------------------
-// bool RIReaderInterface::isNNCsEnabled() {
+//bool RIReaderInterface::isNNCsEnabled() {
 ////    return readerSettings()->importNNCs;
 //}
 
@@ -532,7 +534,7 @@ typedef struct well_conn_struct well_conn_type;
 //  vertex indices
 //
 
-static const size_t cellMappingECLRi[ 8 ] = { 0, 1, 3, 2, 4, 5, 7, 6 };
+static const size_t cellMappingECLRi[8] = { 0, 1, 3, 2, 4, 5, 7, 6 };
 
 // -----------------------------------------------------------------
 // Static functions
@@ -549,13 +551,13 @@ bool transferGridCellData(RIGrid* mainGrid,
   CVF_ASSERT(activeCellInfo && fractureActiveCellInfo);
 
   // ---------------------------------------------------------------
-  int cellCount = ecl_grid_get_global_size( localEclGrid );
+  int cellCount = ecl_grid_get_global_size(localEclGrid);
   size_t cellStartIndex = mainGrid->globalCellArray().size();
   size_t nodeStartIndex = mainGrid->nodes().size();
 
   // ---------------------------------------------------------------
   RICell defaultCell;
-  defaultCell.setHostGrid( localGrid );
+  defaultCell.setHostGrid(localGrid);
   mainGrid->globalCellArray().resize(cellStartIndex + cellCount, defaultCell);
 
   // ---------------------------------------------------------------
@@ -564,7 +566,7 @@ bool transferGridCellData(RIGrid* mainGrid,
   // ---------------------------------------------------------------
   // int progTicks = 100;
   // double cellsPrProgressTick = cellCount/(float)progTicks;
-  // caf::ProgressInfo progInfo(progTicks, "");
+//  caf::ProgressInfo progInfo(progTicks, "");
 
   // ---------------------------------------------------------------
   size_t computedCellCount = 0;
@@ -856,7 +858,7 @@ bool RIReaderECL::open(const QString& fileName,
   // importFaults(fileSet, &faults);
 
   RIGrid* mainGrid = eclipseCase->mainGrid();
-//   mainGrid->setFaults(faults);
+  // mainGrid->setFaults(faults);
   m_eclipseCase = eclipseCase;
 
   // ---------------------------------------------------------------
@@ -878,7 +880,7 @@ bool RIReaderECL::open(const QString& fileName,
 
   // ---------------------------------------------------------------
 //   cout << "Processing NNC data" << endl;
-  //eclipseCase->mainGrid()->nncData()->processConnections( *(eclipseCase->mainGrid()));
+//   eclipseCase->mainGrid()->nncData()->processConnections( *(eclipseCase->mainGrid()));
 
   // ---------------------------------------------------------------
   // cout << "Reading Well information" << endl;
