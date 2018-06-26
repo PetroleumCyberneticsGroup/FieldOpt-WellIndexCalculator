@@ -88,7 +88,7 @@ void caf::AppEnum< RimIntersection::CrossSectionDirEnum >::setUp() {
 // ===============================================================
 RimIntersection::RimIntersection(RIGrid* grid,
                                  RICaseData* casedata,
-                                 Settings::Optimizer* settings) {
+                                 Settings::Optimizer::Constraint &settings) {
 
   // -------------------------------------------------------
   grid_ = grid;
@@ -99,7 +99,7 @@ RimIntersection::RimIntersection(RIGrid* grid,
   m_crossSectionPartMgr = nullptr;
 
   // -------------------------------------------------------
-  if (settings_->verb_vector()[5] > 1) // idx:5 -> mod (Model)
+  if (settings_.verb_vector_[5] > 1) // idx:5 -> mod (Model)
     cout << "[mod]Init RimIntersection.--- " << endl;
 
 }

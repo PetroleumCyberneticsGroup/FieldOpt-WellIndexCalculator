@@ -81,7 +81,7 @@ class RimIntersection // : public caf::PdmObject
   // -------------------------------------------------------------
   RimIntersection(RIGrid* grid,
                   RICaseData* caseData,
-                  Settings::Optimizer* settings);
+                  Settings::Optimizer::Constraint &settings);
 
   RimIntersection();
   ~RimIntersection();
@@ -166,7 +166,7 @@ class RimIntersection // : public caf::PdmObject
  public:
   RIGrid* grid_;
   RICaseData* casedata_;
-  Settings::Optimizer* settings_;
+  Settings::Optimizer::Constraint settings_;
 
  private:
   // -------------------------------------------------------------
