@@ -86,20 +86,21 @@ void caf::AppEnum< RimIntersection::CrossSectionDirEnum >::setUp() {
 // CAF_PDM_SOURCE_INIT(RimIntersection, "CrossSection");
 
 // ===============================================================
-RimIntersection::RimIntersection(RIGrid* grid,
-                                 RICaseData* casedata,
-                                 Settings::Optimizer::Constraint &settings) {
+RimIntersection::
+RimIntersection(RIGrid* grid,
+                RICaseData* casedata,
+                Settings::Optimizer::Constraint &settings_con) {
 
   // -------------------------------------------------------
   grid_ = grid;
   casedata_ = casedata;
-  settings_ = settings;
+  settings_con_ = settings_con;
 
   // -------------------------------------------------------
   m_crossSectionPartMgr = nullptr;
 
   // -------------------------------------------------------
-  if (settings_.verb_vector_[5] > 1) // idx:5 -> mod (Model)
+  if (settings_con_.verb_vector_[5] > 1) // idx:5 -> mod (Model)
     cout << "[mod]Init RimIntersection.--- " << endl;
 
 }
