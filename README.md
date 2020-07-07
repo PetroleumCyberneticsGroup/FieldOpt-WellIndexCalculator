@@ -1,4 +1,4 @@
-# WellIndexCalculatior
+# WellIndexCalculator
 The WellIndexCalculator library and executable is part of the 
 [FieldOpt project](https://github.com/PetroleumCyberneticsGroup/FieldOpt).
 
